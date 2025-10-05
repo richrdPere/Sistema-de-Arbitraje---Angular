@@ -1,73 +1,35 @@
-<div class="flex h-screen bg-gray-100">
-  <!-- Sidebar -->
-  <aside class="w-64 bg-[#0a1a35] text-white flex flex-col">
-    <div class="px-6 py-4 flex items-center justify-center border-b border-gray-700">
-      <img src="assets/logo.png" alt="Logo" class="h-10 mr-2">
-      <h1 class="text-lg font-bold">Sistema</h1>
-    </div>
+<main
+  class="flex overflow-y-scroll w-screen h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white dark:bg-gray-900">
 
-    <nav class="flex-1 mt-6">
-      <ul class="space-y-2">
-        <li>
-          <a routerLink="/admin/expedientes" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Expedientes</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/participes" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Partícipes</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/usuarios" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Usuarios</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/auditoria" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Auditoría</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/calculadora" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Calculadora</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin/solicitudes" routerLinkActive="bg-gray-700"
-            class="flex items-center px-6 py-3 hover:bg-gray-700 rounded-md">
-            <span>Solicitudes</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="p-6 border-t border-gray-700">
-      <button class="w-full flex items-center justify-center px-4 py-2 bg-red-600 rounded hover:bg-red-700">
-        Cerrar Sesión
-      </button>
-    </div>
-  </aside>
+  <!-- sidebar -->
+  <side-menu />
 
   <!-- Main content -->
   <div class="flex flex-col flex-1">
     <!-- Header -->
-    <header class="bg-white shadow px-6 py-4 flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-gray-800">Gestión de Expedientes</h2>
-      <div class="flex items-center space-x-4">
-        <span class="text-gray-600">Hola, Admin User</span>
-        <img class="w-10 h-10 rounded-full border" src="assets/admin-avatar.png" alt="Avatar">
-      </div>
+    <header>
+      <nav class="navbar bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-900">
+        <div class="container mx-auto my-3 xl:max-w-full flex items-center justify-between">
+          <!-- Logo a la izquierda -->
+          <!-- <div class="flex items-center">
+            <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+            <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Sistema Legal </span>
+          </div> -->
+        </div>
+
+        <!-- Menu de usuario a la derecha -->
+        <div class="flex items-center ">
+          <navbar-menu />
+        </div>
+
+      </nav>
     </header>
 
     <!-- Router outlet -->
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <div class="flex-1 overflow-y-auto p-6 bg-gray-50 text-base-100">
       <router-outlet></router-outlet>
-    </main>
+    </div>
   </div>
-</div>
+</main>
+
+

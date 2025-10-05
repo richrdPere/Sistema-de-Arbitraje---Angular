@@ -1,1 +1,88 @@
-<p>expedientes-page works!</p>,
+<div class="p-6 bg-gray-50 min-h-screen">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Expedientes</h2>
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none">
+      Crear Nuevo Expediente
+    </button>
+
+    <form-expediente-modal *ngIf="mostrarModal" (close)="mostrarModal = false">
+    </form-expediente-modal>
+  </div>
+
+  <div class="flex justify-between items-center mb-4">
+    <!-- <input type="text" placeholder="Buscar por cualquier campo..." class="input input-bordered w-full max-w-xs" />
+
+    <button class="btn btn-info btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 16l4-4m0 0l4 4m-4-4v12m12-8v8m0 0h-3m3 0h3" />
+      </svg>
+    </button> -->
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo...">
+    <!-- <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg class="h-5 w-5 text-gray-500 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+          clip-rule="evenodd" />
+      </svg>
+    </div> -->
+  </div>
+
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+    <table class="table w-full">
+      <thead class="bg-gray-100 text-base-100">
+        <tr>
+          <th>N° Expediente</th>
+          <th>N° de Partícipes</th>
+          <th>Fecha de Inicio</th>
+          <th>Estado</th>
+          <th>Docs</th>
+          <th>Actualización</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+        <tr>
+          <td colspan="7" class="text-center py-4">Cargando expedientes...</td>
+        </tr>
+        }
+
+        @for (exp of expedientes; track $index) {
+        <tr class="hover">
+          <td>{{ exp.numeroExpediente }}</td>
+          <td>{{ exp.participantes }}</td>
+          <td>{{ exp.fechaInicio | date:'d/M/yyyy, h:mm a' }}</td>
+          <td>
+            <span class="badge bg-[#0a1a35] text-white px-3 py-1 rounded-full">
+              {{ exp.estado }}
+            </span>
+          </td>
+          <td>{{ exp.docs }}</td>
+          <td>{{ exp.actualizacion | date:'d/M/yyyy, h:mm a' }}</td>
+          <td>
+            <button class="btn btn-ghost btn-circle btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </button>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
+      <span>Página 1 de 1</span>
+      <div class="join ml-4">
+        <button class="join-item btn btn-sm" disabled>Anterior</button>
+        <button class="join-item btn btn-sm">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
