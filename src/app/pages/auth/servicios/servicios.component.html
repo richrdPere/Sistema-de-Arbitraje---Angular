@@ -1,0 +1,51 @@
+<section class="relative w-full min-h-screen">
+  <!-- Fondo con imagen -->
+  <div class="absolute inset-0">
+    <img src="assets/bg-justicia.jpg" alt="Fondo justicia" class="w-full h-full object-cover" />
+    <!-- Overlay oscuro para mejor contraste -->
+    <div class="absolute inset-0 bg-black/40"></div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="relative z-10 container mx-auto px-12 py-16">
+    <!-- Título -->
+    <h2 class="text-center text-2xl md:text-3xl font-bold text-white mb-12">
+      NUESTROS SERVICIOS
+    </h2>
+
+    <!-- Cards de servicios -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 mt-2 gap-8">
+
+      @for (servicio of menuServicios; track $index) {
+      <div class="card bg-base-200 shadow-lg rounded-2xl">
+        <!-- <figure>
+          <img [src]="servicio.icon" alt="Servicio Geología" class="h-48 w-full object-cover" />
+        </figure> -->
+        <div class="card-body items-center text-center">
+
+          <div class="w-12 h-12  rounded-full flex items-center justify-center bg-sky-400 mb-4">
+            <!-- <img [src]="servicio.icon" alt="Servicio ${servicio.title}"  /> -->
+            <img [src]="servicio.icon" [alt]="servicio.title" class="w-6 h-6" />
+            <!-- <i [class]="servicio.icon"></i> -->
+          </div>
+
+          <h2 class="card-title font-bold text-sm ">{{servicio.title}}</h2>
+          <p class="text-xs">
+            {{servicio.description}}
+          </p>
+          <div class="card-actions justify-end ">
+            <a [routerLink]="servicio.route">
+              <button class="btn btn-info text-center">Ingresar</button>
+            </a>
+
+          </div>
+        </div>
+      </div>
+      }
+
+    </div>
+  </div>
+</section>
+
+<!-- Este es el outlet para que se cargue DetallesServicioComponent -->
+<router-outlet />

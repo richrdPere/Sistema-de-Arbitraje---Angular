@@ -1,0 +1,88 @@
+<section class="relative w-full min-h-screen">
+  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');
+  ">
+    <!-- Overlay oscuro -->
+    <div class="absolute inset-0 bg-black/40 "></div>
+
+
+
+
+    <!-- Contenido centrado -->
+    <div class="relative flex flex-col items-center justify-center min-h-screen px-6 py-8 ">
+
+      <!-- Título -->
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
+        MESA DE PARTES VIRTUALES
+      </h1>
+
+      <!-- Card del formulario -->
+      <div class="card w-full max-w-lg bg-white shadow-xl p-6 ">
+
+        <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
+
+        <!-- Número de expediente -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <input type="text" placeholder="Número" class="input input-bordered w-full" />
+          <input type="text" placeholder="Año" class="input input-bordered w-full " />
+          <select class="select select-bordered w-full">
+            <option disabled selected>Código</option>
+            <option>001</option>
+            <option>002</option>
+          </select>
+        </div>
+
+        <!-- Tipo -->
+        <div class="form-control mb-4 ">
+          <select class="select select-bordered ">
+            <option disabled selected>Seleccione un tipo...</option>
+            <option>Demanda</option>
+            <option>Recurso</option>
+          </select>
+        </div>
+
+        <!-- Etapa Procesal -->
+        <div class="form-control mb-4">
+          <select class="select select-bordered">
+            <option disabled selected>Seleccione una etapa...</option>
+            <option>Inicial</option>
+            <option>Intermedia</option>
+            <option>Final</option>
+          </select>
+        </div>
+
+        <h2 class="text-sm font-semibold mb-4">Datos de Usuario</h2>
+
+        <!-- Nombre -->
+        <div class="form-control mb-4">
+          <input type="text" placeholder="Ingrese un nombre" class="input input-bordered" />
+        </div>
+
+        <!-- Email -->
+        <div class="form-control mb-4">
+          <input type="email" placeholder="Ingrese su correo" class="input input-bordered" />
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-control mb-4">
+          <input type="password" placeholder="Ingrese su contraseña" class="input input-bordered" />
+        </div>
+
+        <!-- Condición -->
+        <div class="form-control mb-6">
+          <select class="select select-bordered">
+            <option disabled selected>Seleccione una condición...</option>
+            <option>Parte</option>
+            <option>Abogado</option>
+          </select>
+        </div>
+
+        <!-- Botón -->
+        <button class="btn btn-block bg-black text-white hover:bg-gray-800 ">
+          Enviar Solicitud
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</section><!-- Contenedor principal -->
