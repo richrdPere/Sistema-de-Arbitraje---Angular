@@ -10,7 +10,7 @@ export interface MenuOptions {
 }
 
 @Component({
-  selector: 'app-navbar-menu-profile',
+  selector: 'navbar-menu-profile',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar-menu-profile.component.html',
 })

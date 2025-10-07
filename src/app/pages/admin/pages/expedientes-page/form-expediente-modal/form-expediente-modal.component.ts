@@ -1,37 +1,45 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+// Utils
+import { FormUtils } from 'src/app/utils/form-utils';
 
 @Component({
-  selector: 'form-expediente-modal',
+  selector: 'expediente-modal',
   imports: [ReactiveFormsModule],
   templateUrl: './form-expediente-modal.component.html',
 })
-export class FormExpedienteModalComponent {
-  @Output() close = new EventEmitter<void>();
-  expedienteForm: FormGroup;
+export class FormExpedienteModalComponent implements OnInit {
 
-  constructor(private fb: FormBuilder) {
-    this.expedienteForm = this.fb.group({
-      numero: ['', Validators.required],
-      anio: ['', Validators.required],
-      codigo: ['', Validators.required],
-      estado: ['', Validators.required],
-      tipo: ['', Validators.required],
-      etapa: ['', Validators.required],
-      fechaInicio: ['', Validators.required],
-      fechasLaudos: this.fb.array([])
-    });
+
+  // Validadores
+  formUtils = FormUtils;
+
+  // Input del componente padre
+  @Input() formExpediente!: FormGroup;
+
+  // Output hacia el componente padre
+  @Output() submitForm = new EventEmitter<void>();
+
+  ngOnInit() {
+
   }
 
-  onSubmit() {
-    if (this.expedienteForm.valid) {
-      console.log(this.expedienteForm.value);
-      this.close.emit();
-    }
+
+
+  onSave() {
+    this.submitForm.emit();
   }
 
-  cerrarModal() {
-    this.close.emit();
-  }
+  // onSubmit() {
+  //   if (this.expedienteForm.valid) {
+  //     console.log(this.expedienteForm.value);
+  //     this.close.emit();
+  //   }
+  // }
+
+  // cerrarModal() {
+  //   this.close.emit();
+  // }
 
 }

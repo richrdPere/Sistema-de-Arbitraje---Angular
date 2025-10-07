@@ -1,35 +1,28 @@
 <div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold text-gray-800">Gestión de Expedientes</h2>
-    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none">
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
       Crear Nuevo Expediente
     </button>
-
-    <form-expediente-modal *ngIf="mostrarModal" (close)="mostrarModal = false">
-    </form-expediente-modal>
   </div>
 
-  <div class="flex justify-between items-center mb-4">
-    <!-- <input type="text" placeholder="Buscar por cualquier campo..." class="input input-bordered w-full max-w-xs" />
+  <!-- Modal Form -->
+  <dialog id="my_modal_1" class="modal text-white">
+    <expediente-modal [formExpediente]="formExpediente" (submitForm)="onSubmitExpediente()" />
+  </dialog>
 
-    <button class="btn btn-info btn-circle">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 16l4-4m0 0l4 4m-4-4v12m12-8v8m0 0h-3m3 0h3" />
-      </svg>
-    </button> -->
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
     <input type="text"
       class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
       placeholder="Buscar por cualquier campo...">
-    <!-- <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <svg class="h-5 w-5 text-gray-500 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd"
-          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-          clip-rule="evenodd" />
-      </svg>
-    </div> -->
+
   </div>
 
+
+  <!-- Tabla -->
   <div class="overflow-x-auto bg-white shadow rounded-lg ">
     <table class="table w-full">
       <thead class="bg-gray-100 text-base-100">
@@ -62,14 +55,85 @@
           </td>
           <td>{{ exp.docs }}</td>
           <td>{{ exp.actualizacion | date:'d/M/yyyy, h:mm a' }}</td>
-          <td>
+
+          <!-- Menú contextual -->
+          <td class="relative">
+            <div class="dropdown dropdown-end" #dropdownMenu>
+              <button tabindex="0" class="btn btn-ghost btn-circle btn-sm"
+                (click)="toggleDropdown(dropdownMenu, $event)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 12h.01M12 12h.01M18 12h.01"
+                  />
+                </svg>
+              </button>
+
+              <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[100]"
+                [class.hidden]="!dropdownMenu.classList.contains('dropdown-open')">
+                <li class="menu-title px-4 py-1 text-xs text-gray-400">
+                  Acciones
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="accionYcerrar(dropdownMenu, 'verDocumentos', exp)">
+                    <i class="bi bi-file-earmark-text text-gray-600"></i>
+                    Ver Documentos
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="accionYcerrar(dropdownMenu, 'gestionarParticipes', exp)">
+                    <i class="bi bi-people text-gray-600"></i>
+                    Gestionar Partícipes
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="accionYcerrar(dropdownMenu, 'verHistorial', exp)">
+                    <i class="bi bi-clock-history text-gray-600"></i>
+                    Ver Historial
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="accionYcerrar(dropdownMenu, 'editarExpediente', exp)">
+                    <i class="bi bi-pencil text-gray-600"></i>
+                    Editar Expediente
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-red-600"
+                    (click)="accionYcerrar(dropdownMenu, 'eliminarExpediente', exp)">
+                    <i class="bi bi-trash text-red-600"></i>
+                    Eliminar Expediente
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </td>
+          <!-- <td>
             <button class="btn btn-ghost btn-circle btn-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </button>
-          </td>
+          </td> -->
         </tr>
         }
 

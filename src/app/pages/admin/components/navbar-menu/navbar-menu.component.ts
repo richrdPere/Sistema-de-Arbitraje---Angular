@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { NavbarMenuOptionsComponent } from "./navbar-menu-options/navbar-menu-options.component";
-import { NavbarMenuProfileComponent } from "../../pages/auditoria-page/navbar-menu/navbar-menu-profile/navbar-menu-profile.component";
+import { NavbarMenuProfileComponent } from "./navbar-menu-profile/navbar-menu-profile.component";
 
 export interface MenuOptions {
   label: string;
@@ -9,7 +9,7 @@ export interface MenuOptions {
 }
 
 @Component({
-  selector: 'app-navbar-menu',
+  selector: 'navbar-menu',
   imports: [NavbarMenuOptionsComponent, NavbarMenuProfileComponent],
   templateUrl: './navbar-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

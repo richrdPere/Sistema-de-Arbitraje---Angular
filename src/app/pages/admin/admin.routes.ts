@@ -13,27 +13,6 @@ export const AdminRoutes: Routes = [
       { path: 'solicitudes', loadComponent: () => import('./pages/solicitudes-page/solicitudes-page.component').then(m => m.SolicitudesPageComponent) },
       { path: '', redirectTo: 'expedientes', pathMatch: 'full' },
 
-      // {
-      //   path: 'expedientes',
-      //   component: ExpedientesPageComponent
-      // },
-      // {
-      //   path: 'auditoria',
-      //   component: AuditoriaPageComponent
-      // },
-      // {
-      //   path: 'participes',
-      //   component: ParticipesPageComponent
-      // },
-      // {
-      //   path: 'solicitudes',
-      //   component: SolicitudesPageComponent
-      // },
-      // {
-      //   path: 'usuarios',
-      //   component: UsuariosPagesComponent
-      // }
-
     ]
   },
   {

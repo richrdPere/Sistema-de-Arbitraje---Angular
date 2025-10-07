@@ -1,1 +1,92 @@
-<p>usuarios-pages works!</p>,
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
+      Crear Nuevo Expediente
+    </button>
+  </div>
+
+  <!-- Modal Form -->
+  <!-- <dialog id="my_modal_1" class="modal text-white">
+    <expediente-modal [formExpediente]="formExpediente" (submitForm)="onSubmitExpediente()" />
+  </dialog> -->
+
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo...">
+
+  </div>
+
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+    <table class="table w-full">
+      <thead class="bg-gray-100 text-base-100">
+        <tr>
+          <th>Nombre</th>
+          <th>Correo Electronico</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+        <tr>
+          <td colspan="7" class="text-center py-4">Cargando expedientes...</td>
+        </tr>
+        }
+
+        @for (user of usuarios; track $index) {
+        <tr class="hover">
+          <td>{{ user.nombre }}</td>
+          <td>{{ user.correo }}</td>
+          <td>{{ user.rol}}</td>
+          <td>
+            <span class="badge bg-[#0a1a35] text-white px-3 py-1 rounded-full">
+              {{ user.estado }}
+            </span>
+          </td>
+
+
+          <!-- Menú contextual -->
+          <td class="relative">
+            <button class="btn btn-sm btn-outline-primary me-1">
+              <i class="bi bi-eye"></i> Ver
+            </button>
+            <button class="btn btn-sm btn-outline-warning me-1">
+              <i class="bi bi-pencil"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </td>
+          <!-- <td>
+            <button class="btn btn-ghost btn-circle btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </button>
+          </td> -->
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
+      <span>Página 1 de 1</span>
+      <div class="join ml-4">
+        <button class="join-item btn btn-sm" disabled>Anterior</button>
+        <button class="join-item btn btn-sm">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+

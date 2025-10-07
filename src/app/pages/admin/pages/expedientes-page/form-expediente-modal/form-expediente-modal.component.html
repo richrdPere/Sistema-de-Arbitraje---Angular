@@ -1,83 +1,86 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+<!-- <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
   <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh]">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Crear Nuevo Expediente</h2>
 
-    <form [formGroup]="expedienteForm" (ngSubmit)="onSubmit()" class="space-y-4">
 
-      <!-- Número de expediente -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Número de Expediente</label>
-        <div class="flex gap-2">
-          <input formControlName="numero" type="text" placeholder="Número"
-            class="input input-bordered w-1/3" />
-          <input formControlName="anio" type="text" placeholder="Año"
-            class="input input-bordered w-1/3" />
-          <select formControlName="codigo" class="select select-bordered w-1/3">
-            <option disabled selected>Código</option>
-            <option value="CA-RENA">CA-RENA</option>
-            <option value="JPRD-RENA">JPRD-RENA</option>
-            <option value="MC-RENA">MC-RENA</option>
-            <option value="RECUSACIÓN-RENA">RECUSACIÓN-RENA</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Estado -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Estado</label>
-        <select formControlName="estado" class="select select-bordered w-full">
-          <option disabled selected>Seleccione un estado...</option>
-          <option value="En trámite">En trámite</option>
-          <option value="Concluido">Concluido</option>
-          <option value="Archivado">Archivado</option>
-        </select>
-      </div>
-
-      <!-- Tipo -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Tipo</label>
-        <select formControlName="tipo" class="select select-bordered w-full">
-          <option disabled selected>Seleccione un tipo...</option>
-          <option value="Arbitraje Ordinario">Arbitraje Ordinario</option>
-          <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-          <option value="Recusación">Recusación</option>
-        </select>
-      </div>
-
-      <!-- Etapa Procesal -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Etapa Procesal</label>
-        <select formControlName="etapa" class="select select-bordered w-full">
-          <option disabled selected>Seleccione una etapa...</option>
-          <option value="Instalación">Instalación</option>
-          <option value="Audiencia">Audiencia</option>
-          <option value="Laudo">Laudo</option>
-          <option value="Archivo">Archivo</option>
-        </select>
-      </div>
-
-      <!-- Fecha de Inicio -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Fecha de Inicio</label>
-        <input formControlName="fechaInicio" type="date" class="input input-bordered w-full" />
-      </div>
-
-      <!-- Fechas de Laudos -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Fechas de Laudos</label>
-        <button type="button" class="btn w-full bg-[#0a1a35] text-white hover:bg-[#13244a]">
-          Agregar Laudo
-        </button>
-      </div>
-
-      <!-- Botones -->
-      <div class="flex justify-end gap-3 pt-4">
-        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
-        <button type="submit" class="btn bg-[#0a1a35] text-white hover:bg-[#13244a]">
-          Crear Expediente
-        </button>
-      </div>
-    </form>
   </div>
 </div>
+ -->
 
+<form [formGroup]="formExpediente" class="modal-box space-y-4">
+
+  <!-- ========================================== -->
+  <!-- ========= Número de expediente =========== -->
+  <!-- ========================================== -->
+
+  <div>
+    <label class="block text-sm font-medium mb-1">Número de Expediente</label>
+    <div class="flex gap-2">
+      <input formControlName="numero" type="text" placeholder="Número" class="input input-bordered w-1/3" />
+      <input formControlName="anio" type="text" placeholder="Año" class="input input-bordered w-1/3" />
+      <select formControlName="codigo" class="select select-bordered w-1/3">
+        <option disabled selected>Código</option>
+        <option value="CA-RENA">CA-RENA</option>
+        <option value="JPRD-RENA">JPRD-RENA</option>
+        <option value="MC-RENA">MC-RENA</option>
+        <option value="RECUSACIÓN-RENA">RECUSACIÓN-RENA</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Estado -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Estado</label>
+    <select formControlName="estado" class="select select-bordered w-full">
+      <option disabled selected>Seleccione un estado...</option>
+      <option value="En trámite">En trámite</option>
+      <option value="Concluido">Concluido</option>
+      <option value="Archivado">Archivado</option>
+    </select>
+  </div>
+
+  <!-- Tipo -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Tipo</label>
+    <select formControlName="tipo" class="select select-bordered w-full">
+      <option disabled selected>Seleccione un tipo...</option>
+      <option value="Arbitraje Ordinario">Arbitraje Ordinario</option>
+      <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
+      <option value="Recusación">Recusación</option>
+    </select>
+  </div>
+
+  <!-- Etapa Procesal -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Etapa Procesal</label>
+    <select formControlName="etapa" class="select select-bordered w-full">
+      <option disabled selected>Seleccione una etapa...</option>
+      <option value="Instalación">Instalación</option>
+      <option value="Audiencia">Audiencia</option>
+      <option value="Laudo">Laudo</option>
+      <option value="Archivo">Archivo</option>
+    </select>
+  </div>
+
+  <!-- Fecha de Inicio -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Fecha de Inicio</label>
+    <input formControlName="fechaInicio" type="date" class="input input-bordered w-full" />
+  </div>
+
+  <!-- Fechas de Laudos -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Fechas de Laudos</label>
+    <button type="button" class="btn w-full bg-[#0a1a35] text-white hover:bg-[#13244a]">
+      Agregar Laudo
+    </button>
+  </div>
+
+  <!-- Botones -->
+  <!-- <div class="flex justify-end gap-3 pt-4">
+    <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
+    <button type="submit" class="btn bg-[#0a1a35] text-white hover:bg-[#13244a]">
+      Crear Expediente
+    </button>
+  </div> -->
+</form>
