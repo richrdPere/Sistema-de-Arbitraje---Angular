@@ -30,7 +30,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/servicios/calculadora/calculadora.component').then(m => m.CalculadoraComponent)
       },
       { path: 'contacto', loadComponent: () => import('./pages/auth/contactos/contactos.component').then(m => m.ContactosComponent) },
-      // { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },
+      { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },
       // { path: 'register', loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent) },
 
     ],

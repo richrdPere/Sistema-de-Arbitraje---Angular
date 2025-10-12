@@ -1,103 +1,110 @@
-<div class="min-h-screen bg-base-300 flex flex-col items-center p-6">
+<section class="relative w-full min-h-screen ">
 
+  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
+    <!-- Overlay oscuro -->
+    <div class="absolute inset-0 bg-black/40 "></div>
 
-  <!-- Encabezado -->
-  <div class="text-center max-w-xl">
-    <div class="container bg-base-100 p-10 mx-auto rounded-lg">
-      <h1 class="text-4xl font-bold text-primary">Contáctanos</h1>
-      <p class="mt-2 ">
-        Si tienes dudas, sugerencias o deseas más información sobre nuestros cursos de geología,
-        completa el siguiente formulario y nos pondremos en contacto contigo.
-      </p>
+    <div class=" flex flex-col items-center p-6">
+      <!-- Encabezado -->
+      <div class="text-center max-w-xl">
+        <div class="card bg-base-100 p-10 mx-auto rounded-lg">
+          <h1 class="text-4xl font-bold text-info">Contáctanos</h1>
+          <p class="mt-2 ">
+            Si tienes dudas, sugerencias o deseas más información sobre nuestros servicios de árbitraje,
+            completa el siguiente formulario y nos pondremos en contacto contigo.
+          </p>
 
-    </div>
-  </div>
-
-
-
-  <!-- Contenedor -->
-  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
-    <!-- Formulario -->
-    <div class="card bg-base-200 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title text-primary">Envíanos un mensaje</h2>
-        <form class="space-y-4">
-          <!-- Nombre -->
-          <div>
-            <label class="label">
-              <span class="label-text">Nombre completo</span>
-            </label>
-            <input type="text" placeholder="Ingresa tu nombre" class="input input-bordered w-full" required />
-          </div>
-
-          <!-- Correo -->
-          <div>
-            <label class="label">
-              <span class="label-text">Correo electrónico</span>
-            </label>
-            <input type="email" placeholder="ejemplo@correo.com" class="input input-bordered w-full" required />
-          </div>
-
-          <!-- Mensaje -->
-          <div>
-            <label class="label">
-              <span class="label-text">Mensaje</span>
-            </label>
-            <textarea class="textarea textarea-bordered w-full" placeholder="Escribe tu mensaje aquí..." rows="4"
-              required></textarea>
-          </div>
-
-          <!-- Botón enviar -->
-          <button class="btn btn-primary w-full">Enviar mensaje</button>
-        </form>
+        </div>
       </div>
-    </div>
 
-    <!-- Información de contacto -->
-    <div class="card bg-base-200 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title text-primary">Información de contacto</h2>
-        <p class="text-base-content">
-          Si prefieres, puedes comunicarte directamente con nosotros a través de los siguientes medios:
-        </p>
+      <!-- Contenedor -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+        <!-- Formulario -->
+        <div class="card bg-base-200 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title text-info">Envíanos un mensaje</h2>
+            <form class="space-y-4">
+              <!-- Nombre -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Nombre completo</span>
+                </label>
+                <input type="text" placeholder="Ingresa tu nombre" class="input input-bordered w-full" required />
+              </div>
 
-        <div class="mt-4 space-y-3">
-          <!-- Teléfono -->
-          <div class="flex items-center space-x-3">
-            <span class="material-icons text-primary">phone</span>
-            <span class="text-base-content">+51 987 654 321</span>
-          </div>
+              <!-- Correo -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Correo electrónico</span>
+                </label>
+                <input type="email" placeholder="ejemplo@correo.com" class="input input-bordered w-full" required />
+              </div>
 
-          <!-- Correo -->
-          <div class="flex items-center space-x-3">
-            <span class="material-icons text-primary">email</span>
-            <span class="text-base-content">contacto&#64;geologiacursos.com</span>
-          </div>
+              <!-- Mensaje -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Mensaje</span>
+                </label>
+                <textarea class="textarea textarea-bordered w-full" placeholder="Escribe tu mensaje aquí..." rows="4"
+                  required></textarea>
+              </div>
 
-          <!-- Dirección -->
-          <div class="flex items-center space-x-3">
-            <span class="material-icons text-primary">location_on</span>
-            <span class="text-base-content">Av. Los Andes 123, Cusco, Perú</span>
+              <!-- Botón enviar -->
+              <button class="btn btn-info w-full">Enviar mensaje</button>
+            </form>
           </div>
         </div>
 
-        <!-- Redes sociales -->
-        <div class="mt-6 flex space-x-4">
-          <button class="btn btn-circle btn-outline btn-primary">
-            <i class="fab fa-facebook-f"></i>
-          </button>
-          <button class="btn btn-circle btn-outline btn-primary">
-            <i class="fab fa-twitter"></i>
-          </button>
-          <button class="btn btn-circle btn-outline btn-primary">
-            <i class="fab fa-instagram"></i>
-          </button>
-          <button class="btn btn-circle btn-outline btn-primary">
-            <i class="fab fa-linkedin-in"></i>
-          </button>
+        <!-- Información de contacto -->
+        <div class="card bg-base-200 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title text-info">Información de contacto</h2>
+            <p class="text-base-content">
+              Si prefieres, puedes comunicarte directamente con nosotros a través de los siguientes medios:
+            </p>
+
+            <div class="card-body mt-4 space-y-3">
+              <!-- Teléfono -->
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Teléfono:</span>
+                <span class="text-base-content">+51 987 654 321</span>
+              </div>
+
+              <!-- Correo -->
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Email:</span>
+                <span class="text-base-content">contacto&#64;firmalegal.com</span>
+              </div>
+
+              <!-- Dirección -->
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Dirección:</span>
+                <span class="text-base-content">Av. Los Andes 123, Cusco, Perú</span>
+              </div>
+            </div>
+
+            <!-- Redes sociales -->
+            <div class="mt-6 flex space-x-4 text-black">
+              <button class="btn btn-circle btn-outline btn-primary">
+                <i class="fa-brands fa-facebook-f"></i>
+              </button>
+              <button class="btn btn-circle btn-outline btn-primary">
+                <i class="fa-brands fa-x-twitter"></i>
+              </button>
+              <button class="btn btn-circle btn-outline btn-primary">
+                <i class="fa-brands fa-instagram"></i>
+              </button>
+              <button class="btn btn-circle btn-outline btn-primary">
+                <i class="fa-brands fa-linkedin-in"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
+    </div>
+
+
+  </div>
+
+</section>

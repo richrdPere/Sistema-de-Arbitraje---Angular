@@ -32,7 +32,7 @@
         <text fill="currentColor" font-size="9.72" font-family="LucidaSans, Lucida Sans" letter-spacing="0.55em"
           transform="translate(6.87 119.28) rotate(-0.02) scale(1.05 1)">FIRMA</text>
       </svg>
-       <!-- <span class="ml-3 text-xl font-bold text-primary">Red Nacional de Arbitraje</span> -->
+      <!-- <span class="ml-3 text-xl font-bold text-primary">Red Nacional de Arbitraje</span> -->
 
     </a>
 
@@ -50,7 +50,7 @@
         @if (link.type === 'button') {
         <button [class]="link.buttonStyle">
           <a [routerLink]="link.path"
-            class="flex items-center rounded-lg text-sm font-medium hover:text-white  transition"
+            class="flex items-center rounded-lg text-sm font-medium hover:text-white hover:bg-info transition"
             routerLinkActive="bg-info text-base-100" [routerLinkActiveOptions]="{ exact: true }">
             {{ link.label }}
           </a>

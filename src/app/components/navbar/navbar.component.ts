@@ -64,7 +64,7 @@ export class NavbarComponent implements OnInit {
       path: '/login',
       type: 'button',
       buttonStyle:
-        'text-purple-700 hover:text-white border border-primary  focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-3 py-2 mb-2 text-center dark:border-primary dark:text-primary dark:hover:text-white dark:hover:bg-primary'
+        'text-purple-700 hover:text-white  border border-primary focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-3 py-2 mb-2 text-center dark:border-primary dark:text-primary dark:hover:text-white dark:hover:bg-primary'
     },
     {
       label: 'Regístrate',

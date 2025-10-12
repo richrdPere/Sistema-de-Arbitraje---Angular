@@ -4,9 +4,6 @@
     <!-- Overlay oscuro -->
     <div class="absolute inset-0 bg-black/40 "></div>
 
-
-
-
     <!-- Contenido centrado -->
     <div class="relative flex flex-col items-center justify-center min-h-screen px-6 py-8 ">
 
@@ -16,7 +13,7 @@
       </h1>
 
       <!-- Card del formulario -->
-      <div class="card w-full max-w-lg bg-white shadow-xl p-6 ">
+      <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
 
         <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
 
@@ -26,60 +23,96 @@
           <input type="text" placeholder="Año" class="input input-bordered w-full " />
           <select class="select select-bordered w-full">
             <option disabled selected>Código</option>
-            <option>001</option>
-            <option>002</option>
+            <option>CA-RENA</option>
+            <option>JPRD-RENA</option>
+            <option>DESIGNACIÓN</option>
+            <option>RECUSACIÓN</option>
+            <option>INSTALACIÓN</option>
+            <option>AD HOC-RENA</option>
+            <option>AE-RENA</option>
           </select>
         </div>
 
         <!-- Tipo -->
+        <h2 class="text-sm font-semibold mb-4">Tipo Expediente</h2>
         <div class="form-control mb-4 ">
-          <select class="select select-bordered ">
+          <select class="select select-bordered w-full">
             <option disabled selected>Seleccione un tipo...</option>
-            <option>Demanda</option>
-            <option>Recurso</option>
+            <option>Arbitraje de Emergencia</option>
+            <option>Arbitraje Ad Hoc</option>
+            <option>Arbitraje Institucional</option>
+            <option>Recusación de árbitro</option>
+            <option>Recusación de adjudicador</option>
+            <option>Designación residual</option>
+            <option>Instalación de arbitraje</option>
           </select>
         </div>
 
         <!-- Etapa Procesal -->
+        <h2 class="text-sm font-semibold mb-4">Etapa procesal</h2>
         <div class="form-control mb-4">
-          <select class="select select-bordered">
+          <select class="select select-bordered w-full">
             <option disabled selected>Seleccione una etapa...</option>
-            <option>Inicial</option>
-            <option>Intermedia</option>
-            <option>Final</option>
+            <option>Prearbitral</option>
+            <option>Instalación</option>
+            <option>Postulatoria</option>
+            <option>Fijación de puntos controvertidos</option>
+            <option>Admisión de medios probatorios</option>
+            <option>Actuación pericial</option>
+            <option>Actuación probatoria</option>
+            <option>Cierre de etapa probatoria</option>
+            <option>Alegatos</option>
+            <option>Audiencia</option>
+            <option>Plazo para laudar</option>
+            <option>Plazo para resolver pedido contra Laudo Arbitral</option>
+            <option>Concluido con Laudo Arbitral Consentido</option>
+            <option>Concluido con pedido contra Laudo Arbitral</option>
+            <option>Recusación de arbitro</option>
+            <option>Recusación de adjudicador</option>
+            <option>Reconstitución de Tribunal Arbitral</option>
+            <option>Reconstitución de JPRD</option>
           </select>
         </div>
 
         <h2 class="text-sm font-semibold mb-4">Datos de Usuario</h2>
 
         <!-- Nombre -->
+         <!-- <label for="nombre">Nombre</label> -->
         <div class="form-control mb-4">
-          <input type="text" placeholder="Ingrese un nombre" class="input input-bordered" />
+          <input type="text" placeholder="Ingrese un nombre" class="input input-bordered w-full" name="nombre" />
         </div>
 
         <!-- Email -->
         <div class="form-control mb-4">
-          <input type="email" placeholder="Ingrese su correo" class="input input-bordered" />
+          <input type="email" placeholder="Ingrese su correo" class="input input-bordered w-full" />
         </div>
 
         <!-- Contraseña -->
         <div class="form-control mb-4">
-          <input type="password" placeholder="Ingrese su contraseña" class="input input-bordered" />
+          <input type="password" placeholder="Ingrese su contraseña" class="input input-bordered w-full" />
         </div>
 
         <!-- Condición -->
-        <div class="form-control mb-6">
-          <select class="select select-bordered">
+        <div class="form-control mb-6 ">
+          <select class="select select-bordered w-full">
             <option disabled selected>Seleccione una condición...</option>
-            <option>Parte</option>
-            <option>Abogado</option>
+            <option>Demandante</option>
+            <option>Demandado</option>
+            <option>Adjudicador</option>
+            <option>Árbitro</option>
+            <option>Secretario Arbitral</option>
+            <option>Secretario Técnico</option>
           </select>
         </div>
 
         <!-- Botón -->
-        <button class="btn btn-block bg-black text-white hover:bg-gray-800 ">
+        <button class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
           Enviar Solicitud
         </button>
+
+        <!-- <button class="btn btn-block bg-black text-white hover:bg-gray-800 ">
+          Enviar Solicitud
+        </button> -->
       </div>
     </div>
   </div>

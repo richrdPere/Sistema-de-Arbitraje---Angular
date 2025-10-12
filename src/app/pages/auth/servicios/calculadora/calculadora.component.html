@@ -10,174 +10,160 @@
       </h1>
 
       <!-- Card del formulario -->
+      @if (!resultado) {
       <div class="card w-full max-w-sm bg-base-200 shadow-xl py-5 px-2">
         <h2 class="text-lg text-center mb-4 text-info font-bold">VER TARIFARIO</h2>
 
-        <form [formGroup]="formCalculadora">
+        <form [formGroup]="formCalculadora" (ngSubmit)="calcular(tipoCuantia)">
 
-          <!-- Tabs DaisyUI -->
-          <div class="tabs tabs-border">
+          <!-- Tipo de cuantía -->
+          <div class="flex justify-center gap-4">
+            <button type="button" class="btn" [ngClass]="tipoCuantia === 'determinada' ? 'btn-primary' : 'btn-outline'"
+              (click)="seleccionarCuantia('determinada')">
+              Cuantía Determinada
+            </button>
 
-            <!-- ===================== CUANTÍA DETERMINADA ===================== -->
-            <input type="radio" name="my_tabs_2" class="tab text-xs" aria-label="C. DETERMINADA" checked="checked" />
-            <div class="tab-content border-base-300 bg-base-100 content-center py-5 px-5">
-
-              @if (!resultado) {
-              <div class="flex flex-col gap-4">
-                <label class="text-sm">Monto (S/.)</label>
-                <input formControlName="monto" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto" />
-
-                <button type="button" (click)="calcular('determinada')" class="btn bg-info w-full text-white">
-                  Calcular
-                </button>
-              </div>
-              }
-
-              @if (resultado && resultado.tipo === 'determinada') {
-              <ng-container [ngTemplateOutlet]="resultadoTpl"></ng-container>
-
-
-              }
-            </div>
-
-            <!-- ===================== CUANTÍA INDETERMINADA ===================== -->
-            <input type="radio" name="my_tabs_2" class="tab text-xs" aria-label="C. INDETERMINADA" />
-            <div class="tab-content border-base-300 bg-base-100 content-center py-5 px-5">
-
-              @if (!resultado) {
-              <div class="flex flex-col gap-4">
-                <label class="text-sm">Monto de Contrato (S/.)</label>
-                <input formControlName="contrato" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto contrato" />
-
-                <label class="text-sm">Monto de Pretensión (S/.)</label>
-                <input formControlName="pretension" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto pretensión" />
-
-                <button type="button" (click)="calcular('indeterminada')" class="btn bg-info w-full text-white">
-                  Calcular
-                </button>
-              </div>
-              }
-
-              @if (resultado && resultado.tipo === 'indeterminada') {
-              <ng-container [ngTemplateOutlet]="resultadoTpl"></ng-container>
-              }
-            </div>
-
-            <!-- ===================== CUANTÍA MIXTA ===================== -->
-            <input type="radio" name="my_tabs_2" class="tab text-xs" aria-label="C. MIXTA" />
-            <div class="tab-content border-base-300 bg-base-100 content-center py-5 px-5">
-
-              @if (!resultado) {
-              <div class="flex flex-col gap-4">
-                <label class="text-sm">Monto Determinado (S/.)</label>
-                <input formControlName="monto" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto determinado" />
-
-                <label class="text-sm">Monto de Contrato (S/.)</label>
-                <input formControlName="contrato" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto contrato" />
-
-                <label class="text-sm">Monto de Pretensión (S/.)</label>
-                <input formControlName="pretension" type="text" class="input input-bordered w-full"
-                  placeholder="Ingrese monto pretensión" />
-
-                <button type="button" (click)="calcular('mixta')" class="btn bg-info w-full text-white">
-                  Calcular
-                </button>
-              </div>
-              }
-
-              @if (resultado && resultado.tipo === 'mixta') {
-              <ng-container [ngTemplateOutlet]="resultadoTpl"></ng-container>
-              }
-            </div>
-
+            <button type="button" class="btn"
+              [ngClass]="tipoCuantia === 'indeterminada' ? 'btn-primary' : 'btn-outline'"
+              (click)="seleccionarCuantia('indeterminada')">
+              Cuantía Indeterminada
+            </button>
           </div>
+
+          <!-- Campo monto -->
+          @if ((tipoCuantia === 'determinada')) {
+          <div class="form-control border-base-300 bg-base-100 content-center py-5 px-5">
+
+            <div class="flex flex-col gap-4">
+              <label class="text-sm">Monto de la Controversia (S/.)</label>
+              <input formControlName="monto" type="text" class="input input-bordered w-full" placeholder="Ej. 50,000" />
+
+              <button type="submit" class="btn bg-info w-full text-white">
+                Calcular
+              </button>
+            </div>
+          </div>
+          }
+
+
+          <!-- Campos adicionales solo si es indeterminada -->
+          @if (tipoCuantia === 'indeterminada') {
+
+          <div class="form-control border-base-300 bg-base-100 content-center py-5 px-5">
+            <div class="flex flex-col gap-4">
+              <label class="text-sm">Monto de Contrato (S/.)</label>
+              <input formControlName="contrato" type="text" class="input input-bordered w-full"
+                placeholder="Ej. 100,000" />
+
+              <label class="text-sm">Monto de Pretensión (S/.)</label>
+              <input formControlName="pretension" type="text" class="input input-bordered w-full"
+                placeholder="Ej. 50,000" />
+
+              <button type="submit" class="btn bg-info w-full text-white">
+                Calcular
+              </button>
+            </div>
+          </div>
+
+          }
+
         </form>
       </div>
+      }
 
       <!-- ===================== TEMPLATE DEL RESULTADO ===================== -->
-      <ng-template #resultadoTpl>
-        <div class="mt-4 space-y-2">
+      <!-- RESULTADOS -->
+      @if (resultado) {
+      <div class=" border-t border-base-100 pt-6 bg-base-300 space-y-2">
+        <h3 class="text-xl font-bold text-center text-info">
+          RESULTADO DEL CÁLCULO
+        </h3>
 
-          <div><strong>Monto consultado:</strong> {{ formatearMoneda(resultado.monto_consulta) }}</div>
 
-          <!-- Conceptos -->
-          <button class="w-full btn bg-blue-50 border border-blue-200 text-blue-700 disabled">
-            CONCEPTOS
-          </button>
+
+        <div class="overflow-x-auto">
+          <div class="text-end pr-5 pb-5 text-base"><strong>Monto consultado:</strong> {{
+            formatearMoneda(resultado.monto_consulta) }}</div>
 
           <div class="space-y-4 text-center">
             <div>
-              <h3 class="font-bold uppercase text-xs">HONORARIOS DEL ÁRBITRO ÚNICO</h3>
-              <p class="text-sm">
+              <h3 class="font-bold uppercase text-base">HONORARIOS DEL ÁRBITRO ÚNICO</h3>
+              <p class="text-base text-gray-500">
                 Tarifa referencial (S/): <span class="font-medium">{{
                   formatearMoneda(resultado.honorarios_arbitro_unico) }}</span>
               </p>
             </div>
 
             <div>
-              <h3 class="font-bold uppercase text-xs">TRIBUNAL ARBITRAL</h3>
-              <p class="text-sm">
+              <h3 class="font-bold uppercase text-base">TRIBUNAL ARBITRAL</h3>
+              <p class="text-base text-gray-500">
                 Tarifa referencial (S/): <span class="font-medium">{{
                   formatearMoneda(resultado.honorarios_tribunal_arbitral) }}</span>
               </p>
             </div>
 
             <div>
-              <h3 class="font-bold uppercase text-xs">SECRETARÍA ARBITRAL</h3>
-              <p class="text-sm">
+              <h3 class="font-bold uppercase text-base">SECRETARÍA ARBITRAL</h3>
+              <p class="text-base text-gray-500">
                 Tarifa referencial (S/): <span class="font-medium">{{
                   formatearMoneda(resultado.gastos_secretaria) }}</span>
               </p>
             </div>
 
             <div>
-              <h3 class="font-bold uppercase text-xs">GASTOS ADMINISTRATIVOS</h3>
-              <p class="text-sm">
+              <h3 class="font-bold uppercase text-base">GASTOS ADMINISTRATIVOS</h3>
+              <p class="text-base text-gray-500">
                 Tarifa referencial (S/): <span class="font-medium">{{
                   formatearMoneda(resultado.gastos_administrativos) }}</span> incluido IGV
               </p>
             </div>
           </div>
 
-          <button class="w-full btn bg-blue-50 border border-blue-200 text-blue-700 disabled mt-3">
-            TOTAL
-          </button>
+        </div>
 
-          <div class="space-y-2 text-center">
-            <div>
-              <h3 class="font-bold uppercase text-xs">Total Árbitro Único</h3>
-              <p>{{ formatearMoneda(resultado.total_arbitro_unico) }}</p>
+        <!-- Totales -->
+        <div class="mt-6 p-4 bg-base-200 rounded-xl space-y-4">
+          <h4 class="text-lg font-bold mb-2 text-center">Totales Generales</h4>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="card bg-base-100 shadow-sm p-4">
+              <p class="font-semibold">Total Árbitro Único:</p>
+              <p class="text-xl text-info font-bold">
+                {{ formatearMoneda(resultado.total_arbitro_unico) }}
+              </p>
+              <p class="text-sm text-gray-500">Cada parte paga: {{ formatearMoneda(resultado.cada_parte_arbitro_unico)
+                }}</p>
             </div>
 
-            <div>
-              <h3 class="font-bold uppercase text-xs">Total Tribunal Arbitral</h3>
-              <p>{{ formatearMoneda(resultado.total_tribunal_arbitral) }}</p>
+            <div class="card bg-base-100 shadow-sm p-4">
+              <p class="font-semibold">Total Tribunal Arbitral:</p>
+              <p class="text-xl text-info font-bold">
+                {{ formatearMoneda(resultado.total_tribunal_arbitral) }}
+              </p>
+              <p class="text-sm text-gray-500">Cada parte paga: {{ formatearMoneda(resultado.cada_parte_tribunal) }}</p>
             </div>
           </div>
 
-          <div class="p-3 border border-blue-200 bg-blue-50 rounded-lg text-center text-base-50">
-            <h3 class="text-xs text-base-50">
+          <div class="p-3 border  rounded-lg text-center text-gray-500">
+            <h3 class="text-sm w-md">
               CON RELACIÓN A LOS HONORARIOS DE LOS ÁRBITROS Y EL SERVICIO DE ADMINISTRACIÓN DE ARBITRAJE,
               CADA PARTE DEBERÁ ASUMIR EL 50% DE LOS COSTOS ARBITRALES
             </h3>
             <br>
-            <h4 class="text-xs text-base-50">
+            <h4 class="text-sm">
               * Montos referenciales netos de IGV según Directiva 021-2016-OSCE/CD
             </h4>
           </div>
 
           <button type="button" (click)="reset()"
-            class="btn btn-ghost w-full btn-sm mt-3 bg-info text-sm border-base-50">
+            class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
             Nueva consulta
           </button>
         </div>
-      </ng-template>
 
+
+      </div>
+      }
 
     </div>
 

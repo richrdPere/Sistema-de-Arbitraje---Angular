@@ -23,19 +23,19 @@
         </figure> -->
         <div class="card-body items-center text-center">
 
-          <div class="w-12 h-12  rounded-full flex items-center justify-center bg-sky-400 mb-4">
+          <div class="w-19 h-19  rounded-full flex items-center justify-center bg-sky-400 mb-4">
             <!-- <img [src]="servicio.icon" alt="Servicio ${servicio.title}"  /> -->
-            <img [src]="servicio.icon" [alt]="servicio.title" class="w-6 h-6" />
+            <img [src]="servicio.icon" [alt]="servicio.title" class="w-10 h-10" />
             <!-- <i [class]="servicio.icon"></i> -->
           </div>
 
-          <h2 class="card-title font-bold text-sm ">{{servicio.title}}</h2>
-          <p class="text-xs">
+          <h2 class="card-title font-bold text-lg ">{{servicio.title}}</h2>
+          <p class="text-base pb-5 ">
             {{servicio.description}}
           </p>
           <div class="card-actions justify-end ">
             <a [routerLink]="servicio.route">
-              <button class="btn btn-info text-center">Ingresar</button>
+              <button class="btn btn-info text-center text-base hover:bg-indigo-600 hover:text-white">Ingresar</button>
             </a>
 
           </div>
