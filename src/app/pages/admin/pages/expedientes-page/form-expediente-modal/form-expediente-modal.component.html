@@ -1,86 +1,148 @@
-<!-- <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-  <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh]">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Crear Nuevo Expediente</h2>
+<form [formGroup]="formExpediente" class="modal-box space-y-4 w-lg">
 
-
-  </div>
-</div>
- -->
-
-<form [formGroup]="formExpediente" class="modal-box space-y-4">
+  <h1 class="text-xl pb-5">Crear Nuevo Expediente</h1>
 
   <!-- ========================================== -->
   <!-- ========= Número de expediente =========== -->
   <!-- ========================================== -->
-
   <div>
     <label class="block text-sm font-medium mb-1">Número de Expediente</label>
     <div class="flex gap-2">
-      <input formControlName="numero" type="text" placeholder="Número" class="input input-bordered w-1/3" />
+      <!-- 🔹 Mapea correctamente con numero_expediente -->
+      <input formControlName="numero_expediente" type="text" placeholder="Número" class="input input-bordered w-1/3" />
+
       <input formControlName="anio" type="text" placeholder="Año" class="input input-bordered w-1/3" />
+
+      <!-- 🔹 Código: mantiene nombre -->
       <select formControlName="codigo" class="select select-bordered w-1/3">
         <option disabled selected>Código</option>
         <option value="CA-RENA">CA-RENA</option>
         <option value="JPRD-RENA">JPRD-RENA</option>
+        <option value="DESIGNACIÓN">DESIGNACIÓN</option>
+        <option value="RECUSACIÓN">RECUSACIÓN-RENA</option>
+        <option value="INSTALACIÓN">INSTALACIÓN</option>
+        <option value="AD HOC-RENA">AD HOC-RENA</option>
+        <option value="AE-RENA">AE-RENA</option>
         <option value="MC-RENA">MC-RENA</option>
-        <option value="RECUSACIÓN-RENA">RECUSACIÓN-RENA</option>
       </select>
     </div>
   </div>
 
-  <!-- Estado -->
-  <div>
-    <label class="block text-sm font-medium mb-1">Estado</label>
-    <select formControlName="estado" class="select select-bordered w-full">
-      <option disabled selected>Seleccione un estado...</option>
-      <option value="En trámite">En trámite</option>
-      <option value="Concluido">Concluido</option>
-      <option value="Archivado">Archivado</option>
-    </select>
-  </div>
+  <!-- ========================================== -->
+  <!-- =============== Título =================== -->
+  <!-- ========================================== -->
+  <!-- <div>
+    <label class="block text-sm font-medium mb-1">Título</label>
+    <input formControlName="titulo" type="text" placeholder="Título del expediente" class="input input-bordered w-full" />
+  </div> -->
 
-  <!-- Tipo -->
+  <!-- ========================================== -->
+  <!-- ============== Descripción =============== -->
+  <!-- ========================================== -->
+  <!-- <div>
+    <label class="block text-sm font-medium mb-1">Descripción</label>
+    <textarea formControlName="descripcion" placeholder="Descripción del expediente" class="textarea textarea-bordered w-full"></textarea>
+  </div> -->
+
+  <!-- ========================================== -->
+  <!-- ================ Tipo ==================== -->
+  <!-- ========================================== -->
   <div>
     <label class="block text-sm font-medium mb-1">Tipo</label>
     <select formControlName="tipo" class="select select-bordered w-full">
       <option disabled selected>Seleccione un tipo...</option>
-      <option value="Arbitraje Ordinario">Arbitraje Ordinario</option>
+      <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
       <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-      <option value="Recusación">Recusación</option>
+      <option value="Arbitraje Institucional">Arbitraje Institucional</option>
+      <option value="Recusación de árbitro">Recusación de árbitro</option>
+      <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+      <option value="Designación residual">Designación residual</option>
+      <option value="Instalación de arbitraje">Instalación de arbitraje</option>
     </select>
   </div>
 
-  <!-- Etapa Procesal -->
+  <!-- ========================================== -->
+  <!-- ================= Estado ================= -->
+  <!-- ========================================== -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Estado</label>
+    <select formControlName="estado" class="select select-bordered w-full">
+      <option disabled selected>Seleccione un estado...</option>
+      <option value="Archivado">Archivado</option>
+      <option value="En trámite">En trámite</option>
+      <option value="Suspendido">Suspendido</option>
+      <option value="Concluido">Concluido</option>
+    </select>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- =========== Estado Procesal ============== -->
+  <!-- ========================================== -->
   <div>
     <label class="block text-sm font-medium mb-1">Etapa Procesal</label>
-    <select formControlName="etapa" class="select select-bordered w-full">
+    <select formControlName="estado_procesal" class="select select-bordered w-full">
       <option disabled selected>Seleccione una etapa...</option>
+      <option value="Prearbitral">Prearbitral</option>
       <option value="Instalación">Instalación</option>
+      <option value="Postulatoria">Postulatoria</option>
+      <option value="Fijación de puntos controvertidos">Fijación de puntos controvertidos</option>
+      <option value="Admisión de medios probatorios">Admisión de medios probatorios</option>
+      <option value="Actuación pericial">Actuación pericial</option>
+      <option value="Actuación probatoria">Actuación probatoria</option>
+      <option value="Cierre de etapa probatoria">Cierre de etapa probatoria</option>
+      <option value="Alegatos">Alegatos</option>
       <option value="Audiencia">Audiencia</option>
-      <option value="Laudo">Laudo</option>
-      <option value="Archivo">Archivo</option>
+      <option value="Plazo para laudar">Plazo para laudar</option>
+      <option value="Plazo para resolver pedido contra Laudo Arbitral">Plazo para resolver pedido contra Laudo Arbitral</option>
+      <option value="Concluido con Laudo Arbitral Consentido">Concluido con Laudo Arbitral Consentido</option>
+      <option value="Concluido con pedido contra Laudo Arbitral">Concluido con pedido contra Laudo Arbitral</option>
+      <option value="Recusación de arbitro">Recusación de arbitro</option>
+      <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+      <option value="Reconstitución de Tribunal Arbitral">Reconstitución de Tribunal Arbitral</option>
+      <option value="Reconstitución de JPRD">Reconstitución de JPRD</option>
     </select>
   </div>
 
-  <!-- Fecha de Inicio -->
+  <!-- ========================================== -->
+  <!-- ============== Fecha Inicio ============== -->
+  <!-- ========================================== -->
   <div>
     <label class="block text-sm font-medium mb-1">Fecha de Inicio</label>
-    <input formControlName="fechaInicio" type="date" class="input input-bordered w-full" />
+    <input formControlName="fecha_inicio" type="date" class="input input-bordered w-full" />
   </div>
 
-  <!-- Fechas de Laudos -->
+  <!-- ========================================== -->
+  <!-- ============= Fecha Laudo ================ -->
+  <!-- ========================================== -->
   <div>
-    <label class="block text-sm font-medium mb-1">Fechas de Laudos</label>
-    <button type="button" class="btn w-full bg-[#0a1a35] text-white hover:bg-[#13244a]">
-      Agregar Laudo
-    </button>
+    <label class="block text-sm font-medium mb-1">Fecha de Laudo</label>
+    <input formControlName="fecha_laudo" type="date" class="input input-bordered w-full" />
   </div>
 
-  <!-- Botones -->
-  <!-- <div class="flex justify-end gap-3 pt-4">
-    <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
+  <!-- ========================================== -->
+  <!-- ========== Fecha Resolución ============== -->
+  <!-- ========================================== -->
+  <div>
+    <label class="block text-sm font-medium mb-1">Fecha de Resolución</label>
+    <input formControlName="fecha_resolucion" type="date" class="input input-bordered w-full" />
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ============== Fecha Cierre ============== -->
+  <!-- ========================================== -->
+  <!-- <div>
+    <label class="block text-sm font-medium mb-1">Fecha de Cierre</label>
+    <input formControlName="fecha_cierre" type="date" class="input input-bordered w-full" />
+  </div> -->
+
+  <!-- ========================================== -->
+  <!-- ================ Botones ================= -->
+  <!-- ========================================== -->
+  <div class="flex justify-end gap-3 pt-4">
+    <!-- <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button> -->
     <button type="submit" class="btn bg-[#0a1a35] text-white hover:bg-[#13244a]">
       Crear Expediente
     </button>
-  </div> -->
+  </div>
+
 </form>

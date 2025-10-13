@@ -6,8 +6,6 @@ export const routes: Routes = [
   // --- Layout publico ----
   {
     path: '',
-
-
     component: LayoutComponent,
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },

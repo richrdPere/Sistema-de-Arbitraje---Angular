@@ -23,13 +23,13 @@
           <input type="text" placeholder="Año" class="input input-bordered w-full " />
           <select class="select select-bordered w-full">
             <option disabled selected>Código</option>
-            <option>CA-RENA</option>
-            <option>JPRD-RENA</option>
-            <option>DESIGNACIÓN</option>
-            <option>RECUSACIÓN</option>
-            <option>INSTALACIÓN</option>
-            <option>AD HOC-RENA</option>
-            <option>AE-RENA</option>
+            <option value="CA-RENA">CA-RENA</option>
+            <option value="JPRD-RENA">JPRD-RENA</option>
+            <option value="DESIGNACIÓN">DESIGNACIÓN</option>
+            <option value="RECUSACIÓN-RENA">RECUSACIÓN-RENA</option>
+            <option value="INSTALACIÓN">INSTALACIÓN</option>
+            <option value="AD HOC-RENA">AD HOC-RENA</option>
+            <option value="AE-RENA">AE-RENA</option>
           </select>
         </div>
 
@@ -38,13 +38,13 @@
         <div class="form-control mb-4 ">
           <select class="select select-bordered w-full">
             <option disabled selected>Seleccione un tipo...</option>
-            <option>Arbitraje de Emergencia</option>
-            <option>Arbitraje Ad Hoc</option>
-            <option>Arbitraje Institucional</option>
-            <option>Recusación de árbitro</option>
-            <option>Recusación de adjudicador</option>
-            <option>Designación residual</option>
-            <option>Instalación de arbitraje</option>
+            <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
+            <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
+            <option value="Arbitraje Institucional">Arbitraje Institucional</option>
+            <option value="Recusación de árbitro">Recusación de árbitro</option>
+            <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+            <option value="Designación residual">Designación residual</option>
+            <option value="Instalación de arbitraje">Instalación de arbitraje</option>
           </select>
         </div>
 
@@ -53,31 +53,33 @@
         <div class="form-control mb-4">
           <select class="select select-bordered w-full">
             <option disabled selected>Seleccione una etapa...</option>
-            <option>Prearbitral</option>
-            <option>Instalación</option>
-            <option>Postulatoria</option>
-            <option>Fijación de puntos controvertidos</option>
-            <option>Admisión de medios probatorios</option>
-            <option>Actuación pericial</option>
-            <option>Actuación probatoria</option>
-            <option>Cierre de etapa probatoria</option>
-            <option>Alegatos</option>
-            <option>Audiencia</option>
-            <option>Plazo para laudar</option>
-            <option>Plazo para resolver pedido contra Laudo Arbitral</option>
-            <option>Concluido con Laudo Arbitral Consentido</option>
-            <option>Concluido con pedido contra Laudo Arbitral</option>
-            <option>Recusación de arbitro</option>
-            <option>Recusación de adjudicador</option>
-            <option>Reconstitución de Tribunal Arbitral</option>
-            <option>Reconstitución de JPRD</option>
+            <option value="Prearbitral">Prearbitral</option>
+            <option value="Instalación">Instalación</option>
+            <option value="Postulatoria">Postulatoria</option>
+            <option value="puntos controvertidos">Fijación de puntos controvertidos</option>
+            <option value="Admisión de medios probatorios">Admisión de medios probatorios</option>
+            <option value="Actuación pericial">Actuación pericial</option>
+            <option value="Actuación probatoria">Actuación probatoria</option>
+            <option value="Cierre de etapa probatoria">Cierre de etapa probatoria</option>
+            <option value="Alegatos">Alegatos</option>
+            <option value="Audiencia">Audiencia</option>
+            <option value="Plazo para laudar">Plazo para laudar</option>
+            <option value="Plazo para resolver pedido contra Laudo Arbitral">Plazo para resolver pedido contra Laudo
+              Arbitral</option>
+            <option value="Concluido con Laudo Arbitral Consentido">Concluido con Laudo Arbitral Consentido</option>
+            <option value="Concluido con pedido contra Laudo Arbitral">Concluido con pedido contra Laudo Arbitral
+            </option>
+            <option value="Recusación de arbitro">Recusación de arbitro</option>
+            <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+            <option value="Reconstitución de Tribunal Arbitral">Reconstitución de Tribunal Arbitral</option>
+            <option value="Reconstitución de JPRD">Reconstitución de JPRD</option>
           </select>
         </div>
 
         <h2 class="text-sm font-semibold mb-4">Datos de Usuario</h2>
 
         <!-- Nombre -->
-         <!-- <label for="nombre">Nombre</label> -->
+        <!-- <label for="nombre">Nombre</label> -->
         <div class="form-control mb-4">
           <input type="text" placeholder="Ingrese un nombre" class="input input-bordered w-full" name="nombre" />
         </div>
@@ -106,7 +108,8 @@
         </div>
 
         <!-- Botón -->
-        <button class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
+        <button
+          class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
           Enviar Solicitud
         </button>
 

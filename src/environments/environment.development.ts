@@ -10,6 +10,6 @@ export const environment = {
 
   // URLS
   main_url: 'https://ba-sistemapatrullaje-backend.onrender.com/api/',
-  main_url_prueba: ''
+  main_url_prueba: 'http://localhost:4000/api/'
 };
 

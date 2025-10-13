@@ -25,7 +25,7 @@
   <!-- Tabla -->
   <div class="overflow-x-auto bg-white shadow rounded-lg ">
     <table class="table w-full">
-      <thead class="bg-gray-100 text-base-100">
+      <!-- <thead class="bg-gray-100 text-base-100">
         <tr>
           <th>N° Expediente</th>
           <th>N° de Partícipes</th>
@@ -35,6 +35,21 @@
           <th>Actualización</th>
           <th></th>
         </tr>
+      </thead> -->
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th>N° Expediente</th>
+          <!-- <th>Código</th>
+          <th>Título</th> -->
+          <th>Tipo</th>
+          <th>Estado</th>
+          <!-- <th>Estado Procesal</th>
+          <th>Fecha de Inicio</th> -->
+          <th>Fecha de Laudo</th>
+          <th>Fecha de Resolución</th>
+          <!-- <th>Fecha de Cierre</th> -->
+          <th>Acciones</th>
+        </tr>
       </thead>
       <tbody>
         @if (loading) {
@@ -43,9 +58,101 @@
         </tr>
         }
 
-        @for (exp of expedientes; track $index) {
+        @for (exp of expedientes; track exp.id_expediente) {
         <tr class="hover">
-          <td>{{ exp.numeroExpediente }}</td>
+          <td>{{ exp.numero_expediente }}</td>
+          <!-- <td>{{ exp.codigo }}</td> -->
+          <!-- <td>{{ exp.titulo }}</td> -->
+          <td>{{ exp.tipo }}</td>
+          <td>
+            <span class="badge bg-[#0a1a35] text-white px-3 py-1 rounded-full">
+              {{ exp.estado }}
+            </span>
+          </td>
+          <td>{{ exp.estado_procesal }}</td>
+          <!-- <td>{{ exp.fecha_inicio | date: 'dd/MM/yyyy' }}</td> -->
+          <td>
+            {{ exp.fecha_laudo ? (exp.fecha_laudo | date: 'dd/MM/yyyy') : '—' }}
+          </td>
+          <td>
+            {{
+            exp.fecha_resolucion
+            ? (exp.fecha_resolucion | date: 'dd/MM/yyyy')
+            : '—'
+            }}
+          </td>
+          <!-- <td>
+            {{ exp.fecha_cierre ? (exp.fecha_cierre | date: 'dd/MM/yyyy') : '—' }}
+          </td> -->
+
+          <!-- Menú contextual -->
+          <td class="relative">
+            <div class="dropdown dropdown-end" #dropdownMenu>
+              <button tabindex="0" class="btn btn-ghost btn-circle btn-sm"
+                (click)="toggleDropdown(dropdownMenu, $event)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 12h.01M12 12h.01M18 12h.01" />
+                </svg>
+              </button>
+
+              <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[100]"
+                [class.hidden]="!dropdownMenu.classList.contains('dropdown-open')">
+                <li class="menu-title px-4 py-1 text-xs text-gray-400">
+                  Acciones
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="verDocumentos(exp)">
+                    <i class="bi bi-file-earmark-text text-gray-600"></i>
+                    Ver Documentos
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="gestionarParticipes(exp)">
+                    <i class="bi bi-people text-gray-600"></i>
+                    Gestionar Partícipes
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="verHistorial(exp)">
+                    <i class="bi bi-clock-history text-gray-600"></i>
+                    Ver Historial
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="editarExpediente(exp)">
+                    <i class="bi bi-pencil text-gray-600"></i>
+                    Editar Expediente
+                  </button>
+                </li>
+
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-red-600"
+                    (click)="eliminarExpediente(exp.id_expediente!)">
+                    <i class="bi bi-trash text-red-600"></i>
+                    Eliminar Expediente
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        }
+
+
+        <!-- @for (exp of expedientes; track $index) {
+        <tr class="hover">
+          <td>{{ exp.numero_expediente }}</td>
           <td>{{ exp.participantes }}</td>
           <td>{{ exp.fechaInicio | date:'d/M/yyyy, h:mm a' }}</td>
           <td>
@@ -56,24 +163,15 @@
           <td>{{ exp.docs }}</td>
           <td>{{ exp.actualizacion | date:'d/M/yyyy, h:mm a' }}</td>
 
-          <!-- Menú contextual -->
+
           <td class="relative">
             <div class="dropdown dropdown-end" #dropdownMenu>
               <button tabindex="0" class="btn btn-ghost btn-circle btn-sm"
                 (click)="toggleDropdown(dropdownMenu, $event)">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 12h.01M12 12h.01M18 12h.01"
-                  />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 12h.01M12 12h.01M18 12h.01" />
                 </svg>
               </button>
 
@@ -126,17 +224,15 @@
               </ul>
             </div>
           </td>
-          <!-- <td>
-            <button class="btn btn-ghost btn-circle btn-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </button>
-          </td> -->
+        </tr>
+        } -->
+        @if (!loading && expedientes.length === 0) {
+        <tr>
+          <td colspan="11" class="text-center py-4 text-gray-500">
+            No hay expedientes registrados
+          </td>
         </tr>
         }
-
       </tbody>
     </table>
 

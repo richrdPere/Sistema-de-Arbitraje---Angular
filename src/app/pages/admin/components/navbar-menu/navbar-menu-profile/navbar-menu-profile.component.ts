@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-// import { AdminService } from 'src/app/services/admin.service';
+
+// IziToast
+import iziToast from 'izitoast';
+
+// Servicio
+import { AuthService } from '../../../../../services/auth.service';
 
 
 export interface MenuOptions {
@@ -22,22 +27,19 @@ export class NavbarMenuProfileComponent {
   public avatar: String = '';
 
 
-  // constructor(
-  //   private _adminService: AdminService,
-  //   private _router: Router
-  // ) {
-  //   const usuario = _adminService.getUsuario()
+  constructor(
+    private _authService: AuthService,
+    private _router: Router
+  ) {
+    const usuario = _authService.getUser()
 
-  //   if (usuario) {
-  //     this.name = usuario.firstName;
-  //     this.email = usuario.email;
-  //     this.avatar = usuario.avatar;
-  //   }
+    if (usuario) {
+      this.name = usuario.nombre;
+      this.email = usuario.correo;
+      // this.avatar = usuario.avatar;
+    }
 
-
-  //   console.log("name", this.name);
-  //   console.log("email", this.email);
-  // }
+  }
 
   menuOptions: MenuOptions[] = [
     {
@@ -59,14 +61,14 @@ export class NavbarMenuProfileComponent {
   ];
 
   logout() {
-    // this._adminService.logout();
+    this._authService.logout();
 
-    // iziToast.info({
-    //   title: 'Sesión cerrada',
-    //   message: 'Has cerrado sesión correctamente',
-    //   position: 'topRight',
-    // });
-    // this._router.navigate(['/login']);
+    iziToast.info({
+      title: 'Sesión cerrada',
+      message: 'Has cerrado sesión correctamente',
+      position: 'bottomRight',
+    });
+    this._router.navigate(['/login']);
   }
 
 }
