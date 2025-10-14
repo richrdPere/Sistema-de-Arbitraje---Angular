@@ -23,13 +23,16 @@
         <div class="card bg-base-200 shadow-xl">
           <div class="card-body">
             <h2 class="card-title text-info">Envíanos un mensaje</h2>
-            <form class="space-y-4">
+
+            <!-- Formulario Angular -->
+            <form class="space-y-4" (ngSubmit)="enviarFormulario()" >
               <!-- Nombre -->
               <div>
                 <label class="label">
                   <span class="label-text">Nombre completo</span>
                 </label>
-                <input type="text" placeholder="Ingresa tu nombre" class="input input-bordered w-full" required />
+                <input type="text" placeholder="Ingresa tu nombre" class="input input-bordered w-full" name="nombre"
+                  [(ngModel)]="contacto.nombre" required />
               </div>
 
               <!-- Correo -->
@@ -37,7 +40,26 @@
                 <label class="label">
                   <span class="label-text">Correo electrónico</span>
                 </label>
-                <input type="email" placeholder="ejemplo@correo.com" class="input input-bordered w-full" required />
+                <input type="email" placeholder="ejemplo@correo.com" class="input input-bordered w-full" name="email"
+                  [(ngModel)]="contacto.email" required />
+              </div>
+
+              <!-- Teléfono -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Teléfono</span>
+                </label>
+                <input type="text" placeholder="Ingresa tu teléfono" class="input input-bordered w-full" name="telefono"
+                  [(ngModel)]="contacto.telefono" />
+              </div>
+
+              <!-- Asunto -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Asunto</span>
+                </label>
+                <input type="text" placeholder="Motivo del mensaje" class="input input-bordered w-full" name="asunto"
+                  [(ngModel)]="contacto.asunto" />
               </div>
 
               <!-- Mensaje -->
@@ -45,12 +67,38 @@
                 <label class="label">
                   <span class="label-text">Mensaje</span>
                 </label>
-                <textarea class="textarea textarea-bordered w-full" placeholder="Escribe tu mensaje aquí..." rows="4"
-                  required></textarea>
+                <textarea class="textarea textarea-bordered w-full" placeholder="Escribe tu mensaje aquí..."
+                  name="mensaje" [(ngModel)]="contacto.mensaje" rows="4" required></textarea>
+              </div>
+
+              <!-- Archivos -->
+              <div>
+                <label class="label">
+                  <span class="label-text">Adjuntar archivos (opcional)</span>
+                </label>
+                <input type="file" class="file-input file-input-bordered w-full " multiple
+                  (change)="onFileChange($event)" />
+                @if (contacto.archivos!.length > 0) {
+                <p class="text-xs text-gray-500 mt-1">
+                  {{ contacto.archivos!.length }} archivo(s) seleccionado(s)
+                </p>
+                }
+
               </div>
 
               <!-- Botón enviar -->
-              <button class="btn btn-info w-full">Enviar mensaje</button>
+              <button class="btn btn-info w-full mt-5" type="submit" [disabled]="enviando ">
+
+                @if (!enviando) {
+                <span>Enviar mensaje</span>
+                }
+
+                @if (enviando) {
+                <span class="loading loading-spinner"></span>
+                }
+
+
+              </button>
             </form>
           </div>
         </div>

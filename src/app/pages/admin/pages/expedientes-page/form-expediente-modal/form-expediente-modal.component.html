@@ -7,14 +7,16 @@
   <!-- ========================================== -->
   <div>
     <label class="block text-sm font-medium mb-1">Número de Expediente</label>
-    <div class="flex gap-2">
+    <div class="grid grid-cols-3 gap-3 mb-4">
       <!-- 🔹 Mapea correctamente con numero_expediente -->
-      <input formControlName="numero_expediente" type="text" placeholder="Número" class="input input-bordered w-1/3" />
+      <input formControlName="numero_expediente" type="text" placeholder="Número"
+      class="input input-bordered w-full" />
 
-      <input formControlName="anio" type="text" placeholder="Año" class="input input-bordered w-1/3" />
+      <input formControlName="anio" type="text" placeholder="Año"
+      class="input input-bordered w-full" />
 
       <!-- 🔹 Código: mantiene nombre -->
-      <select formControlName="codigo" class="select select-bordered w-1/3">
+      <select formControlName="codigo" class="select select-bordered w-wull">
         <option disabled selected>Código</option>
         <option value="CA-RENA">CA-RENA</option>
         <option value="JPRD-RENA">JPRD-RENA</option>
