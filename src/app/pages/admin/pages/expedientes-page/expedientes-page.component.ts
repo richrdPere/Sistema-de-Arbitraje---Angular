@@ -1,12 +1,17 @@
 import { Component, inject, OnInit, HostListener, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ExpedientesService, Expediente } from '../../../../services/admin/expedientes.service';
+
 import { DatePipe } from '@angular/common';
 import { FormExpedienteModalComponent } from "./form-expediente-modal/form-expediente-modal.component";
 import { FormUtils } from 'src/app/utils/form-utils';
 import { CommonModule } from '@angular/common';
 
+// Izitoast
 import iziToast from 'izitoast';
+
+// Service
+import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { Expediente } from 'src/app/interfaces/components/expediente';
 
 @Component({
   selector: 'app-expedientes-page',
@@ -16,51 +21,68 @@ import iziToast from 'izitoast';
 })
 export class ExpedientesPageComponent implements OnInit {
 
+  // Expedientes
+  expedientes: any = [];
 
   // =========================
   // VARIABLES
   // =========================
-  expedientes: Expediente[] = [];
-  loading = true;
-  editMode = false;
-  selectedExpedienteId?: number;
-
+  formExpediente!: FormGroup;
   fb = inject(FormBuilder);
   formUtils = FormUtils;
 
-  // Modal
+  loading = true;
+  mensajeError = '';
+  mensajeExito = '';
+  filtro: string = '';
+  editMode = false;
   mostrarModal = false;
-  // eRef: any;
+  selectedExpedienteId?: number;
 
-  // =========================
-  // FORMULARIO
-  // =========================
-  formExpediente: FormGroup = this.fb.group({
-    numero_expediente: ['', Validators.required],
-    anio: ['', Validators.required],
-    codigo: ['', Validators.required],
-    titulo: ['', Validators.required],
-    descripcion: [''],
-    tipo: ['', Validators.required],
-    estado: ['', Validators.required],
-    estado_procesal: ['', Validators.required],
-    fecha_inicio: ['', Validators.required],
-    fecha_laudo: [''],
-    fecha_resolucion: [''],
-    fecha_cierre: ['']
-  });
+  menuAbierto: number | null = null;
+
+  toggleDropdown(index: number, event: MouseEvent) {
+    // Si se vuelve a hacer click en el mismo menú, se cierra
+    event.stopPropagation(); // Evita que se cierre inmediatamente
+    this.menuAbierto = this.menuAbierto === index ? null : index;
+  }
+
+  cerrarDropdown() {
+    this.menuAbierto = null;
+  }
 
   // Constructor
-
   constructor(private expedienteService: ExpedientesService, private eRef: ElementRef) { }
 
   // onInit
   ngOnInit(): void {
-    // Simula carga desde servidor
-    // setTimeout(() => {
-    //   this.loading = false;
-    // }, 1500);
-    this.loadExpedientes();
+
+    this.formExpediente = this.fb.group({
+      numero_expediente: ['', Validators.required],
+      anio: ['', Validators.required],
+      codigo: ['', Validators.required],
+      titulo: ['', Validators.required],
+      descripcion: [''],
+      tipo: ['', Validators.required],
+      estado: ['', Validators.required],
+      estado_procesal: ['', Validators.required],
+      fecha_inicio: ['', Validators.required],
+      fecha_laudo: [''],
+      fecha_resolucion: [''],
+      fecha_cierre: ['']
+    });
+
+
+    this.cargarExpedientes();
+  }
+
+  abrirModal() {
+    this.mostrarModal = true;
+  }
+
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.formExpediente.reset();
   }
 
   // Ejemplo de funciones base:
@@ -73,8 +95,10 @@ export class ExpedientesPageComponent implements OnInit {
   // =========================================================
   // 1.- LOAD EXPDIENTES
   // =========================================================
-  loadExpedientes() {
-    this.expedienteService.getExpedientes().subscribe({
+  cargarExpedientes() {
+    this.loading = true;
+
+    this.expedienteService.listarExpedientes().subscribe({
       next: (data) => {
         this.expedientes = data;
         this.loading = false;
@@ -100,11 +124,11 @@ export class ExpedientesPageComponent implements OnInit {
       return;
     }
 
-    const formData: Expediente = this.formExpediente.value;
+    const formData: any = this.formExpediente.value;
 
     if (this.editMode && this.selectedExpedienteId) {
       // Actualizar
-      this.expedienteService.updateExpediente(this.selectedExpedienteId, formData).subscribe({
+      this.expedienteService.actualizarExpediente(this.selectedExpedienteId, formData).subscribe({
         next: () => {
           iziToast.success({
             title: 'Éxito',
@@ -112,7 +136,7 @@ export class ExpedientesPageComponent implements OnInit {
             position: 'topRight'
           });
           this.resetForm();
-          this.loadExpedientes();
+          this.cargarExpedientes();
         },
         error: (err) => {
           console.error(err);
@@ -125,7 +149,7 @@ export class ExpedientesPageComponent implements OnInit {
       });
     } else {
       // Crear
-      this.expedienteService.createExpediente(formData).subscribe({
+      this.expedienteService.crearExpediente(formData).subscribe({
         next: () => {
           iziToast.success({
             title: 'Éxito',
@@ -133,7 +157,7 @@ export class ExpedientesPageComponent implements OnInit {
             position: 'topRight'
           });
           this.resetForm();
-          this.loadExpedientes();
+          this.cargarExpedientes();
         },
         error: (err) => {
           console.error(err);
@@ -175,14 +199,14 @@ export class ExpedientesPageComponent implements OnInit {
   // =========================
   eliminarExpediente(id: number): void {
     if (confirm('¿Seguro que deseas eliminar este expediente?')) {
-      this.expedienteService.deleteExpediente(id).subscribe({
+      this.expedienteService.eliminarExpediente(id).subscribe({
         next: () => {
           iziToast.info({
             title: 'Eliminado',
             message: 'Expediente eliminado correctamente',
             position: 'topRight'
           });
-          this.loadExpedientes();
+          this.cargarExpedientes();
         },
         error: (err) => {
           console.error('Error al eliminar expediente:', err);
@@ -199,26 +223,26 @@ export class ExpedientesPageComponent implements OnInit {
   // =========================
   // 5.- BUSCAR EXPEDIENTES
   // =========================
-  buscarExpedientes(estado?: string, tipo?: string): void {
-    this.loading = true;
-    this.expedienteService.searchExpedientes(estado, tipo).subscribe({
-      next: (data) => {
-        this.expedientes = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al buscar expedientes:', err);
-        this.loading = false;
-      }
-    });
-  }
+  // buscarExpedientes(estado?: string, tipo?: string): void {
+  //   this.loading = true;
+  //   this.expedienteService.searchExpedientes(estado, tipo).subscribe({
+  //     next: (data) => {
+  //       this.expedientes = data;
+  //       this.loading = false;
+  //     },
+  //     error: (err) => {
+  //       console.error('Error al buscar expedientes:', err);
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
 
   // =========================
   // 6.- RESET FORMULARIO
   // =========================
   resetForm(): void {
     this.formExpediente.reset();
-    this.editMode = false;
+    // this.editMode = false;
     this.mostrarModal = false;
     this.selectedExpedienteId = undefined;
   }
@@ -226,33 +250,27 @@ export class ExpedientesPageComponent implements OnInit {
   // =========================
   // 7.- DROPDOWN
   // =========================
-  toggleDropdown(menu: HTMLElement, event: MouseEvent): void {
-    event.stopPropagation();
-    const isOpen = menu.classList.contains('dropdown-open');
-    document.querySelectorAll('.dropdown').forEach(el => el.classList.remove('dropdown-open'));
-    if (!isOpen) menu.classList.add('dropdown-open');
-  }
-
-  accionYcerrar(menu: HTMLElement, accion: string, exp: Expediente): void {
-    menu.classList.remove('dropdown-open');
-    switch (accion) {
-      case 'editar':
-        this.editarExpediente(exp);
-        break;
-      case 'eliminar':
-        if (exp.id_expediente) this.eliminarExpediente(exp.id_expediente);
-        break;
-      default:
-        console.log('Acción no reconocida');
-    }
-  }
+  // toggleDropdown(menu: HTMLElement, event: MouseEvent): void {
+  //   event.stopPropagation();
+  //   const isOpen = menu.classList.contains('dropdown-open');
+  //   document.querySelectorAll('.dropdown').forEach(el => el.classList.remove('dropdown-open'));
+  //   if (!isOpen) menu.classList.add('dropdown-open');
+  // }
 
   @HostListener('document:click', ['$event'])
-  cerrarDropdowns(event: Event): void {
-    if (!this.eRef.nativeElement.contains(event.target)) {
-      document.querySelectorAll('.dropdown').forEach(el => el.classList.remove('dropdown-open'));
+  onClickFuera(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown')) {
+      this.cerrarDropdown();
     }
   }
+
+  // @HostListener('document:click', ['$event'])
+  // cerrarDropdowns(event: Event): void {
+  //   if (!this.eRef.nativeElement.contains(event.target)) {
+  //     document.querySelectorAll('.dropdown').forEach(el => el.classList.remove('dropdown-open'));
+  //   }
+  // }
 
   // toggleDropdown(menu: HTMLElement, event: MouseEvent) {
   //   event.stopPropagation();

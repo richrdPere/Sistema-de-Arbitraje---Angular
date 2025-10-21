@@ -4,15 +4,11 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 // IziToast
 import iziToast from 'izitoast';
 
+// Interface
+import { MenuOptions } from 'src/app/interfaces/components/MenuOptions';
+
 // Servicio
-import { AuthService } from '../../../../../services/auth.service';
-
-
-export interface MenuOptions {
-  label: string;
-  icon: string; // Ruta al SVG
-  route: string;
-}
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'navbar-menu-profile',

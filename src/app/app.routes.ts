@@ -27,6 +27,10 @@ export const routes: Routes = [
         path: 'ser_calculadora',
         loadComponent: () => import('./pages/auth/servicios/calculadora/calculadora.component').then(m => m.CalculadoraComponent)
       },
+      {
+        path: 'trazabilidad',
+        loadComponent: () => import('./pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
+      },
       { path: 'contacto', loadComponent: () => import('./pages/auth/contactos/contactos.component').then(m => m.ContactosComponent) },
       { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },
       // { path: 'register', loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent) },
@@ -38,6 +42,10 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadChildren: () => import('./pages/admin/admin.routes'),
+  },
+   {
+    path: 'secretaria',
+    loadChildren: () => import('./pages/secretaria/secretaria.routes'),
   },
 
   // --- Página no encontrada ---

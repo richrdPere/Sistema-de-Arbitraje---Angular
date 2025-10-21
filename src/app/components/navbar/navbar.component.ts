@@ -25,7 +25,7 @@ export class NavbarComponent implements OnInit {
   // Lista dinámica de rutas
   navbarLinks: NavbarLink[] = [
     {
-      label: 'Principal',
+      label: 'Inicio',
       path: '/home',
       activeClass: 'bg-info text-base-100'
     },
@@ -39,21 +39,21 @@ export class NavbarComponent implements OnInit {
       path: '/servicios',
       activeClass: 'bg-info text-base-100'
     },
-    // {
-    //   label: 'Capacitaciones',
-    //   path: '/capacitaciones',
-    //   activeClass: 'bg-primary text-base-100'
-    // },
-    // {
-    //   label: 'Asesorías Académicas',
-    //   path: '/asesorias',
-    //   activeClass: 'bg-primary text-base-100'
-    // },
-    // {
-    //   label: 'Blog',
-    //   path: '/blog',
-    //   activeClass: 'bg-primary text-base-100'
-    // },
+    {
+      label: 'Laudos',
+      path: '/servicios',
+      activeClass: 'bg-info text-base-100'
+    },
+    {
+      label: 'Trazabilidad Documentaria',
+      path: '/trazabilidad',
+      activeClass: 'bg-primary text-base-100'
+    },
+    {
+      label: 'Mesa de Partes',
+      path: '/ser_mesa_partes',
+      activeClass: 'bg-primary text-base-100'
+    },
     {
       label: 'Contáctanos',
       path: '/contacto',
@@ -62,17 +62,26 @@ export class NavbarComponent implements OnInit {
     {
       label: 'Iniciar Sesión',
       path: '/login',
-      type: 'button',
-      buttonStyle:
-        'text-purple-700 hover:text-white  border border-primary focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-3 py-2 mb-2 text-center dark:border-primary dark:text-primary dark:hover:text-white dark:hover:bg-primary'
+      activeClass: 'bg-primary text-base-100'
     },
-    {
-      label: 'Regístrate',
-      path: '/register',
-      type: 'button',
-      buttonStyle:
-        'focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-3 py-2 mb-2 dark:bg-primary dark:hover:bg-primary dark:focus:ring-purple-900'
-    }
+    // {
+    //   label: 'Registrate',
+    //   path: '/register',
+    //   activeClass: 'bg-primary text-base-100'
+    // },
+
+    // {
+    //   label: 'Iniciar Sesión',
+    //   path: '/login',
+    //   type: 'button',
+    //   // buttonStyle:'text-purple-700 hover:text-white  border border-primary focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-3 py-2 mb-2 text-center dark:border-primary dark:text-primary dark:hover:text-white dark:hover:bg-primary'
+    // },
+    // {
+    //   label: 'Regístrate',
+    //   path: '/register',
+    //   type: 'button',
+    //   // buttonStyle: 'focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-3 py-2 mb-2 dark:bg-primary dark:hover:bg-primary dark:focus:ring-purple-900'
+    // }
   ];
 
   ngOnInit(): void {
