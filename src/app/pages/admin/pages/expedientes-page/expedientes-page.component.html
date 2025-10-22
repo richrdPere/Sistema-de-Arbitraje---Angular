@@ -7,8 +7,9 @@
     </button>
   </div>
 
-  <expediente-modal [mostrarModal]="mostrarModal" (modalCerrado)="cerrarModal()"
-    (participeCreado)="cargarExpedientes()">
+  <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
+    [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModal()"
+    (expedienteCreado)="cargarExpedientes()">
   </expediente-modal>
 
   <!-- Modal Form -->
@@ -112,6 +113,10 @@
                   </button>
                 </li>
 
+                @if (mostrarModalParticipes) {
+                <gestionar-participes (cerrar)="cerrarModalParticipes()">></gestionar-participes>
+                }
+
                 <hr class="my-1 border-gray-200" />
 
                 <!-- Editar Expediente -->
@@ -157,3 +162,5 @@
     </div>
   </div>
 </div>
+
+<router-outlet></router-outlet>

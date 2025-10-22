@@ -4,7 +4,7 @@
 
     <!-- Header -->
     <div class="flex justify-between items-center border-b border-base-300 pb-4 mb-6">
-      <h3 class="text-2xl font-semibold">Crear Nuevo Expediente</h3>
+      <h3 class="text-2xl font-semibold">{{ modoEdicion ? 'Editar Expediente' : 'Crear Nuevo Expediente' }}</h3>
       <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
     </div>
 
@@ -22,7 +22,7 @@
     }
 
     <!-- FORMULARIO -->
-    <form [formGroup]="formExpediente" (ngSubmit)="crearExpediente()" class="space-y-6">
+    <form [formGroup]="formExpediente" (ngSubmit)="crearOEditarExpediente()" class="space-y-6">
 
       <!-- ========== Número de expediente ========== -->
       <section>

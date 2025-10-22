@@ -1,0 +1,93 @@
+<div class="p-6">
+  <!-- Link de regreso -->
+  <a (click)="volver()" class="text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-4">
+    <i class="fa-solid fa-arrow-left"></i>
+    Volver a Expedientes
+  </a>
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+
+    <h2 class="text-xl font-semibold mb-4">
+      🕒 Historial del expediente #{{ idExpediente }}
+    </h2>
+
+  </div>
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo...">
+
+  </div>
+
+
+
+  @if (loading) {
+  <div class="text-gray-500">Cargando historial...</div>
+  }
+
+  @if (!loading && historial.length === 0) {
+  <div class="text-gray-400">
+    No hay eventos en el historial.
+  </div>
+  }
+
+  @if (!loading && historial.length > 0) {
+
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+
+    <table class="table w-full">
+
+      <thead class="bg-gray-100 text-gray-700">
+
+        <tr>
+          <th>N°</th>
+          <th>Expediente</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+        @for (his of historial; track $index) {
+        <tr>
+          <td>{{ $index +1 }}</td>
+          <td>{{ his.id_expediente }}</td>
+          <td>{{ his.fecha_accion | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ his.hora_accion }}</td>
+          <td>{{ his.usuario_responsable }}</td>
+          <td>{{ his.detalle }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- <ul class="timeline timeline-vertical">
+
+    @for (h of historial; track $index) {
+    <li>
+      <div class="timeline-start">
+        {{ h.fecha | date: 'dd/MM/yyyy, h:mm a' }}
+      </div>
+      <div class="timeline-middle">
+        <i class="fa-solid fa-circle text-[#0a1a35]"></i>
+      </div>
+      <div class="timeline-end">
+        <p class="font-semibold">{{ h.accion }}</p>
+        <p class="text-gray-500 text-sm">{{ h.descripcion }}</p>
+      </div>
+    </li>
+    }
+
+  </ul> -->
+  }
+
+
+</div>

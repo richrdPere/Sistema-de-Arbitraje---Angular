@@ -33,9 +33,6 @@ export class ExpedientesService {
 
     return { headers };
   }
-
-
-
   // ===========================
   // 1.- CREAR EXPEDIENTE
   // ===========================

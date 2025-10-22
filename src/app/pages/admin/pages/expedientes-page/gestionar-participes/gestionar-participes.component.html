@@ -1,0 +1,224 @@
+<!-- Backdrop -->
+
+@if (mostrar) {
+
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" (click)="cerrar()">
+  <!-- Modal -->
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl h-[85vh] overflow-hidden"
+    (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b">
+      <h3 id="modal-title" class="text-lg font-semibold text-slate-800">
+        Gestionar Partícipes
+      </h3>
+    </div>
+
+    <!-- Body: scrollable -->
+    <div class="px-6 py-4 overflow-y-auto h-[calc(85vh-160px)] space-y-6">
+      <!-- Demandante -->
+      <section>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Demandante</label>
+
+        <div class="flex gap-3 items-start">
+          <select (ngModel)="selectedDemandante" class="flex-1 rounded-lg border border-gray-200 p-3 bg-gray-50">
+            <option [ngValue]="null">Seleccionar participante...</option>
+            <option *ngFor="let p of posiblesParticipes" [ngValue]="p">
+              {{ p.nombre }}
+            </option>
+          </select>
+
+          <button (click)="agregarDemandante()"
+            class="px-3 py-2 bg-slate-900 text-white rounded-md shadow-sm whitespace-nowrap">
+            + Agregar Demandante
+          </button>
+        </div>
+
+        <!-- Lista añadidos -->
+        <div class="mt-3 space-y-2">
+          @if (demandantes.length === 0) {
+          <div class="text-sm text-gray-400">No hay demandantes asignados</div>
+          }
+
+          @for (d of demandantes; track $index) {
+          <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div class="text-sm text-slate-800">{{ d.nombre }}</div>
+            <button (click)="eliminarDemandante($index)" class="text-red-600 hover:text-red-700">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+              </svg>
+            </button>
+          </div>
+          }
+
+        </div>
+      </section>
+
+      <!-- Demandado -->
+      <section>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Demandado</label>
+
+        <div class="flex gap-3 items-start">
+          <select (ngModel)="selectedDemandado" class="flex-1 rounded-lg border border-gray-200 p-3 bg-gray-50">
+            <option [ngValue]="null">Seleccionar participante...</option>
+            <option *ngFor="let p of posiblesParticipes" [ngValue]="p">
+              {{ p.nombre }}
+            </option>
+          </select>
+
+          <button (click)="agregarDemandado()"
+            class="px-3 py-2 bg-slate-900 text-white rounded-md shadow-sm whitespace-nowrap">
+            + Agregar Demandado
+          </button>
+        </div>
+
+        <div class="mt-3 space-y-2">
+          @if (demandados.length === 0) {
+          <div class="text-sm text-gray-400">No hay demandados asignados</div>
+          }
+
+          @for (d of demandados; track $index) {
+          <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div class="text-sm text-slate-800">{{ d.nombre }}</div>
+            <button (click)="eliminarDemandado($index)" class="text-red-600 hover:text-red-700">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+              </svg>
+            </button>
+          </div>
+          }
+
+
+        </div>
+      </section>
+
+      <!-- Adjudicador -->
+      <section>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Adjudicador</label>
+
+        <div class="flex gap-3 items-start">
+          <select (ngModel)="selectedAdjudicador" class="flex-1 rounded-lg border border-gray-200 p-3 bg-gray-50">
+            <option [ngValue]="null">Seleccionar adjudicador...</option>
+            <option *ngFor="let p of posiblesAdjudicadores" [ngValue]="p">
+              {{ p.nombre }}
+            </option>
+          </select>
+
+          <button (click)="agregarAdjudicador()"
+            class="px-3 py-2 bg-slate-900 text-white rounded-md shadow-sm whitespace-nowrap">
+            + Agregar Adjudicador
+          </button>
+        </div>
+
+        <div class="mt-3 space-y-2">
+          @if (adjudicadores.length === 0) {
+          <div class="text-sm text-gray-400">No hay adjudicadores asignados</div>
+          }
+
+          @for (a of adjudicadores; track $index) {
+          <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div class="text-sm text-slate-800">{{ a.nombre }}</div>
+            <button (click)="eliminarAdjudicador($index)" class="text-red-600 hover:text-red-700">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+              </svg>
+            </button>
+          </div>
+          }
+
+
+        </div>
+      </section>
+
+      <!-- Árbitro -->
+      <section>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Árbitro</label>
+
+        <div class="flex gap-3 items-start">
+          <select (ngModel)="selectedArbitro" class="flex-1 rounded-lg border border-gray-200 p-3 bg-gray-50">
+            <option [ngValue]="null">Seleccionar árbitro...</option>
+            <option *ngFor="let p of posiblesArbitros" [ngValue]="p">
+              {{ p.nombre }}
+            </option>
+          </select>
+
+          <button (click)="agregarArbitro()"
+            class="px-3 py-2 bg-slate-900 text-white rounded-md shadow-sm whitespace-nowrap">
+            + Agregar Árbitro
+          </button>
+        </div>
+
+        <div class="mt-3 space-y-2">
+
+          @if (arbitros.length === 0) {
+          <div class="text-sm text-gray-400">No hay árbitros asignados</div>
+          }
+
+          @for (a of arbitros; track $index) {
+          <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div class="text-sm text-slate-800">{{ a.nombre }}</div>
+            <button (click)="eliminarArbitro($index)" class="text-red-600 hover:text-red-700">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+              </svg>
+            </button>
+          </div>
+          }
+
+
+        </div>
+      </section>
+
+      <!-- Secretario Arbitral (ejemplo) -->
+      <section>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Secretario Arbitral</label>
+
+        <div class="flex gap-3 items-start">
+          <select (ngModel)="selectedSecretario" class="flex-1 rounded-lg border border-gray-200 p-3 bg-gray-50">
+            <option [ngValue]="null">Seleccionar secretario...</option>
+            <option *ngFor="let p of posiblesSecretarios" [ngValue]="p">
+              {{ p.nombre }}
+            </option>
+          </select>
+
+          <button (click)="agregarSecretario()"
+            class="px-3 py-2 bg-slate-900 text-white rounded-md shadow-sm whitespace-nowrap">
+            + Agregar Secretario
+          </button>
+        </div>
+
+        <div class="mt-3 space-y-2">
+
+          @if (secretarios.length === 0) {
+          <div class="text-sm text-gray-400">No hay secretarios asignados</div>
+          }
+
+          @for (s of secretarios; track $index) {
+          <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+            <div class="text-sm text-slate-800">{{ s.nombre }}</div>
+            <button (click)="eliminarSecretario($index)" class="text-red-600 hover:text-red-700">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+              </svg>
+            </button>
+          </div>
+          }
+
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t flex justify-end gap-3">
+      <button (click)="cerrar()" class="px-4 py-2 bg-white border rounded-md">Cerrar</button>
+      <button (click)="guardar()" class="px-4 py-2 bg-slate-900 text-white rounded-md">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+}

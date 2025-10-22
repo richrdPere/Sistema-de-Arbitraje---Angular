@@ -13,6 +13,9 @@ import { AuthService } from 'src/app/services/auth.service';
 export class FormExpedienteModalComponent implements OnInit {
 
   @Input() mostrarModal = false;
+  @Input() modoEdicion = false;
+  @Input() expedienteSeleccionado: any = null;
+
   @Output() modalCerrado = new EventEmitter<void>();
   @Output() expedienteCreado = new EventEmitter<void>();
 
@@ -32,6 +35,20 @@ export class FormExpedienteModalComponent implements OnInit {
   ngOnInit() {
     this.inicializarFormulario();
     this.obtenerSecretariaId();
+
+    if (this.modoEdicion && this.expedienteSeleccionado) {
+      this.formExpediente.patchValue({
+        titulo: this.expedienteSeleccionado.titulo,
+        descripcion: this.expedienteSeleccionado.descripcion,
+        tipo: this.expedienteSeleccionado.tipo,
+        estado_procesal: this.expedienteSeleccionado.estado_procesal,
+        codigo: this.expedienteSeleccionado.codigo,
+        fecha_inicio: this.expedienteSeleccionado.fecha_inicio,
+        fecha_laudo: this.expedienteSeleccionado.fecha_laudo,
+        fecha_resolucion: this.expedienteSeleccionado.fecha_resolucion,
+      });
+    }
+
   }
 
   //  Obtener ID del usuario logueado (secretaria)
@@ -67,7 +84,7 @@ export class FormExpedienteModalComponent implements OnInit {
   }
 
   // Enviar Formulario
-  crearExpediente(): void {
+  crearOEditarExpediente(): void {
     if (this.formExpediente.invalid) {
       this.mensajeError = 'Por favor completa todos los campos requeridos.';
       return;
@@ -88,7 +105,7 @@ export class FormExpedienteModalComponent implements OnInit {
     const numeroExpediente = `${data.numero}-${data.anio}/${data.codigo}`;
 
     //  Objeto final para enviar al backend
-    const nuevoExpediente = {
+    const expedienteData = {
       titulo: data.titulo,
       descripcion: data.descripcion,
       tipo: data.tipo,
@@ -101,30 +118,43 @@ export class FormExpedienteModalComponent implements OnInit {
       secretaria_id: this.secretariaId,
     };
 
-    //  Llamada al servicio
-    this.expedientesService.crearExpediente(nuevoExpediente).subscribe({
-      next: (resp) => {
-        this.cargando = false;
-        // this.toastr.success('Expediente creado correctamente');
-        this.mensajeExito = ' Expediente creado exitosamente.';
-        console.log('Respuesta:', resp);
+    // Si existe id_expediente => EDITAR
+    if (this.modoEdicion && this.expedienteSeleccionado?.id_expediente) {
+      this.expedientesService.actualizarExpediente(this.expedienteSeleccionado.id_expediente, expedienteData).subscribe({
+        next: (resp) => {
+          this.cargando = false;
+          this.mensajeExito = 'Expediente actualizado correctamente.';
+          console.log('Actualizado:', resp);
+          this.expedienteCreado.emit(); // también refresca la tabla
 
-        // Notificar al componente padre que se creó un partícipe
-        this.expedienteCreado.emit();
+          setTimeout(() => this.cerrarModal(), 1000);
+        },
+        error: (err) => {
+          this.cargando = false;
+          console.error('Error al actualizar expediente:', err);
+          this.mensajeError = err.error?.message || 'Error al actualizar el expediente.';
+        },
+      });
+    }
 
-        // Cerrar el modal tras un pequeño delay
-        setTimeout(() => {
-          this.cerrarModal();
-        }, 1000);
+    // Si no existe id_expediente => CREAR
+    else {
+      this.expedientesService.crearExpediente(expedienteData).subscribe({
+        next: (resp) => {
+          this.cargando = false;
+          this.mensajeExito = 'Expediente creado exitosamente.';
+          console.log('Creado:', resp);
+          this.expedienteCreado.emit();
 
-
-      },
-      error: (err) => {
-        this.cargando = false;
-        console.error('Error al crear el partícipe:', err);
-        this.mensajeError = err.error?.message || ' Error al crear el partícipe.';
-      },
-    });
+          setTimeout(() => this.cerrarModal(), 1000);
+        },
+        error: (err) => {
+          this.cargando = false;
+          console.error('Error al crear expediente:', err);
+          this.mensajeError = err.error?.message || 'Error al crear el expediente.';
+        },
+      });
+    }
   }
 
   //  Cerrar el modal
