@@ -81,6 +81,8 @@ export class ExpedientesPageComponent implements OnInit {
   }
 
   abrirModal() {
+    this.modoEdicion = false;
+    this.expedienteSeleccionado = null;
     this.mostrarModal = true;
   }
 

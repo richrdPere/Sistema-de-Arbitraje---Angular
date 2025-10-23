@@ -28,6 +28,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/servicios/calculadora/calculadora.component').then(m => m.CalculadoraComponent)
       },
       {
+        path: 'laudos',
+        loadComponent: () => import('./pages/auth/laudos/laudos.component').then(m => m.LaudosComponent),
+      },
+      {
         path: 'trazabilidad',
         loadComponent: () => import('./pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
       },
@@ -43,7 +47,7 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('./pages/admin/admin.routes'),
   },
-   {
+  {
     path: 'secretaria',
     loadChildren: () => import('./pages/secretaria/secretaria.routes'),
   },

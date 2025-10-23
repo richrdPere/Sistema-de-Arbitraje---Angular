@@ -36,9 +36,19 @@
 
             <div class="flex flex-col gap-4">
               <label class="text-sm">Monto de la Controversia (S/.)</label>
-              <input formControlName="monto" type="text" class="input input-bordered w-full" placeholder="Ej. 50,000" />
+              <input formControlName="monto" type="text" class="input input-bordered w-full" placeholder="Ej. 50,000"
+                min="1" max="1999999" />
 
-              <button type="submit" class="btn bg-info w-full text-white">
+              @if (formCalculadora.get('monto')?.hasError('max') && formCalculadora.get('monto')?.touched) {
+              <div class="text-red-500 text-sm mt-1">
+                De momento no podemos calcular un monto superior a los 2,000,000.
+              </div>
+              }
+
+
+
+              <button type="submit" class="btn bg-info w-full text-white"
+                [disabled]="formCalculadora.invalid || formCalculadora.get('monto')?.value >= 2000000">
                 Calcular
               </button>
             </div>
@@ -53,13 +63,30 @@
             <div class="flex flex-col gap-4">
               <label class="text-sm">Monto de Contrato (S/.)</label>
               <input formControlName="contrato" type="text" class="input input-bordered w-full"
-                placeholder="Ej. 100,000" />
+                placeholder="Ej. 100,000" min="0" max="1999999" />
+
+              @if (formCalculadora.get('contrato')?.hasError('max') && formCalculadora.get('contrato')?.touched) {
+              <div class="text-red-500 text-sm mt-1">
+                De momento no podemos calcular un contrato superior a los 2,000,000.
+              </div>
+              }
+
 
               <label class="text-sm">Monto de Pretensión (S/.)</label>
               <input formControlName="pretension" type="text" class="input input-bordered w-full"
-                placeholder="Ej. 50,000" />
+                placeholder="Ej. 50,000" min="0" max="1999999" />
 
-              <button type="submit" class="btn bg-info w-full text-white">
+              @if (formCalculadora.get('pretension')?.hasError('max') && formCalculadora.get('pretension')?.touched) {
+              <div class="text-red-500 text-sm mt-1">
+                La pretensión no puede superar los 2,000,000.
+              </div>
+              }
+
+
+              <button type="submit" class="btn bg-info w-full text-white" [disabled]="          formCalculadora.invalid ||
+          formCalculadora.get('contrato')?.value >= 2000000 ||
+          formCalculadora.get('pretension')?.value >= 2000000
+        ">
                 Calcular
               </button>
             </div>

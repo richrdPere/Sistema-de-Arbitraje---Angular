@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
     },
     {
       label: 'Laudos',
-      path: '/servicios',
+      path: '/laudos',
       activeClass: 'bg-info text-base-100'
     },
     {

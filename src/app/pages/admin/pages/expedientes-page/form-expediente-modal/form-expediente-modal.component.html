@@ -29,12 +29,12 @@
         <h4 class="text-lg font-medium mb-2">Número de Expediente</h4>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input formControlName="numero" type="text" placeholder="Número"
-            class="input input-bordered w-full focus:outline-none"/>
+            class="input input-bordered w-full focus:outline-none"  />
 
           <input formControlName="anio" type="text" placeholder="Año"
-            class="input input-bordered w-full focus:outline-none" />
+            class="input input-bordered w-full focus:outline-none"  />
 
-          <select formControlName="codigo" class="select select-bordered w-full">
+          <select formControlName="codigo" class="select select-bordered w-full" >
             <option disabled selected>Seleccione código...</option>
             <option value="CA-RENA">CA-RENA</option>
             <option value="JPRD-RENA">JPRD-RENA</option>
@@ -144,9 +144,9 @@
         <button type="submit" class="btn btn-primary text-white" [disabled]="formExpediente.invalid || cargando">
           @if (cargando) {
           <span class="loading loading-spinner loading-sm"></span>
-          Creando...
+          {{ modoEdicion ? 'Actualizando...' : 'Creando...' }} <!--  Cambiado -->
           } @else {
-          Guardar Expediente
+          {{ modoEdicion ? 'Actualizar Expediente' : 'Guardar Expediente' }}
           }
         </button>
       </div>

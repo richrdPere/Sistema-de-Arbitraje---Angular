@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ElementRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ElementRef, ViewChild, SimpleChanges, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // Services
@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
   imports: [ReactiveFormsModule],
   templateUrl: './form-expediente-modal.component.html',
 })
-export class FormExpedienteModalComponent implements OnInit {
+export class FormExpedienteModalComponent implements OnInit, OnChanges {
 
   @Input() mostrarModal = false;
   @Input() modoEdicion = false;
@@ -24,32 +24,72 @@ export class FormExpedienteModalComponent implements OnInit {
   cargando = false;
   mensajeError = '';
   mensajeExito = '';
-  @ViewChild('numeroInput') numeroInput!: ElementRef;
+  // @ViewChild('numeroInput') numeroInput!: ElementRef;
   //  Variable para guardar el ID de la secretaria logueada
   secretariaId: number | null = null;
 
 
-  constructor(private fb: FormBuilder, private expedientesService: ExpedientesService, private authService: AuthService) { }
+  constructor(
+    private fb: FormBuilder,
+    private expedientesService: ExpedientesService,
+    private authService: AuthService
+  ) { }
 
 
   ngOnInit() {
     this.inicializarFormulario();
     this.obtenerSecretariaId();
-
-    if (this.modoEdicion && this.expedienteSeleccionado) {
-      this.formExpediente.patchValue({
-        titulo: this.expedienteSeleccionado.titulo,
-        descripcion: this.expedienteSeleccionado.descripcion,
-        tipo: this.expedienteSeleccionado.tipo,
-        estado_procesal: this.expedienteSeleccionado.estado_procesal,
-        codigo: this.expedienteSeleccionado.codigo,
-        fecha_inicio: this.expedienteSeleccionado.fecha_inicio,
-        fecha_laudo: this.expedienteSeleccionado.fecha_laudo,
-        fecha_resolucion: this.expedienteSeleccionado.fecha_resolucion,
-      });
-    }
-
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Detecta cuando cambian los inputs
+    if (changes['expedienteSeleccionado'] && this.modoEdicion && this.expedienteSeleccionado) {
+      this.patchFormExpediente();
+    }
+  }
+
+  private formatearFecha(fecha: string | null): string | null {
+    if (!fecha) return null;
+    return fecha.split('T')[0]; // Extrae solo YYYY-MM-DD
+  }
+
+
+  //  Función para descomponer el número de expediente
+  private extraerParte(numeroExpediente: string, parte: 'numero' | 'anio' | 'codigo'): string {
+    if (!numeroExpediente) return '';
+    const partes = numeroExpediente.match(/^(\d+)-(\d{4})\/([\p{L}\d\s\-ÁÉÍÓÚáéíóúÑñ]+)$/u);
+
+    console.log("numeroExpediente: ", partes);
+
+
+    if (!partes) return '';
+    switch (parte) {
+      case 'numero': return partes[1];
+      case 'anio': return partes[2];
+      case 'codigo': return partes[3];
+      default: return '';
+    }
+  }
+  private patchFormExpediente(): void {
+
+    console.log("Expediente numero: ", this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'numero'));
+
+    this.formExpediente.patchValue({
+      titulo: this.expedienteSeleccionado.titulo || '',
+      descripcion: this.expedienteSeleccionado.descripcion || '',
+      tipo: this.expedienteSeleccionado.tipo || '',
+      estado: this.expedienteSeleccionado.estado || '',
+      estado_procesal: this.expedienteSeleccionado.estado_procesal || '',
+      numero: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'numero'),
+      anio: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'anio'),
+      codigo: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'codigo'),
+      fecha_inicio: this.formatearFecha(this.expedienteSeleccionado.fecha_inicio),
+      fecha_laudo: this.formatearFecha(this.expedienteSeleccionado.fecha_laudo),
+      fecha_resolucion: this.formatearFecha(this.expedienteSeleccionado.fecha_resolucion),
+    });
+  }
+
+
 
   //  Obtener ID del usuario logueado (secretaria)
   private obtenerSecretariaId(): void {
@@ -73,8 +113,9 @@ export class FormExpedienteModalComponent implements OnInit {
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       tipo: [''],
+      estado: [''],
       estado_procesal: [''],
-      numero: ['', Validators.required],
+      numero: ['', Validators.required,],
       anio: ['', Validators.required],
       codigo: ['', Validators.required],
       fecha_inicio: [''],
@@ -109,6 +150,7 @@ export class FormExpedienteModalComponent implements OnInit {
       titulo: data.titulo,
       descripcion: data.descripcion,
       tipo: data.tipo,
+      estado: data.estado,
       estado_procesal: data.estado_procesal,
       numero_expediente: numeroExpediente,
       codigo: data.codigo,
@@ -118,59 +160,36 @@ export class FormExpedienteModalComponent implements OnInit {
       secretaria_id: this.secretariaId,
     };
 
-    // Si existe id_expediente => EDITAR
-    if (this.modoEdicion && this.expedienteSeleccionado?.id_expediente) {
-      this.expedientesService.actualizarExpediente(this.expedienteSeleccionado.id_expediente, expedienteData).subscribe({
-        next: (resp) => {
-          this.cargando = false;
-          this.mensajeExito = 'Expediente actualizado correctamente.';
-          console.log('Actualizado:', resp);
-          this.expedienteCreado.emit(); // también refresca la tabla
+    const peticion = this.modoEdicion && this.expedienteSeleccionado?.id_expediente
+      ? this.expedientesService.actualizarExpediente(this.expedienteSeleccionado.id_expediente, expedienteData)
+      : this.expedientesService.crearExpediente(expedienteData);
 
-          setTimeout(() => this.cerrarModal(), 1000);
-        },
-        error: (err) => {
-          this.cargando = false;
-          console.error('Error al actualizar expediente:', err);
-          this.mensajeError = err.error?.message || 'Error al actualizar el expediente.';
-        },
-      });
-    }
+    peticion.subscribe({
+      next: (resp) => {
+        this.cargando = false;
+        this.mensajeExito = this.modoEdicion
+          ? 'Expediente actualizado correctamente.'
+          : 'Expediente creado exitosamente.';
+        this.expedienteCreado.emit();
+        setTimeout(() => this.cerrarModal(), 1000);
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error en operación de expediente:', err);
+        this.mensajeError = err.error?.message || 'Error en la operación.';
+      },
+    });
 
-    // Si no existe id_expediente => CREAR
-    else {
-      this.expedientesService.crearExpediente(expedienteData).subscribe({
-        next: (resp) => {
-          this.cargando = false;
-          this.mensajeExito = 'Expediente creado exitosamente.';
-          console.log('Creado:', resp);
-          this.expedienteCreado.emit();
-
-          setTimeout(() => this.cerrarModal(), 1000);
-        },
-        error: (err) => {
-          this.cargando = false;
-          console.error('Error al crear expediente:', err);
-          this.mensajeError = err.error?.message || 'Error al crear el expediente.';
-        },
-      });
-    }
   }
 
   //  Cerrar el modal
   cerrarModal(): void {
     this.mostrarModal = false;
-    // this.formExpediente.reset({
-    //   tipo_persona: 'Natural',
-    //   rol: 'participe',
-    // });
     this.modalCerrado.emit();
+    this.formExpediente.reset();
   }
 
   get f() {
     return this.formExpediente.controls;
   }
-
-
-
 }
