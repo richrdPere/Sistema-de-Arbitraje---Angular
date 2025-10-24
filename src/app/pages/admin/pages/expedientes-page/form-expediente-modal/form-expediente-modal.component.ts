@@ -43,7 +43,7 @@ export class FormExpedienteModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // Detecta cuando cambian los inputs
-    if (changes['expedienteSeleccionado'] && this.modoEdicion && this.expedienteSeleccionado) {
+    if ((changes['expedienteSeleccionado'] || changes['mostrarModal']) && this.modoEdicion && this.expedienteSeleccionado) {
       this.patchFormExpediente();
     }
   }

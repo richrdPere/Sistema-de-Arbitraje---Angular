@@ -12,10 +12,14 @@
       📄 Documentos del expediente #{{ idExpediente }}
     </h2>
 
-    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" (click)="abrirModal()">
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" (click)="abrirModalDocumento(idExpediente)">
       + Nuevo Documento
     </button>
   </div>
+
+  <!-- Modal Subir documento -->
+  <subir-documento [mostrarModal]="mostrarModalDocumento" [expedienteId]="expedienteSeleccionadoId"
+    (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="cargarDocumentos()"></subir-documento>
 
   <!-- Buscador -->
   <div class="flex justify-between items-center mb-4">

@@ -1,0 +1,171 @@
+@if (mostrarModal) {
+<div class="modal modal-open">>
+  <div class="modal-box max-w-xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-primary">📄 Subir Documento</h2>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="cerrarModal()">
+        ✕
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="formDocumento" (ngSubmit)="subirDocumento()" class="space-y-4">
+
+      <!-- Campo: Título -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Título</span>
+        </label>
+        <input type="text" formControlName="titulo" placeholder="Ej. Resolución arbitral"
+          class="input input-bordered w-full" />
+      </div>
+
+      <!-- Campo: Descripción -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Descripción</span>
+        </label>
+        <textarea formControlName="descripcion" rows="2" placeholder="Breve descripción del documento"
+          class="textarea textarea-bordered w-full"></textarea>
+      </div>
+
+      <!-- Campo: Versión -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Versión</span>
+        </label>
+        <input type="number" formControlName="version" placeholder="Ej. 1" class="input input-bordered w-full" />
+      </div>
+
+      <!-- Campo: Tipo de Documento -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Tipo de documento</span>
+        </label>
+        <select formControlName="tipo_documento" class="select select-bordered w-full">
+          <option value="" disabled selected>Seleccione un tipo</option>
+          <option value="Resolución">Resolución</option>
+          <option value="Informe">Informe</option>
+          <option value="Laudo">Laudo</option>
+          <option value="Oficio">Oficio</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <!-- Campo: Archivo PDF -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">Archivo PDF</span>
+        </label>
+        <input type="file" accept="application/pdf" (change)="onArchivoSeleccionado($event)"
+          class="file-input file-input-bordered file-input-primary w-full" />
+        @if (archivoSeleccionado) {
+        <p class="text-sm text-success mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-file-pdf"></i>
+          {{ archivoSeleccionado.name }}
+        </p>
+        }
+      </div>
+
+      <!-- Mensajes de error / éxito -->
+      @if (mensajeError) {
+      <div class="alert alert-error mt-2 shadow-sm py-2">
+        <span>{{ mensajeError }}</span>
+      </div>
+      }
+      @if (mensajeExito) {
+      <div class="alert alert-success mt-2 shadow-sm py-2">
+        <span>{{ mensajeExito }}</span>
+      </div>
+      }
+
+      <!-- Botones -->
+      <div class="flex justify-end gap-3 mt-6">
+        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" [class.loading]="cargando" [disabled]="cargando">
+          {{ cargando ? 'Subiendo...' : 'Subir Documento' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Fondo oscuro del modal -->
+  <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+</div>
+}
+
+
+<!-- @if (mostrarModal) {
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Subir Documento</h2>
+
+    <form [formGroup]="formDocumento" (ngSubmit)="subirDocumento()" class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+        <input type="text" formControlName="titulo"
+          class="w-full border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          placeholder="Ej. Resolución arbitral" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+        <textarea formControlName="descripcion" rows="2"
+          class="w-full border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          placeholder="Breve descripción del documento"></textarea>
+      </div>
+
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Versión</label>
+        <input type="number" formControlName="version"
+          class="w-full border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          placeholder="Ej. 1" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de documento</label>
+        <select formControlName="tipo_documento"
+          class="w-full border rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300">
+          <option value="" disabled selected>Seleccione un tipo</option>
+          <option value="Resolución">Resolución</option>
+          <option value="Informe">Informe</option>
+          <option value="Laudo">Laudo</option>
+          <option value="Oficio">Oficio</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Archivo PDF</label>
+        <input type="file" accept="application/pdf" (change)="onArchivoSeleccionado($event)" class="w-full text-sm" />
+        @if (archivoSeleccionado) {
+        <p class="text-sm text-green-600 mt-1">✔ {{ archivoSeleccionado.name }}</p>
+        }
+      </div>
+
+      @if (mensajeError) {
+      <p class="text-red-600 text-sm">{{ mensajeError }}</p>
+      }
+      @if (mensajeExito) {
+      <p class="text-green-600 text-sm">{{ mensajeExito }}</p>
+      }
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button type="button" (click)="cerrarModal()"
+          class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="cargando"
+          class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
+          {{ cargando ? 'Subiendo...' : 'Subir Documento' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+} -->

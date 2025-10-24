@@ -101,7 +101,19 @@ export class ExpedientesService {
   //  DOCUMENTOS
   // *****************************************************
   subirDocumento(idExpediente: number, data: any): Observable<any> {
-    return this.http.post(`${this.url}/${idExpediente}/documentos`, data, this.getAuthHeaders());
+    const token = localStorage.getItem('token'); // o donde guardes tu JWT
+
+    return this.http.post(
+      `${this.url}/${idExpediente}/documentos`,
+      data,
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        }),
+      }
+    );
+
+    // return this.http.post(`${this.url}/${idExpediente}/documentos`, data, this.getAuthHeaders());
   }
 
   listarDocumentos(idExpediente: number): Observable<any> {

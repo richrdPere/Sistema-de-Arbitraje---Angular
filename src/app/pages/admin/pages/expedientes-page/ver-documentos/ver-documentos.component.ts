@@ -4,10 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // Service
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { SubirDocumentoComponent } from "./subir-documento.component/subir-documento.component";
 
 @Component({
   selector: 'app-ver-documentos',
-  imports: [DatePipe],
+  imports: [DatePipe, SubirDocumentoComponent],
   templateUrl: './ver-documentos.component.html',
 })
 export class VerDocumentosComponent implements OnInit {
@@ -18,6 +19,9 @@ export class VerDocumentosComponent implements OnInit {
   mensajeError = '';
   mensajeExito = '';
   mostrarModal = false;
+
+  mostrarModalDocumento = false;
+  expedienteSeleccionadoId!: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -44,14 +48,13 @@ export class VerDocumentosComponent implements OnInit {
     });
   }
 
-  abrirModal() {
-    this.mostrarModal = true;
+  abrirModalDocumento(id: number) {
+    this.expedienteSeleccionadoId = id;
+    this.mostrarModalDocumento = true;
   }
 
-
-  cerrarModal() {
-    this.mostrarModal = false;
-    // this.formExpediente.reset();
+  cerrarModalDocumento() {
+    this.mostrarModalDocumento = false;
   }
 
   volver() {
