@@ -81,6 +81,7 @@ export class SubirDocumentoComponent {
     formData.append('version', this.formDocumento.value.version);
     formData.append('tipo_documento', this.formDocumento.value.tipo_documento);
     formData.append('file', this.archivoSeleccionado);
+    formData.append('fecha_emision', new Date().toISOString());
 
     this.expedientesService.subirDocumento(this.expedienteId, formData).subscribe({
       next: () => {

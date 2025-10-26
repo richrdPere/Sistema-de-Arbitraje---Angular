@@ -44,20 +44,23 @@
 
         <h2 class="text-lg text-center mt-4 mb-2 text-info font-bold">Inicia sesión para ingresar al sistema</h2>
 
-        <form [formGroup]="formTrazabilidad">
+        <form [formGroup]="formTrazabilidad" (ngSubmit)="login()">
 
           <!-- Tipo de usuario -->
           <div class="flex justify-around gap-4">
+
+            <button type="button" class="btn" [ngClass]="tipoUsuario === 'usuarios' ? 'btn-primary' : 'btn-outline'"
+              (click)="seleccionarUsuario('usuarios')">
+              Usuarios
+            </button>
+
             <button type="button" class="btn"
               [ngClass]="tipoUsuario === 'administracion' ? 'btn-primary' : 'btn-outline'"
               (click)="seleccionarUsuario('administracion')">
               Administración
             </button>
 
-            <button type="button" class="btn" [ngClass]="tipoUsuario === 'usuarios' ? 'btn-primary' : 'btn-outline'"
-              (click)="seleccionarUsuario('usuarios')">
-              Usuarios
-            </button>
+
           </div>
 
           @if (tipoUsuario === 'administracion') {
@@ -67,21 +70,20 @@
             <div class="flex flex-col gap-4 ">
               <!-- Usuario -->
               <label class="text-sm">Usuario</label>
-              <input formControlName="email" type="text" class="input input-bordered w-full"
-                placeholder="Ingrese su correo" />
+              <input formControlName="correo" type="text" class="input input-bordered w-full"
+                placeholder="admin@firmalegalordonezterrazas.com" />
 
               <!-- Contraseña -->
               <label class="text-sm">Contraseña</label>
-              <input formControlName="contraseña" type="text" class="input input-bordered w-full"
+              <input formControlName="password" type="password" class="input input-bordered w-full"
                 placeholder="Contraseña" />
 
               <button type="submit" class="btn bg-info w-full text-white ">
-                Ingresar
+                Acceder a Mi Caso
               </button>
             </div>
           </div>
           }
-
 
 
           @if (tipoUsuario === 'usuarios') {
@@ -89,24 +91,24 @@
 
             <div class="flex flex-col gap-4">
               <!-- Usuario -->
-              <label class="text-sm">Número de Expediente</label>
+              <label class="text-sm">Usuario</label>
+              <input formControlName="correo" type="text" class="input input-bordered w-full"
+                placeholder="tu-correo@gmail.com" />
+              <!-- <label class="text-sm">Número de Expediente</label>
 
               <div class="grid grid-cols-3 gap-3 mb-4">
                 <input formControlName="nro" type="text" placeholder="Número" class="input input-bordered w-full" />
                 <input formControlName="anio" type="text" placeholder="Año" class="input input-bordered w-full " />
                 <input formControlName="codigo" type="text" class="input input-bordered w-full" placeholder="MARC" />
-              </div>
-
-
-
+              </div> -->
 
               <!-- Contraseña -->
               <label class="text-sm">Contraseña</label>
-              <input formControlName="contraseña" type="text" class="input input-bordered w-full"
+              <input formControlName="password" type="password" class="input input-bordered w-full"
                 placeholder="Contraseña" />
 
               <button type="submit" class="btn bg-info w-full text-white">
-                Ingresar
+                Acceder al Sistema
               </button>
             </div>
           </div>

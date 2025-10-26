@@ -1,10 +1,10 @@
 <div class="p-6 bg-gray-50 min-h-screen">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">Gestión de Partícipes</h2>
-    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
+    <h2 class="text-2xl font-bold text-gray-800">Solicitudes</h2>
+    <!-- <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
       Crear Nuevo Expediente
-    </button>
+    </button> -->
   </div>
 
   <!-- Modal Form -->
@@ -27,13 +27,17 @@
     <table class="table w-full">
       <thead class="bg-gray-100 text-base-100">
         <tr>
+          <th>#</th>
           <th>Expediente</th>
           <th>Estado</th>
           <th>Tipo</th>
+          <th>Descripción</th>
           <th>Fecha Inicio</th>
           <th>Solicitante</th>
           <th>Correo</th>
-          <th>Condición</th>
+          <th>Archivo</th>
+          <th></th>
+          <!-- <th>Condición</th> -->
         </tr>
       </thead>
       <tbody>
@@ -45,21 +49,39 @@
 
         @for (solicitud of solicitudes; track $index) {
         <tr class="hover">
-          <td>{{ solicitud.expediente }}</td>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ solicitud.numero_tramite }}</td>
           <td>{{ solicitud.estado }}</td>
-          <td>{{ solicitud.tipo}}</td>
+          <td>{{ solicitud.tipo_solicitud}}</td>
+          <td>{{ solicitud.descripcion}}</td>
           <td>
-            {{ solicitud.fecha }}
+            {{ solicitud.createdAt | date: 'dd/MM/yyyy, h:mm a'}}
           </td>
-          <td>{{ solicitud.usuario }}</td>
-          <td>{{ solicitud.correo }}</td>
-          <td>{{ solicitud.condicion }}</td>
+          <td></td>
+          <td></td>
+          <td>
+            <a [href]="solicitud.archivo_url" target="_blank" class="text-blue-600 hover:underline">
+              Ver archivo
+            </a>
+          </td>
 
-          <!-- Menú contextual -->
+
+
           <td class="relative">
-            <button class="btn btn-sm btn-outline-primary me-1">
-              <i class="bi bi-eye"></i> Ver
-            </button>
+            <div class="dropdown dropdown-end inline-block">
+              <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 12h.01M12 12h.01M18 12h.01" />
+                </svg>
+              </button>
+
+              <ul>
+
+              </ul>
+            </div>
+
 
           </td>
 

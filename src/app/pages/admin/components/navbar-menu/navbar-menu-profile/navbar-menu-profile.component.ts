@@ -51,7 +51,7 @@ export class NavbarMenuProfileComponent {
     {
       icon: 'assets/icons/navbar/sign_out.svg',
       label: 'Cerrar Sesión',
-      route: '/login',
+      route: '/trazabilidad',  //   route: '/login',
     },
 
   ];
@@ -64,7 +64,7 @@ export class NavbarMenuProfileComponent {
       message: 'Has cerrado sesión correctamente',
       position: 'bottomRight',
     });
-    this._router.navigate(['/login']);
+    this._router.navigate(['/trazabilidad']);   //  this._router.navigate(['/login']);
   }
 
 }

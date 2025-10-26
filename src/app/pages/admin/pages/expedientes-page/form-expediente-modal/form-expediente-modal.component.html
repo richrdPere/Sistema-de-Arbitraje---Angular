@@ -29,21 +29,21 @@
         <h4 class="text-lg font-medium mb-2">Número de Expediente</h4>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input formControlName="numero" type="text" placeholder="Número"
-            class="input input-bordered w-full focus:outline-none"  />
+            class="input input-bordered w-full focus:outline-none" />
 
           <input formControlName="anio" type="text" placeholder="Año"
-            class="input input-bordered w-full focus:outline-none"  />
+            class="input input-bordered w-full focus:outline-none" />
 
-          <select formControlName="codigo" class="select select-bordered w-full" >
+          <select formControlName="codigo" class="select select-bordered w-full">
             <option disabled selected>Seleccione código...</option>
-            <option value="CA-RENA">CA-RENA</option>
-            <option value="JPRD-RENA">JPRD-RENA</option>
+            <option value="CA-FIRMA-LEGAL">CA-FIRMA-LEGAL</option>
+            <option value="JPRD-FIRMA-LEGAL">JPRD-FIRMA-LEGAL</option>
             <option value="DESIGNACIÓN">DESIGNACIÓN</option>
-            <option value="RECUSACIÓN">RECUSACIÓN-RENA</option>
+            <option value="RECUSACIÓN-FIRMA-LEGAL">RECUSACIÓN-FIRMA-LEGAL</option>
             <option value="INSTALACIÓN">INSTALACIÓN</option>
-            <option value="AD HOC-RENA">AD HOC-RENA</option>
-            <option value="AE-RENA">AE-RENA</option>
-            <option value="MC-RENA">MC-RENA</option>
+            <option value="AD HOC-FIRMA-LEGAL">AD HOC-FIRMA-LEGAL</option>
+            <option value="AE-FIRMA-LEGAL">AE-FIRMA-LEGAL</option>
+            <option value="MC-FIRMA-LEGAL">MC-FIRMA-LEGAL</option>
           </select>
         </div>
       </section>
@@ -122,12 +122,12 @@
       <section>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-1">Fecha de Inicio</label>
+            <label class="block text-sm font-semibold mb-1">Fecha de Presentación</label>
             <input formControlName="fecha_inicio" type="date" class="input input-bordered w-full" />
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-1">Fecha de Laudo</label>
+            <label class="block text-sm font-semibold mb-1">Fecha de Notificación</label>
             <input formControlName="fecha_laudo" type="date" class="input input-bordered w-full" />
           </div>
 

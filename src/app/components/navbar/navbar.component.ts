@@ -45,9 +45,14 @@ export class NavbarComponent implements OnInit {
       activeClass: 'bg-info text-base-100'
     },
     {
-      label: 'Trazabilidad Documentaria',
-      path: '/trazabilidad',
-      activeClass: 'bg-primary text-base-100'
+      label: 'Decisiones',
+      path: '/desiciones',
+      activeClass: 'bg-info text-base-100'
+    },
+    {
+      label: 'Centro de Arbitraje',
+      path: '/arbitraje',
+      activeClass: 'bg-info text-base-100'
     },
     {
       label: 'Mesa de Partes',
@@ -60,10 +65,15 @@ export class NavbarComponent implements OnInit {
       activeClass: 'bg-info text-base-100'
     },
     {
-      label: 'Iniciar Sesión',
-      path: '/login',
+      label: 'Trazabilidad Documentaria',
+      path: '/trazabilidad',
       activeClass: 'bg-primary text-base-100'
     },
+    // {
+    //   label: 'Iniciar Sesión',
+    //   path: '/login',
+    //   activeClass: 'bg-primary text-base-100'
+    // },
     // {
     //   label: 'Registrate',
     //   path: '/register',

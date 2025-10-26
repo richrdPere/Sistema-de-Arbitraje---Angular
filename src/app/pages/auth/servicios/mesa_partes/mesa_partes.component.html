@@ -12,12 +12,83 @@
         MESA DE PARTES VIRTUALES
       </h1>
 
-      <!-- Card del formulario -->
       <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
+        <form [formGroup]="formTramiteMPV" (ngSubmit)="enviar()" class="space-y-6">
+          <!-- Tipo de Solicitud -->
+          <div>
+            <label class="label">
+              <span class="label-text font-semibold text-gray-700">Tipo de Solicitud</span>
+            </label>
+            <select formControlName="tipo_solicitud" class="select select-bordered w-full">
+              <option value="">Seleccione</option>
+              <option value="Demanda">Demanda</option>
+              <option value="Escrito">Escrito</option>
+              <option value="Anexo">Anexo</option>
+            </select>
+          </div>
+
+          <!-- Descripción -->
+          <div>
+            <label class="label">
+              <span class="label-text font-semibold text-gray-700">Descripción</span>
+            </label>
+            <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
+              placeholder="Describa brevemente su solicitud..." rows="3"></textarea>
+          </div>
+
+          <!-- Expediente -->
+          <!-- <div>
+            <label class="label">
+              <span class="label-text font-semibold text-gray-700">Expediente (opcional)</span>
+            </label>
+            <input formControlName="id_expediente" type="text" placeholder="Ingrese número o nombre del expediente"
+              class="input input-bordered w-full" />
+          </div> -->
+
+          <!-- Archivos -->
+          <div>
+            <label class="label">
+              <span class="label-text font-semibold text-gray-700">Adjuntar archivos (opcional)</span>
+            </label>
+            <input type="file" class="file-input file-input-bordered w-full" multiple
+              (change)="onFileSelected($event)" />
+            <!-- <p *ngIf="archivosSeleccionados?.length" class="text-xs text-gray-500 mt-2">
+              {{ archivosSeleccionados.length }} archivo(s) seleccionado(s)
+            </p> -->
+          </div>
+
+          <!-- Botón Enviar -->
+          <div class="flex justify-center pt-2">
+            <button type="submit"
+              class="btn btn-info w-full sm:w-auto text-white font-semibold px-8 shadow-md hover:bg-info/90">
+              <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Solicitud
+            </button>
+          </div>
+        </form>
+
+        @if (enviado) {
+        <div>
+          <h3>Trámite registrado</h3>
+          <p>Número: {{ respuesta.tramite.numero_tramite }}</p>
+          <p>Estado: {{ respuesta.tramite.estado }}</p>
+        </div>
+        }
+
+      </div>
+
+    </div>
+  </div>
+
+
+</section>
+
+
+
+<!-- <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
 
         <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
 
-        <!-- Número de expediente -->
+
         <div class="grid grid-cols-3 gap-3 mb-4">
           <input type="text" placeholder="Número" class="input input-bordered w-full" />
           <input type="text" placeholder="Año" class="input input-bordered w-full " />
@@ -33,7 +104,7 @@
           </select>
         </div>
 
-        <!-- Tipo -->
+
         <h2 class="text-sm font-semibold mb-4">Tipo Expediente</h2>
         <div class="form-control mb-4 ">
           <select class="select select-bordered w-full">
@@ -48,7 +119,7 @@
           </select>
         </div>
 
-        <!-- Etapa Procesal -->
+
         <h2 class="text-sm font-semibold mb-4">Etapa procesal</h2>
         <div class="form-control mb-4">
           <select class="select select-bordered w-full">
@@ -78,23 +149,22 @@
 
         <h2 class="text-sm font-semibold mb-4">Datos de Usuario</h2>
 
-        <!-- Nombre -->
-        <!-- <label for="nombre">Nombre</label> -->
+
         <div class="form-control mb-4">
           <input type="text" placeholder="Ingrese un nombre" class="input input-bordered w-full" name="nombre" />
         </div>
 
-        <!-- Email -->
+
         <div class="form-control mb-4">
           <input type="email" placeholder="Ingrese su correo" class="input input-bordered w-full" />
         </div>
 
-        <!-- Contraseña -->
+
         <div class="form-control mb-4">
           <input type="password" placeholder="Ingrese su contraseña" class="input input-bordered w-full" />
         </div>
 
-        <!-- Condición -->
+
         <div class="form-control mb-6 ">
           <select class="select select-bordered w-full">
             <option disabled selected>Seleccione una condición...</option>
@@ -107,18 +177,11 @@
           </select>
         </div>
 
-        <!-- Botón -->
+
         <button
           class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
           Enviar Solicitud
         </button>
 
-        <!-- <button class="btn btn-block bg-black text-white hover:bg-gray-800 ">
-          Enviar Solicitud
-        </button> -->
-      </div>
-    </div>
-  </div>
 
-
-</section><!-- Contenedor principal -->
+      </div> -->

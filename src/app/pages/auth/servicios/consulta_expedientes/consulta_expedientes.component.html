@@ -48,19 +48,21 @@
             <h3 class="text-lg font-bold text-center text-info">Resultado</h3>
 
             <div class="space-y-2">
-              <p><strong>N° Expediente:</strong> {{ resultado.numero_expediente }}</p>
-              <p><strong>Tipo:</strong> {{ resultado.tipo_proceso }}</p>
-              <p><strong>Estado actual:</strong> {{ resultado.estado_actual }}</p>
-              <p><strong>Última actualización:</strong> {{ resultado.fecha_actualizacion | date:'mediumDate' }}</p>
+              <p><strong>N° Expediente:</strong> {{ resultado.numero_tramite }}</p>
+              <p><strong>Tipo:</strong> {{ resultado.tipo_solicitud }}</p>
+              <p><strong>Estado actual:</strong> {{ resultado.estado }}</p>
+              <!-- <p><strong>Última actualización:</strong> {{ resultado.fecha_actualizacion | date:'mediumDate' }}</p> -->
+              <p>Archivo: <a [href]="resultado.archivo_url" target="_blank">Abrir</a></p>
             </div>
 
             <!-- Avance del proceso -->
-            @if (resultado.avance) {
+            <!-- @if (resultado.avance) {
             <div class="mt-3">
               <progress class="progress progress-info w-full" [value]="resultado.avance" max="100"></progress>
+
               <p class="text-center text-sm mt-1">Avance: {{ resultado.avance }}%</p>
             </div>
-            }
+            } -->
 
             <button class="btn btn-ghost w-full mt-3" (click)="reset()">Nueva consulta</button>
           </div>

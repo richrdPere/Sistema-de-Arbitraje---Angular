@@ -115,8 +115,8 @@ export class CalculadoraComponent implements OnInit {
     const pretensionNum = parseFloat((pretension || '0').toString().replace(/,/g, '')) || 0;
 
     //  Validaciones generales
-    if (montoNum >= 2000000 || contratoNum >= 2000000 || pretensionNum >= 2000000) {
-      alert('No se puede calcular con valores iguales o mayores a 2,000,000.');
+    if (montoNum >= 10701000 || contratoNum >= 10701000 || pretensionNum >= 10701000) {
+      alert('No se puede calcular con valores iguales o mayores a 10,701,000.');
       return;
     }
 

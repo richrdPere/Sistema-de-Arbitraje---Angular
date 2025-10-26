@@ -32,6 +32,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/laudos/laudos.component').then(m => m.LaudosComponent),
       },
       {
+        path: 'desiciones',
+        loadComponent: () => import('./pages/auth/desiciones.component/desiciones.component').then(m => m.DesicionesComponent),
+      },
+      {
+        path: 'arbitraje',
+        loadComponent: () => import('./pages/auth/arbitraje.component/arbitraje.component').then(m => m.ArbitrajeComponent),
+      },
+      {
         path: 'trazabilidad',
         loadComponent: () => import('./pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
       },
