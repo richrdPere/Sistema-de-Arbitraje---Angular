@@ -1,9 +1,20 @@
 export interface TramiteMPV {
-  id_tramite?: number;
-  numero_tramite: string;
-  tipo_solicitud?: string;
-  descripcion?: string;
-  archivo_url?: string;
-  estado?: string;
-  createdAt?: string;
+  id: number;
+  numero_expediente: string;
+  tipo: string;
+  estado: string;
+  etapa_procesal: string;
+  fecha_inicio?: string;
+  solicitante: string;
+  correo: string;
+  condicion: string;
+  accion: string;
+}
+
+export interface TramiteMPVResponse {
+  total: number;
+  pagina_actual: number;
+  por_pagina: number;
+  total_paginas: number;
+  tramites: TramiteMPV[];
 }

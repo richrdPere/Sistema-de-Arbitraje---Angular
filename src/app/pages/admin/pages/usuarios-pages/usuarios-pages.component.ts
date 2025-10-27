@@ -40,12 +40,12 @@ export class UsuariosPagesComponent implements OnInit {
       correo: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       rol: ['', Validators.required],
+      telefono: [''],
+      documento_identidad: [''],
 
       // Campos opcionales (dependen del rol)
       tipo_persona: [''],
-      documento_identidad: [''],
       razon_social: [''],
-      telefono: [''],
       direccion: [''],
       cargo: [''],
       especialidad: [''],
@@ -87,6 +87,7 @@ export class UsuariosPagesComponent implements OnInit {
         this.usuarioService.getArbitros().toPromise(),
         this.usuarioService.getSecretarias().toPromise(),
         this.usuarioService.getParticipes().toPromise(),
+        this.usuarioService.getAdmins().toPromise(),
       ]);
 
       // Normalizamos los tres tipos
@@ -103,9 +104,10 @@ export class UsuariosPagesComponent implements OnInit {
       };
 
       this.usuarios = [
-        ...normalizar(arbitros ?? [], 'Árbitro'),
+        // ...normalizar(arbitros ?? [], 'Árbitro'),
         ...normalizar(secretarias ?? [], 'Secretaria'),
-        ...normalizar(participes ?? [], 'Partícipe'),
+        // ...normalizar(participes ?? [], 'Partícipe'),
+        ...normalizar(participes ?? [], 'Admins'),
       ];
     } catch (err) {
       console.error('Error al cargar usuarios:', err);

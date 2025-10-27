@@ -14,48 +14,141 @@
 
       <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
         <form [formGroup]="formTramiteMPV" (ngSubmit)="enviar()" class="space-y-6">
+
+          <label class="label">
+            <span class="label-text font-semibold text-xl">Datos del Expediente</span>
+          </label>
+
+          <!-- Expediente -->
+          <!-- <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <input type="text" placeholder="Número" class="input input-bordered w-full" />
+            <input type="text" placeholder="Año" class="input input-bordered w-full " />
+            <select class="select select-bordered w-full">
+              <option disabled selected>Código</option>
+              <option value="CA-FIRMA-LEGAL">CA-FIRMA-LEGAL</option>
+              <option value="JPRD-FIRMA-LEGAL">JPRD-FIRMA-LEGAL</option>
+              <option value="DESIGNACIÓN">DESIGNACIÓN</option>
+              <option value="RECUSACIÓN-FIRMA-LEGAL">RECUSACIÓN-FIRMA-LEGAL</option>
+              <option value="INSTALACIÓN">INSTALACIÓN</option>
+              <option value="AD HOC-FIRMA-LEGAL">AD HOC-FIRMA-LEGAL</option>
+              <option value="AE-FIRMA-LEGAL">AE-FIRMA-LEGAL</option>
+            </select>
+          </div> -->
+
+          <h2 class="text-sm font-semibold mb-4">Tipo Expediente y codigo</h2>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <!-- Tipo expediente -->
+            <select formControlName="tipo_solicitud" class="select select-bordered w-full">
+              <option disabled selected>Seleccione un tipo...</option>
+              <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
+              <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
+              <option value="Arbitraje Institucional">Arbitraje Institucional</option>
+              <option value="Recusación de árbitro">Recusación de árbitro</option>
+              <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+              <option value="Designación residual">Designación residual</option>
+              <option value="Instalación de arbitraje">Instalación de arbitraje</option>
+            </select>
+
+            <!-- Codigo -->
+            <select formControlName="codigo" class="select select-bordered w-full">
+              <option disabled selected>Código</option>
+              <option value="CA-FIRMA-LEGAL">CA-FIRMA-LEGAL</option>
+              <option value="JPRD-FIRMA-LEGAL">JPRD-FIRMA-LEGAL</option>
+              <option value="DESIGNACIÓN">DESIGNACIÓN</option>
+              <option value="RECUSACIÓN-FIRMA-LEGAL">RECUSACIÓN-FIRMA-LEGAL</option>
+              <option value="INSTALACIÓN">INSTALACIÓN</option>
+              <option value="AD HOC-FIRMA-LEGAL">AD HOC-FIRMA-LEGAL</option>
+              <option value="AE-FIRMA-LEGAL">AE-FIRMA-LEGAL</option>
+            </select>
+
+          </div>
+
+          <!-- Tipo de Expediente -->
+          <!-- <h2 class="text-sm font-semibold mb-4">Tipo Expediente</h2>
+          <div class="form-control mb-4 ">
+            <select class="select select-bordered w-full">
+              <option disabled selected>Seleccione un tipo...</option>
+              <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
+              <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
+              <option value="Arbitraje Institucional">Arbitraje Institucional</option>
+              <option value="Recusación de árbitro">Recusación de árbitro</option>
+              <option value="Recusación de adjudicador">Recusación de adjudicador</option>
+              <option value="Designación residual">Designación residual</option>
+              <option value="Instalación de arbitraje">Instalación de arbitraje</option>
+            </select>
+          </div> -->
+
+
           <!-- Tipo de Solicitud -->
-          <div>
-            <label class="label">
-              <span class="label-text font-semibold text-gray-700">Tipo de Solicitud</span>
-            </label>
+          <!-- <div>
+
+            <h2 class="text-sm font-semibold mb-4">Tipo de Solicitud</h2>
             <select formControlName="tipo_solicitud" class="select select-bordered w-full">
               <option value="">Seleccione</option>
               <option value="Demanda">Demanda</option>
               <option value="Escrito">Escrito</option>
               <option value="Anexo">Anexo</option>
             </select>
-          </div>
+          </div> -->
 
           <!-- Descripción -->
           <div>
-            <label class="label">
+            <!-- <label class="label">
               <span class="label-text font-semibold text-gray-700">Descripción</span>
-            </label>
+            </label> -->
+            <h2 class="text-sm font-semibold mb-4">Descripción</h2>
             <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
               placeholder="Describa brevemente su solicitud..." rows="3"></textarea>
           </div>
 
-          <!-- Expediente -->
-          <!-- <div>
-            <label class="label">
-              <span class="label-text font-semibold text-gray-700">Expediente (opcional)</span>
-            </label>
-            <input formControlName="id_expediente" type="text" placeholder="Ingrese número o nombre del expediente"
-              class="input input-bordered w-full" />
-          </div> -->
-
           <!-- Archivos -->
           <div>
-            <label class="label">
+            <!-- <label class="label">
               <span class="label-text font-semibold text-gray-700">Adjuntar archivos (opcional)</span>
-            </label>
+            </label> -->
+            <h2 class="text-sm font-semibold mb-4">Adjuntar archivos </h2>
             <input type="file" class="file-input file-input-bordered w-full" multiple
               (change)="onFileSelected($event)" />
             <!-- <p *ngIf="archivosSeleccionados?.length" class="text-xs text-gray-500 mt-2">
               {{ archivosSeleccionados.length }} archivo(s) seleccionado(s)
             </p> -->
           </div>
+
+          <label class="label">
+            <span class="label-text font-semibold text-xl">Datos del Usuario</span>
+          </label>
+
+
+          <!-- Nombres y Apellidos -->
+          <h2 class="text-sm font-semibold mb-4">Nombres y Apellidos</h2>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full" />
+            <input type="text" formControlName="apellidos" placeholder="Apellidos"
+              class="input input-bordered w-full " />
+          </div>
+
+          <!-- Correo y Contraseña-->
+          <h2 class="text-sm font-semibold mb-4">Correo</h2>
+          <div class="form-control mb-4 ">
+            <input type="text" formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
+          </div>
+
+          <h2 class="text-sm font-semibold mb-4">Contreaseña</h2>
+          <div class="form-control mb-4 ">
+            <input type="password" formControlName="password" placeholder="Contraseña"
+              class="input input-bordered w-full " />
+          </div>
+
+          <!-- DNI/RUC y Telefono -->
+          <h2 class="text-sm font-semibold mb-4">DNI/RUC y Teléfono</h2>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <input type="text" formControlName="documento_identidad" placeholder="DNI / RUC"
+              class="input input-bordered w-full " />
+            <input type="text" formControlName="telefono" placeholder="Teléfono" class="input input-bordered w-full" />
+
+          </div>
+
 
           <!-- Botón Enviar -->
           <div class="flex justify-center pt-2">

@@ -82,6 +82,15 @@ export class UsuarioService {
   }
 
   /**
+   * Obtener admins
+   */
+  getAdmins(): Observable<any[]> {
+    return this.http
+      .get<any[]>(`${this.url}/admins`, this.getAuthHeaders())
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
    * Crear usuario
    */
   crearUsuario(data: any): Observable<any> {

@@ -147,7 +147,7 @@
           </label>
           <select formControlName="rol" class="select select-bordered w-full">
             <option value="" disabled selected>Selecciona un rol</option>
-            <option value="cliente">Cliente</option>
+            <option value="admin">Admin</option>
             <!-- <option value="arbitro">Árbitro</option> -->
             <option value="secretaria">Secretaria</option>
           </select>
@@ -271,9 +271,35 @@
             <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
           </div>
         </div>
-
         }
 
+        <!-- ADMIN -->
+        @if (formUsuario.get('rol')?.value === 'admin') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <!-- <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
+              class="input input-bordered w-full" />
+          </div> -->
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
 
         <!-- Footer Buttons -->
         <div class="modal-action">

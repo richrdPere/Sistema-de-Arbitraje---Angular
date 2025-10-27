@@ -15,12 +15,19 @@ export class MesaPartesComponent {
   file: File | null = null;
   enviado = false;
   respuesta: any;
+  mensajeExito: string = '';
+  mensajeError: string = '';
 
   constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService) {
     this.formTramiteMPV = this.fb.group({
+      nombre: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      documento_identidad: ['', Validators.required],
       tipo_solicitud: ['', Validators.required],
       descripcion: ['', Validators.required],
-      // id_expediente: ['']
+      codigo: ['', Validators.required] // viene desde el sistema
     });
   }
 
@@ -31,15 +38,41 @@ export class MesaPartesComponent {
 
   enviar() {
     if (this.formTramiteMPV.invalid) return this.formTramiteMPV.markAllAsTouched();
+
+    if (this.formTramiteMPV.invalid || !this.file) {
+      this.mensajeError = 'Por favor, completa todos los campos y adjunta un archivo.';
+      return;
+    }
+
     const fd = new FormData();
-    fd.append('tipo_solicitud', this.formTramiteMPV.value.tipo_solicitud);
-    fd.append('descripcion', this.formTramiteMPV.value.descripcion);
-    // if (this.formTramiteMPV.value.id_expediente) fd.append('id_expediente', this.formTramiteMPV.value.id_expediente);
+    Object.entries(this.formTramiteMPV.value).forEach(([key, value]) => {
+      fd.append(key, value as string);
+    });
     if (this.file) fd.append('file', this.file, this.file.name);
+    // fd.append('archivo', this.file!);
+
+    // fd.append('tipo_solicitud', this.formTramiteMPV.value.tipo_solicitud);
+    // fd.append('descripcion', this.formTramiteMPV.value.descripcion);
+
+    this.enviado = true;
+
+
 
     this.tramiteService.registrarTramite(fd).subscribe({
-      next: (res) => { this.enviado = true; this.respuesta = res; },
-      error: (err) => alert(err?.error?.message || 'Error')
+      next: (response) => {
+        this.enviado = false;
+        this.mensajeExito = ` ${response.message}`;
+        console.log('Trámite registrado:', response.tramite);
+        this.formTramiteMPV.reset();
+        this.file = null;
+      },
+      error: (err) => {
+        this.enviado = false;
+        this.mensajeError = ' Error al registrar la solicitud.';
+        console.error(err);
+      }
+      // next: (res) => { this.enviado = true; this.respuesta = res; },
+      // error: (err) => alert(err?.error?.message || 'Error')
     });
   }
 

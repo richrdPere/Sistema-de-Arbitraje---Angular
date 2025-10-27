@@ -8,7 +8,7 @@ import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 
 @Component({
   selector: 'app-consulta-expedientes',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './consulta_expedientes.component.html',
 })
 export class ConsultaExpedientesComponent {
