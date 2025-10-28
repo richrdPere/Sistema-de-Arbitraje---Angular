@@ -22,10 +22,10 @@
         <!-- Formulario -->
         <div class="card bg-base-200 shadow-xl">
           <div class="card-body">
-            <h2 class="card-title text-info">Envíanos un mensaje</h2>
+            <h2 class="card-title text-info"><i class="fa-solid fa-envelope text-info"></i>Envíanos un mensaje</h2>
 
             <!-- Formulario Angular -->
-            <form class="space-y-4" (ngSubmit)="enviarFormulario()" >
+            <form class="space-y-4" (ngSubmit)="enviarFormulario()">
               <!-- Nombre -->
               <div>
                 <label class="label">
@@ -104,45 +104,87 @@
         </div>
 
         <!-- Información de contacto -->
-        <div class="card bg-base-200 shadow-xl">
-          <div class="card-body">
-            <h2 class="card-title text-info">Información de contacto</h2>
-            <p class="text-base-content">
+        <div class="card bg-base-200 shadow-xl rounded-2xl">
+          <div class="card-body space-y-6">
+
+            <!-- Título -->
+            <h2 class="card-title text-info"> <i class="fa-solid fa-address-book text-info"></i>Información de contacto
+            </h2>
+            <p class="text-base-content leading-relaxed">
               Si prefieres, puedes comunicarte directamente con nosotros a través de los siguientes medios:
             </p>
 
-            <div class="card-body mt-4 space-y-3">
-              <!-- Teléfono -->
-              <div class="flex items-center space-x-3">
-                <span class="material-icons text-primary">Teléfono:</span>
-                <span class="text-base-content">+51 987 654 321</span>
-              </div>
-
-              <!-- Correo -->
-              <div class="flex items-center space-x-3">
-                <span class="material-icons text-primary">Email:</span>
-                <span class="text-base-content">contacto&#64;firmalegal.com</span>
-              </div>
-
-              <!-- Dirección -->
-              <div class="flex items-center space-x-3">
-                <span class="material-icons text-primary">Dirección:</span>
-                <span class="text-base-content">Av. Los Andes 123, Cusco, Perú</span>
+            <!-- Teléfonos -->
+            <div>
+              <h3 class="text-lg font-semibold text-info mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-phone"></i>
+                Teléfonos:
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-base-100 rounded-full shadow-sm text-sm text-base-content">929 100 020</span>
+                <span class="px-3 py-1 bg-base-100 rounded-full shadow-sm text-sm text-base-content">922 060 994</span>
+                <span class="px-3 py-1 bg-base-100 rounded-full shadow-sm text-sm text-base-content">922 061 234</span>
+                <!-- Teléfono más importante -->
+                <span class="px-3 py-1 bg-info text-black rounded-full shadow-md text-sm font-medium">
+                  Central Teléfonica: 948 272 454
+                </span>
               </div>
             </div>
 
+            <!-- Correo -->
+            <div>
+              <h3 class="text-lg font-semibold text-info mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-envelope"></i>
+                Correo:
+              </h3>
+              <p class="text-base-content text-sm md:text-base">mesadepartes&#64;firmalegalordonezterrazas.com</p>
+            </div>
+
+            <!-- Dirección -->
+            <div>
+              <h3 class="text-lg font-semibold text-info mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot"></i>
+                Dirección:
+              </h3>
+              <p class="text-base-content text-sm md:text-base leading-relaxed">
+                Huachancay S/N - distrito de Pucyura, provincia de Anta, departamento del Cusco
+              </p>
+            </div>
+
+
+            <!-- <div class="card-body mt-4 space-y-3">
+
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Teléfono:</span>
+                <span class="text-base-content">929 100 020, 922 060 994, 922 061 234, 948 272 454</span>
+              </div>
+
+
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Email:</span>
+                <span class="text-base-content">mesa_partes&#64;firmalegal.com</span>
+              </div>
+
+
+              <div class="flex items-center space-x-3">
+                <span class="material-icons text-primary">Dirección:</span>
+                <span class="text-base-content">Huachancay S/N - distrito de Pucyura, provincia de Anta, departamento
+                  del Cusco</span>
+              </div>
+            </div> -->
+
             <!-- Redes sociales -->
             <div class="mt-6 flex space-x-4 text-black">
-              <button class="btn btn-circle btn-outline btn-primary">
+              <button class="btn btn-circle btn-outline btn-info">
                 <i class="fa-brands fa-facebook-f"></i>
               </button>
-              <button class="btn btn-circle btn-outline btn-primary">
+              <button class="btn btn-circle btn-outline btn-info">
                 <i class="fa-brands fa-x-twitter"></i>
               </button>
-              <button class="btn btn-circle btn-outline btn-primary">
+              <!-- <button class="btn btn-circle btn-outline btn-info">
                 <i class="fa-brands fa-instagram"></i>
-              </button>
-              <button class="btn btn-circle btn-outline btn-primary">
+              </button> -->
+              <button class="btn btn-circle btn-outline btn-info">
                 <i class="fa-brands fa-linkedin-in"></i>
               </button>
             </div>

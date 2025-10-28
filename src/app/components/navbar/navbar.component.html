@@ -9,7 +9,6 @@
         <!-- <img src="assets/logo_firma.svg" alt="Logo Firma" class="w-full h-[80px] object-cover " /> -->
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 121.33" class="w-auto h-[75px] text-primary">
-
           <!-- paths -->
           <path fill="currentColor"
             d="M20.11,74.11l47-71.61C83,26.51,98.7,50.12,114.64,74.11Zm8.41-3.9h77.63L94,51.85c-17.89,18.28-35.65,18.06-53.36-.1C36.56,57.94,32.68,63.85,28.52,70.21ZM45.17,44.8l.38.44C59.67,32.62,74,32,88.62,44.75l.19-.66L67.08,11.38Zm31.92,5.59a10,10,0,1,0-9.82,10.06A10,10,0,0,0,77.09,50.39Zm1.57,7.51.6.6q4.42-3.33,8.84-6.67c1-.73.61-1.44-.16-2.07-2.28-1.86-4.56-3.73-6.88-5.55a11.81,11.81,0,0,0-1.83-1C81.47,48.39,81.32,53.17,78.66,57.9ZM55.13,43.81l-.61-.41-9.27,7.5L54.81,58l.58-.43A14.91,14.91,0,0,1,55.13,43.81Z"
@@ -42,30 +41,37 @@
 
     <!-- Menú de navegación (visible en desktop) -->
     <!-- Menú de navegación -->
-    <nav class="flex md:flex justify-center">
+    <!-- <nav class="flex md:flex justify-center">
       <ul class="menu menu-horizontal px-2 flex flex-row justify-center gap-2">
 
-        <!-- Iteramos sobre la lista de enlaces -->
         @for (link of navbarLinks; track $index) {
         <li>
-          <!-- Si es un botón -->
-          @if (link.type === 'button') {
-          <button [class]="link.buttonStyle">
-            <a [routerLink]="link.path"
-              class="flex items-center rounded-lg text-sm font-medium hover:text-white hover:bg-info transition"
-              routerLinkActive="bg-info text-base-100" [routerLinkActiveOptions]="{ exact: true }">
+          @if (link.children) {
+          <details class="dropdown">
+            <summary
+              class="cursor-pointer px-3 py-2 rounded-lg text-sm font-medium hover:bg-info hover:text-white transition">
               {{ link.label }}
-            </a>
-          </button>
+            </summary>
+            <ul class="p-2 bg-base-100 shadow-lg rounded-lg z-[1] w-52 mt-2 space-y-1 text-sm">
+              @for (child of link.children; track $index) {
+              <li>
+                <a [routerLink]="child.path" routerLinkActive="bg-info text-white"
+                  class="block px-3 py-2 rounded-md hover:bg-info hover:text-white transition">
+                  {{ child.label }}
+                </a>
+              </li>
+              }
+            </ul>
+          </details>
           }
-          <!-- Si es un enlace normal -->
+
           @else {
           <a [routerLink]="link.path"
             class="flex flex-col items-start px-3 py-2 group rounded-lg text-sm font-medium hover:text-white hover:bg-primary transition"
             routerLinkActive="{{ link.activeClass || 'bg-info text-base-100' }}"
             [routerLinkActiveOptions]="{ exact: true }">
             {{ link.label }}
-            <!-- <div class="bg-[#ffff00] h-[2px] w-0 group-hover:w-full transition-all duration-500"></div> -->
+
           </a>
 
           }
@@ -73,18 +79,106 @@
         }
 
       </ul>
+    </nav> -->
+    <!-- MENÚ DE NAVEGACIÓN (Desktop) -->
+    <nav class="flex md:flex justify-center">
+      <ul class="menu menu-horizontal px-2 flex flex-row justify-center gap-2">
+        @for (link of navbarLinks; track $index) {
+        <li class="relative">
+          <!-- Dropdown -->
+          @if (link.children) {
+          <div class="dropdown dropdown-hover">
+            <label tabindex="0"
+              class="cursor-pointer px-3 py-2 rounded-lg text-sm font-medium hover:bg-info hover:text-white transition">
+              {{ link.label }}
+            </label>
+            <ul tabindex="0"
+              class="dropdown-content p-2 bg-base-100 shadow-lg rounded-lg z-[1] w-52 mt-2 space-y-1 text-sm">
+              @for (child of link.children; track $index) {
+              <li>
+                <a [routerLink]="child.path" routerLinkActive="bg-info text-white"
+                  class="block px-3 py-2 rounded-md hover:bg-info hover:text-white transition">
+                  {{ child.label }}
+                </a>
+              </li>
+              }
+            </ul>
+          </div>
+          }
+          <!-- Enlace normal -->
+          @else {
+          <a [routerLink]="link.path"
+            class="flex items-center px-3 py-2 rounded-lg text-sm font-medium hover:bg-info hover:text-white transition"
+            routerLinkActive="{{ link.activeClass || 'bg-info text-base-100' }}"
+            [routerLinkActiveOptions]="{ exact: true }">
+            {{ link.label }}
+          </a>
+          }
+        </li>
+        }
+      </ul>
     </nav>
+
+    <!-- BOTONES (Tema + Móvil) -->
+    <div class="flex items-center gap-2">
+      <!-- Cambiar tema -->
+      <button class="btn btn-square btn-ghost" (click)="toggleTheme()">
+        @if (theme === 'light') {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m8.66-12.34l-.71.71M5.05 18.95l-.71.71M21 12h-1M4 12H3m15.66 6.34l-.71-.71M6.34 6.34l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+          </svg>
+        }
+      </button>
+
+      <!-- Menú móvil -->
+      <div class="dropdown dropdown-end md:hidden">
+        <div tabindex="0" role="button" class="btn btn-ghost text-lg">☰</div>
+        <ul tabindex="0"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow space-y-1">
+          @for (link of navbarLinks; track $index) {
+            @if (link.children) {
+              <li tabindex="0">
+                <span class="font-semibold">{{ link.label }}</span>
+                <ul class="pl-4 space-y-1">
+                  @for (child of link.children; track $index) {
+                    <li>
+                      <a [routerLink]="child.path"
+                        class="text-sm hover:bg-info hover:text-white px-2 py-1 rounded-md block transition">
+                        {{ child.label }}
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </li>
+            } @else {
+              <li>
+                <a [routerLink]="link.path"
+                  class="hover:bg-primary hover:text-white rounded-md transition">
+                  {{ link.label }}
+                </a>
+              </li>
+            }
+          }
+        </ul>
+      </div>
+    </div>
+
+
+
 
 
 
     <!-- Barra de búsqueda + botón de tema + menú móvil -->
-    <div class="flex items-center justify-center pb-2 gap-3">
-      <!-- Barra de búsqueda -->
-      <!-- <div class="md:block">
-      <input type="text" placeholder="Buscar" class="input input-bordered w-32 md:w-48" />
-    </div> -->
+    <!-- <div class="flex items-center justify-center pb-2 gap-3">
 
-      <!-- Botón de tema -->
       <button class="btn btn-square btn-ghost" (click)="toggleTheme()">
         @if (theme === 'light') {
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,7 +194,7 @@
 
       </button>
 
-      <!-- Menú hamburguesa (solo visible en móvil) -->
+
       <div class="dropdown dropdown-end md:hidden">
         <div tabindex="0" role="button" class="btn btn-ghost">☰</div>
         <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
@@ -111,7 +205,7 @@
           <li><a routerLink="/contacto" routerLinkActive="active">Contáctanos</a></li>
         </ul>
       </div>
-    </div>
+    </div> -->
   </div>
 
 </header>

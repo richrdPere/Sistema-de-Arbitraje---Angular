@@ -2,11 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 
+interface NavbarChild {
+  label: string;
+  path: string;
+}
 
 interface NavbarLink {
   label: string;       // Texto a mostrar
-  path: string;        // Ruta a navegar
+  path?: string;        // Ruta a navegar
   activeClass?: string; // Clase para cuando la ruta está activa
+  children?: NavbarChild[];
   type?: 'link' | 'button'; // Tipo de enlace
   buttonStyle?: string; // Clases para botones
 }
@@ -24,31 +29,42 @@ export class NavbarComponent implements OnInit {
 
   // Lista dinámica de rutas
   navbarLinks: NavbarLink[] = [
+    // {
+    //   label: 'Inicio',
+    //   path: '/home',
+    //   activeClass: 'bg-info text-base-100'
+    // },
     {
-      label: 'Inicio',
-      path: '/home',
-      activeClass: 'bg-info text-base-100'
+      label: 'Institucional ',
+      activeClass: ' text-base-100',
+      children: [
+        { label: 'Nosotros', path: '/about' },
+        { label: 'Servicios', path: '/servicios' },
+        { label: 'Licencias', path: '/licencia' },
+        { label: 'Laudos', path: '/laudos' },
+        { label: 'Decisiones', path: '/desiciones' },
+      ]
     },
-    {
-      label: 'Nosotros',
-      path: '/about',
-      activeClass: 'bg-info text-base-100'
-    },
-    {
-      label: 'Servicios',
-      path: '/servicios',
-      activeClass: 'bg-info text-base-100'
-    },
-    {
-      label: 'Laudos',
-      path: '/laudos',
-      activeClass: 'bg-info text-base-100'
-    },
-    {
-      label: 'Decisiones',
-      path: '/desiciones',
-      activeClass: 'bg-info text-base-100'
-    },
+    // {
+    //   label: 'Nosotros',
+    //   path: '/about',
+    //   activeClass: 'bg-info text-base-100'
+    // },
+    // {
+    //   label: 'Servicios',
+    //   path: '/servicios',
+    //   activeClass: 'bg-info text-base-100'
+    // },
+    // {
+    //   label: 'Laudos',
+    //   path: '/laudos',
+    //   activeClass: 'bg-info text-base-100'
+    // },
+    // {
+    //   label: 'Decisiones',
+    //   path: '/desiciones',
+    //   activeClass: 'bg-info text-base-100'
+    // },
     {
       label: 'Centro de Arbitraje',
       path: '/arbitraje',
@@ -58,6 +74,11 @@ export class NavbarComponent implements OnInit {
       label: 'Mesa de Partes',
       path: '/ser_mesa_partes',
       activeClass: 'bg-primary text-base-100'
+    },
+    {
+      label: 'JPRD',
+      path: '/jprd',
+      activeClass: 'bg-info text-base-100'
     },
     {
       label: 'Contáctanos',

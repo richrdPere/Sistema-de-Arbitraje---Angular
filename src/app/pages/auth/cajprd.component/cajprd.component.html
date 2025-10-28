@@ -1,4 +1,5 @@
 <section class="relative w-full min-h-screen ">
+
   <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
     <!-- Overlay oscuro -->
     <div class="absolute inset-0 bg-black/40  "></div>
@@ -6,9 +7,8 @@
 
     <!-- Contenido centrado -->
     <div class="relative flex flex-col items-center justify-start min-h-screen px-6 py-8 ">
-      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
-        CENTRO DE ARBITRAJE
-      </h1>
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">JUNTA DE PREVENCIÓN Y RESOLUCIÓN
+        DE DISPUTAS</h1>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Columna izquierda -->
@@ -17,7 +17,7 @@
           <!-- Descripción principal -->
           <div class="bg-white p-6 rounded-2xl shadow-md">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
-              Centro de Arbitraje <span class="text-info">FIRMA LEGAL</span>
+              JPRD <span class="text-info">FIRMA LEGAL</span>
             </h2>
             <p class="text-gray-700 leading-relaxed mb-3">
               Tiene como finalidad principal la resolución eficiente y especializada de controversias entre
@@ -50,40 +50,8 @@
           <!-- documentos.component.html -->
           <div class="bg-white p-6 rounded-2xl shadow-md">
 
-            <!-- Sección de Arbitraje -->
-            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📄 Documentos de Arbitraje</h2>
-            <table class="table w-full mb-8">
-              <tbody class="text-gray-800">
-                @for (file of arbitrajeEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>
-                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | titlecase }}
-                    </a>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-
             <!-- Sección de JPRD -->
-            <!-- <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Documentos de JPRD</h2>
-            <table class="table w-full">
-              <tbody class="text-gray-800">
-                @for (file of jprdEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>
-                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | titlecase }}
-                    </a>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table> -->
-
-            <!-- Sección de JPRDFilesEntries -->
-            <!-- <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Documentos de JPRDFiles</h2>
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Documentos de JPRD</h2>
             <table class="table w-full">
               <tbody class="text-gray-800">
                 @for (file of JPRDFilesEntries; track file[0]) {
@@ -96,61 +64,9 @@
                 </tr>
                 }
               </tbody>
-            </table> -->
-
-            <!-- Sección de JPRDFilesEntries -->
-            <!-- <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Arbitraje Entries</h2>
-            <table class="table w-full">
-              <tbody class="text-gray-800">
-                @for (file of arbitrajeFilesEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>
-                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | titlecase }}
-                    </a>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table> -->
-
+            </table>
           </div>
 
-
-          <!-- Lista de documentos -->
-          <!-- <div class="bg-white p-6 rounded-2xl shadow-md">
-            <table class="table w-full">
-              <tbody class="text-gray-800">
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Reglamento de Arbitraje – Ley N° 30225</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Reglamento de Arbitraje – Ley N° 32069</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Nómina de Árbitros</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Código de Ética</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Requisitos para la incorporación a la nómina de Árbitros</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Tasas Arbitrales</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Recusaciones</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>Sanciones</td>
-                </tr>
-                <tr class="hover:bg-info hover:text-white cursor-pointer">
-                  <td>Laudos</td>
-                </tr>
-              </tbody>
-            </table>
-          </div> -->
         </div>
 
         <!-- Columna derecha -->
@@ -186,6 +102,7 @@
 
 
     </div>
+
 
 
 

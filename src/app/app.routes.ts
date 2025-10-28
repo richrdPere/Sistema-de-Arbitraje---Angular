@@ -32,12 +32,20 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/laudos/laudos.component').then(m => m.LaudosComponent),
       },
       {
+        path: 'licencia',
+        loadComponent: () => import('./pages/auth/licencia/licencia.component').then(m => m.LicenciaComponent),
+      },
+      {
         path: 'desiciones',
         loadComponent: () => import('./pages/auth/desiciones.component/desiciones.component').then(m => m.DesicionesComponent),
       },
       {
         path: 'arbitraje',
         loadComponent: () => import('./pages/auth/arbitraje.component/arbitraje.component').then(m => m.ArbitrajeComponent),
+      },
+      {
+        path: 'jprd',
+        loadComponent: () => import('./pages/auth/cajprd.component/cajprd.component').then(m => m.CajprdComponent),
       },
       {
         path: 'trazabilidad',

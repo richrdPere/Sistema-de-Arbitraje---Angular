@@ -1,30 +1,81 @@
-<section class="py-10 md:px-21 bg-base-300 min-h-screen px-9 rounded-box shadow ">
-  <div class="container bg-base-100 p-10 mx-auto rounded-lg">
-    <!-- Título -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold ">Home</h1>
-      <p class="mt-3 text-lg text-gray-500 dark:text-gray-400">
-        Promovemos la difusión y el estudio del Arbitraje en Contrataciones del Estado y Derecho de la Construcción.
-      </p>
+<div class="relative">
+
+  <!-- Imagen de fondo -->
+  <img src="assets/bg-justicia.jpg" alt="Fondo de justicia" class="absolute inset-0 w-full h-full object-cover z-10" />
+
+  <!-- Capa de color degradado encima -->
+  <div class="absolute inset-0 z-20 bg-gradient-to-r from-gray-800/90 via-gray-900/60 to-transparent"></div>
+
+  <!-- Contenido principal -->
+  <div class="relative py-32 max-w-7xl mx-auto px-8 z-30">
+    <div class="max-w-[400px] text-white">
+      <h1 class="text-6xl font-semibold leading-tight">FIRMA LEGAL <span class="text-info">ORDOÑEZ TERRAZAS</span></h1>
+      <p class="my-6 text-lg italic leading-relaxed">“Toda controversia, derivada o relacionada con el presente acto
+        jurídico, será resuelto
+        mediante arbitraje de derecho"</p>
+      <div class="flex items-center gap-6">
+        <a href="#" class="py-4 px-8 rounded-full bg-[#1d65c1] hover:bg-[#3d7cce] font-semibold text-sm">
+          Contactanos
+        </a>
+        <a href="#" class="flex items-center gap-3 font-medium group">
+          <div class="bg-white p-1 rounded-full">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+              class="text-[#1d65c1] group-hover:text-[#3d7cce] w-8 h-8" role="img">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M14.207 11.293a1 1 0 0 1 0 1.414l-3 3a1 1 0 0 1-1.414-1.414L12.086 12 9.793 9.707a1 1 0 0 1 1.414-1.414l3 3z">
+              </path>
+            </svg>
+          </div>
+          <div class="group-hover:underline underline-offset-8">Más información</div>
+        </a>
+      </div>
     </div>
 
-    <!-- Grid de servicios -->
-     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptatum dicta rerum commodi incidunt quisquam
-        voluptatibus fugit quidem qui earum facilis accusamus quos, aperiam, nostrum excepturi quod libero recusandae
-        eius!\n
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptatum dicta rerum commodi incidunt quisquam
-        voluptatibus fugit quidem qui earum facilis accusamus quos, aperiam, nostrum excepturi quod libero recusandae
-        eius!
+    <div class="absolute bottom-4 text-white text-sm">Firma legal: Ordoñez Terrazas</div>
+  </div>
+
+  <div class="absolute top-0 z-20 opacity-[96%] bg-gradient-to-r from-gray-800 from-40% bg-transparent w-full h-full">
+
+  </div>
+
+
+</div>
+
+
+<!-- Sección de Noticias y Eventos -->
+<section class="relative bg-gray-100 bg-cover bg-center py-16 md:py-20"
+  style="background-image: url('assets/textura-fondo.png')">
+  <!-- Título -->
+  <h2 class="text-center text-3xl md:text-4xl font-light text-gray-800 mb-12">
+    Nuestros <span class="font-bold text-info">Servicios</span>
+  </h2>
+
+  <!-- Contenedor de tarjetas -->
+  <div class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    @for (item of noticiasEventos; track $index) {
+    <div
+      class="bg-white rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition transform p-8 text-center">
+      <!-- Icono -->
+      <div class="bg-gray-300 w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-5">
+        <img [src]="item.icono" [alt]="item.titulo" class="w-10 h-10" />
+      </div>
+
+      <!-- Título -->
+      <h3 class="text-xl font-semibold text-gray-800 mb-2">
+        {{ item.titulo }}
+      </h3>
+
+      <!-- Descripción -->
+      <p class="text-gray-600 text-sm leading-relaxed mb-4">
+        {{ item.descripcion }}
       </p>
 
-    <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-10">
-
-
-
-    </div> -->
+      <!-- Botón -->
+      <a [href]="item.enlace"
+        class="text-info font-medium text-sm border-b border-dotted border-info hover:text-info transition-colors">
+        Ver más
+      </a>
+    </div>
+    }
   </div>
 </section>
-
-<!-- Este es el outlet para que se cargue DetallesServicioComponent -->
-<!-- <router-outlet/> -->
-

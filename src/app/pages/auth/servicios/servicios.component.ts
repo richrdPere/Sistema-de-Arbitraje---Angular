@@ -26,7 +26,7 @@ export class ServiciosComponent {
       title: 'MESA DE PARTES VIRTUALES',
       description: 'Ingresa aquí si deseas presentar solicitudes, contestaciones, escritos y documentos en general',
       route: '/ser_mesa_partes',
-      icon: 'public/assets/icons/paper_pencil.svg'   //fa-solid fa-file-pen o assets/icons/paper_pencil.svg
+      icon: 'assets/icons/paper_pencil.svg'   //fa-solid fa-file-pen o assets/icons/paper_pencil.svg
     },
     {
       title: 'CONSULTA DE EXPEDIENTES',

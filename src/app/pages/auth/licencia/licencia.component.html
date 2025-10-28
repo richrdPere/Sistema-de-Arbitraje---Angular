@@ -1,0 +1,114 @@
+<section class="relative w-full min-h-screen">
+
+  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
+    <!-- Overlay oscuro -->
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <!-- Contenido centrado -->
+    <div class="relative flex flex-col items-center justify-start min-h-screen px-6 py-8">
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">LICENCIAMIENTO</h1>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Columna izquierda -->
+        <div class="md:col-span-2 space-y-6">
+
+          <!-- Descripción principal -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+              LICENCIAMIENTO <span class="text-info">FIRMA LEGAL</span>
+            </h2>
+            <p class="text-gray-700 leading-relaxed mb-3">
+              Tiene como finalidad principal la resolución eficiente y especializada de controversias entre
+              particulares,
+              así como con entidades del Estado, a través de mecanismos alternativos de solución de conflictos,
+              como el <span class="font-semibold">arbitraje</span> y las <span class="font-semibold">juntas de
+                resolución de disputas</span>.
+            </p>
+            <p class="text-gray-700 leading-relaxed mb-3">
+              Contamos con un <span class="font-semibold">Registro de Árbitros y Adjudicadores</span> conformado por
+              profesionales de reconocida trayectoria y alta especialización en diversas ramas del derecho,
+              quienes garantizan imparcialidad, competencia técnica y solvencia ética en cada proceso.
+            </p>
+            <p class="text-gray-700 leading-relaxed mb-3">
+              Nuestros procesos arbitrales se desarrollan de forma eficaz y profesional, con una duración estimada
+              entre <span class="font-semibold">seis meses y un año</span> para la emisión del laudo.
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+              Los honorarios del tribunal arbitral y de la secretaría arbitral son altamente competitivos,
+              tomando como referencia la <span class="font-semibold">Tabla de Honorarios del OSCE</span>, garantizando
+              transparencia y accesibilidad económica.
+            </p>
+          </div>
+
+          <!-- ====================== DOCUMENTOS ====================== -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Documentos Institucionales</h2>
+
+            <!-- Documentos varios -->
+            <h3 class="text-lg font-semibold text-info mb-2">Otros Documentos</h3>
+            <table class="table w-full mb-6">
+              <tbody class="text-gray-800">
+                @for (file of otrosDocumentosEntries; track file[0]) {
+                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
+                  <td>
+                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
+                      {{ file[0] | titlecase }}
+                    </a>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+
+            <!-- Documentos de árbitros -->
+            <h3 class="text-lg font-semibold text-info mb-2">Documentos de Árbitros</h3>
+            <table class="table w-full">
+              <tbody class="text-gray-800">
+                @for (file of arbitrosEntries; track file[0]) {
+                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
+                  <td>
+                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
+                      {{ file[0] | titlecase }}
+                    </a>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="space-y-6">
+          <!-- Bloque institucional -->
+          <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-md">
+            <p class="italic leading-relaxed">
+              Somos una institución encargada de la administración y conducción de Arbitrajes y Juntas de
+              Prevención y Resolución de Disputas, garantizando la eficiencia y eficacia en ambos procedimientos.
+            </p>
+            <p class="mt-4 text-right font-semibold">FIRMA LEGAL SAC</p>
+          </div>
+
+          <!-- Calculadora de costos -->
+          <div class="bg-yellow-100 p-6 rounded-2xl shadow-md">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">Calculadora de Costos</h3>
+            <p class="text-gray-700 text-sm mb-4">
+              Nuestras calculadoras determinan automáticamente las tasas administrativas, los honorarios del árbitro
+              único o del tribunal arbitral, y presentan un desglose claro del total a pagar.
+            </p>
+
+            <div class="flex flex-col gap-3">
+              <button class="btn btn-info btn-outline w-full">
+                CALCULAR COSTOS DE ARBITRAJE
+              </button>
+              <button class="btn btn-info btn-outline w-full">
+                CALCULAR COSTOS DE JPRD
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

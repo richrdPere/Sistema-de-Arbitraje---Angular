@@ -67,15 +67,15 @@
     <table class="table w-full">
       <thead class="bg-gray-100 text-base-100">
         <tr>
-          <th class="py-2 px-4 border">#</th>
-          <th class="py-2 px-4 border">N° Expediente</th>
-          <th class="py-2 px-4 border">Tipo</th>
-          <th class="py-2 px-4 border">Estado</th>
-          <th class="py-2 px-4 border">Etapa</th>
-          <th class="py-2 px-4 border">Solicitante</th>
-          <th class="py-2 px-4 border">Correo</th>
-          <th class="py-2 px-4 border">Condición</th>
-          <th class="py-2 px-4 border"></th>
+          <th class="py-2 px-4 ">#</th>
+          <th class="py-2 px-4 ">N° Expediente</th>
+          <th class="py-2 px-4 ">Tipo</th>
+          <th class="py-2 px-4 ">Estado</th>
+          <th class="py-2 px-4 ">Etapa</th>
+          <th class="py-2 px-4 ">Solicitante</th>
+          <th class="py-2 px-4 ">Correo</th>
+          <th class="py-2 px-4 ">Condición</th>
+          <th class="py-2 px-4 "></th>
         </tr>
       </thead>
       <tbody>
@@ -102,19 +102,19 @@
               Ver archivo
             </a>
           </td> -->
-          <td class="py-2 px-4 border">{{ $index + 1 }}</td>
-          <td class="py-2 px-4 border font-medium text-blue-600">{{ solicitud.numero_expediente }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.tipo }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.estado }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.etapa_procesal }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.solicitante }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.correo }}</td>
-          <td class="py-2 px-4 border">{{ solicitud.condicion }}</td>
+          <td class="py-2 px-4 ">{{ $index + 1 }}</td>
+          <td class="py-2 px-4  font-medium text-blue-600">{{ solicitud.numero_expediente }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.tipo }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.estado }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.etapa_procesal }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.solicitante }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.correo }}</td>
+          <td class="py-2 px-4 ">{{ solicitud.condicion }}</td>
           <!-- <td class="py-2 px-4 border text-center text-sm text-blue-700 cursor-pointer hover:underline">
             {{ solicitud.accion }}
           </td> -->
 
-          <td class="relative border">
+          <td class="relative ">
             <div class="dropdown dropdown-end inline-block">
               <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -125,8 +125,7 @@
               </button>
 
 
-              <ul tabindex="0"
-                class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[100]"
+              <ul tabindex="0" class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52  mt-2 z-[100]"
                 [class.hidden]="menuAbierto == $index">
                 <li class="menu-title px-4 py-1 text-xs text-gray-400">
                   Acciones
