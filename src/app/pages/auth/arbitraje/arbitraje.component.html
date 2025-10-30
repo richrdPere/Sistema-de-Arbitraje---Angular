@@ -1,25 +1,25 @@
 <section class="relative w-full min-h-screen ">
-
   <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
     <!-- Overlay oscuro -->
     <div class="absolute inset-0 bg-black/40  "></div>
 
 
     <!-- Contenido centrado -->
-    <div class="relative flex flex-col items-center justify-start min-h-screen px-6 py-8 ">
-      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">JUNTA DE PREVENCIÓN Y RESOLUCIÓN
-        DE DISPUTAS</h1>
+    <div class="relative flex flex-col items-center justify-start min-h-screen px-40 py-10 ">
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
+        CENTRO DE ARBITRAJE
+      </h1>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Columna izquierda -->
         <div class="md:col-span-2 space-y-6">
 
           <!-- Descripción principal -->
-          <div class="bg-white p-6 rounded-2xl shadow-md">
+          <div class="bg-white p-6 rounded-2xl shadow-md space-y-7 text-justify">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
-              JPRD <span class="text-info">FIRMA LEGAL</span>
+              Centro de Arbitraje <span class="text-info">FIRMA LEGAL</span>
             </h2>
-            <p class="text-gray-700 leading-relaxed mb-3">
+            <p class="text-gray-700 leading-relaxed mb-3 text-lg">
               Tiene como finalidad principal la resolución eficiente y especializada de controversias entre
               particulares,
               así como con entidades del Estado, a través de mecanismos alternativos de solución de conflictos,
@@ -28,18 +28,18 @@
                 de
                 disputas</span>.
             </p>
-            <p class="text-gray-700 leading-relaxed mb-3">
+            <p class="text-gray-700 leading-relaxed mb-3 text-lg">
               Contamos con un <span class="font-semibold">Registro de Árbitros y Adjudicadores</span> conformado por
               profesionales de reconocida trayectoria y alta especialización en diversas ramas del derecho,
               quienes garantizan imparcialidad, competencia técnica y solvencia ética en cada proceso.
             </p>
-            <p class="text-gray-700 leading-relaxed mb-3">
+            <p class="text-gray-700 leading-relaxed mb-3 text-lg">
               Nuestros procesos arbitrales se desarrollan de forma eficaz y profesional, con una duración estimada
               entre <span class="font-semibold">seis meses y un año</span> para la emisión del laudo, conforme a lo
               dispuesto
               en nuestro Reglamento Institucional.
             </p>
-            <p class="text-gray-700 leading-relaxed">
+            <p class="text-gray-700 leading-relaxed text-lg">
               Los honorarios del tribunal arbitral y de la secretaría arbitral son altamente competitivos,
               tomando como referencia la <span class="font-semibold">Tabla de Honorarios del Organismo Supervisor
                 de las Contrataciones del Estado (OECE)</span>, lo que garantiza transparencia y accesibilidad
@@ -50,30 +50,30 @@
           <!-- documentos.component.html -->
           <div class="bg-white p-6 rounded-2xl shadow-md">
 
-            <!-- Sección de JPRD -->
-            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Documentos de JPRD</h2>
-            <table class="table w-full">
+            <!-- Sección de Arbitraje -->
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📄 Documentos de Arbitraje</h2>
+            <table class="table w-full mb-8">
               <tbody class="text-gray-800">
-                @for (file of JPRDFilesEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
+                @for (file of arbitrajeEntries; track file[0]) {
+                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200 text-xl">
                   <td>
                     <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | titlecase }}
+                      {{ file[0] | separarPalabras }}
                     </a>
                   </td>
                 </tr>
                 }
               </tbody>
             </table>
-          </div>
 
+          </div>
         </div>
 
         <!-- Columna derecha -->
         <div class="space-y-6">
           <!-- Bloque institucional -->
           <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-md">
-            <p class="italic leading-relaxed">
+            <p class="italic leading-relaxed text-justify">
               Somos una institución encargada de la administración y conducción de Arbitrajes y Juntas de
               Prevención y Resolución de Disputas, garantizando la eficiencia y eficacia en ambos procedimientos.
             </p>
@@ -83,18 +83,21 @@
           <!-- Calculadora de costos -->
           <div class="bg-yellow-100 p-6 rounded-2xl shadow-md">
             <h3 class="text-lg font-bold text-gray-800 mb-3">Calculadora de Costos</h3>
-            <p class="text-gray-700 text-sm mb-4">
+            <p class="text-gray-700 text-sm mb-4 text-justify">
               Nuestras calculadoras determinan automáticamente las tasas administrativas, los honorarios del
               árbitro único o del tribunal arbitral, y presentan un desglose claro del total a pagar.
             </p>
 
             <div class="flex flex-col gap-3">
-              <button class="btn btn-info btn-outline w-full">
+              <button class="btn btn-info btn-outline w-full" routerLink="/ser_calculadora">
+                CALCULADORA
+              </button>
+              <!-- <button class="btn btn-info btn-outline w-full">
                 CALCULAR COSTOS DE ARBITRAJE
-              </button>
-              <button class="btn btn-info btn-outline w-full">
+              </button> -->
+              <!-- <button class="btn btn-info btn-outline w-full">
                 CALCULAR COSTOS DE JPRD
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
@@ -102,7 +105,6 @@
 
 
     </div>
-
 
 
 

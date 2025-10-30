@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
-interface Laudo {
+
+interface Desiciones {
   id: number;
   contratista: string;
   entidad: string;
@@ -10,28 +11,26 @@ interface Laudo {
 
 
 @Component({
-  selector: 'app-laudos',
+  selector: 'app-desiciones.component',
   imports: [],
-  templateUrl: './laudos.component.html',
+  templateUrl: './desiciones.component.html',
 })
-export class LaudosComponent implements OnInit {
+export class DesicionesComponent {
 
   totalLaudos = 120; // Número total (puede venir del backend)
   laudosPorPagina = 10;
   paginaActual = 1;
-  laudos: Laudo[] = [];
+  desiciones: Desiciones[] = [];
+
 
   constructor() { }
 
   ngOnInit(): void {
-    this.cargarLaudosDePrueba();
+    this.cargarDesicionesDePrueba();
   }
 
-  // ===========================================================
-  //  Datos de ejemplo (puedes reemplazarlos luego por tu API)
-  // ===========================================================
-  cargarLaudosDePrueba() {
-    this.laudos = [
+  cargarDesicionesDePrueba() {
+    this.desiciones = [
       // {
       //   id: 1,
       //   contratista: '',
@@ -112,6 +111,8 @@ export class LaudosComponent implements OnInit {
       //   enlaceLaudo: 'https://example.com/laudo10.pdf',
       // },
     ];
+
+
   }
 
   // ===========================================================
@@ -124,9 +125,8 @@ export class LaudosComponent implements OnInit {
     // this.laudoService.obtenerPorPagina(pagina).subscribe(...)
   }
 
-  descargarLaudo(enlace: string) {
+  descargarDesicion(enlace: string) {
     window.open(enlace, '_blank');
   }
-
 
 }

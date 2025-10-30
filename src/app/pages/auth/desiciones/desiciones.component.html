@@ -9,14 +9,15 @@
     <div class="relative flex flex-col items-center justify-start min-h-screen px-6 py-8">
 
       <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
-        BANCO DE LAUDOS
+        BANCO DE DECISIONES
       </h1>
+
 
       <div class="p-6 bg-base-100 rounded-xl shadow-lg  flex flex-col">
         <!-- Encabezado -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
           <h2 class="text-lg font-semibold text-base-50">
-            Nº DE LAUDOS: <span class="text-info font-bold">{{laudos.length}}</span>
+            Nº DE DECISIONES: <span class="text-info font-bold">{{desiciones.length}}</span>
           </h2>
         </div>
 
@@ -29,12 +30,12 @@
                 <th class="py-3 px-4 text-left">CONTRATISTA</th>
                 <th class="py-3 px-4 text-left">ENTIDAD</th>
                 <th class="py-3 px-4 text-left">CONTROVERSIA</th>
-                <th class="py-3 px-4 text-center">LAUDO</th>
+                <th class="py-3 px-4 text-center">DECICIONES</th>
               </tr>
             </thead>
             <tbody>
-              @if (laudos.length > 0) {
-              @for (item of laudos; track $index) {
+              @if (desiciones.length > 0) {
+              @for (item of desiciones; track $index) {
               <tr class="border-b hover:bg-base-200 transition">
                 <td class="py-2 px-4 font-medium">{{ item.id }}</td>
                 <td class="py-2 px-4 uppercase">{{ item.contratista }}</td>
@@ -54,7 +55,7 @@
               } @else {
               <tr>
                 <td colspan="5" class="text-center py-10 text-base-50  text-md">
-                  No se encontraron registros de laudos.
+                  No se encontraron registros de desiciones.
                 </td>
               </tr>
               }
@@ -66,7 +67,7 @@
         <!-- Paginación -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-4 text-sm">
           <p class="text-gray-600 mb-2 md:mb-0">
-            Mostrando <span class="font-semibold">1</span> de <span class="font-semibold">{{laudos.length}}</span>
+            Mostrando <span class="font-semibold">1</span> de <span class="font-semibold">{{desiciones.length}}</span>
             resultados
           </p>
 

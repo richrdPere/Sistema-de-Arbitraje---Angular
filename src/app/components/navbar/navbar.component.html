@@ -1,6 +1,6 @@
 <!-- Header (Navbar DaisyUI) -->
 <!-- <header class="navbar bg-base-100 shadow-sm px-4 fixed top-0 left-0 w-full z-50 transition-all duration-300">-->
-<header class="bg-base-100 shadow-sm px-4">
+<header class="bg-base-100 shadow-sm px-4 ">
 
   <div class="navbar flex justify-between max-w-7xl mx-auto text-sm">
     <!-- Logo -->
@@ -39,59 +39,28 @@
 
     </div>
 
-    <!-- Menú de navegación (visible en desktop) -->
-    <!-- Menú de navegación -->
-    <!-- <nav class="flex md:flex justify-center">
-      <ul class="menu menu-horizontal px-2 flex flex-row justify-center gap-2">
-
-        @for (link of navbarLinks; track $index) {
-        <li>
-          @if (link.children) {
-          <details class="dropdown">
-            <summary
-              class="cursor-pointer px-3 py-2 rounded-lg text-sm font-medium hover:bg-info hover:text-white transition">
-              {{ link.label }}
-            </summary>
-            <ul class="p-2 bg-base-100 shadow-lg rounded-lg z-[1] w-52 mt-2 space-y-1 text-sm">
-              @for (child of link.children; track $index) {
-              <li>
-                <a [routerLink]="child.path" routerLinkActive="bg-info text-white"
-                  class="block px-3 py-2 rounded-md hover:bg-info hover:text-white transition">
-                  {{ child.label }}
-                </a>
-              </li>
-              }
-            </ul>
-          </details>
-          }
-
-          @else {
-          <a [routerLink]="link.path"
-            class="flex flex-col items-start px-3 py-2 group rounded-lg text-sm font-medium hover:text-white hover:bg-primary transition"
-            routerLinkActive="{{ link.activeClass || 'bg-info text-base-100' }}"
-            [routerLinkActiveOptions]="{ exact: true }">
-            {{ link.label }}
-
-          </a>
-
-          }
-        </li>
-        }
-
-      </ul>
-    </nav> -->
     <!-- MENÚ DE NAVEGACIÓN (Desktop) -->
-    <nav class="flex md:flex justify-center">
+    <nav class=" md:block max-sm:hidden justify-center items-center ">
       <ul class="menu menu-horizontal px-2 flex flex-row justify-center gap-2">
         @for (link of navbarLinks; track $index) {
         <li class="relative">
           <!-- Dropdown -->
           @if (link.children) {
           <div class="dropdown dropdown-hover">
-            <label tabindex="0"
+            <!-- <label tabindex="0"
               class="cursor-pointer px-3 py-2 rounded-lg text-sm font-medium hover:bg-info hover:text-white transition">
               {{ link.label }}
-            </label>
+            </label> -->
+            <a tabindex="0" [routerLink]="link.path"
+              routerLinkActive="{{ link.activeClass || 'bg-info text-base-100' }}"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="cursor-pointer rounded-lg text-sm font-medium hover:bg-info hover:text-white transition flex items-center gap-1">
+              {{ link.label }}
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
             <ul tabindex="0"
               class="dropdown-content p-2 bg-base-100 shadow-lg rounded-lg z-[1] w-52 mt-2 space-y-1 text-sm">
               @for (child of link.children; track $index) {
@@ -124,17 +93,15 @@
       <!-- Cambiar tema -->
       <button class="btn btn-square btn-ghost" (click)="toggleTheme()">
         @if (theme === 'light') {
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 3v1m0 16v1m8.66-12.34l-.71.71M5.05 18.95l-.71.71M21 12h-1M4 12H3m15.66 6.34l-.71-.71M6.34 6.34l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 3v1m0 16v1m8.66-12.34l-.71.71M5.05 18.95l-.71.71M21 12h-1M4 12H3m15.66 6.34l-.71-.71M6.34 6.34l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
         } @else {
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
-          </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+        </svg>
         }
       </button>
 
@@ -144,28 +111,27 @@
         <ul tabindex="0"
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow space-y-1">
           @for (link of navbarLinks; track $index) {
-            @if (link.children) {
-              <li tabindex="0">
-                <span class="font-semibold">{{ link.label }}</span>
-                <ul class="pl-4 space-y-1">
-                  @for (child of link.children; track $index) {
-                    <li>
-                      <a [routerLink]="child.path"
-                        class="text-sm hover:bg-info hover:text-white px-2 py-1 rounded-md block transition">
-                        {{ child.label }}
-                      </a>
-                    </li>
-                  }
-                </ul>
-              </li>
-            } @else {
+          @if (link.children) {
+          <li tabindex="0">
+            <span class="font-semibold">{{ link.label }}</span>
+            <ul class="pl-4 space-y-1">
+              @for (child of link.children; track $index) {
               <li>
-                <a [routerLink]="link.path"
-                  class="hover:bg-primary hover:text-white rounded-md transition">
-                  {{ link.label }}
+                <a [routerLink]="child.path"
+                  class="text-sm hover:bg-info hover:text-white px-2 py-1 rounded-md block transition">
+                  {{ child.label }}
                 </a>
               </li>
-            }
+              }
+            </ul>
+          </li>
+          } @else {
+          <li>
+            <a [routerLink]="link.path" class="hover:bg-primary hover:text-white rounded-md transition">
+              {{ link.label }}
+            </a>
+          </li>
+          }
           }
         </ul>
       </div>

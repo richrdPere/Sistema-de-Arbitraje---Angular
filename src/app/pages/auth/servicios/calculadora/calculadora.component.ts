@@ -8,6 +8,9 @@ import { CommonModule } from '@angular/common';
   templateUrl: './calculadora.component.html',
 })
 export class CalculadoraComponent implements OnInit {
+  parseFloat(arg0: any) {
+    throw new Error('Method not implemented.');
+  }
   formCalculadora: FormGroup;
   resultado: any = null;
 
@@ -15,8 +18,8 @@ export class CalculadoraComponent implements OnInit {
     this.formCalculadora = this.fb.group({
       tipo: ['determinada'],   // ejemplo: radio/selector
       monto: ['', [Validators.required, Validators.min(1), Validators.max(1999999)]],
-      contrato: [null, [Validators.min(0), Validators.max(1999999)]],
-      pretension: [null, [Validators.min(0), Validators.max(1999999)]]
+      contrato: ['', [Validators.required, Validators.min(0), Validators.max(1999999)]],
+      pretension: ['', [Validators.required, Validators.min(0), Validators.max(1999999)]]
     });
   }
   ngOnInit(): void {
@@ -77,16 +80,31 @@ export class CalculadoraComponent implements OnInit {
 
   seleccionarCuantia(tipo: 'determinada' | 'indeterminada') {
     this.tipoCuantia = tipo;
+    this.resultado = null;
     // aquí podrías resetear/calcular lo que necesites según tipo
-    console.log('Cuantía seleccionada:', this.tipoCuantia);
+    // console.log('Cuantía seleccionada:', this.tipoCuantia);
 
     // Reiniciamos los valores del formulario sin destruir su estructura
     this.formCalculadora.reset({
       tipo: tipo,
       monto: '',
-      contrato: null,
-      pretension: null
+      contrato: '',
+      pretension: ''
     });
+
+    // Limpia validadores
+    this.formCalculadora.get('monto')?.clearValidators();
+    this.formCalculadora.get('contrato')?.clearValidators();
+    this.formCalculadora.get('pretension')?.clearValidators();
+
+    if (tipo === 'determinada') {
+      this.formCalculadora.get('monto')?.setValidators([Validators.required, Validators.min(1), Validators.max(1999999)]);
+    } else if (tipo === 'indeterminada') {
+      this.formCalculadora.get('contrato')?.setValidators([Validators.required, Validators.min(0), Validators.max(1999999)]);
+      this.formCalculadora.get('pretension')?.setValidators([Validators.required, Validators.min(0), Validators.max(1999999)]);
+    }
+
+    this.formCalculadora.updateValueAndValidity();
 
     // Opcional: también reiniciamos el resultado mostrado
     this.resultado = null;

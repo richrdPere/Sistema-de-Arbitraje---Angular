@@ -9,7 +9,7 @@ export const environment = {
 
 
   // URLS
-  main_url: 'https://ba-sistemapatrullaje-backend.onrender.com/api/',
+  main_url: 'https://ba-pangeast2dio.onrender.com/api/',
   main_url_prueba: 'http://localhost:4000/api/'
 };
 

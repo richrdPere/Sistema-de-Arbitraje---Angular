@@ -22,7 +22,7 @@ export class HomeComponent {
       descripcion:
         'Ingresa aquí si deseas presentar solicitudes, contestaciones, escritos y documentos en general.',
       icono: 'assets/icons/paper_pencil.svg',
-      enlace: '#'
+      enlace: '/ser_mesa_partes'
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export class HomeComponent {
       descripcion:
         'Consulta el estado y avance de un arbitraje, una conciliación decisoria y una Junta de Disputas, para lo cual necesitará conocer el número de expediente que corresponda.',
       icono: 'assets/icons/search.svg',
-      enlace: '#'
+      enlace: '/ser_consulta_expedientes'
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ export class HomeComponent {
       descripcion:
         'Ingresa el monto y calcula la tarifa dependiendo si es cuantía determinada o indeterminada.',
       icono: 'assets/icons/calcule.svg',
-      enlace: '#'
+      enlace: '/ser_calculadora'
     }
   ];
 

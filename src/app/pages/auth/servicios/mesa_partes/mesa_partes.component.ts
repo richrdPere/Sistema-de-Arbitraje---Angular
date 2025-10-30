@@ -23,6 +23,7 @@ export class MesaPartesComponent {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
       telefono: ['', Validators.required],
       documento_identidad: ['', Validators.required],
       tipo_solicitud: ['', Validators.required],

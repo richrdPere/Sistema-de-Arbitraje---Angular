@@ -1,12 +1,14 @@
-<section class="relative w-full min-h-screen">
+<section class="relative w-full min-h-screen ">
 
   <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
     <!-- Overlay oscuro -->
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/40  "></div>
+
 
     <!-- Contenido centrado -->
-    <div class="relative flex flex-col items-center justify-start min-h-screen px-6 py-8">
-      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">LICENCIAMIENTO</h1>
+    <div class="relative flex flex-col items-center justify-start min-h-screen px-40 py-10 ">
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">JUNTA DE PREVENCIÓN Y RESOLUCIÓN
+        DE DISPUTAS</h1>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Columna izquierda -->
@@ -15,14 +17,16 @@
           <!-- Descripción principal -->
           <div class="bg-white p-6 rounded-2xl shadow-md space-y-7 text-justify">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
-              LICENCIAMIENTO <span class="text-info">FIRMA LEGAL</span>
+              JPRD <span class="text-info">FIRMA LEGAL</span>
             </h2>
             <p class="text-gray-700 leading-relaxed mb-3 text-lg ">
               Tiene como finalidad principal la resolución eficiente y especializada de controversias entre
               particulares,
               así como con entidades del Estado, a través de mecanismos alternativos de solución de conflictos,
               como el <span class="font-semibold">arbitraje</span> y las <span class="font-semibold">juntas de
-                resolución de disputas</span>.
+                resolución
+                de
+                disputas</span>.
             </p>
             <p class="text-gray-700 leading-relaxed mb-3 text-lg ">
               Contamos con un <span class="font-semibold">Registro de Árbitros y Adjudicadores</span> conformado por
@@ -31,40 +35,26 @@
             </p>
             <p class="text-gray-700 leading-relaxed mb-3 text-lg ">
               Nuestros procesos arbitrales se desarrollan de forma eficaz y profesional, con una duración estimada
-              entre <span class="font-semibold">seis meses y un año</span> para la emisión del laudo.
+              entre <span class="font-semibold">seis meses y un año</span> para la emisión del laudo, conforme a lo
+              dispuesto
+              en nuestro Reglamento Institucional.
             </p>
-            <p class="text-gray-700 leading-relaxed text-lg ">
+            <p class="text-gray-700 leading-relaxed mb-3 text-lg ">
               Los honorarios del tribunal arbitral y de la secretaría arbitral son altamente competitivos,
-              tomando como referencia la <span class="font-semibold">Tabla de Honorarios del OSCE</span>, garantizando
-              transparencia y accesibilidad económica.
+              tomando como referencia la <span class="font-semibold">Tabla de Honorarios del Organismo Supervisor de las
+                Contrataciones del Estado (OECE)</span>, lo que garantiza transparencia y accesibilidad
+              económica.
             </p>
           </div>
 
-          <!-- ====================== DOCUMENTOS ====================== -->
+          <!-- documentos.component.html -->
           <div class="bg-white p-6 rounded-2xl shadow-md">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Documentos Institucionales</h2>
 
-            <!-- Documentos varios -->
-            <h3 class="text-lg font-semibold text-info mb-2">Otros Documentos</h3>
-            <table class="table w-full mb-6">
-              <tbody class="text-gray-800">
-                @for (file of otrosDocumentosEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200 text-xl">
-                  <td>
-                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | separarPalabras }}
-                    </a>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-
-            <!-- Documentos de árbitros -->
-            <h3 class="text-lg font-semibold text-info mb-2">Documentos de Árbitros</h3>
+            <!-- Sección de JPRD -->
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">📘 Documentos de JPRD</h2>
             <table class="table w-full">
               <tbody class="text-gray-800">
-                @for (file of arbitrosEntries; track file[0]) {
+                @for (file of JPRDFilesEntries; track file[0]) {
                 <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200 text-xl">
                   <td>
                     <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
@@ -94,8 +84,8 @@
           <div class="bg-yellow-100 p-6 rounded-2xl shadow-md">
             <h3 class="text-lg font-bold text-gray-800 mb-3">Calculadora de Costos</h3>
             <p class="text-gray-700 text-sm mb-4 text-justify">
-              Nuestras calculadoras determinan automáticamente las tasas administrativas, los honorarios del árbitro
-              único o del tribunal arbitral, y presentan un desglose claro del total a pagar.
+              Nuestras calculadoras determinan automáticamente las tasas administrativas, los honorarios del
+              árbitro único o del tribunal arbitral, y presentan un desglose claro del total a pagar.
             </p>
 
             <div class="flex flex-col gap-3">
@@ -112,6 +102,15 @@
           </div>
         </div>
       </div>
+
+
     </div>
+
+
+
+
+
+
   </div>
+
 </section>

@@ -36,9 +36,8 @@
               "src/styles.css",
               "node_modules/izitoast/dist/css/iziToast.min.css"
             ],
-            "scripts": [
 
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

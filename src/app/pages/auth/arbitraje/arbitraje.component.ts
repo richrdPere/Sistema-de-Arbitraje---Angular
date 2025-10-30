@@ -1,9 +1,14 @@
-import { TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+// Pipes
+import { SepararPalabrasPipe } from 'src/app/pipes/separar-palabras.pipe';
 
 @Component({
   selector: 'app-arbitraje.component',
-  imports: [TitleCasePipe],
+  standalone: true,
+  imports: [CommonModule, SepararPalabrasPipe, RouterModule],
   templateUrl: './arbitraje.component.html',
 })
 export class ArbitrajeComponent {

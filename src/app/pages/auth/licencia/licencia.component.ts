@@ -1,9 +1,13 @@
-import { TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+// Pipes
+import { SepararPalabrasPipe } from 'src/app/pipes/separar-palabras.pipe';
 
 @Component({
   selector: 'app-licencia.component',
-  imports: [TitleCasePipe],
+  imports: [CommonModule, SepararPalabrasPipe, RouterModule],
   templateUrl: './licencia.component.html',
 })
 export class LicenciaComponent {
