@@ -7,7 +7,7 @@ export const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'home', loadComponent: () => import('./pages/auth/home/home.component').then(m => m.HomeComponent) },
       { path: 'about', loadComponent: () => import('./pages/auth/about/about.component').then(m => m.AboutComponent) },
       {
@@ -49,6 +49,10 @@ export const routes: Routes = [
       {
         path: 'trazabilidad',
         loadComponent: () => import('./pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
+      },
+       {
+        path: 'unidad_gobierno',
+        loadComponent: () => import('./pages/auth/unidad_gobierno/unidad_gobierno.component').then(m => m.UnidadGobiernoComponent),
       },
       { path: 'contacto', loadComponent: () => import('./pages/auth/contactos/contactos.component').then(m => m.ContactosComponent) },
       { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },

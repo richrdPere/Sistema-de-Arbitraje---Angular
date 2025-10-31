@@ -39,6 +39,7 @@ export class NavbarComponent implements OnInit {
       activeClass: 'bg-info text-base-100',
       children: [
         { label: 'Nosotros', path: '/about' },
+        { label: 'Unidad de Gobierno', path: '/unidad_gobierno' },
         { label: 'Servicios', path: '/servicios' },
         { label: 'Licencias', path: '/licencia' },
         { label: 'Banco de Laudos', path: '/laudos' },
