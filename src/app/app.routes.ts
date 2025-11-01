@@ -50,7 +50,7 @@ export const routes: Routes = [
         path: 'trazabilidad',
         loadComponent: () => import('./pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
       },
-       {
+      {
         path: 'unidad_gobierno',
         loadComponent: () => import('./pages/auth/unidad_gobierno/unidad_gobierno.component').then(m => m.UnidadGobiernoComponent),
       },
@@ -67,6 +67,10 @@ export const routes: Routes = [
   {
     path: 'secretaria',
     loadChildren: () => import('./pages/secretaria/secretaria.routes'),
+  },
+  {
+    path: 'participe',
+    loadChildren: () => import('./pages/participe/participe.routes'),
   },
 
   // ✅ CORREGIDO: ÚNICA ruta comodín en toda la aplicación

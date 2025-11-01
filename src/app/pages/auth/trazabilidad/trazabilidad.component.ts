@@ -77,8 +77,8 @@ export class TrazabilidadComponent implements OnInit {
             console.log("Redirigiendo a panel de secretaria...");
             this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
             break;
-          case 'arbitro':
-            this._router.navigate(['/dashboard/arbitro']);
+          case 'participe':
+            this._router.navigate(['/participe']);
             break;
           case 'cliente':
             this._router.navigate(['/panel/cliente']);
