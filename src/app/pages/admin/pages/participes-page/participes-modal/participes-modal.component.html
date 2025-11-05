@@ -134,9 +134,9 @@
           <option value="Demandado">Demandado</option>
           <option value="Árbitro">Árbitro</option>
           <option value="Adjudicador">Adjudicador</option>
-          <option value="Secretaria">Secretaria</option>
+          <!-- <option value="Secretaria">Secretaria</option>
           <option value="Perito">Perito</option>
-          <option value="Testigo">Testigo</option>
+          <option value="Testigo">Testigo</option> -->
         </select>
         @if (f['rol_participe'].invalid && f['rol_participe'].touched) {
         <small class="text-error text-xs">
@@ -145,6 +145,65 @@
         }
 
       </div>
+
+      <!-- ÁRBITRO -->
+        @if (formParticipe.get('rol_participe')?.value === 'Árbitro') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Especialidad</span>
+            </label>
+            <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Experiencia</span>
+            </label>
+            <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
+
+
+        <!-- ADJUDICADOR -->
+        @if (formParticipe.get('rol_participe')?.value === 'Adjudicador') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Especialidad</span>
+            </label>
+            <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Experiencia</span>
+            </label>
+            <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
       <!-- Footer Buttons -->
       <div class="modal-action flex justify-end items-center gap-3">
         <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>

@@ -73,15 +73,17 @@ export class TrazabilidadComponent implements OnInit {
 
         // Redirección según rol
         switch (res.usuario.rol) {
-          case 'secretaria':
-            console.log("Redirigiendo a panel de secretaria...");
+          case 'admin':
             this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
+            break;
+          case 'secretaria':
+            this._router.navigate(['/secretaria']); // Lazy load admin -> redirige a expedientes
             break;
           case 'participe':
             this._router.navigate(['/participe']);
             break;
-          case 'cliente':
-            this._router.navigate(['/panel/cliente']);
+          case 'arbitro':
+            this._router.navigate(['/arbitro']);
             break;
           default:
             this._router.navigate(['/']);

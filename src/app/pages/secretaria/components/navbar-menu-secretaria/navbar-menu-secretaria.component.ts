@@ -10,7 +10,7 @@ import { MenuProfileSecretariaComponent } from "./menu-profile-secretaria/menu-p
 
 
 @Component({
-  selector: 'app-navbar-menu-secretaria',
+  selector: 'navbar-menu-secretaria',
   imports: [MenuOptionsSecretariaComponent, MenuProfileSecretariaComponent],
   templateUrl: './navbar-menu-secretaria.component.html',
 })

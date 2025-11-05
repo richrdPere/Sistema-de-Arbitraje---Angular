@@ -1,19 +1,22 @@
 <footer class="footer sm:footer-horizontal bg-base-100 text-base-content p-10">
+
+  <!-- Bloque Servicios -->
+
+  @for (section of footerSections; track $index) {
   <nav>
-    <h6 class="footer-title">Servicios</h6>
-    <a class="link link-hover">Centro de Arbitraje</a>
-    <a class="link link-hover">JPRD</a>
-    <a class="link link-hover">Mesa de Partes</a>
-    <a class="link link-hover">Consultar expediente</a>
-    <a class="link link-hover">Calculadora</a>
+    <h6 class="footer-title">{{ section.title }}</h6>
+
+    @for (link of section.links; track $index) {
+    <a class="link link-hover" [routerLink]="link.path" routerLinkActive="{{ link.activeClass || 'text-primary' }}">{{
+      link.label }}</a>
+    }
+
+
   </nav>
-  <nav>
-    <h6 class="footer-title">Empresa</h6>
-    <a class="link link-hover">Nosotros</a>
-    <a class="link link-hover">Contactanos</a>
-    <a class="link link-hover">Trabajos</a>
-    <!-- <a class="link link-hover">Press kit</a> -->
-  </nav>
+
+
+  }
+
   <nav>
     <h6 class="footer-title">Social</h6>
     <div class="grid grid-flow-col gap-4">

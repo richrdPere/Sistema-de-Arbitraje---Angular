@@ -72,6 +72,14 @@ export const routes: Routes = [
     path: 'participe',
     loadChildren: () => import('./pages/participe/participe.routes'),
   },
+  {
+    path: 'arbitro',
+    loadChildren: () => import('./pages/arbitro/arbitro.routes'),
+  },
+  {
+    path: 'adjudicador',
+    loadChildren: () => import('./pages/adjudicador/adjudicador.routes'),
+  },
 
   // ✅ CORREGIDO: ÚNICA ruta comodín en toda la aplicación
   {

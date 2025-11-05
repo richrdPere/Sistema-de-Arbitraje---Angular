@@ -36,6 +36,12 @@ export class SideMenuOptionsComponent {
       route: '/admin/usuarios',
     },
     {
+      icon: 'fa-solid fa-file-word',
+      label: 'Resoluciones',
+      sublabel: 'Reporta los avances del dia',
+      route: '/admin/resoluciones',
+    },
+    {
       icon: 'fa-solid fa-scale-balanced',
       label: 'Auditoria',
       sublabel: 'Reporta los avances del dia',

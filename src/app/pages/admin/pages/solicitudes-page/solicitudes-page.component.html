@@ -63,113 +63,100 @@
 
   @if (!loading && solicitudes.length > 0) {
   <!-- Tabla -->
-  <div class="overflow-x-auto bg-white shadow rounded-lg ">
-    <table class="table w-full">
-      <thead class="bg-gray-100 text-base-100">
-        <tr>
-          <th class="py-2 px-4 ">#</th>
-          <th class="py-2 px-4 ">N° Expediente</th>
-          <th class="py-2 px-4 ">Tipo</th>
-          <th class="py-2 px-4 ">Estado</th>
-          <th class="py-2 px-4 ">Etapa</th>
-          <th class="py-2 px-4 ">Solicitante</th>
-          <th class="py-2 px-4 ">Correo</th>
-          <th class="py-2 px-4 ">Condición</th>
-          <th class="py-2 px-4 "></th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (loading) {
-        <tr>
-          <td colspan="7" class="text-center py-4">Cargando trámites...</td>
-        </tr>
-        }
+  <div class="bg-white shadow rounded-lg border border-gray-100 overflow-hidden">
 
-        @for (solicitud of solicitudes; track $index) {
-        <tr class="hover">
-          <!-- <td>{{ $index + 1 }}</td>
-          <td>{{ solicitud.numero_tramite }}</td>
-          <td>{{ solicitud.estado }}</td>
-          <td>{{ solicitud.tipo_solicitud}}</td>
-          <td>{{ solicitud.descripcion}}</td>
-          <td>
-            {{ solicitud.createdAt | date: 'dd/MM/yyyy, h:mm a'}}
-          </td>
-          <td></td>
-          <td></td>
-          <td>
-            <a [href]="solicitud.archivo_url" target="_blank" class="text-blue-600 hover:underline">
-              Ver archivo
-            </a>
-          </td> -->
-          <td class="py-2 px-4 ">{{ $index + 1 }}</td>
-          <td class="py-2 px-4  font-medium text-blue-600">{{ solicitud.numero_expediente }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.tipo }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.estado }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.etapa_procesal }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.solicitante }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.correo }}</td>
-          <td class="py-2 px-4 ">{{ solicitud.condicion }}</td>
-          <!-- <td class="py-2 px-4 border text-center text-sm text-blue-700 cursor-pointer hover:underline">
-            {{ solicitud.accion }}
-          </td> -->
+    <div class="overflow-x-auto overflow-y-auto
+                h-[40vh] sm:max-h-[65vh] md:max-h-[60vh] lg:max-h-[65vh] xl:max-h-[70vh]">
+      <!-- Tabla responsive -->
+      <table class="table w-full">
+        <thead class="bg-gray-100 text-base-100">
+          <tr>
+            <th class="py-2 px-4 ">#</th>
+            <th class="py-2 px-4 ">N° Expediente</th>
+            <th class="py-2 px-4 ">Tipo</th>
+            <th class="py-2 px-4 ">Estado</th>
+            <th class="py-2 px-4 ">Etapa</th>
+            <th class="py-2 px-4 ">Solicitante</th>
+            <th class="py-2 px-4 ">Correo</th>
+            <th class="py-2 px-4 ">Condición</th>
+            <th class="py-2 px-4 "></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading) {
+          <tr>
+            <td colspan="7" class="text-center py-4">Cargando trámites...</td>
+          </tr>
+          }
 
-          <td class="relative ">
-            <div class="dropdown dropdown-end inline-block">
-              <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M6 12h.01M12 12h.01M18 12h.01" />
-                </svg>
-              </button>
+          @for (solicitud of solicitudes; track $index) {
+          <tr class="hover">
+
+            <td class="py-2 px-4 ">{{ $index + 1 }}</td>
+            <td class="py-2 px-4  font-medium text-blue-600">{{ solicitud.numero_expediente }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.tipo }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.estado }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.etapa_procesal }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.solicitante }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.correo }}</td>
+            <td class="py-2 px-4 ">{{ solicitud.condicion }}</td>
 
 
-              <ul tabindex="0" class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52  mt-2 z-[100]"
-                [class.hidden]="menuAbierto == $index">
-                <li class="menu-title px-4 py-1 text-xs text-gray-400">
-                  Acciones
-                </li>
-
-                <!-- Ver Documentos -->
-                <li>
-                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700">
-                    <i class="fa-solid fa-file-lines text-gray-600 w-5 text-center"></i>
-                    <a [href]="solicitud.documento" target="_blank" class="text-blue-600 hover:underline">
-                      Ver archivo
-                    </a>
-                  </button>
-                </li>
-
-                <hr class="my-1 border-gray-200" />
-
-                <!-- Aprobar Expediente -->
-                <li>
-                  <button
-                    class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-blue-600 hover:underline"
-                    (click)="abrirModal(solicitud)">
-                    <i class="fa-solid fa-pen text-gray-600 w-5 text-center"></i>
-                    Aprobar Expediente
-                  </button>
+            <td class="relative ">
+              <div class="dropdown dropdown-end inline-block">
+                <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 12h.01M12 12h.01M18 12h.01" />
+                  </svg>
+                </button>
 
 
-                </li>
+                <ul tabindex="0" class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 mt-2 z-[100]"
+                  [class.hidden]="menuAbierto == $index">
+                  <li class="menu-title px-4 py-1 text-xs text-gray-400">
+                    Acciones
+                  </li>
 
-              </ul>
-            </div>
-          </td>
+                  <!-- Ver Documentos -->
+                  <li>
+                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700">
+                      <i class="fa-solid fa-file-lines text-gray-600 w-5 text-center"></i>
+                      <a [href]="solicitud.documento" target="_blank" class="text-blue-600 hover:underline">
+                        Ver archivo
+                      </a>
+                    </button>
+                  </li>
 
-        </tr>
-        }
+                  <hr class="my-1 border-gray-200" />
 
-      </tbody>
-    </table>
+                  <!-- Aprobar Expediente -->
+                  <li>
+                    <button
+                      class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-blue-600 hover:underline"
+                      (click)="abrirModal(solicitud)">
+                      <i class="fa-solid fa-pen text-gray-600 w-5 text-center"></i>
+                      Aprobar Expediente
+                    </button>
 
 
+                  </li>
+
+                </ul>
+              </div>
+            </td>
+
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
 
 
     <!-- Paginación -->
-    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
+    <div class="flex flex-wrap justify-end items-center p-4 border-t bg-gray-50 text-sm gap-3">
       <button class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" (click)="paginaAnterior()"
         [disabled]="paginaActual === 1">
         Anterior
@@ -181,12 +168,20 @@
         [disabled]="paginaActual === totalPaginas">
         Siguiente
       </button>
-      <!-- <span>Página 1 de 1</span>
-      <div class="join ml-4">
-        <button class="join-item btn btn-sm" disabled>Anterior</button>
-        <button class="join-item btn btn-sm">Siguiente</button>
-      </div> -->
+
     </div>
+  </div>
+  }
+  @else if (!loading && solicitudes.length === 0) {
+  <!--  Mensaje atractivo cuando no hay solicitudes -->
+  <div class="flex flex-col items-center justify-center mt-20 text-center text-gray-500">
+    <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+    <h3 class="text-lg font-semibold text-gray-700 mb-2">
+      No hay solicitudes registradas
+    </h3>
+    <p class="text-sm max-w-md text-gray-500">
+      Cuando se registren nuevas solicitudes, aparecerán aquí automáticamente.
+    </p>
   </div>
   }
 

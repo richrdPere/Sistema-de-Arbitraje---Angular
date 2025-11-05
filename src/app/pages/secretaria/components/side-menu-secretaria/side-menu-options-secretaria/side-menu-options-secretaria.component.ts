@@ -3,7 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuOptions } from 'src/app/interfaces/components/MenuOptions';
 
 @Component({
-  selector: 'app-side-menu-options-secretaria',
+  selector: 'side-menu-options-secretaria',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './side-menu-options-secretaria.component.html',
 })
@@ -15,45 +15,38 @@ export class SideMenuOptionsSecretariaComponent {
     {
       icon: 'fa-solid fa-book-journal-whills',
       label: 'Casos',
-      route: '/admin/expedientes',
+      route: '/secretaria/casos',
     },
     {
       icon: 'fa-solid fa-file',
       label: 'Expedientes',
-      route: '/admin/expedientes',
+      route: '/secretaria/expedientes',
     },
     {
       icon: 'fa-solid fa-user-tie',
       label: 'Participes',
-      route: '/admin/participes',
+      route: '/secretaria/participes',
     },
     {
       icon: 'fa-solid fa-users',
       label: 'Usuarios',
-      route: '/admin/usuarios',
+      route: '/secretaria/usuarios',
     },
     {
       icon: 'fa-solid fa-scale-balanced',
       label: 'Auditoria',
-      route: '/admin/auditoria',
+      route: '/secretaria/auditoria',
     },
     {
       icon: 'fa-solid fa-gavel',
       label: 'Solicitudes',
-      route: '/admin/solicitudes',
+      route: '/secretaria/solicitudes',
     },
-    // {
-    //   icon: 'fa-solid fa-comment',
-    //   label: 'Chats',
-    //   sublabel: 'Conversa y asigna acciones a los serenos u otros operadores',
-    //   route: '/dashboard/chats',
-    // },
-    // {
-    //   icon: 'fa-solid fa-calendar-days',
-    //   label: 'Calendario',
-    //   sublabel: 'Calendario de actividades',
-    //   route: '/dashboard/calendario',
-    // },
+    {
+      icon: 'fa-solid fa-calendar-days',
+      label: 'Calendario',
+      route: '/secretaria/calendario',
+    },
     // {
     //   icon: 'fa-solid fa-flask-vial',
     //   label: 'Test pages',
