@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { JwtHelperService } from "@auth0/angular-jwt";
 
@@ -51,23 +51,23 @@ export class TramiteMPVService {
     return this.http.get<any>(`${this.url}/estado?numero=${encodeURIComponent(numero)}`);
   }
 
-  // listar(params?: any) {
-  //   const httpParams = new HttpParams({ fromObject: params || {} });
-  //   return this.http.get(`${this.url}/listar`, { params: httpParams }, );
-  // }
-  // listarTramites() {
-  //   return this.http.get<{ count: number, rows: any[] }>(`${this.url}/listar`, this.getAuthHeaders());
-  // }
-
   // Obtener todos los trámites con paginación
-  listarTramites(pagina: number = 1, limite: number = 20): Observable<TramiteMPVResponse> {
+  listarTramites(pagina: number = 1, limite: number = 20, rol: string): Observable<TramiteMPVResponse> {
     const params = new HttpParams()
-      .set('pagina', pagina)
-      .set('limite', limite);
+      .set('page', pagina)
+      .set('limit', limite)
+      .set('rol', rol); //  o 'secretaria', según corresponda
 
     const headers = this.getAuthHeaders().headers; // extrae solo los headers
 
-    return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers });
+    console.log(' Enviando petición GET a:', `${this.url}/listar`);
+    console.log(' Parámetros:', { page: pagina, limit: limite, rol });
+
+    return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers }).pipe(
+      tap((resp) => {
+        console.log(' Respuesta del backend:', resp);
+      })
+    );
   }
 
   actualizarEstado(id: number, estado: string): Observable<any> {

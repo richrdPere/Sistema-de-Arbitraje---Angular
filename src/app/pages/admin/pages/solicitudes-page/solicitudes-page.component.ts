@@ -4,6 +4,9 @@ import { FormUtils } from 'src/app/utils/form-utils';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
+import { AuthService } from 'src/app/services/auth.service';
+
+// Pipes
 import { DatePipe } from '@angular/common';
 
 
@@ -18,21 +21,22 @@ export class SolicitudesPageComponent implements OnInit {
   fb = inject(FormBuilder);
   formUtils = FormUtils;
 
-
-
   solicitudes: any[] = [];
+  solicitudesAprobadas: any[] = [];
+  solicitudesRechazadas: any[] = [];
+
   loading = true;
   paginaActual = 1;
   totalPaginas = 1;
 
+  rol: string = '';
+
+  // Dropdown
+  menuAbierto: number | null = null;
 
 
   menuPosX = 0;
   menuPosY = 0;
-
-
-  // MENU DESPLEGABLE
-  menuAbierto: number | null = null;
 
   toggleDropdown(index: number, event: MouseEvent) {
     // Si se vuelve a hacer click en el mismo menú, se cierra
@@ -60,19 +64,48 @@ export class SolicitudesPageComponent implements OnInit {
     this.nuevoEstado = '';
   }
 
-  constructor(private tramiteService: TramiteMPVService) { }
+  constructor(private tramiteService: TramiteMPVService, private _authService: AuthService,) {
+
+    const usuario = _authService.getUser()
+
+    if (usuario) {
+      this.rol = usuario.rol;
+    }
+  }
 
 
   ngOnInit(): void {
     this.cargarTramites();
   }
 
+  /**
+ * Carga todos los trámites y los separa según su estado
+ */
   cargarTramites(pagina: number = 1): void {
     this.loading = true;
-    this.tramiteService.listarTramites(pagina).subscribe({
+    this.tramiteService.listarTramites(pagina, 20, this.rol).subscribe({
       next: (data) => {
+        const tramites = data.tramites || [];
+
         console.log('Respuesta del backend:', data);
-        this.solicitudes = data.tramites;
+
+
+        // Clasificación por estado
+        this.solicitudes = tramites.filter(
+          (t: any) => t.estado === 'pendiente'
+        );
+        this.solicitudesAprobadas = tramites.filter(
+          (t: any) => t.estado === 'aprobada'
+        );
+        this.solicitudesRechazadas = tramites.filter(
+          (t: any) => t.estado === 'rechazada'
+        );
+
+
+        console.log(' Pendientes:', this.solicitudes);
+        console.log(' Aprobadas:', this.solicitudesAprobadas);
+        console.log(' Rechazadas:', this.solicitudesRechazadas);
+
         this.paginaActual = data.pagina_actual;
         this.totalPaginas = data.total_paginas;
         this.loading = false;
@@ -101,7 +134,7 @@ export class SolicitudesPageComponent implements OnInit {
 
     this.tramiteService.actualizarEstado(this.tramiteSeleccionado.id, this.nuevoEstado)
       .subscribe({
-        next: (resp) => {
+        next: () => {
           alert(`Solicitud ${this.nuevoEstado === 'aprobada' ? 'aprobada' : 'rechazada'} correctamente`);
           this.cerrarModal();
           this.cargarTramites(); // vuelve a cargar la tabla
