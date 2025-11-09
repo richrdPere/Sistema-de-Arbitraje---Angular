@@ -56,7 +56,10 @@ export class ExpedientesPageComponent implements OnInit {
   }
 
   // Constructor
-  constructor(private expedienteService: ExpedientesService, private router: Router, private eRef: ElementRef) { }
+  constructor(
+    private expedienteService: ExpedientesService,
+    private router: Router,
+    private eRef: ElementRef) { }
 
   // onInit
   ngOnInit(): void {
@@ -109,7 +112,7 @@ export class ExpedientesPageComponent implements OnInit {
   cargarExpedientes() {
     this.loading = true;
 
-    this.expedienteService.listarExpedientes().subscribe({
+    this.expedienteService.listarExpedientes('admin').subscribe({
       next: (data) => {
         this.expedientes = data;
         this.loading = false;

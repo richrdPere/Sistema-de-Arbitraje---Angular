@@ -14,4 +14,12 @@ import { MenuProfileSecretariaComponent } from "./menu-profile-secretaria/menu-p
   imports: [MenuOptionsSecretariaComponent, MenuProfileSecretariaComponent],
   templateUrl: './navbar-menu-secretaria.component.html',
 })
-export class NavbarMenuSecretariaComponent { }
+export class NavbarMenuSecretariaComponent {
+
+  usuario = {
+    nombre: 'María Pérez',
+    rol: 'Secretaría'
+  };
+
+
+}

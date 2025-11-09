@@ -77,7 +77,7 @@ export class ExpedienteComponent implements OnInit {
   cargarExpedientes() {
     this.loading = true;
 
-    this.expedienteService.listarExpedientes().subscribe({
+    this.expedienteService.listarExpedientes('participe').subscribe({
       next: (data) => {
         console.log('Respuesta API:', data);
         this.expedientes = data;

@@ -10,6 +10,11 @@ export class MenuOptionsSecretariaComponent implements OnInit {
 
   theme: string = 'light';
 
+  usuario = {
+    nombre: 'María Pérez',
+    rol: 'Secretaría'
+  };
+
   constructor(private themeService: ThemeService) { }
 
 

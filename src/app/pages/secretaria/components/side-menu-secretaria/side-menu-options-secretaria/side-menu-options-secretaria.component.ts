@@ -12,11 +12,11 @@ export class SideMenuOptionsSecretariaComponent {
   constructor(private router: Router) { }
 
   menuOptions: MenuOptions[] = [
-    {
-      icon: 'fa-solid fa-book-journal-whills',
-      label: 'Casos',
-      route: '/secretaria/casos',
-    },
+    // {
+    //   icon: 'fa-solid fa-book-journal-whills',
+    //   label: 'Casos',
+    //   route: '/secretaria/casos',
+    // },
     {
       icon: 'fa-solid fa-file',
       label: 'Expedientes',
@@ -27,11 +27,11 @@ export class SideMenuOptionsSecretariaComponent {
       label: 'Participes',
       route: '/secretaria/participes',
     },
-    {
-      icon: 'fa-solid fa-users',
-      label: 'Usuarios',
-      route: '/secretaria/usuarios',
-    },
+    // {
+    //   icon: 'fa-solid fa-users',
+    //   label: 'Usuarios',
+    //   route: '/secretaria/usuarios',
+    // },
     {
       icon: 'fa-solid fa-scale-balanced',
       label: 'Auditoria',

@@ -4,6 +4,7 @@ import { FormUtils } from 'src/app/utils/form-utils';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
+import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 // Pipes
@@ -25,9 +26,13 @@ export class SolicitudesPageComponent implements OnInit {
   solicitudesAprobadas: any[] = [];
   solicitudesRechazadas: any[] = [];
 
+  // Nuevo campo para razón o comentario
+  razonRechazo: string = '';
+
   loading = true;
   paginaActual = 1;
   totalPaginas = 1;
+  usuario: any = null;
 
   rol: string = '';
 
@@ -56,20 +61,26 @@ export class SolicitudesPageComponent implements OnInit {
   abrirModal(solicitud: any) {
     this.tramiteSeleccionado = solicitud;
     this.modalVisible = true;
+    this.razonRechazo = ''; // limpiar cada vez que se abra el modal
   }
 
   cerrarModal() {
     this.modalVisible = false;
     this.tramiteSeleccionado = null;
     this.nuevoEstado = '';
+    this.razonRechazo = '';
   }
 
-  constructor(private tramiteService: TramiteMPVService, private _authService: AuthService,) {
+  constructor(
+    private tramiteService: TramiteMPVService,
+    private expedientesService: ExpedientesService,
+    private _authService: AuthService
+  ) {
 
-    const usuario = _authService.getUser()
+    this.usuario = _authService.getUser()
 
-    if (usuario) {
-      this.rol = usuario.rol;
+    if (this.usuario) {
+      this.rol = this.usuario.rol;
     }
   }
 
@@ -132,16 +143,54 @@ export class SolicitudesPageComponent implements OnInit {
   confirmarCambioEstado() {
     if (!this.tramiteSeleccionado || !this.nuevoEstado) return;
 
-    this.tramiteService.actualizarEstado(this.tramiteSeleccionado.id, this.nuevoEstado)
+    const tramite = this.tramiteSeleccionado;
+    const nuevoEstadoTramite = this.nuevoEstado;
+
+    // 1.- Actualizamos primero el estado del trámite
+    this.tramiteService.actualizarEstado(
+      this.tramiteSeleccionado.id,
+      this.nuevoEstado,
+      this.tramiteSeleccionado.id_expediente,
+      this.usuario?.nombre || 'Administrador del sistema',
+      this.razonRechazo // enviamos la razón al backend
+    )
       .subscribe({
         next: () => {
-          alert(`Solicitud ${this.nuevoEstado === 'aprobada' ? 'aprobada' : 'rechazada'} correctamente`);
-          this.cerrarModal();
-          this.cargarTramites(); // vuelve a cargar la tabla
+          console.log(` Trámite ${tramite.id} actualizado a: ${nuevoEstadoTramite}`);
+
+          //  Ahora actualizamos el expediente relacionado
+          const expedienteId = tramite.expediente_id; // asegúrate que el campo existe en tu respuesta
+          if (expedienteId) {
+            // Definimos el nuevo estado para el expediente según el trámite
+            const nuevoEstadoExpediente =
+              nuevoEstadoTramite === 'aprobada' ? 'En trámite' : 'Suspendido';
+
+            this.expedientesService
+              .actualizarExpediente(expedienteId, { estado: nuevoEstadoExpediente })
+              .subscribe({
+                next: () => {
+                  console.log(` Expediente ${expedienteId} actualizado a: ${nuevoEstadoExpediente}`);
+                  alert(`Solicitud ${nuevoEstadoTramite === 'aprobada' ? 'aprobada' : 'rechazada'} correctamente`);
+                  this.cerrarModal();
+                  this.cargarTramites(); // refrescamos la tabla
+                },
+                error: (err) => {
+                  console.error(' Error al actualizar el expediente:', err);
+                  alert('El trámite fue actualizado, pero ocurrió un error al actualizar el expediente.');
+                  this.cerrarModal();
+                  this.cargarTramites();
+                },
+              });
+          } else {
+            console.warn(' El trámite no tiene expediente asociado.');
+            alert('El trámite fue actualizado, pero no se encontró expediente asociado.');
+            this.cerrarModal();
+            this.cargarTramites();
+          }
         },
         error: (err) => {
-          console.error('Error al actualizar estado:', err);
-          alert('Error al actualizar el estado.');
+          console.error('Error al actualizar estado del trámite:', err);
+          alert('Error al actualizar el estado del trámite.');
         }
       });
   }

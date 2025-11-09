@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // Environment
@@ -41,8 +41,12 @@ export class ExpedientesService {
   // ===========================
   // 2.- LISTAR TODOS LOS EXPEDIENTES
   // ===========================
-  listarExpedientes(): Observable<any> {
-    return this.http.get(`${this.url}/`, this.getAuthHeaders());
+  listarExpedientes(rol: string): Observable<any> {
+    const params = new HttpParams().set('rol', rol);
+
+    const headers = this.getAuthHeaders().headers;
+
+    return this.http.get(`${this.url}/`, { params, headers });
   }
 
   // getExpedientes(): Observable<Expediente[]> {

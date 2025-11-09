@@ -70,9 +70,14 @@ export class TramiteMPVService {
     );
   }
 
-  actualizarEstado(id: number, estado: string): Observable<any> {
+  getTramitesAprobados() {
+    const headers = this.getAuthHeaders().headers; // extrae solo los headers
+    return this.http.get(`${this.url}/listar?estado=aprobada`, { headers });
+  }
+
+  actualizarEstado(id: number, estado: string, id_expediente?: number, usuario_responsable?: string, razon?: string): Observable<any> {
     const headers = this.getAuthHeaders().headers;
-    return this.http.put(`${this.url}/actualizar/${id}`, { estado }, { headers });
+    return this.http.put(`${this.url}/actualizar/${id}`, { estado, id_expediente, usuario_responsable, razon }, { headers });
   }
   // actualizarEstado(id: number, body: any) {
   //   return this.http.put(`${this.url}/actualizar/${id}`, body, this.getAuthHeaders());
