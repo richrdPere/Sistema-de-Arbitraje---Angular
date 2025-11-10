@@ -7,7 +7,18 @@ export const SecretariaRoutes: Routes = [
     path: '',
     component: SecretariaLayoutComponent,
     children: [
+      // Para expedientes
       { path: 'expedientes', loadComponent: () => import('./pages/expedientes/expedientes.component').then(m => m.ExpedientesComponent) },
+        {
+        path: 'expedientes/:id/documentos',
+        loadComponent: () => import('./pages/expedientes/ver-documentos/ver-documentos.component').then(m => m.VerDocumentosComponent)
+      },
+      {
+        path: 'expedientes/:id/historial',
+        loadComponent: () => import('./pages/expedientes/ver-historial/ver-historial.component').then(m => m.VerHistorialComponent)
+      },
+
+      // Para participe
       { path: 'participes', loadComponent: () => import('./pages/participes/participes.component').then(m => m.ParticipesComponent) },
       { path: 'usuarios', loadComponent: () => import('./pages/usuarios/usuarios.component').then(m => m.UsuariosComponent) },
       { path: 'auditoria', loadComponent: () => import('./pages/auditoria/auditoria.component').then(m => m.AuditoriaComponent) },

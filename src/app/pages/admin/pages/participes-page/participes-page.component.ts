@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
+
+// Component
 import { ParticipesModalComponent } from "./participes-modal/participes-modal.component";
 
 @Component({

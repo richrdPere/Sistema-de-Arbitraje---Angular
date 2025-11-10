@@ -56,7 +56,7 @@ export class SideMenuOptionsSecretariaComponent {
   ];
 
   logout() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/trazabilidad']);
   }
 
 

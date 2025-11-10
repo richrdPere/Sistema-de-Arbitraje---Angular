@@ -1,1 +1,141 @@
-<p>participes works!</p>,
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Partícipes</h2>
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" (click)="abrirModal()">
+      + Crear Nuevo Participe
+    </button>
+  </div>
+
+  <participes-modal-secretaria
+    [mostrarModal]="mostrarModal"
+    [modoEdicion]="modoEdicion"
+    [participeSeleccionado]="participeSeleccionado"
+    (modalCerrado)="cerrarModal()"
+    (participeCreado)="cargarParticipes()">
+  </participes-modal-secretaria>
+
+  <!-- Modal Form -->
+  <!-- <dialog id="my_modal_1" class="modal text-white">
+    <expediente-modal [formExpediente]="formExpediente" (submitForm)="onSubmitExpediente()" />
+  </dialog> -->
+
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo..." [(ngModel)]="filtro">
+
+  </div>
+
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+    <table class="table w-full">
+      <thead class="bg-gray-100 text-base-100">
+        <tr>
+          <th>Nombre</th>
+          <th>Correo Electrónico</th>
+          <th>Rol de Usuario</th>
+          <th>Rol en el Proceso</th>
+          <th>Estado</th>
+          <th>Teléfono</th>
+          <!-- <th>Cargo</th> -->
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+        <tr>
+          <td colspan="7" class="text-center py-4">Cargando participes...</td>
+        </tr>
+        }
+
+        @if (!loading && participes.length === 0) {
+        <tr>
+          <td colspan="8" class="text-center py-4 text-gray-500">
+            No hay partícipes registrados.
+          </td>
+        </tr>
+        }
+
+        @for (p of participes; track p.id_expediente; let i = $index) {
+        <tr class="hover">
+          <td>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</td>
+          <td>{{ p.usuario?.correo }}</td>
+          <td>{{ p.usuario?.rol }}</td>
+          <td>{{ p.rol_participe }}</td>
+          <td>
+            <span [ngClass]="{
+                  'bg-green-600': p.estado === 'Activo',
+                  'bg-red-600': p.estado === 'Inactivo'
+                }" class="text-white px-3 py-1 rounded-full text-sm">
+              {{ p.estado }}
+            </span>
+          </td>
+          <td>{{ p.usuario?.telefono || '-' }}</td>
+          <!-- Menú contextual -->
+          <td class="relative">
+            <div class="dropdown dropdown-end inline-block">
+              <button tabindex="0" class="btn btn-ghost btn-circle btn-sm" (click)="toggleDropdown(i, $event)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 12h.01M12 12h.01M18 12h.01" />
+                </svg>
+              </button>
+
+              <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[100]"
+                [class.hidden]="menuAbierto == i">
+                <li class="menu-title px-4 py-1 text-xs text-gray-400">
+                  Acciones
+                </li>
+
+                <!-- Ver Participe -->
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="verParticipe(p)">
+                    <i class="fa-solid fa-eye text-gray-600 w-5 text-center"></i>
+                    Ver Expediente
+                  </button>
+                </li>
+
+                <!-- Editar Participe -->
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
+                    (click)="editarParticipe(p)">
+                    <i class="fa-solid fa-pen text-gray-600 w-5 text-center"></i>
+                    Editar Expediente
+                  </button>
+                </li>
+
+                <!-- Eliminar Participe -->
+                <li>
+                  <button class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-red-600"
+                    (click)="eliminarParticipe(p.id!)">
+                    <i class="fa-solid fa-trash text-red-600 w-5 text-center"></i>
+                    Eliminar Expediente
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
+      <span>Página 1 de 1</span>
+      <div class="join ml-4">
+        <button class="join-item btn btn-sm" disabled>Anterior</button>
+        <button class="join-item btn btn-sm">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,1 +1,86 @@
-<p>ver-documentos.component works!</p>,
+<div class="p-6 bg-gray-50 min-h-screen">
+
+  <!-- Link de regreso -->
+  <a (click)="volver()" class="text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-4">
+    <i class="fa-solid fa-arrow-left"></i>
+    Volver a Expedientes
+  </a>
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-xl font-semibold mb-4">
+      📄 Documentos del expediente #{{ idExpediente }}
+    </h2>
+
+    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none"
+      (click)="abrirModalDocumento(idExpediente)">
+      + Nuevo Documento
+    </button>
+  </div>
+
+  <!-- Modal Subir documento -->
+  <subir-documento-secretaria [mostrarModal]="mostrarModalDocumento" [expedienteId]="expedienteSeleccionadoId"
+    (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="cargarDocumentos()"></subir-documento-secretaria>
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo...">
+
+  </div>
+
+
+  @if (loading) {
+
+  <div class="text-gray-500">Cargando documentos...</div>
+  }
+
+
+  @if (!loading && documentos.length === 0) {
+  <div class="text-gray-400">
+    No hay documentos registrados.
+  </div>
+  }
+
+
+  @if (!loading && documentos.length > 0) {
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+    <table class="table w-full">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th>ID</th>
+          <th>Estado</th>
+          <th>Fecha de Subida</th>
+          <th>Titulo</th>
+          <th>Tipo Documento</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        @for (doc of documentos; track $index) {
+        <tr>
+          <td>{{ doc.id_documento }}</td>
+          <td>{{ doc.estado }}</td>
+          <td>{{ doc.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</td>
+          <td>{{ doc.titulo }}</td>
+          <td>{{ doc.tipo_documento }}</td>
+          <td>{{ doc.usuario_id }}</td>
+          <td>
+            <a [href]="doc.url_s3" target="_blank" class="text-blue-600 hover:underline">
+              Ver archivo
+            </a>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+  </div>
+
+  }
+
+</div>

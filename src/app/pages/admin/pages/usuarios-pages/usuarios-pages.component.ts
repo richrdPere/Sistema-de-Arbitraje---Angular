@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule, FormGroup } from '@angular/forms';
 import { FormUtils } from 'src/app/utils/form-utils';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 // Service
 import { UsuarioService } from 'src/app/services/admin/usuarios.service';
@@ -83,7 +84,7 @@ export class UsuariosPagesComponent implements OnInit {
     this.loading = true;
 
     try {
-      const [arbitros, secretarias, participes] = await Promise.all([
+      const [arbitros, secretarias, participes, admins] = await Promise.all([
         this.usuarioService.getArbitros().toPromise(),
         this.usuarioService.getSecretarias().toPromise(),
         this.usuarioService.getParticipes().toPromise(),
@@ -99,7 +100,20 @@ export class UsuariosPagesComponent implements OnInit {
           correo: item.usuario?.correo ?? '',
           rol,
           cargo: item.cargo ?? '',
-          estado: item.estado ?? 'Activo',
+          estado: item.estado === 'Activo' || item.estado === true ? 'Activo' : 'Inactivo',
+        }));
+      };
+
+      // Función para normalizar admins con estructura directa
+      const normalizarDirecto = (lista: any[], rol: string) => {
+        return (lista || []).map(item => ({
+          id: item.id ?? null,
+          nombre: item.nombre ?? '',
+          apellidos: item.apellidos ?? '',
+          correo: item.correo ?? '',
+          rol,
+          cargo: item.cargo ?? '',
+          estado: item.estado === true || item.estado === 'Activo' ? 'Activo' : 'Desactivado',
         }));
       };
 
@@ -107,7 +121,7 @@ export class UsuariosPagesComponent implements OnInit {
         // ...normalizar(arbitros ?? [], 'Árbitro'),
         ...normalizar(secretarias ?? [], 'Secretaria'),
         // ...normalizar(participes ?? [], 'Partícipe'),
-        ...normalizar(participes ?? [], 'Admins'),
+        ...normalizarDirecto(admins ?? [], 'Admin'),
       ];
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
@@ -137,58 +151,40 @@ export class UsuariosPagesComponent implements OnInit {
 
   // cerrar modal
   crearUsuario(): void {
-    if (this.formUsuario.invalid) return;
+    if (this.formUsuario.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Por favor, completa todos los campos requeridos antes de continuar.',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
 
     const usuario = this.formUsuario.value;
 
-    console.log(`Usuarios: ${usuario}`);
     this.usuarioService.crearUsuario(usuario).subscribe({
       next: (res) => {
-        alert(' Usuario creado correctamente');
-        this.cerrarModal();
-        this.cargarDatos();
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario creado correctamente',
+          text: `El usuario ${usuario.nombre} ha sido registrado con éxito.`,
+          confirmButtonColor: '#3085d6'
+        }).then(() => {
+          this.cerrarModal();
+          this.cargarDatos();
+        });
       },
       error: (err) => {
+        const mensaje = err.error?.message || 'Error inesperado al crear el usuario.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al crear usuario',
+          text: mensaje,
+          confirmButtonColor: '#d33'
+        });
         console.error('Error al crear usuario:', err);
-        alert(' Error al crear usuario: ' + err.error?.message);
       },
     });
   }
-
-  // usuarios = [
-  //   {
-  //     nombre: 'Andrés Morales',
-  //     correo: 'andres.morales@example.com',
-  //     rol: 'Administrador',
-  //     estado: 'Activo'
-  //   },
-  //   {
-  //     nombre: 'Patricia Ramos',
-  //     correo: 'patricia.ramos@example.com',
-  //     rol: 'Secretaria Arbitral',
-  //     estado: 'Inactivo'
-  //   },
-  //   {
-  //     nombre: 'Miguel Quispe',
-  //     correo: 'miguel.quispe@example.com',
-  //     rol: 'Árbitro',
-  //     estado: 'Activo'
-  //   },
-  //   {
-  //     nombre: 'Verónica Paredes',
-  //     correo: 'veronica.paredes@example.com',
-  //     rol: 'Parte Demandante',
-  //     estado: 'Suspendido'
-  //   },
-  //   {
-  //     nombre: 'Eduardo Salazar',
-  //     correo: 'eduardo.salazar@example.com',
-  //     rol: 'Parte Demandada',
-  //     estado: 'Activo'
-  //   }
-  // ];
-
-
-
-
 }
