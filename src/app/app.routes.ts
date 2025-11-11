@@ -56,6 +56,13 @@ export const routes: Routes = [
       },
       { path: 'contacto', loadComponent: () => import('./pages/auth/contactos/contactos.component').then(m => m.ContactosComponent) },
       { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },
+      {
+        path: 'confirmar-cuenta/:token',
+        loadComponent: () =>
+          import('./pages/auth/confirmar-cuenta/confirmar-cuenta.component').then(
+            (m) => m.ConfirmarCuentaComponent
+          ),
+      },
     ],
   },
 

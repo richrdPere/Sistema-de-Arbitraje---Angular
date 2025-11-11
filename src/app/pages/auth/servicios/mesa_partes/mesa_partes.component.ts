@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
@@ -41,8 +42,13 @@ export class MesaPartesComponent {
     if (this.formTramiteMPV.invalid) return this.formTramiteMPV.markAllAsTouched();
 
     if (this.formTramiteMPV.invalid || !this.file) {
-      this.mensajeError = 'Por favor, completa todos los campos y adjunta un archivo.';
-      return;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos y adjunta un archivo antes de enviar.',
+        confirmButtonColor: '#3085d6'
+      });
+      return this.formTramiteMPV.markAllAsTouched();
     }
 
     const fd = new FormData();
@@ -50,19 +56,29 @@ export class MesaPartesComponent {
       fd.append(key, value as string);
     });
     if (this.file) fd.append('file', this.file, this.file.name);
-    // fd.append('archivo', this.file!);
-
-    // fd.append('tipo_solicitud', this.formTramiteMPV.value.tipo_solicitud);
-    // fd.append('descripcion', this.formTramiteMPV.value.descripcion);
-
     this.enviado = true;
 
-
+    // Mostramos un loader mientras se envía
+    Swal.fire({
+      title: 'Enviando solicitud...',
+      text: 'Por favor espera mientras procesamos tu trámite.',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
     this.tramiteService.registrarTramite(fd).subscribe({
       next: (response) => {
-        this.enviado = false;
-        this.mensajeExito = ` ${response.message}`;
+        this.respuesta = response; //  guarda respuesta
+        this.enviado = true;
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Solicitud enviada!',
+          text: response.message || 'Tu trámite fue registrado correctamente.',
+          confirmButtonColor: '#16a34a'
+        });
+
+        // this.mensajeExito = ` ${response.message}`;
         console.log('Trámite registrado:', response.tramite);
         this.formTramiteMPV.reset();
         this.file = null;
@@ -70,10 +86,14 @@ export class MesaPartesComponent {
       error: (err) => {
         this.enviado = false;
         this.mensajeError = ' Error al registrar la solicitud.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al registrar la solicitud',
+          text: err?.error?.message || 'Ocurrió un error al procesar tu trámite.',
+          confirmButtonColor: '#d33'
+        });
         console.error(err);
       }
-      // next: (res) => { this.enviado = true; this.respuesta = res; },
-      // error: (err) => alert(err?.error?.message || 'Error')
     });
   }
 

@@ -19,23 +19,6 @@
             <span class="label-text font-semibold text-xl">Datos del Expediente</span>
           </label>
 
-          <!-- Expediente -->
-          <!-- <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
-          <div class="grid grid-cols-3 gap-3 mb-4">
-            <input type="text" placeholder="Número" class="input input-bordered w-full" />
-            <input type="text" placeholder="Año" class="input input-bordered w-full " />
-            <select class="select select-bordered w-full">
-              <option disabled selected>Código</option>
-              <option value="CA-FIRMA-LEGAL">CA-FIRMA-LEGAL</option>
-              <option value="JPRD-FIRMA-LEGAL">JPRD-FIRMA-LEGAL</option>
-              <option value="DESIGNACIÓN">DESIGNACIÓN</option>
-              <option value="RECUSACIÓN-FIRMA-LEGAL">RECUSACIÓN-FIRMA-LEGAL</option>
-              <option value="INSTALACIÓN">INSTALACIÓN</option>
-              <option value="AD HOC-FIRMA-LEGAL">AD HOC-FIRMA-LEGAL</option>
-              <option value="AE-FIRMA-LEGAL">AE-FIRMA-LEGAL</option>
-            </select>
-          </div> -->
-
           <h2 class="text-sm font-semibold mb-4">Tipo Expediente y codigo</h2>
           <div class="grid grid-cols-2 gap-3 mb-4">
             <!-- Tipo expediente -->
@@ -64,39 +47,8 @@
 
           </div>
 
-          <!-- Tipo de Expediente -->
-          <!-- <h2 class="text-sm font-semibold mb-4">Tipo Expediente</h2>
-          <div class="form-control mb-4 ">
-            <select class="select select-bordered w-full">
-              <option disabled selected>Seleccione un tipo...</option>
-              <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
-              <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-              <option value="Arbitraje Institucional">Arbitraje Institucional</option>
-              <option value="Recusación de árbitro">Recusación de árbitro</option>
-              <option value="Recusación de adjudicador">Recusación de adjudicador</option>
-              <option value="Designación residual">Designación residual</option>
-              <option value="Instalación de arbitraje">Instalación de arbitraje</option>
-            </select>
-          </div> -->
-
-
-          <!-- Tipo de Solicitud -->
-          <!-- <div>
-
-            <h2 class="text-sm font-semibold mb-4">Tipo de Solicitud</h2>
-            <select formControlName="tipo_solicitud" class="select select-bordered w-full">
-              <option value="">Seleccione</option>
-              <option value="Demanda">Demanda</option>
-              <option value="Escrito">Escrito</option>
-              <option value="Anexo">Anexo</option>
-            </select>
-          </div> -->
-
           <!-- Descripción -->
           <div>
-            <!-- <label class="label">
-              <span class="label-text font-semibold text-gray-700">Descripción</span>
-            </label> -->
             <h2 class="text-sm font-semibold mb-4">Descripción</h2>
             <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
               placeholder="Describa brevemente su solicitud..." rows="3"></textarea>
@@ -104,15 +56,9 @@
 
           <!-- Archivos -->
           <div>
-            <!-- <label class="label">
-              <span class="label-text font-semibold text-gray-700">Adjuntar archivos (opcional)</span>
-            </label> -->
             <h2 class="text-sm font-semibold mb-4">Adjuntar archivos </h2>
             <input type="file" class="file-input file-input-bordered w-full" multiple
               (change)="onFileSelected($event)" />
-            <!-- <p *ngIf="archivosSeleccionados?.length" class="text-xs text-gray-500 mt-2">
-              {{ archivosSeleccionados.length }} archivo(s) seleccionado(s)
-            </p> -->
           </div>
 
           <label class="label">
@@ -175,106 +121,3 @@
 
 </section>
 
-
-
-<!-- <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
-
-        <h2 class="text-sm font-semibold mb-4">Nuevo expediente</h2>
-
-
-        <div class="grid grid-cols-3 gap-3 mb-4">
-          <input type="text" placeholder="Número" class="input input-bordered w-full" />
-          <input type="text" placeholder="Año" class="input input-bordered w-full " />
-          <select class="select select-bordered w-full">
-            <option disabled selected>Código</option>
-            <option value="CA-RENA">CA-RENA</option>
-            <option value="JPRD-RENA">JPRD-RENA</option>
-            <option value="DESIGNACIÓN">DESIGNACIÓN</option>
-            <option value="RECUSACIÓN-RENA">RECUSACIÓN-RENA</option>
-            <option value="INSTALACIÓN">INSTALACIÓN</option>
-            <option value="AD HOC-RENA">AD HOC-RENA</option>
-            <option value="AE-RENA">AE-RENA</option>
-          </select>
-        </div>
-
-
-        <h2 class="text-sm font-semibold mb-4">Tipo Expediente</h2>
-        <div class="form-control mb-4 ">
-          <select class="select select-bordered w-full">
-            <option disabled selected>Seleccione un tipo...</option>
-            <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
-            <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-            <option value="Arbitraje Institucional">Arbitraje Institucional</option>
-            <option value="Recusación de árbitro">Recusación de árbitro</option>
-            <option value="Recusación de adjudicador">Recusación de adjudicador</option>
-            <option value="Designación residual">Designación residual</option>
-            <option value="Instalación de arbitraje">Instalación de arbitraje</option>
-          </select>
-        </div>
-
-
-        <h2 class="text-sm font-semibold mb-4">Etapa procesal</h2>
-        <div class="form-control mb-4">
-          <select class="select select-bordered w-full">
-            <option disabled selected>Seleccione una etapa...</option>
-            <option value="Prearbitral">Prearbitral</option>
-            <option value="Instalación">Instalación</option>
-            <option value="Postulatoria">Postulatoria</option>
-            <option value="puntos controvertidos">Fijación de puntos controvertidos</option>
-            <option value="Admisión de medios probatorios">Admisión de medios probatorios</option>
-            <option value="Actuación pericial">Actuación pericial</option>
-            <option value="Actuación probatoria">Actuación probatoria</option>
-            <option value="Cierre de etapa probatoria">Cierre de etapa probatoria</option>
-            <option value="Alegatos">Alegatos</option>
-            <option value="Audiencia">Audiencia</option>
-            <option value="Plazo para laudar">Plazo para laudar</option>
-            <option value="Plazo para resolver pedido contra Laudo Arbitral">Plazo para resolver pedido contra Laudo
-              Arbitral</option>
-            <option value="Concluido con Laudo Arbitral Consentido">Concluido con Laudo Arbitral Consentido</option>
-            <option value="Concluido con pedido contra Laudo Arbitral">Concluido con pedido contra Laudo Arbitral
-            </option>
-            <option value="Recusación de arbitro">Recusación de arbitro</option>
-            <option value="Recusación de adjudicador">Recusación de adjudicador</option>
-            <option value="Reconstitución de Tribunal Arbitral">Reconstitución de Tribunal Arbitral</option>
-            <option value="Reconstitución de JPRD">Reconstitución de JPRD</option>
-          </select>
-        </div>
-
-        <h2 class="text-sm font-semibold mb-4">Datos de Usuario</h2>
-
-
-        <div class="form-control mb-4">
-          <input type="text" placeholder="Ingrese un nombre" class="input input-bordered w-full" name="nombre" />
-        </div>
-
-
-        <div class="form-control mb-4">
-          <input type="email" placeholder="Ingrese su correo" class="input input-bordered w-full" />
-        </div>
-
-
-        <div class="form-control mb-4">
-          <input type="password" placeholder="Ingrese su contraseña" class="input input-bordered w-full" />
-        </div>
-
-
-        <div class="form-control mb-6 ">
-          <select class="select select-bordered w-full">
-            <option disabled selected>Seleccione una condición...</option>
-            <option>Demandante</option>
-            <option>Demandado</option>
-            <option>Adjudicador</option>
-            <option>Árbitro</option>
-            <option>Secretario Arbitral</option>
-            <option>Secretario Técnico</option>
-          </select>
-        </div>
-
-
-        <button
-          class="btn btn-ghost w-full btn-md mt-3 bg-info text-base border-base-50 hover:bg-indigo-600 hover:text-white">
-          Enviar Solicitud
-        </button>
-
-
-      </div> -->

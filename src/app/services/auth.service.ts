@@ -86,6 +86,15 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
+  // ===========================================================
+  // 5.- Confirmar cuenta
+  // ===========================================================
+
+  confirmar_cuenta(){
+
+
+  }
+
   // ✅ VERIFICAR SI HAY SESIÓN
   public isAuthenticated(allowRoles: string[]): boolean {
 
