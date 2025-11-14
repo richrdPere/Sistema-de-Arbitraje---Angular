@@ -33,7 +33,7 @@ export class ConfirmarCuentaComponent implements OnInit {
         next: (res: any) => {
           this.mensaje = res.message || 'Cuenta confirmada con éxito ';
           setTimeout(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/trazabilidad']);
           }, 3000);
         },
         error: (err) => {

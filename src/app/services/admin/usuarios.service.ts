@@ -98,6 +98,18 @@ export class UsuarioService {
     return this.http.post(`${this.url}/nuevo`, data, this.getAuthHeaders());
   }
 
+  actualizarUsuario(id: number, data: any) {
+    return this.http.put(`${this.url}/${id}`, data);
+  }
+
+  eliminarUsuario(id: number) {
+    return this.http.delete(`${this.url}/${id}`);
+  }
+
+  verUsuario(id: number) {
+    return this.http.get(`${this.url}/${id}`);
+  }
+
 
   // // Obtener árbitros
   // getArbitros(): Observable<any[]> {

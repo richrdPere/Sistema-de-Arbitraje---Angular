@@ -17,12 +17,6 @@ export class UsuariosPagesComponent implements OnInit {
   // Usuarios combinados
   usuarios: any[] = [];
 
-
-  // Usuarios
-  // arbitros: any[] = [];
-  // secretarias: any[] = [];
-  // participes: any[] = [];
-
   // Variables
   formUsuario!: FormGroup;
   fb = inject(FormBuilder);
@@ -31,11 +25,16 @@ export class UsuariosPagesComponent implements OnInit {
   loading = true;
   filtro: string = '';
   mostrarModal = false;
+  modoEdicion = false;
+  usuarioSeleccionado: any = null;
+
+  backendErrors: any = {};
 
   constructor(private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
     this.formUsuario = this.fb.group({
+      id: [null],
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
@@ -71,58 +70,69 @@ export class UsuariosPagesComponent implements OnInit {
     });
   }
 
-  abrirModal() {
+  abrirModal(modo: 'crear' | 'editar' = 'crear', usuario?: any) {
     this.mostrarModal = true;
+    this.modoEdicion = modo === 'editar';
+
+    if (modo === 'editar' && usuario) {
+      this.usuarioSeleccionado = usuario;
+      this.formUsuario.patchValue(usuario);
+      this.formUsuario.get('password')?.clearValidators();
+      this.formUsuario.get('password')?.updateValueAndValidity();
+    } else {
+      this.usuarioSeleccionado = null;
+      this.formUsuario.reset();
+      this.formUsuario.get('password')?.setValidators([Validators.required]);
+      this.formUsuario.get('password')?.updateValueAndValidity();
+    }
   }
 
   cerrarModal() {
     this.mostrarModal = false;
     this.formUsuario.reset();
+    this.modoEdicion = false;
   }
 
   async cargarDatos(): Promise<void> {
     this.loading = true;
 
     try {
-      const [arbitros, secretarias, participes, admins] = await Promise.all([
-        this.usuarioService.getArbitros().toPromise(),
+      const [secretarias, admins] = await Promise.all([
         this.usuarioService.getSecretarias().toPromise(),
-        this.usuarioService.getParticipes().toPromise(),
         this.usuarioService.getAdmins().toPromise(),
       ]);
 
-      // Normalizamos los tres tipos
-      const normalizar = (lista: any[], rol: string) => {
-        return (lista || []).map(item => ({
+      // Normalizar secretarias
+      const normalizar = (lista: any[] = [], rol: string) => {
+        return lista.map(item => ({
           id: item.usuario?.id ?? null,
           nombre: item.usuario?.nombre ?? '',
           apellidos: item.usuario?.apellidos ?? '',
           correo: item.usuario?.correo ?? '',
           rol,
           cargo: item.cargo ?? '',
-          estado: item.estado === 'Activo' || item.estado === true ? 'Activo' : 'Inactivo',
+          estado: item.activo ? 'Activo' : 'Inactivo',
         }));
       };
 
-      // Función para normalizar admins con estructura directa
-      const normalizarDirecto = (lista: any[], rol: string) => {
-        return (lista || []).map(item => ({
-          id: item.id ?? null,
+      // Normalizar admins (estructura directa)
+      const normalizarDirecto = (lista: any[] = [], rol: string) => {
+        return lista.map(item => ({
+          id: item.id,
           nombre: item.nombre ?? '',
           apellidos: item.apellidos ?? '',
           correo: item.correo ?? '',
           rol,
           cargo: item.cargo ?? '',
-          estado: item.estado === true || item.estado === 'Activo' ? 'Activo' : 'Desactivado',
+          estado: item.estado ? 'Activo' : 'Desactivado',
         }));
       };
 
       this.usuarios = [
-        // ...normalizar(arbitros ?? [], 'Árbitro'),
-        ...normalizar(secretarias ?? [], 'Secretaria'),
-        // ...normalizar(participes ?? [], 'Partícipe'),
-        ...normalizarDirecto(admins ?? [], 'Admin'),
+        ...normalizar(secretarias, 'Secretaria'),
+        ...normalizarDirecto(admins, 'Admin'),
       ];
+
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     } finally {
@@ -130,10 +140,36 @@ export class UsuariosPagesComponent implements OnInit {
     }
   }
 
-  // // Combina todos los usuarios
-  // get usuarios(): any[] {
-  //   return [...this.arbitros, ...this.secretarias, ...this.participes];
-  // }
+  private manejarErroresBackend(err: any) {
+    console.error("Error backend:", err);
+
+    // Si backend envía errors: { campo: "mensaje" }
+    if (err?.error?.errors) {
+      this.backendErrors = err.error.errors;
+
+      Object.keys(this.backendErrors).forEach((campo) => {
+        const control = this.formUsuario.get(campo);
+        if (control) {
+          control.setErrors({ backend: true });
+        }
+      });
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Errores en el formulario',
+        text: 'Revisa los campos marcados en rojo.'
+      });
+
+      return;
+    }
+
+    // Mensaje general
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al procesar la solicitud',
+      text: err.error?.message || 'Error inesperado.'
+    });
+  }
 
 
 
@@ -148,43 +184,104 @@ export class UsuariosPagesComponent implements OnInit {
     );
   }
 
+  crearOEditarUsuario() {
+    // Limpiar errores previos del backend
+    this.backendErrors = {};
 
-  // cerrar modal
-  crearUsuario(): void {
     if (this.formUsuario.invalid) {
+      this.formUsuario.markAllAsTouched();
       Swal.fire({
         icon: 'warning',
         title: 'Formulario incompleto',
-        text: 'Por favor, completa todos los campos requeridos antes de continuar.',
-        confirmButtonColor: '#3085d6'
+        text: 'Por favor completa todos los campos requeridos.',
       });
       return;
     }
 
     const usuario = this.formUsuario.value;
 
+    //  MODO EDICIÓN
+    if (this.modoEdicion) {
+
+      this.usuarioService.actualizarUsuario(usuario.id, usuario).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Usuario actualizado correctamente' });
+          this.cerrarModal();
+          this.cargarDatos();
+        },
+        error: (err) => {
+          this.manejarErroresBackend(err);
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar usuario',
+            text: err.error?.message || 'Error desconocido.',
+          });
+        },
+
+
+      });
+
+    }
+
+    //  MODO CREACIÓN
     this.usuarioService.crearUsuario(usuario).subscribe({
-      next: (res) => {
+      next: () => {
         Swal.fire({
           icon: 'success',
           title: 'Usuario creado correctamente',
-          text: `El usuario ${usuario.nombre} ha sido registrado con éxito.`,
-          confirmButtonColor: '#3085d6'
-        }).then(() => {
-          this.cerrarModal();
-          this.cargarDatos();
+          text: 'Se envió un correo con las credenciales y enlace de confirmación.'
         });
+
+        this.cerrarModal();
+        this.cargarDatos();
       },
       error: (err) => {
-        const mensaje = err.error?.message || 'Error inesperado al crear el usuario.';
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al crear usuario',
-          text: mensaje,
-          confirmButtonColor: '#d33'
+        this.manejarErroresBackend(err);
+      }
+    });
+  }
+
+  verUsuario(usuario: any) {
+    Swal.fire({
+      title: 'Detalles del Usuario',
+      html: `
+        <div class="text-left">
+          <b>Nombre:</b> ${usuario.nombre} ${usuario.apellidos}<br>
+          <b>Correo:</b> ${usuario.correo}<br>
+          <b>Rol:</b> ${usuario.rol}<br>
+          <b>Cargo:</b> ${usuario.cargo || '-'}<br>
+          <b>Estado:</b> ${usuario.estado}
+        </div>
+      `,
+    });
+  }
+
+  eliminarUsuario(id: number) {
+    Swal.fire({
+      title: '¿Eliminar usuario?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.usuarioService.eliminarUsuario(id).subscribe({
+          next: () => {
+            Swal.fire({ icon: 'success', title: 'Usuario eliminado correctamente' });
+            this.cargarDatos();
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al eliminar usuario',
+              text: err.error?.message || 'Error inesperado',
+            });
+          },
         });
-        console.error('Error al crear usuario:', err);
-      },
+      }
     });
   }
 }
