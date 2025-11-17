@@ -3,12 +3,16 @@ import { RouterOutlet } from '@angular/router';
 import { SideMenuSecretariaComponent } from "../components/side-menu-secretaria/side-menu-secretaria.component";
 import { NavbarMenuSecretariaComponent } from "../components/navbar-menu-secretaria/navbar-menu-secretaria.component";
 
-// Service
+// Services
 import { AuthService } from 'src/app/services/auth.service';
+import { ThemeService } from 'src/app/services/theme.service';
+
+// Pipe
+import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
 
 @Component({
   selector: 'app-secretaria-layout',
-  imports: [RouterOutlet, SideMenuSecretariaComponent, NavbarMenuSecretariaComponent],
+  imports: [RouterOutlet, SideMenuSecretariaComponent, NavbarMenuSecretariaComponent, CapitalizePipe],
   templateUrl: './secretaria_layout.component.html',
 })
 export class SecretariaLayoutComponent {
@@ -16,7 +20,10 @@ export class SecretariaLayoutComponent {
   rol: string = '';
   nombre: string = '';
 
-  constructor(private _authService: AuthService,) {
+  constructor(
+    private _authService: AuthService,
+    private themeService: ThemeService
+  ) {
 
     const usuario = _authService.getUser()
 
@@ -24,6 +31,14 @@ export class SecretariaLayoutComponent {
       this.rol = usuario.rol;
       this.nombre = usuario.nombre;
     }
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
+
+  isDarkTheme(): boolean {
+    return this.themeService.getTheme() === 'dark';
   }
 
 

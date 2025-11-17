@@ -1,9 +1,16 @@
 <div class="p-6 min-h-screen overflow-y-auto bg-base-300 transition-colors duration-300">
 
+  <!-- <div class="p-6 bg-base-100 rounded-xl shadow-xl ">
+
+  </div> -->
+
+  <!-- <h2 class="text-2xl font-bold mb-6 text-base-content">Mi Perfil</h2> -->
+
   <div class="p-4 mb-7 card bg-base-100 shadow-md flex flex-col items-start">
     <h1 class="text-2xl font-bold mb-1 text-base-content">Mi Perfil</h1>
     <p class="text-gray-600">Vea y actualice sus datos.</p>
   </div>
+
 
 
   @if (loading) {
@@ -15,7 +22,7 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
     <!-- Card Foto -->
-    <div class="card bg-base-100 shadow-md p-4 flex flex-col items-center">
+    <div class="card bg-base-100 shadow-2xl p-4 flex flex-col items-center">
       <img [src]="fotoPreview || 'assets/img/default-avatar.png'" alt="Foto de perfil"
         class="w-40 h-40 rounded-full object-cover mb-4" />
 
@@ -26,7 +33,7 @@
     <!-- Card Datos de Perfil -->
     <div class="md:col-span-2 space-y-6">
 
-      <div class="card bg-base-100 shadow-md p-6">
+      <div class="card bg-base-100 shadow-2xl p-6">
         <h3 class="text-lg font-semibold mb-3 text-base-content">Datos del Perfil</h3>
 
         <form [formGroup]="perfilForm" (ngSubmit)="actualizarPerfil() " class="space-y-4 text-base-content">
@@ -48,7 +55,7 @@
       </div>
 
       <!-- Card Contraseña -->
-      <div class="card bg-base-100 shadow-md p-6">
+      <div class="card bg-base-100 shadow-2xl p-6">
         <h3 class="text-lg font-semibold text-base-content">Cambiar Contraseña</h3>
 
         <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()" class="mt-4 space-y-3 text-base-content">
@@ -73,5 +80,6 @@
   </div>
 
   }
+
 
 </div>

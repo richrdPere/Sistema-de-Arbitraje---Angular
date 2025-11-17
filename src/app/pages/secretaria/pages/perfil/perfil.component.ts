@@ -1,10 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ViewChild, ElementRef } from '@angular/core';
 import Swal from 'sweetalert2';
 
 // Service
-import { AuthService } from 'src/app/services/auth.service';
 import { PerfilService } from 'src/app/services/perfil.service';
 
 @Component({
@@ -20,7 +18,7 @@ export class PerfilComponent implements OnInit {
   loading = true;
   fotoPreview: string | ArrayBuffer | null = null;
 
-  constructor(private perfilService: PerfilService, private _authService: AuthService) { }
+  constructor(private perfilService: PerfilService) { }
 
   ngOnInit(): void {
     this.initForms();
@@ -112,12 +110,7 @@ export class PerfilComponent implements OnInit {
 
     // Subir la foto al backend
     this.perfilService.subirFoto(file).subscribe({
-      next: (res) => {
-
-        this._authService.updateUser({
-          foto_perfil: res.foto_perfil
-        });
-
+      next: () => {
         Swal.fire('Éxito', 'Foto de perfil actualizada', 'success');
       },
       error: () => {

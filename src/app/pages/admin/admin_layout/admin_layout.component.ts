@@ -6,9 +6,12 @@ import { SideMenuComponent } from "../components/side-menu/side-menu.component";
 // Service
 import { AuthService } from 'src/app/services/auth.service';
 
+// Pipe
+import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
+
 @Component({
   selector: 'app-admin-layout',
-  imports: [RouterOutlet, SideMenuComponent, NavbarMenuComponent],
+  imports: [RouterOutlet, SideMenuComponent, NavbarMenuComponent, CapitalizePipe],
   templateUrl: './admin_layout.component.html',
 })
 export class AdminLayoutComponent {

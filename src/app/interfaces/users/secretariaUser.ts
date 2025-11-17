@@ -9,6 +9,7 @@ export interface UsuarioSecretaria {
   nombre: string;
   correo: string;
   rol: string;
+  foto_perfil: string;
   detalles?: {
     id_secretaria: number;
     usuario_id: number;

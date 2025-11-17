@@ -90,7 +90,7 @@ export class AuthService {
   // 5.- Confirmar cuenta
   // ===========================================================
 
-  confirmar_cuenta(){
+  confirmar_cuenta() {
 
 
   }
@@ -127,6 +127,18 @@ export class AuthService {
     // Valida si el token existe y no ha expirado
     return !!token;
   }
+
+  updateUser(data: Partial<LoginResponse['usuario']>) {
+    const current = this.currentUserSubject.value;
+
+    if (current) {
+      const updated = { ...current, ...data };
+
+      localStorage.setItem('usuario', JSON.stringify(updated));
+      this.currentUserSubject.next(updated);
+    }
+  }
+
 
   // isAuthenticated(): boolean {
   //   return !!this.getToken();

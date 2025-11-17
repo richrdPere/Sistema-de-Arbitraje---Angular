@@ -18,7 +18,7 @@
     @for (item of menuOptions; track item.route) {
 
     @if (item.label !== 'Cerrar Sesión') {
-    <li [routerLink]="item.route" routerLinkActive="bg-grey-200">
+    <li [routerLink]="item.route" routerLinkActive="bg-gray-200">
       <a class="justify-start items-center ">
         <img [src]="item.icon" alt="{{ item.label }} icon" class="w-5 h-5 mr-3 " />
         {{item.label}}

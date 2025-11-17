@@ -53,18 +53,20 @@ export class SideMenuOptionsComponent {
       sublabel: 'Evalua la logistica dentro de los bienes del almacén',
       route: '/admin/solicitudes',
     },
+        {
+      icon: 'fa-solid fa-calendar-days',
+      label: 'Calendario',
+      sublabel: 'Calendario de actividades',
+      route: '/admin/calendario',
+    },
+
     // {
     //   icon: 'fa-solid fa-comment',
     //   label: 'Chats',
     //   sublabel: 'Conversa y asigna acciones a los serenos u otros operadores',
     //   route: '/dashboard/chats',
     // },
-    // {
-    //   icon: 'fa-solid fa-calendar-days',
-    //   label: 'Calendario',
-    //   sublabel: 'Calendario de actividades',
-    //   route: '/dashboard/calendario',
-    // },
+
     // {
     //   icon: 'fa-solid fa-flask-vial',
     //   label: 'Test pages',

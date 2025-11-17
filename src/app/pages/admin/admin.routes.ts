@@ -27,10 +27,12 @@ export const AdminRoutes: Routes = [
 
       // Para participe
       { path: 'participes', loadComponent: () => import('./pages/participes-page/participes-page.component').then(m => m.ParticipesPageComponent) },
+      { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
       { path: 'usuarios', loadComponent: () => import('./pages/usuarios-pages/usuarios-pages.component').then(m => m.UsuariosPagesComponent) },
       { path: 'resoluciones', loadComponent: () => import('./pages/resoluciones-page/resoluciones-page.component').then(m => m.ResolucionesPageComponent) },
       { path: 'auditoria', loadComponent: () => import('./pages/auditoria-page/auditoria-page.component').then(m => m.AuditoriaPageComponent) },
       { path: 'solicitudes', loadComponent: () => import('./pages/solicitudes-page/solicitudes-page.component').then(m => m.SolicitudesPageComponent) },
+      { path: 'calendario', loadComponent: () => import('./pages/calendario/calendario.component').then(m => m.CalendarioComponent) },
       { path: '', redirectTo: 'expedientes', pathMatch: 'full' },
     ]
   }

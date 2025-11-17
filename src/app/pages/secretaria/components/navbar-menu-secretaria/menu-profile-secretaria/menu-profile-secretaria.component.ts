@@ -6,6 +6,7 @@ import iziToast from 'izitoast';
 import { MenuOptions } from 'src/app/interfaces/components/MenuOptions';
 // Servicio
 import { AuthService } from 'src/app/services/auth.service';
+import { PerfilService } from 'src/app/services/perfil.service';
 
 
 @Component({
@@ -23,14 +24,15 @@ export class MenuProfileSecretariaComponent {
 
   constructor(
     private _authService: AuthService,
-    private _router: Router
+    private _router: Router,
+    private perfilService: PerfilService
   ) {
     const usuario = _authService.getUser()
 
     if (usuario) {
       this.name = usuario.nombre;
       this.email = usuario.correo;
-      // this.avatar = usuario.avatar;
+      this.avatar = `${this.perfilService.envs.url_image}${usuario.foto_perfil}`;
     }
   }
 
@@ -38,7 +40,7 @@ export class MenuProfileSecretariaComponent {
     {
       icon: 'assets/icons/navbar/perfil.svg',
       label: 'Perfil',
-      route: '/dashboard/perfil',
+      route: '/secretaria/perfil',
     },
     {
       icon: 'assets/icons/navbar/settings.svg',
@@ -48,7 +50,7 @@ export class MenuProfileSecretariaComponent {
     {
       icon: 'assets/icons/navbar/sign_out.svg',
       label: 'Cerrar Sesión',
-      route: '/login',
+      route: '/trazabilidad',
     },
 
   ];
@@ -61,7 +63,7 @@ export class MenuProfileSecretariaComponent {
       message: 'Has cerrado sesión correctamente',
       position: 'bottomRight',
     });
-    this._router.navigate(['/login']);
+    this._router.navigate(['/trazabilidad']);
   }
 
 }

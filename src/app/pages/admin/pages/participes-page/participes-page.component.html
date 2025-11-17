@@ -1,108 +1,112 @@
-<div class="p-6 bg-gray-50 min-h-screen">
-  <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">Gestión de Partícipes</h2>
-    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" (click)="abrirModal()">
-      + Crear Nuevo Participe
-    </button>
-  </div>
+<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
 
-  <app-participes-modal
-    [mostrarModal]="mostrarModal"
-    (modalCerrado)="cerrarModal()"
-    (participeCreado)="cargarDatos()">
-  </app-participes-modal>
+  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-base-content">Gestión de Partícipes</h2>
+      <button
+        class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none hover:brightness-110 transition-all"
+        (click)="abrirModal()">
+        + Crear Nuevo Participe
+      </button>
+    </div>
 
-  <!-- Modal Form -->
-  <!-- <dialog id="my_modal_1" class="modal text-white">
-    <expediente-modal [formExpediente]="formExpediente" (submitForm)="onSubmitExpediente()" />
-  </dialog> -->
+    <app-participes-modal [mostrarModal]="mostrarModal" (modalCerrado)="cerrarModal()"
+      (participeCreado)="cargarDatos()">
+    </app-participes-modal>
 
 
-  <!-- Buscador -->
-  <div class="flex justify-between items-center mb-4">
-    <input type="text"
-      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      placeholder="Buscar por cualquier campo..." [(ngModel)]="filtro">
+    <!-- Buscador -->
+    <div class="flex justify-between items-center mb-4">
+      <input type="text"
+        class="input input-bordered w-full max-w-xs bg-base-100 rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="Buscar por cualquier campo..." [(ngModel)]="filtro">
 
-  </div>
+    </div>
 
 
-  <!-- Tabla -->
-  <div class="overflow-x-auto bg-white shadow rounded-lg ">
-    <table class="table w-full">
-      <thead class="bg-gray-100 text-base-100">
-        <tr>
-          <th>Nombre</th>
-          <th>Correo Electrónico</th>
-          <th>Rol de Usuario</th>
-          <th>Rol en el Proceso</th>
-          <th>Estado</th>
-          <th>Teléfono</th>
-          <th>Cargo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (loading) {
-        <tr>
-          <td colspan="7" class="text-center py-4">Cargando participes...</td>
-        </tr>
-        }
+    <!-- Tabla -->
+    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg ">
+      <table class="table w-full">
+        <thead class="bg-base-300/90">
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Correo Electrónico</th>
+            <th>Rol de Usuario</th>
+            <th>Rol en el Proceso</th>
+            <th>Estado</th>
+            <th>Teléfono</th>
+            <th>Cargo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading) {
+          <tr>
+            <td colspan="7" class="text-center py-4">Cargando participes...</td>
+          </tr>
+          }
 
-        @if (!loading && participes.length === 0) {
-        <tr>
-          <td colspan="8" class="text-center py-4 text-gray-500">
-            No hay partícipes registrados.
-          </td>
-        </tr>
-        }
+          @if (!loading && participes.length === 0) {
+          <tr class="">
+            <td colspan="8" class="text-center py-4 text-gray-500">
+              No hay partícipes registrados.
+            </td>
+          </tr>
+          }
 
-        @for (p of participes; track $index) {
-        <tr class="hover">
-          <td>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</td>
-          <td>{{ p.usuario?.correo }}</td>
-          <td>{{ p.usuario?.rol }}</td>
-          <td>{{ p.rol_participe }}</td>
-          <td>
-            <span [ngClass]="{
+          @for (p of participes; track $index; let i = $index) {
+          <tr class="hover:bg-base-300 transition text-base-content">
+            <td>{{i + 1}}</td>
+            <td>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</td>
+            <td>{{ p.usuario?.correo }}</td>
+            <td>{{ p.usuario?.rol }}</td>
+            <td>{{ p.rol_participe }}</td>
+            <td>
+              <span [ngClass]="{
                   'bg-green-600': p.estado === 'Activo',
                   'bg-red-600': p.estado === 'Inactivo'
                 }" class="text-white px-3 py-1 rounded-full text-sm">
-              {{ p.estado }}
-            </span>
-          </td>
-          <td>{{ p.telefono || '-' }}</td>
-          <td>{{ p.cargo || '-' }}</td>
-          <td class="space-x-2">
-            <button class="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white">
-              <i class="bi bi-eye"></i> Ver
-            </button>
-            <button class="btn btn-sm bg-yellow-500 hover:bg-yellow-600 text-white">
-              <i class="bi bi-pencil"></i> Editar
-            </button>
-            <button class="btn btn-sm bg-red-500 hover:bg-red-600 text-white">
-              <i class="bi bi-trash"></i> Eliminar
-            </button>
-          </td>
-        </tr>
-        }
+                {{ p.estado }}
+              </span>
+            </td>
+            <td>{{ p.telefono || '-' }}</td>
+            <td>{{ p.cargo || '-' }}</td>
+            <td class="space-x-2 flex items-center">
+              <!-- Ver -->
+              <button class="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white">
+                <i class="fa-solid fa-eye"></i>
+              </button>
 
-      </tbody>
-    </table>
+              <!-- Editar -->
+              <button class="btn btn-sm bg-yellow-500 hover:bg-yellow-600 text-white">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
 
-    <!-- Paginación -->
-    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
-      <span>Página 1 de 1</span>
-      <div class="join ml-4">
-        <button class="join-item btn btn-sm" disabled>Anterior</button>
-        <button class="join-item btn btn-sm">Siguiente</button>
+              <!-- Eliminar -->
+              <button class="btn btn-sm bg-red-500 hover:bg-red-600 text-white">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          }
+
+        </tbody>
+      </table>
+
+      <!-- Paginación -->
+      <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
+        <span>Página 1 de 1</span>
+        <div class="join ml-4">
+          <button class="join-item btn btn-sm" disabled>Anterior</button>
+          <button class="join-item btn btn-sm">Siguiente</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL CREAR PARTICIPE -->
-  <!-- @if (mostrarModal) {
+    <!-- MODAL CREAR PARTICIPE -->
+    <!-- @if (mostrarModal) {
   <div class="modal modal-open">
     <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg">
 
@@ -209,4 +213,7 @@
     <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
   </div>
   } -->
+  </div>
+
+
 </div>
