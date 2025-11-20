@@ -26,9 +26,11 @@ export const AdminRoutes: Routes = [
       },
 
       // Para participe
+
       { path: 'participes', loadComponent: () => import('./pages/participes-page/participes-page.component').then(m => m.ParticipesPageComponent) },
       { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
       { path: 'usuarios', loadComponent: () => import('./pages/usuarios-pages/usuarios-pages.component').then(m => m.UsuariosPagesComponent) },
+      { path: 'casos', loadComponent: () => import('./pages/caso/caso.component').then(m => m.CasoComponent) },
       { path: 'resoluciones', loadComponent: () => import('./pages/resoluciones-page/resoluciones-page.component').then(m => m.ResolucionesPageComponent) },
       { path: 'auditoria', loadComponent: () => import('./pages/auditoria-page/auditoria-page.component').then(m => m.AuditoriaPageComponent) },
       { path: 'solicitudes', loadComponent: () => import('./pages/solicitudes-page/solicitudes-page.component').then(m => m.SolicitudesPageComponent) },

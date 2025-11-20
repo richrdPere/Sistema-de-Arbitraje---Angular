@@ -4,10 +4,10 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-base-content">Gestión de Expedientes</h2>
-      <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+      <!-- <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
         (click)="abrirModal()">
         + Crear Nuevo Expediente
-      </button>
+      </button> -->
     </div>
 
     <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
@@ -27,6 +27,7 @@
       <table class="table w-full">
         <thead class="bg-base-300/90">
           <tr>
+            <th>#</th>
             <th>N° Expediente</th>
             <th>N° de Participes</th>
             <th>Fecha de Inicio</th>
@@ -57,6 +58,7 @@
 
           @for (exp of expedientes; track exp.id_expediente; let i = $index) {
           <tr class="hover:bg-base-300 transition text-base-content">
+            <td>{{i + 1}}</td>
             <td>{{ exp.numero_expediente }}</td>
             <td>{{ exp.total_participes }}</td>
             <td>{{ exp.fecha_inicio | date: 'dd/MM/yyyy' }}</td>

@@ -23,6 +23,12 @@ export class SideMenuOptionsComponent {
       sublabel: 'Accede al mapa en tiempo real',
       route: '/admin/expedientes',
     },
+     {
+      icon: 'fa-solid fa-building-columns',
+      label: 'Casos',
+      sublabel: 'Casos abiertos de las solicitudes aprobadas',
+      route: '/admin/casos',
+    },
     {
       icon: 'fa-solid fa-user-tie',
       label: 'Participes',
