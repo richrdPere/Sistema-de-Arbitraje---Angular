@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
+
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
 
@@ -45,7 +46,6 @@ export class ParticipesComponent implements OnInit {
     event.stopPropagation(); // Evita que se cierre inmediatamente
     this.menuAbierto = this.menuAbierto === index ? null : index;
   }
-
 
   cerrarDropdown() {
     this.menuAbierto = null;
@@ -97,6 +97,8 @@ export class ParticipesComponent implements OnInit {
 
     });
   }
+
+
 
   //  Método para enviar el formulario
   crearParticipe(): void {

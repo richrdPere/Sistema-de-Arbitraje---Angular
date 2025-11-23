@@ -18,6 +18,8 @@ export class UsuariosPagesComponent implements OnInit {
   usuarios: any[] = [];
 
   // Variables
+  formArbitro!: FormGroup;
+  formAdjudicador!: FormGroup;
   formUsuario!: FormGroup;
   fb = inject(FormBuilder);
   formUtils = FormUtils;
@@ -33,6 +35,31 @@ export class UsuariosPagesComponent implements OnInit {
   constructor(private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
+
+    // // FORM PARA ÁRBITRO
+    // this.formArbitro = this.fb.group({
+    //   usuario_id: ['', Validators.required],
+    //   cargo: ['Árbitro Técnico', Validators.required],
+    //   especialidad: [''],
+    //   experiencia: [''],
+    //   numero_colegiatura: [''],
+    //   certificado_pdf: [''],
+    //   disponible: [true],
+    //   estado: ['Activo'],
+    // });
+
+    // // FORM PARA ADJUDICADOR
+    // this.formAdjudicador = this.fb.group({
+    //   usuario_id: ['', Validators.required],
+    //   cargo: ['JPRD', Validators.required],
+    //   especialidad: [''],
+    //   experiencia: [''],
+    //   acreditacion_pdf: [''],
+    //   disponible: [true],
+    //   estado: ['Activo'],
+    // });
+
+
     this.formUsuario = this.fb.group({
       id: [null],
       nombre: ['', Validators.required],
@@ -50,6 +77,12 @@ export class UsuariosPagesComponent implements OnInit {
       cargo: [''],
       especialidad: [''],
       experiencia: [''],
+
+      // Para arbitro y adjudicador
+      numero_colegiatura: [''],
+      certificado_pdf: [''],
+      disponible: [true],
+      estado: ['Activo'],
     });
 
     // Opcional: limpiar campos cuando cambia el rol
@@ -86,6 +119,28 @@ export class UsuariosPagesComponent implements OnInit {
       this.formUsuario.get('password')?.updateValueAndValidity();
     }
   }
+
+  // abrirModalArbitro() {
+  //   this.formArbitro.reset({
+  //     cargo: 'Árbitro Técnico',
+  //     disponible: true,
+  //     estado: 'Activo'
+  //   });
+  //   this.mostrarModal = true;
+  //   this.modoEdicion = false;
+  // }
+
+  // abrirModalAdjudicador() {
+  //   this.formAdjudicador.reset({
+  //     cargo: 'JPRD',
+  //     disponible: true,
+  //     estado: 'Activo'
+  //   });
+  //   this.mostrarModal = true;
+  //   this.modoEdicion = false;
+  // }
+
+
 
   cerrarModal() {
     this.mostrarModal = false;

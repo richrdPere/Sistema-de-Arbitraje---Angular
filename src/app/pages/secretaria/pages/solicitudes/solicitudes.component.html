@@ -1,1 +1,444 @@
-<p>solicitudes works!</p>,
+<div class="p-6 bg-base-200 min-h-screen transition-all duration-300">
+
+  <!-- Contenedor de tabs -->
+  <div class="tabs tabs-lifted w-full mb-6">
+    <!-- TAB 1 -->
+    <input type="radio" name="my_tabs_2" id="tab1" class="tab peer/tab1 hidden" checked />
+    <label for="tab1"
+      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab1:bg-info peer-checked/tab1:text-white peer-checked/tab1:font-bold text-base-content transition-colors">
+      Pendientes
+    </label>
+
+    <div
+      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab1:block transition-all duration-300">
+
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-base-content">Lista de Solicitudes</h2>
+      </div>
+
+      <!-- Modal -->
+      @if (modalVisible) {
+      <dialog class="modal modal-open text-base-content">
+        <div class="modal-box bg-base-100 rounded-2xl shadow-2xl max-w-md transition-all duration-300">
+          <h3 class="font-bold text-lg text-center mb-3">Cambiar estado del trámite</h3>
+
+          <p class="text-center text-base-content/80 mb-6">
+            ¿Deseas
+            <span class="font-semibold text-success">admitir</span> o
+            <span class="font-semibold text-error">desestimar</span>
+            la solicitud
+            <span class="text-primary font-bold">{{ tramiteSeleccionado?.numero_expediente }}</span>?
+          </p>
+
+          <!-- ============================= -->
+          <!-- 1. BOTONES PRINCIPALES        -->
+          <!-- ============================= -->
+
+          @if (nuevoEstado === '') {
+          <div class="flex justify-center gap-3 mt-4">
+
+            <!-- ADMITIR -->
+            <button class="btn btn-success btn-sm text-white"
+              (click)="nuevoEstado = 'aprobada'; confirmarCambioEstado()">
+              <i class="fa-solid fa-check mr-1"></i>
+              Admitir
+            </button>
+
+            <!-- RECHAZAR: SOLO CAMBIA DE ESTADO, NO ENVÍA AL BACKEND -->
+            <button class="btn btn-error btn-sm text-white" (click)="nuevoEstado = 'rechazada';
+
+              ">
+              <i class="fa-solid fa-xmark mr-1"></i>
+              No admitir
+            </button>
+
+            <button class="btn btn-ghost btn-sm" (click)="cerrarModal()">
+              <i class="fa-solid fa-ban mr-1"></i>
+              Cancelar
+            </button>
+          </div>
+          }
+
+
+          <!-- ============================= -->
+          <!-- 2. TEXTAREA PARA RECHAZO     -->
+          <!-- ============================= -->
+          @if (nuevoEstado === 'rechazada') {
+
+          <div class="mt-4">
+
+            <label class="block font-semibold mb-2">Observaciones:</label>
+
+            <textarea [(ngModel)]="razonRechazo" placeholder="Describe brevemente los motivos del rechazo..."
+              class="textarea textarea-bordered w-full h-28">
+            </textarea>
+
+            <div class="flex justify-center gap-3 mt-4">
+
+              <!-- CONFIRMAR RECHAZO: AQUÍ recién llama al backend -->
+              <button class="btn btn-error btn-sm text-white" [disabled]="!razonRechazo"
+                (click)="confirmarCambioEstado()">
+                <i class="fa-solid fa-xmark mr-1"></i>
+                Confirmar Rechazo
+              </button>
+
+              <button class="btn btn-ghost btn-sm" (click)="nuevoEstado = ''; razonRechazo = ''">
+                Volver
+              </button>
+
+            </div>
+
+          </div>
+          }
+        </div>
+      </dialog>
+
+      <form method="dialog" class="modal-backdrop bg-black/40" (click)="cerrarModal()"></form>
+      }
+
+      <!-- Buscador -->
+      <!-- <div class="flex justify-between items-center mb-4">
+        <input type="text"
+          class="input input-bordered w-full max-w-xs bg-base-100 text-base-content rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Buscar por cualquier campo..." />
+      </div> -->
+
+      <div class="flex flex-row justify-between pb-3">
+        <div class="relative">
+          <input type="text" class="input input-bordered bg-base-100 text-base-content pl-10 h-11 w-64"
+            placeholder="Buscar..." [(ngModel)]="filtroSearch" (input)="aplicarFiltros()" />
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-base-content/60"></i>
+        </div>
+
+        <!-- Filtro Tipo -->
+        <select class="select select-bordered h-11 bg-base-100 text-base-content " [(ngModel)]="filtroTipo"
+          (change)="aplicarFiltros()">
+          <option value="">Todos los tipos</option>
+          <option *ngFor="let t of tiposTramite" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+
+
+      <!-- Filtro Estado -->
+      <!-- <select class="select select-bordered h-11 bg-base-100 text-base-content" [(ngModel)]="filtroEstado"
+        (change)="aplicarFiltros()">
+        <option value="">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="rechazada">Rechazada</option>
+      </select> -->
+
+      <!-- Tabla -->
+      @if (!loading && solicitudes.length > 0) {
+      <div class="bg-base-100 shadow rounded-lg border border-base-300 overflow-hidden">
+
+        <div
+          class="overflow-x-auto overflow-y-auto h-[40vh] sm:max-h-[65vh] md:max-h-[60vh] lg:max-h-[65vh] xl:max-h-[70vh]">
+          <table class="table w-full">
+            <thead class="bg-base-300 text-base-content">
+              <tr>
+                <th>#</th>
+                <th>N° Expediente</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Etapa</th>
+                <th>Solicitante</th>
+                <th>Correo</th>
+                <!-- <th>Condición</th> -->
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (loading) {
+              <tr>
+                <td colspan="9" class="text-center py-4">Cargando trámites...</td>
+              </tr>
+              }
+
+              @for (solicitud of solicitudes; track $index) {
+              <tr class="hover transition-colors text-base-content">
+                <td>{{ $index + 1 }}</td>
+                <td class="font-medium text-primary">{{ solicitud.numero_expediente }}</td>
+                <td>{{ solicitud.tipo }}</td>
+                <td>{{ solicitud.estado }}</td>
+                <td>{{ solicitud.etapa_procesal }}</td>
+                <td>{{ solicitud.solicitante }}</td>
+                <td>{{ solicitud.correo }}</td>
+                <!-- <td>{{ solicitud.condicion }}</td> -->
+
+                <td class="relative">
+                  <div class="dropdown dropdown-end inline-block">
+                    <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 12h.01M12 12h.01M18 12h.01" />
+                      </svg>
+                    </button>
+
+                    <ul tabindex="0"
+                      class="menu menu-sm dropdown-content bg-base-100 shadow-lg rounded-xl w-52 mt-2 z-[100]">
+                      <li class="menu-title px-4 py-1 text-xs text-base-content/60">
+                        Acciones
+                      </li>
+
+                      <!-- Ver Documentos -->
+                      <li>
+                        <button
+                          class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-base-content">
+                          <i class="fa-solid fa-file-lines w-5 text-center"></i>
+                          <a [href]="solicitud.documento" target="_blank" class="text-primary hover:underline">
+                            Ver archivo
+                          </a>
+                        </button>
+                      </li>
+
+                      <hr class="my-1 border-base-300" />
+
+                      <!-- Aprobar Expediente -->
+                      <li>
+                        <button
+                          class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-primary hover:underline"
+                          (click)="abrirModal(solicitud)">
+                          <i class="fa-solid fa-pen w-5 text-center"></i>
+                          Aprobar Expediente
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-wrap justify-end items-center p-4 border-t bg-base-200 text-sm gap-3">
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="paginaAnterior()"
+            [disabled]="paginaActual === 1">
+            Anterior
+          </button>
+
+          <p class="text-base-content">Página {{ paginaActual }} de {{ totalPaginas }}</p>
+
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="siguientePagina()"
+            [disabled]="paginaActual === totalPaginas">
+            Siguiente
+          </button>
+        </div>
+      </div>
+      }
+      @else if (!loading && solicitudes.length === 0) {
+      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+        <h3 class="text-lg font-semibold text-base-content mb-2">
+          No hay solicitudes registradas
+        </h3>
+        <p class="text-sm max-w-md">Cuando se registren nuevas solicitudes, aparecerán aquí automáticamente.</p>
+      </div>
+      }
+    </div>
+
+    <!-- TAB 2 -->
+    <input type="radio" name="my_tabs_2" id="tab2" class="tab peer/tab2 hidden" />
+    <label for="tab2"
+      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab2:bg-info peer-checked/tab2:text-white peer-checked/tab2:font-bold text-base-content transition-colors">
+      Admitidas
+    </label>
+    <div
+      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab2:block transition-all duration-300">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-base-content">Solicitudes Admitidas</h2>
+      </div>
+      <div class="relative">
+        <input type="text" class="input input-bordered bg-base-100 text-base-content pl-10 h-11 w-64"
+          placeholder="Buscar..." [(ngModel)]="filtroSearch" (input)="aplicarFiltros()" />
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-base-content/60"></i>
+      </div>
+
+      <!-- Filtro Tipo -->
+      <select class="select select-bordered h-11 bg-base-100 text-base-content" [(ngModel)]="filtroTipo"
+        (change)="aplicarFiltros()">
+        <option value="">Todos los tipos</option>
+        <option *ngFor="let t of tiposTramite" [value]="t">{{ t }}</option>
+      </select>
+
+      <!-- Filtro Estado -->
+      <!-- <select class="select select-bordered h-11 bg-base-100 text-base-content" [(ngModel)]="filtroEstado"
+        (change)="aplicarFiltros()">
+        <option value="">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="rechazada">Rechazada</option>
+      </select> -->
+
+      <!-- Tabla -->
+      @if (!loading && solicitudesAprobadas.length > 0) {
+      <div class="bg-base-100 shadow rounded-lg border border-base-300 overflow-hidden">
+
+        <div
+          class="overflow-x-auto overflow-y-auto h-[40vh] sm:max-h-[65vh] md:max-h-[60vh] lg:max-h-[65vh] xl:max-h-[70vh]">
+          <table class="table w-full">
+            <thead class="bg-base-300 text-base-content">
+              <tr>
+                <th>#</th>
+                <th>N° Expediente</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Etapa</th>
+                <th>Solicitante</th>
+                <th>Correo</th>
+                <!-- <th>Condición</th> -->
+
+              </tr>
+            </thead>
+            <tbody>
+              @if (loading) {
+              <tr>
+                <td colspan="9" class="text-center py-4">Cargando trámites...</td>
+              </tr>
+              }
+
+              @for (solicitud of solicitudesAprobadas; track $index) {
+              <tr class="hover transition-colors text-base-content">
+                <td>{{ $index + 1 }}</td>
+                <td class="font-medium text-primary">{{ solicitud.numero_expediente }}</td>
+                <td>{{ solicitud.tipo }}</td>
+                <td>{{ solicitud.estado }}</td>
+                <td>{{ solicitud.etapa_procesal }}</td>
+                <td>{{ solicitud.solicitante }}</td>
+                <td>{{ solicitud.correo }}</td>
+                <!-- <td>{{ solicitud.condicion }}</td> -->
+
+
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-wrap justify-end items-center p-4 border-t bg-base-200 text-sm gap-3">
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="paginaAnterior()"
+            [disabled]="paginaActual === 1">
+            Anterior
+          </button>
+
+          <p class="text-base-content">Página {{ paginaActual }} de {{ totalPaginas }}</p>
+
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="siguientePagina()"
+            [disabled]="paginaActual === totalPaginas">
+            Siguiente
+          </button>
+        </div>
+      </div>
+      }
+      @else if (!loading && solicitudesAprobadas.length === 0) {
+      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+        <h3 class="text-lg font-semibold text-base-content mb-2">
+          No hay solicitudes aprobadas
+        </h3>
+        <p class="text-sm max-w-md">Cuando apruebe sus solicitudes, aparecerán aquí automáticamente.</p>
+      </div>
+      }
+    </div>
+
+
+    <!-- TAB 3 -->
+    <input type="radio" name="my_tabs_2" id="tab3" class="tab peer/tab3 hidden" />
+    <label for="tab3"
+      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab3:bg-info peer-checked/tab3:text-white peer-checked/tab3:font-bold text-base-content transition-colors">
+      No admitidas
+    </label>
+    <div
+      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab3:block transition-all duration-300">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-base-content">Solicitudes no admitidas</h2>
+      </div>
+
+
+      <!-- Tabla -->
+      @if (!loading && solicitudesRechazadas.length > 0) {
+      <div class="bg-base-100 shadow rounded-lg border border-base-300 overflow-hidden">
+
+        <div
+          class="overflow-x-auto overflow-y-auto h-[40vh] sm:max-h-[65vh] md:max-h-[60vh] lg:max-h-[65vh] xl:max-h-[70vh]">
+          <table class="table w-full">
+            <thead class="bg-base-300 text-base-content">
+              <tr>
+                <th>#</th>
+                <th>N° Expediente</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Etapa</th>
+                <th>Solicitante</th>
+                <th>Correo</th>
+                <!-- <th>Condición</th> -->
+
+              </tr>
+            </thead>
+            <tbody>
+              @if (loading) {
+              <tr>
+                <td colspan="9" class="text-center py-4">Cargando trámites...</td>
+              </tr>
+              }
+
+              @for (solicitud of solicitudesRechazadas; track $index) {
+              <tr class="hover transition-colors text-base-content">
+                <td>{{ $index + 1 }}</td>
+                <td class="font-medium text-primary">{{ solicitud.numero_expediente }}</td>
+                <td>{{ solicitud.tipo }}</td>
+                <td>{{ solicitud.estado }}</td>
+                <td>{{ solicitud.etapa_procesal }}</td>
+                <td>{{ solicitud.solicitante }}</td>
+                <td>{{ solicitud.correo }}</td>
+                <!-- <td>{{ solicitud.condicion }}</td> -->
+
+
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-wrap justify-end items-center p-4 border-t bg-base-200 text-sm gap-3">
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="paginaAnterior()"
+            [disabled]="paginaActual === 1">
+            Anterior
+          </button>
+
+          <p class="text-base-content">Página {{ paginaActual }} de {{ totalPaginas }}</p>
+
+          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="siguientePagina()"
+            [disabled]="paginaActual === totalPaginas">
+            Siguiente
+          </button>
+        </div>
+      </div>
+      }
+      @else if (!loading && solicitudesRechazadas.length === 0) {
+      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+        <h3 class="text-lg font-semibold text-base-content mb-2">
+          No hay solicitudes admitidas
+        </h3>
+        <p class="text-sm max-w-md">Cuando apruebe sus solicitudes, aparecerán aquí automáticamente.</p>
+      </div>
+      }
+    </div>
+
+    <!-- TAB 4 -->
+    <!-- <input type="radio" name="my_tabs_2" id="tab4" class="tab peer/tab4 hidden" />
+    <label for="tab4"
+      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab4:bg-info peer-checked/tab4:text-red-600 peer-checked/tab4:font-bold text-base-content transition-colors">
+      Prueba
+    </label>
+    <div class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab4:block">
+      <h2 class="text-2xl font-bold text-base-content mb-4">Prueba</h2>
+    </div> -->
+  </div>
+</div>

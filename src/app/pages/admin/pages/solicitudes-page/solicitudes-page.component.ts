@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
 // Pipes
 import { DatePipe } from '@angular/common';
+import { SolicitudComponent } from '../../../adjudicador/pages/solicitud/solicitud.component';
 
 
 @Component({
@@ -32,9 +33,20 @@ export class SolicitudesPageComponent implements OnInit {
   loading = true;
   paginaActual = 1;
   totalPaginas = 1;
-  usuario: any = null;
 
+  usuario: any = null;
   rol: string = '';
+
+  // Filtros
+  search = '';
+  estado = '';
+  tipo = '';
+  fecha_inicio = '';
+  fecha_fin = '';
+  filtroSearch: string = '';
+  filtroTipo: string = '';
+  filtroEstado: string = '';
+  solicitudesFiltradas: any[] = [];
 
   // Dropdown
   menuAbierto: number | null = null;
@@ -92,9 +104,26 @@ export class SolicitudesPageComponent implements OnInit {
   /**
  * Carga todos los trámites y los separa según su estado
  */
-  cargarTramites(pagina: number = 1): void {
+  cargarTramites(page: number = 1): void {
     this.loading = true;
-    this.tramiteService.listarTramites(pagina, 20, this.rol).subscribe({
+
+    const filtros: any = {
+      page,
+      limit: 20,
+      rol: this.rol,
+      search: this.search,
+      estado: this.estado,
+      tipo: this.tipo,
+      fecha_inicio: this.fecha_inicio,
+      fecha_fin: this.fecha_fin
+    };
+
+    // Si es usuario, debe enviarse el id_usuario
+    if (this.rol === 'usuario') {
+      filtros.id_usuario = this.usuario.id_usuario;
+    }
+
+    this.tramiteService.listarTramites(filtros).subscribe({
       next: (data) => {
         const tramites = data.tramites || [];
 
@@ -146,13 +175,24 @@ export class SolicitudesPageComponent implements OnInit {
     const tramite = this.tramiteSeleccionado;
     const nuevoEstadoTramite = this.nuevoEstado;
 
+    // ================================
+    // 1. Preparamos payload
+    // ================================
+    const payload = {
+      estado: nuevoEstadoTramite,
+      id_expediente: tramite.id_expediente,
+      usuario_responsable: this.usuario?.nombre || 'Administrador del sistema',
+      razon: this.razonRechazo || null,
+      correo_solicitante: tramite.correo,
+      nombre_solicitante: tramite.solicitante,
+      // correo_asociado: { ... }   <-- si luego usas webhooks, aquí entra
+    };
+
+    // console.log("NOMBRE SOLICITANTE", tramite.solicitante);
+
     // 1.- Actualizamos primero el estado del trámite
     this.tramiteService.actualizarEstado(
-      this.tramiteSeleccionado.id,
-      this.nuevoEstado,
-      this.tramiteSeleccionado.id_expediente,
-      this.usuario?.nombre || 'Administrador del sistema',
-      this.razonRechazo // enviamos la razón al backend
+      tramite.id, payload
     )
       .subscribe({
         next: () => {
