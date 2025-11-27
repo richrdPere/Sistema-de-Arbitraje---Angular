@@ -1,18 +1,644 @@
 <section class="relative w-full min-h-screen">
-
   <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
     <!-- Overlay oscuro -->
     <div class="absolute inset-0 bg-black/40"></div>
 
     <!-- Contenido centrado -->
-    <div class="relative flex flex-col items-center justify-start min-h-screen px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 py-10">
-      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">LICENCIAMIENTO</h1>
+    <div
+      class="relative flex flex-col items-center justify-start min-h-screen px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 py-10">
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-2">
+        NÓMINAS DE ÁRBITROS Y ADJUDICADORES
+      </h1>
+      <p class="text-center text-white text-sm md:text-lg mb-6 opacity-90">
+        Profesionales especializados en contrataciones públicas
+      </p>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Columna izquierda -->
         <div class="md:col-span-2 space-y-6">
 
           <!-- Descripción principal -->
+          <div class="bg-white p-6 rounded-2xl shadow-md space-y-6 text-justify">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+              Registro de <span class="text-info">Árbitros y Adjudicadores</span>
+            </h2>
+            <p class="text-gray-700 leading-relaxed text-base sm:text-lg">
+              Contamos con un <strong>Registro de Árbitros y Adjudicadores</strong> conformado por
+              profesionales de reconocida trayectoria y alta especialización en diversas ramas del derecho,
+              quienes garantizan <strong>imparcialidad, competencia técnica y solvencia ética</strong> en cada proceso.
+            </p>
+
+            <!-- Estadísticas -->
+            <div class="grid grid-cols-2 gap-4 py-4">
+              <div class="text-center p-4 bg-info/10 rounded-lg">
+                <div class="text-2xl font-bold text-info">{{ totalArbitros }}</div>
+                <div class="text-sm text-gray-600">Árbitros Registrados</div>
+              </div>
+              <div class="text-center p-4 bg-success/10 rounded-lg">
+                <div class="text-2xl font-bold text-success">{{ totalAdjudicadores }}</div>
+                <div class="text-sm text-gray-600">Adjudicadores</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====================== NÓMINAS DE ÁRBITROS ====================== -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+                Nómina de Árbitros
+              </h2>
+              <span class="badge badge-info badge-lg">{{ totalArbitros }} profesionales</span>
+            </div>
+
+            <!-- Barra de búsqueda y filtros -->
+            <div class="mb-6">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                  <input type="text" placeholder="Buscar árbitro por nombre o especialidad..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-info focus:border-transparent"
+                    [(ngModel)]="filtroArbitros" (input)="filtrarArbitros()">
+                  <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <select class="select select-bordered w-full sm:w-auto" [(ngModel)]="filtroEspecialidad"
+                  (change)="filtrarArbitros()">
+                  <option value="">Todas las especialidades</option>
+                  <option value="civil">Derecho Civil</option>
+                  <option value="administrativo">Derecho Administrativo</option>
+                  <option value="contrataciones">Contrataciones Públicas</option>
+                  <option value="comercial">Derecho Comercial</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Lista de Árbitros -->
+            <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+              @for (arbitro of arbitrosFiltrados; track arbitro.id) {
+              <div
+                class="border border-gray-200 rounded-lg hover:border-info hover:shadow-md transition-all duration-200 p-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start space-x-4 flex-1">
+                    <!-- Avatar -->
+                    <div class="w-12 h-12 bg-info/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                      </svg>
+                    </div>
+
+                    <!-- Información -->
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ arbitro.nombre }}</h3>
+                      <p class="text-gray-600 text-sm mb-2">{{ arbitro.especialidadPrincipal }}</p>
+
+                      <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-outline badge-sm">{{ arbitro.experiencia }} años exp.</span>
+                        <span class="badge badge-info badge-sm text-white">{{ arbitro.tipo }}</span>
+                        @for (especialidad of arbitro.especialidades; track especialidad) {
+                        <span class="badge badge-ghost badge-sm">{{ especialidad }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Acciones -->
+                  <div class="flex flex-col gap-2">
+                    <button class="btn btn-ghost btn-sm btn-info" (click)="verHojaVida(arbitro.id)">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      Ver CV
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+              @empty {
+              <div class="text-center py-8 text-gray-500">
+                <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+                <p>No se encontraron árbitros</p>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- ====================== NÓMINAS DE ADJUDICADORES ====================== -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Nómina de Adjudicadores
+              </h2>
+              <span class="badge badge-success badge-lg">{{ totalAdjudicadores }} profesionales</span>
+            </div>
+
+            <!-- Lista de Adjudicadores -->
+            <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+              @for (adjudicador of adjudicadores; track adjudicador.id) {
+              <div
+                class="border border-gray-200 rounded-lg hover:border-success hover:shadow-md transition-all duration-200 p-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start space-x-4 flex-1">
+                    <!-- Avatar -->
+                    <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+
+                    <!-- Información -->
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ adjudicador.nombre }}</h3>
+                      <p class="text-gray-600 text-sm mb-2">{{ adjudicador.especialidadPrincipal }}</p>
+
+                      <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-outline badge-sm">{{ adjudicador.experiencia }} años exp.</span>
+                        <span class="badge badge-success badge-sm text-white">Adjudicador</span>
+                        @for (especialidad of adjudicador.especialidades; track especialidad) {
+                        <span class="badge badge-ghost badge-sm">{{ especialidad }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Acciones -->
+                  <div class="flex flex-col gap-2">
+                    <button class="btn btn-ghost btn-sm btn-success" (click)="verHojaVida(adjudicador.id)">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      Ver CV
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+
+
+          </div>
+
+          <!-- Lista de Secretarios Arbitrales -->
+          <div class="space-y-4">
+            <!-- Header de la sección -->
+
+            <div
+              class=" bg-white border border-gray-200 rounded-lg hover:border-info hover:shadow-md transition-all duration-200 p-4">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                  <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Secretarios Arbitrales
+                </h2>
+                <span class="badge badge-primary badge-lg">{{ totalSecretarios }} profesionales</span>
+              </div>
+
+              <!-- Barra de búsqueda y filtros -->
+              <div class="mb-6">
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="flex-1 relative">
+                    <input type="text" placeholder="Buscar secretario por nombre o especialidad..."
+                      class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      [(ngModel)]="filtroSecretarios" (input)="filtrarSecretarios()">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                  <select class="select select-bordered w-full sm:w-auto" [(ngModel)]="filtroSede"
+                    (change)="filtrarSecretarios()">
+                    <option value="">Todas las sedes</option>
+                    <option value="lima">Lima</option>
+                    <option value="arequipa">Arequipa</option>
+                    <option value="trujillo">Trujillo</option>
+                    <option value="cusco">Cusco</option>
+                  </select>
+                </div>
+              </div>
+
+
+              <!-- Lista de Secretarios -->
+              <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                @for (secretario of secretariosFiltrados; track secretario.id) {
+                <div
+                  class="border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition-all duration-200 p-4 bg-gradient-to-r from-white to-purple-50/30">
+                  <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-4 flex-1">
+                      <!-- Avatar -->
+                      <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+
+                      <!-- Información -->
+                      <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ secretario.nombre }}</h3>
+                        <p class="text-gray-600 text-sm mb-2">{{ secretario.cargo }}</p>
+
+                        <!-- Información de contacto -->
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                          <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {{ secretario.sede }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            {{ secretario.correo }}
+                          </span>
+                        </div>
+
+                        <!-- Especialidades y experiencia -->
+                        <div class="flex flex-wrap gap-2">
+                          <span class="badge badge-outline badge-sm">{{ secretario.experiencia }} años exp.</span>
+                          <span class="badge badge-primary badge-sm text-white">Secretario Arbitral</span>
+                          @for (especialidad of secretario.especialidades; track especialidad) {
+                          <span class="badge badge-ghost badge-sm">{{ especialidad }}</span>
+                          }
+                          @if (secretario.idiomas && secretario.idiomas.length > 0) {
+                          <span class="badge badge-accent badge-sm">
+                            {{ secretario.idiomas.length }} idiomas
+                          </span>
+                          }
+                        </div>
+
+                        <!-- Información adicional -->
+                        <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500">
+                          <span class="flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ secretario.disponibilidad }}
+                          </span>
+                          <span class="flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            {{ secretario.casosAtendidos }} casos
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="flex flex-col gap-2">
+                      <button class="btn btn-primary btn-sm gap-2" (click)="verHojaVidaSecretario(secretario.id)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        Ver CV
+                      </button>
+                      <button class="btn btn-outline btn-primary btn-sm gap-2"
+                        (click)="contactarSecretario(secretario)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Contactar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                }
+
+                @empty {
+                <!-- Estado vacío -->
+                <div class="text-center py-8 text-gray-500">
+                  <div class="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <p class="text-gray-500">No se encontraron secretarios arbitrales</p>
+                  <p class="text-gray-400 text-sm mt-1">Intenta con otros términos de búsqueda</p>
+                </div>
+                }
+              </div>
+
+              <!-- Información adicional -->
+              <div class="mt-6 pt-4 border-t border-gray-200">
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Secretarios especializados en soporte y asistencia a árbitros
+                  </div>
+                  <div class="text-primary font-semibold">
+                    {{ secretariosFiltrados.length }} de {{ totalSecretarios }} mostrados
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+
+
+
+          <!-- documentos.component.html -->
+          <!-- <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Documentos Institucionales</h2>
+
+            <h3 class="text-lg font-semibold text-info mb-2">Otros Documentos</h3>
+            <table class="table w-full mb-6">
+              <tbody class="text-gray-800 text-base sm:text-lg">
+                @for (file of otrosDocumentosEntries; track file[0]) {
+                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200 ">
+                  <td>
+                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
+                      {{ file[0] | separarPalabras }}
+                    </a>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+
+
+          </div> -->
+          <!-- documentos.component.html -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <!-- Header Mejorado -->
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                  <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                  </svg>
+                  Documentación Legal y Reglamentaria
+                </h2>
+                <p class="text-gray-600 text-sm mt-1">Documentos oficiales que respaldan nuestra operación</p>
+              </div>
+              <div class="badge badge-info badge-lg text-white font-semibold">
+                {{ otrosDocumentosEntries.length }} documentos
+              </div>
+            </div>
+
+            <!-- Filtros y Búsqueda -->
+            <div class="mb-6">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                  <input type="text" placeholder="Buscar documento..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-info focus:border-transparent"
+                    #searchInput (input)="filtrarDocumentos(searchInput.value)">
+                  <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <select class="select select-bordered w-full sm:w-auto" #categorySelect
+                  (change)="filtrarPorCategoria(categorySelect.value)">
+                  <option value="">Todos los documentos</option>
+                  <option value="licencia">Licencias y Permisos</option>
+                  <option value="registro">Registros Públicos</option>
+                  <option value="legal">Documentos Legales</option>
+                  <option value="operacion">Operación Institucional</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Lista de Documentos Mejorada -->
+            <div class="space-y-4">
+              @for (file of otrosDocumentosEntries; track file[0]) {
+              <div
+                class="group border border-gray-200 rounded-xl hover:border-info hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-white to-gray-50/30">
+                <a [href]="file[1]" target="_blank" rel="noopener noreferrer"
+                  class="block p-5 no-underline hover:no-underline">
+                  <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-4 flex-1">
+                      <!-- Icono del documento según tipo -->
+                      <div class="p-3 rounded-xl flex-shrink-0
+                {{ getDocumentColor(file[0]) }}
+                group-hover:scale-105 transition-transform duration-200">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                          </path>
+                        </svg>
+                      </div>
+
+                      <!-- Información del documento -->
+                      <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-gray-800 group-hover:text-info transition-colors text-lg mb-2">
+                          {{ file[0] | separarPalabras }}
+                        </h3>
+
+                        <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                          <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {{ getDocumentDate(file[0]) }}
+                          </span>
+
+                          <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            {{ getFileType(file[1]) }}
+                          </span>
+
+                          <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            {{ getFileSize(file) }}
+                          </span>
+                        </div>
+
+                        <!-- Badge de categoría -->
+                        @if (getDocumentCategory(file[0])) {
+                        <div class="mt-3">
+                          <span class="badge badge-sm
+                      {{ getCategoryBadgeColor(getDocumentCategory(file[0])) }}">
+                            {{ getCategoryLabel(getDocumentCategory(file[0])) }}
+                          </span>
+                        </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Acción de descarga -->
+                    <div class="flex items-center">
+                      <button class="btn btn-ghost btn-sm group-hover:btn-info transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                          </path>
+                        </svg>
+                        <span class="hidden sm:inline ml-1">Descargar</span>
+                      </button>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              }
+
+              @empty {
+              <!-- Estado vacío -->
+              <div class="text-center py-12">
+                <div class="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                  </svg>
+                </div>
+                <p class="text-gray-500 text-lg font-medium">No se encontraron documentos</p>
+                <p class="text-gray-400 text-sm mt-1">Intenta con otros términos de búsqueda</p>
+              </div>
+              }
+            </div>
+
+            <!-- Información adicional -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <div class="flex items-center justify-between text-sm text-gray-500">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Todos los documentos están debidamente registrados y actualizados
+                </div>
+                <div class="text-info font-semibold">
+                  Última actualización: {{ ultimaActualizacion }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Columna derecha -->
+        <div class="space-y-6">
+          <!-- Bloque institucional -->
+          <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-md">
+            <p class="italic leading-relaxed text-justify text-base sm:text-lg">
+              Contamos con profesionales de primer nivel especializados en
+              <strong>contrataciones públicas y resolución de disputas</strong>,
+              garantizando la más alta calidad en nuestros procesos.
+            </p>
+            <p class="mt-4 text-right font-semibold">FIRMA LEGAL SAC</p>
+          </div>
+
+          <!-- Información de Requisitos -->
+          <div class="bg-info/10 p-6 rounded-2xl shadow-md">
+            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Requisitos de Incorporación
+            </h3>
+            <ul class="text-sm text-white space-y-2">
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-info mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Mínimo 10 años de experiencia profesional</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-info mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Especialización en contrataciones públicas</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-info mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Solvencia ética y moral comprobada</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Enlaces Rápidos -->
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Enlaces Rápidos</h3>
+            <div class="space-y-3">
+              <a href="/arbitraje" class="block btn btn-outline btn-info w-full text-center">
+                Centro de Arbitraje
+              </a>
+              <a href="/documentos" class="block btn btn-outline btn-info w-full text-center">
+                Documentación
+              </a>
+              <button class="btn btn-outline btn-info w-full" routerLink="/ser_calculadora">
+                Calculadora de Costos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="relative w-full min-h-screen">
+
+  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
+
+    <div class="absolute inset-0 bg-black/40"></div>
+
+
+    <div class="relative flex flex-col items-center justify-start min-h-screen px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 py-10">
+      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">LICENCIAMIENTO</h1>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <div class="md:col-span-2 space-y-6">
+
+
           <div class="bg-white p-6 rounded-2xl shadow-md space-y-7 text-justify">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
               LICENCIAMIENTO <span class="text-info">FIRMA LEGAL</span>
@@ -40,11 +666,10 @@
             </p>
           </div>
 
-          <!-- ====================== DOCUMENTOS ====================== -->
+
           <div class="bg-white p-6 rounded-2xl shadow-md">
             <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Documentos Institucionales</h2>
 
-            <!-- Documentos varios -->
             <h3 class="text-lg font-semibold text-info mb-2">Otros Documentos</h3>
             <table class="table w-full mb-6">
               <tbody class="text-gray-800 text-base sm:text-lg">
@@ -60,28 +685,13 @@
               </tbody>
             </table>
 
-            <!-- Documentos de árbitros -->
-            <!-- <h3 class="text-lg font-semibold text-info mb-2">Documentos de Árbitros</h3>
-            <table class="table w-full">
-              <tbody class="text-gray-800 text-base sm:text-lg">
-                @for (file of arbitrosEntries; track file[0]) {
-                <tr class="hover:bg-info hover:text-white cursor-pointer border-b border-gray-200">
-                  <td>
-                    <a [href]="file[1]" target="_blank" rel="noopener noreferrer" class="block py-2">
-                      {{ file[0] | separarPalabras }}
-                    </a>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table> -->
-          </div>
+
 
         </div>
 
-        <!-- Columna derecha -->
+
         <div class="space-y-6">
-          <!-- Bloque institucional -->
+
           <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-md">
             <p class="italic leading-relaxed text-justify text-base sm:text-lg">
               Somos una institución encargada de la administración y conducción de Arbitrajes y Juntas de
@@ -90,7 +700,7 @@
             <p class="mt-4 text-right font-semibold">FIRMA LEGAL SAC</p>
           </div>
 
-          <!-- Calculadora de costos -->
+
           <div class="bg-yellow-100 p-6 rounded-2xl shadow-md">
             <h3 class="text-lg font-bold text-gray-800 mb-3">Calculadora de Costos</h3>
             <p class="text-gray-700 text-sm sm:text-base mb-4 text-justify">
@@ -102,16 +712,12 @@
               <button class="btn btn-info btn-outline w-full" routerLink="/ser_calculadora">
                 CALCULADORA
               </button>
-              <!-- <button class="btn btn-info btn-outline w-full">
-                CALCULAR COSTOS DE ARBITRAJE
+
               </button>
-              <button class="btn btn-info btn-outline w-full">
-                CALCULAR COSTOS DE JPRD
-              </button> -->
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</section>
+</section> -->

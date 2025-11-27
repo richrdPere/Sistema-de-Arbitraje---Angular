@@ -19,6 +19,7 @@ export class TrazabilidadComponent implements OnInit {
   formTrazabilidad: FormGroup;
   resultado: any = null;
 
+
   public user: any = {};
   public token: any = '';
 
@@ -49,6 +50,52 @@ export class TrazabilidadComponent implements OnInit {
       // Mantener en el componente login
     }
   }
+
+  cargarCredencialesUsuario() {
+    this.tipoUsuario = 'usuarios';
+    this.formTrazabilidad.patchValue({
+      correo: 'usuario@demo.com',
+      password: 'user123'
+    });
+
+    // Efecto visual de confirmación
+    this.mostrarConfirmacion('Credenciales de usuario cargadas');
+  }
+
+  mostrarConfirmacion(mensaje: string) {
+    // Podrías implementar un toast o notificación aquí
+    console.log(mensaje);
+
+    // Efecto visual simple
+    const button = event?.target as HTMLElement;
+    if (button) {
+      const originalText = button.innerHTML;
+      button.innerHTML = '✓ Cargadas';
+      button.classList.add('btn-success');
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        if (button.classList.contains('btn-info')) {
+          button.classList.add('btn-info');
+        } else if (button.classList.contains('btn-success')) {
+          button.classList.add('btn-success');
+        }
+      }, 2000);
+    }
+  }
+
+
+  cargarCredencialesAdmin() {
+    this.tipoUsuario = 'administracion';
+    this.formTrazabilidad.patchValue({
+      correo: 'fernando@gmail.com',
+      password: 'nueva123'
+    });
+
+    // Efecto visual de confirmación
+    this.mostrarConfirmacion('Credenciales de administración cargadas');
+  }
+
 
   login() {
     if (this.formTrazabilidad.invalid) return;

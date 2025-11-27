@@ -65,7 +65,7 @@ export class UsuariosPagesComponent implements OnInit {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      // password: ['', Validators.required],
       rol: ['', Validators.required],
       telefono: [''],
       documento_identidad: [''],
@@ -152,9 +152,11 @@ export class UsuariosPagesComponent implements OnInit {
     this.loading = true;
 
     try {
-      const [secretarias, admins] = await Promise.all([
+      const [secretarias, admins, arbitros, adjudicadores] = await Promise.all([
         this.usuarioService.getSecretarias().toPromise(),
         this.usuarioService.getAdmins().toPromise(),
+        this.usuarioService.getArbitros().toPromise(),
+        this.usuarioService.getAdjudicadores().toPromise()
       ]);
 
       // Normalizar secretarias
@@ -184,8 +186,11 @@ export class UsuariosPagesComponent implements OnInit {
       };
 
       this.usuarios = [
-        ...normalizar(secretarias, 'Secretaria'),
         ...normalizarDirecto(admins, 'Admin'),
+        ...normalizar(secretarias, 'Secretaria'),
+        ...normalizar(arbitros, 'Arbitros'),
+        ...normalizar(adjudicadores, 'Adjudicadores'),
+
       ];
 
     } catch (err) {

@@ -27,6 +27,11 @@ export class SideMenuOptionsSecretariaComponent {
       label: 'Participes',
       route: '/secretaria/participes',
     },
+     {
+      icon: 'fa-solid fa-user-tie',
+      label: 'Designaciones',
+      route: '/secretaria/designaciones',
+    },
     // {
     //   icon: 'fa-solid fa-users',
     //   label: 'Usuarios',

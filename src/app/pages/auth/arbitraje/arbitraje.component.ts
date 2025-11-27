@@ -14,6 +14,58 @@ import { SepararPalabrasPipe } from 'src/app/pipes/separar-palabras.pipe';
 export class ArbitrajeComponent {
   private baseUrl = 'https://firmalegalordonezterrazas.com'
 
+  // En tu component.ts
+  filteredEntries: [string, string][] = [];
+
+  ngOnInit() {
+    this.filteredEntries = [...this.arbitrajeEntries];
+  }
+
+  filterDocuments(searchTerm: string) {
+    if (!searchTerm) {
+      this.filteredEntries = [...this.arbitrajeEntries];
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    this.filteredEntries = this.arbitrajeEntries.filter(([fileName]) =>
+      fileName.toLowerCase().includes(term)
+    );
+  }
+
+  filterByCategory(category: string) {
+    if (!category) {
+      this.filteredEntries = [...this.arbitrajeEntries];
+      return;
+    }
+
+    this.filteredEntries = this.arbitrajeEntries.filter(([fileName]) =>
+      this.getDocumentCategory(fileName) === category
+    );
+  }
+
+  getFileType(fileUrl: string): string {
+    if (fileUrl.toLowerCase().endsWith('.pdf')) return 'PDF';
+    if (fileUrl.toLowerCase().endsWith('.docx')) return 'DOCX';
+    if (fileUrl.toLowerCase().endsWith('.doc')) return 'DOC';
+    return 'Archivo';
+  }
+
+  getFileSize(file: [string, string]): string {
+    // Puedes implementar lógica para obtener el tamaño real del archivo
+    // Por ahora devolvemos un placeholder
+    return '~500 KB';
+  }
+
+  getDocumentCategory(fileName: string): string {
+    const name = fileName.toLowerCase();
+    if (name.includes('reglamento')) return 'reglamento';
+    if (name.includes('ética') || name.includes('etica')) return 'etica';
+    if (name.includes('procedimiento')) return 'procedimiento';
+    if (name.includes('formato')) return 'formato';
+    return '';
+  }
+
 
   // Archivos de Arbitraje
   arbitrajeFiles = {

@@ -43,6 +43,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/arbitraje/arbitraje.component').then(m => m.ArbitrajeComponent),
       },
       {
+        path: 'hoja_vida',
+        loadComponent: () => import('./pages/auth/hoja-vida/hoja-vida.component').then(m => m.HojaVidaComponent),
+      },
+      {
         path: 'jprd',
         loadComponent: () => import('./pages/auth/cajprd/cajprd.component').then(m => m.CajprdComponent),
       },

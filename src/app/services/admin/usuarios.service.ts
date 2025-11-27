@@ -64,6 +64,15 @@ export class UsuarioService {
   }
 
   /**
+  * Obtener adjudicadores
+  */
+  getAdjudicadores(): Observable<any[]> {
+    return this.http
+      .get<any[]>(`${this.url}/adjudicadores`, this.getAuthHeaders())
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
    * Obtener secretarias
    */
   getSecretarias(): Observable<any[]> {

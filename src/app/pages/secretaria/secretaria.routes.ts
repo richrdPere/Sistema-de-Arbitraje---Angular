@@ -21,6 +21,7 @@ export const SecretariaRoutes: Routes = [
       // Para participe
       { path: 'participes', loadComponent: () => import('./pages/participes/participes.component').then(m => m.ParticipesComponent) },
       { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
+      { path: 'designaciones', loadComponent: () => import('./pages/designaciones/designaciones.component').then(m => m.DesignacionesComponent) },
       { path: 'usuarios', loadComponent: () => import('./pages/usuarios/usuarios.component').then(m => m.UsuariosComponent) },
       { path: 'auditoria', loadComponent: () => import('./pages/auditoria/auditoria.component').then(m => m.AuditoriaComponent) },
       { path: 'solicitudes', loadComponent: () => import('./pages/solicitudes/solicitudes.component').then(m => m.SolicitudesComponent) },
