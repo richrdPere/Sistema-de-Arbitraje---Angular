@@ -43,6 +43,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/arbitraje/arbitraje.component').then(m => m.ArbitrajeComponent),
       },
       {
+        path: 'arbitraje/nominas_adjudicadores',
+        loadComponent: () => import('./pages/auth/arbitraje/nomina_adjudicadores/nomina_adjudicadores.component').then(m => m.NominaAdjudicadoresComponent),
+      },
+      {
+        path: 'arbitraje/nominas_arbitros',
+        loadComponent: () => import('./pages/auth/arbitraje/nomina_arbitros/nomina_arbitros.component').then(m => m.NominaArbitrosComponent),
+      },
+      {
         path: 'hoja_vida',
         loadComponent: () => import('./pages/auth/hoja-vida/hoja-vida.component').then(m => m.HojaVidaComponent),
       },

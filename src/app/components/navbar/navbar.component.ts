@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit {
       activeClass: 'bg-info text-base-100',
       children: [
         { label: 'Nosotros', path: '/about' },
-        { label: 'Unidad de Gobierno', path: '/unidad_gobierno' },
+        { label: 'Estructura Institucional', path: '/unidad_gobierno' },
         { label: 'Servicios', path: '/servicios' },
         { label: 'Licencias', path: '/licencia' },
         { label: 'Banco de Laudos', path: '/laudos' },
@@ -47,15 +47,23 @@ export class NavbarComponent implements OnInit {
       ]
     },
     {
+      label: 'Conciliaciones',
+      path: '/conciliaciones',
+      activeClass: 'bg-info text-base-100'
+    },
+
+    {
+      label: 'Proceso\nJudiciales',
+      path: '/proceso_judiciales',
+      activeClass: 'bg-info text-base-100'
+    },
+
+    {
       label: 'Centro de Arbitraje',
       path: '/arbitraje',
       activeClass: 'bg-info text-base-100'
     },
-    // {
-    //   label: 'Laudos',
-    //   path: '/laudos',
-    //   activeClass: 'bg-info text-base-100'
-    // },
+
     {
       label: 'JPRD',
       path: '/jprd',

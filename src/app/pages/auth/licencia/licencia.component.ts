@@ -92,56 +92,56 @@ export class LicenciaComponent {
   arbitros: any[] = [
     {
       id: 1,
-      nombre: 'Dr. Carlos Manuel Rodríguez López',
-      especialidadPrincipal: 'Derecho Administrativo',
+      nombre: 'Dr. Luis Fernando Ordoñez Chambi',
+      especialidadPrincipal: 'Abogado',
       experiencia: 15,
-      tipo: 'Árbitro Principal',
-      especialidades: ['Contrataciones Públicas', 'Derecho Civil']
+      tipo: 'Arbitraje',
+      especialidades: ['Contrataciones Públicas', 'Derecho Administrativo']
     },
-    {
-      id: 2,
-      nombre: 'Dra. Ana María Gutierrez Paredes',
-      especialidadPrincipal: 'Derecho Civil',
-      experiencia: 12,
-      tipo: 'Árbitro',
-      especialidades: ['Derecho Contractual', 'Arbitraje Comercial']
-    },
-    {
-      id: 3,
-      nombre: 'Dr. Roberto Jiménez Mendoza',
-      especialidadPrincipal: 'Contrataciones Públicas',
-      experiencia: 18,
-      tipo: 'Árbitro Principal',
-      especialidades: ['Derecho Administrativo', 'Derecho Comercial']
-    },
-    {
-      id: 4,
-      nombre: 'Dra. Sofia Elena Torres Ruiz',
-      especialidadPrincipal: 'Derecho Comercial',
-      experiencia: 14,
-      tipo: 'Árbitro',
-      especialidades: ['Derecho Civil', 'Contrataciones Públicas']
-    }
+    // {
+    //   id: 2,
+    //   nombre: 'Dra. Ana María Gutierrez Paredes',
+    //   especialidadPrincipal: 'Derecho Civil',
+    //   experiencia: 12,
+    //   tipo: 'Árbitro',
+    //   especialidades: ['Derecho Contractual', 'Arbitraje Comercial']
+    // },
+    // {
+    //   id: 3,
+    //   nombre: 'Dr. Roberto Jiménez Mendoza',
+    //   especialidadPrincipal: 'Contrataciones Públicas',
+    //   experiencia: 18,
+    //   tipo: 'Árbitro Principal',
+    //   especialidades: ['Derecho Administrativo', 'Derecho Comercial']
+    // },
+    // {
+    //   id: 4,
+    //   nombre: 'Dra. Sofia Elena Torres Ruiz',
+    //   especialidadPrincipal: 'Derecho Comercial',
+    //   experiencia: 14,
+    //   tipo: 'Árbitro',
+    //   especialidades: ['Derecho Civil', 'Contrataciones Públicas']
+    // }
   ];
 
   // Datos de prueba para adjudicadores
   adjudicadores: any[] = [
     {
       id: 5,
-      nombre: 'Dr. Miguel Ángel Castro Díaz',
-      especialidadPrincipal: 'Contrataciones Públicas',
-      experiencia: 16,
-      tipo: 'Adjudicador Principal',
-      especialidades: ['Derecho Administrativo', 'Derecho Civil']
-    },
-    {
-      id: 6,
-      nombre: 'Dra. Patricia Isabel Moreno Vargas',
-      especialidadPrincipal: 'Derecho Administrativo',
-      experiencia: 13,
+      nombre: 'Julio Ricardo de Olarte Mendivil',
+      especialidadPrincipal: 'Ing. Civil',
+      experiencia: 'mas de 10',
       tipo: 'Adjudicador',
-      especialidades: ['Contrataciones Públicas', 'Derecho Comercial']
-    }
+      especialidades: ['Contrataciones Públicas', 'Derecho Administrativo']
+    },
+    // {
+    //   id: 6,
+    //   nombre: 'Dra. Patricia Isabel Moreno Vargas',
+    //   especialidadPrincipal: 'Derecho Administrativo',
+    //   experiencia: 13,
+    //   tipo: 'Adjudicador',
+    //   especialidades: ['Contrataciones Públicas', 'Derecho Comercial']
+    // }
   ];
 
   arbitrosFiltrados: any[] = [];
@@ -211,8 +211,8 @@ export class LicenciaComponent {
       licenciaFuncionamiento: `${this.baseUrl}/otros%20documentos/licencia%20de%20funcionamiento.jpg`,
       inscripcionRRPP: `${this.baseUrl}/otros%20documentos/INSCRIPCION_A_RRPP[1].pdf`,
       fichaRUC: `${this.baseUrl}/otros%20documentos/FICHA_RUC.pdf`,
-      cirSunat1: `${this.baseUrl}/otros%20documentos/CIR-SUNAT.jpg`,
-      cirSunat2: `${this.baseUrl}/otros%20documentos/CIR-SUNAT2.jpg`,
+      // cirSunat1: `${this.baseUrl}/otros%20documentos/CIR-SUNAT.jpg`,
+      // cirSunat2: `${this.baseUrl}/otros%20documentos/CIR-SUNAT2.jpg`,
       anotacionInscripcion: `${this.baseUrl}/otros%20documentos/anotacion%20de%20inscripcion.jpg`
     };
   }
