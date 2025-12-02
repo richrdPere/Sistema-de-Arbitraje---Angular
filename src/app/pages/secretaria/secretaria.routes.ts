@@ -14,6 +14,10 @@ export const SecretariaRoutes: Routes = [
         loadComponent: () => import('./pages/expedientes/ver-documentos/ver-documentos.component').then(m => m.VerDocumentosComponent)
       },
       {
+        path: 'expedientes/:id/participes',
+        loadComponent: () => import('./pages/expedientes/gestionar-participes/gestionar-participes.component').then(m => m.GestionarParticipesComponent)
+      },
+      {
         path: 'expedientes/:id/historial',
         loadComponent: () => import('./pages/expedientes/ver-historial/ver-historial.component').then(m => m.VerHistorialComponent)
       },

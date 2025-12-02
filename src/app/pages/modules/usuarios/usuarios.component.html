@@ -1,0 +1,452 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+    <!-- <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
+      Crear Nuevo Usuario
+    </button> -->
+    <button class="btn bg-[#0a1a35] hover:bg-[#13244a] text-white border-none px-4 py-2 rounded-lg"
+      (click)="abrirModal()">
+      + Crear Nuevo Usuario
+    </button>
+  </div>
+
+  <!-- Buscador -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text"
+      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      placeholder="Buscar por cualquier campo..." [(ngModel)]="filtro">
+
+  </div>
+
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+    <table class="table w-full">
+      <thead class="bg-gray-100 text-black">
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Correo Electrónico</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody class=" text-black">
+        @if (loading) {
+        <tr>
+          <td colspan="7" class="text-center py-4">Cargando usuarios...</td>
+        </tr>
+        }
+
+        @for (user of usuariosFiltrados(); track $index) {
+        <tr class="hover ">
+          <td>{{ $index + 1 }}</td>
+          <td>{{ user.nombre }}</td>
+          <td>{{ user.apellidos }}</td>
+          <td>{{ user.correo }}</td>
+          <td>{{ user.rol }}</td>
+          <td>
+            <span class="badge bg-[#0a1a35] text-white px-3 py-1 rounded-full">
+              {{ user.estado }}
+            </span>
+          </td>
+
+          <td class="relative">
+            <button class="btn btn-sm btn-outline-primary me-1" (click)="verUsuario(user)">
+              <i class="bi bi-eye"></i> Ver
+            </button>
+            <button class="btn btn-sm btn-outline-warning me-1" (click)="abrirModal('editar', user)">
+              <i class="bi bi-pencil"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(user.id)">
+              <i class="bi bi-trash"></i> Desactivar usuario
+            </button>
+          </td>
+
+
+          @if (!loading && usuariosFiltrados().length === 0) {
+        <tr>
+          <td colspan="5" class="text-center text-gray-500 py-4">No se encontraron usuarios</td>
+        </tr>
+        }
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
+      <span>Página 1 de 1</span>
+      <div class="join ml-4">
+        <button class="join-item btn btn-sm" disabled>Anterior</button>
+        <button class="join-item btn btn-sm">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CREAR USUARIO -->
+  @if (mostrarModal) {
+  <div class="modal modal-open">
+    <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b border-base-300 pb-3 mb-4">
+        <h3 class="text-xl font-semibold"> {{ modoEdicion ? "Editar Usuario" : "Crear Nuevo Usuario" }}</h3>
+        <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
+      </div>
+
+      <!-- Formulario -->
+      <form [formGroup]="formUsuario" (ngSubmit)="crearOEditarUsuario()" class="space-y-4">
+
+        <!--  Nombre + Apellidos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+          <!-- Nombre -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Nombre</span>
+            </label>
+            <input type="text" formControlName="nombre" placeholder="Ej. Juan" class="input input-bordered w-full"
+              [class.input-error]="formUsuario.get('nombre')?.invalid && formUsuario.get('nombre')?.touched" />
+
+            <!-- Error local -->
+            @if (formUsuario.get('nombre')?.hasError('required') && formUsuario.get('nombre')?.touched) {
+            <p class="text-red-500 text-sm">
+              El nombre es obligatorio.
+            </p>
+            }
+
+            <!-- Error backend -->
+            @if (backendErrors?.nombre) {
+            <p class="text-red-500 text-sm">
+              {{ backendErrors.nombre }}
+            </p>
+            }
+          </div>
+
+          <!-- Apellidos -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Apellidos</span>
+            </label>
+            <input type="text" formControlName="apellidos" placeholder="Ej. Pérez López"
+              class="input input-bordered w-full"
+              [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched" />
+
+            @if (formUsuario.get('apellidos')?.hasError('required') && formUsuario.get('apellidos')?.touched) {
+            <p class="text-red-500 text-sm">
+              Los apellidos son obligatorios.
+            </p>
+            }
+
+            @if (backendErrors?.apellidos) {
+            <p class="text-red-500 text-sm">
+              {{ backendErrors.apellidos }}
+            </p>
+            }
+
+          </div>
+        </div>
+
+        <!--  Correo -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Correo</span>
+          </label>
+          <input type="email" formControlName="correo" placeholder="ejemplo@correo.com"
+            class="input input-bordered w-full"
+            [class.input-error]="formUsuario.get('correo')?.invalid && formUsuario.get('correo')?.touched" />
+
+          @if (formUsuario.get('correo')?.hasError('required') && formUsuario.get('correo')?.touched) {
+          <p class="text-red-500 text-sm">
+            El correo es obligatorio.
+          </p>
+          }
+
+          @if (formUsuario.get('correo')?.hasError('email') && formUsuario.get('correo')?.touched) {
+          <p class="text-red-500 text-sm">
+            Ingresa un correo válido.
+          </p>
+          }
+
+          <!-- Error backend: correo duplicado -->
+          @if (backendErrors?.correo) {
+          <p class="text-red-500 text-sm">
+            {{ backendErrors.correo }}
+          </p>
+          }
+        </div>
+
+        <!--  Password -->
+        <!-- @if (!modoEdicion) {
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Contraseña</span>
+          </label>
+          <input type="password" formControlName="password" class="input input-bordered w-full"
+            [class.input-error]="formUsuario.get('password')?.invalid && formUsuario.get('password')?.touched" />
+
+          @if (formUsuario.get('password')?.hasError('required') && formUsuario.get('password')?.touched) {
+          <p class="text-red-500 text-sm">
+            La contraseña es obligatoria.
+          </p>
+          }
+
+          @if (backendErrors?.password) {
+          <p class="text-red-500 text-sm">
+            {{ backendErrors.password }}
+          </p>
+          }
+        </div>
+        } -->
+
+        <!--  Rol -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Rol</span>
+          </label>
+          <select formControlName="rol" class="select select-bordered w-full"
+            [class.select-error]="formUsuario.get('rol')?.invalid && formUsuario.get('rol')?.touched">
+            <option value="" disabled selected>Selecciona un rol</option>
+            <option value="admin">Administrador</option>
+            <option value="secretaria">Secretaria</option>
+            <option value="arbitro">Árbitro</option>
+            <option value="adjudicador">Adjudicador</option>
+          </select>
+
+          @if (backendErrors?.rol) {
+          <p class="text-red-500 text-sm">
+            {{ backendErrors.rol }}
+          </p>
+          }
+
+        </div>
+
+        <!-- Campos dinámicos según el rol seleccionado -->
+        <!-- ADJUDICADOR -->
+        @if (formUsuario.get('rol')?.value === 'adjudicador') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. JPRD" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Especialidad</span>
+            </label>
+            <input type="text" formControlName="especialidad" placeholder="Ej. Arbitraje comercial"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Experiencia</span>
+            </label>
+            <input type="text" formControlName="experiencia" placeholder="Años de experiencia"
+              class="input input-bordered w-full" />
+          </div>
+
+        </div>
+        }
+
+
+        <!-- CLIENTE -->
+        @if (formUsuario.get('rol')?.value === 'cliente') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Tipo de Persona</span>
+            </label>
+            <select formControlName="tipo_persona" class="select select-bordered w-full">
+              <option value="" disabled selected>Seleccione tipo</option>
+              <option value="Natural">Natural</option>
+              <option value="Jurídica">Jurídica</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI / RUC"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Razón Social</span>
+            </label>
+            <input type="text" formControlName="razon_social" placeholder="Ej. Empresa SAC"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control md:col-span-2">
+            <label class="label">
+              <span class="label-text">Dirección</span>
+            </label>
+            <input type="text" formControlName="direccion" placeholder="Av. Ejemplo 123"
+              class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
+
+        <!-- ÁRBITRO -->
+        @if (formUsuario.get('rol')?.value === 'arbitro') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Especialidad</span>
+            </label>
+            <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
+              class="input input-bordered w-full" />
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Experiencia</span>
+            </label>
+            <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
+        <!-- SECRETARIA -->
+        @if (formUsuario.get('rol')?.value === 'secretaria') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Cargo</span>
+            </label>
+            <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
+              class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" />
+
+            @if (backendErrors?.cargo) {
+            <p class="text-red-500 text-sm">{{ backendErrors.cargo }}</p>
+            }
+
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI"
+              class="input input-bordered w-full" [class.input-error]="backendErrors?.documento_identidad" />
+
+            @if (backendErrors?.documento_identidad) {
+            <p class="text-red-500 text-sm">
+              {{ backendErrors.documento_identidad }}
+            </p>
+            }
+
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
+        <!-- ADMIN -->
+        @if (formUsuario.get('rol')?.value === 'admin') {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Documento de Identidad</span>
+            </label>
+            <input type="text" formControlName="documento_identidad" placeholder="DNI"
+              class="input input-bordered w-full" [class.input-error]="backendErrors?.documento_identidad" />
+
+            @if (backendErrors?.documento_identidad) {
+            <p class="text-red-500 text-sm">
+              {{ backendErrors.documento_identidad }}
+            </p>
+            }
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Teléfono</span>
+            </label>
+            <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full" />
+          </div>
+        </div>
+        }
+
+        <!-- Footer Buttons -->
+        <div class="modal-action">
+          <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn bg-primary text-white hover:bg-primary-focus"
+            [disabled]="formUsuario.invalid">
+            Guardar Usuario
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Fondo oscuro del modal -->
+    <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+  </div>
+  }
+
+</div>
+

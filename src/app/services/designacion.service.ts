@@ -9,6 +9,7 @@ import { environment } from '@environments/environment';
 // Interfaces opcionales (si deseas usarlas)
 export interface ICrearDesignacionRequest {
   expediente_id: number;
+  usuario_responsable: string;
   adjudicador_id: number;
   tipo_designacion: 'individual' | 'tribunal' | 'aleatoria';
   arbitro_ids?: number[];

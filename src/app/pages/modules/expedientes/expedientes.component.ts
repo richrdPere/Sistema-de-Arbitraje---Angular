@@ -2,11 +2,12 @@ import { Component, inject, OnInit, HostListener, ElementRef } from '@angular/co
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 
-
 import { DatePipe } from '@angular/common';
 
 import { FormUtils } from 'src/app/utils/form-utils';
 import { CommonModule } from '@angular/common';
+import { ExpedienteModalComponent } from "./expediente-modal/expediente-modal.component";
+
 
 // Interface
 import { Expediente } from 'src/app/interfaces/components/expediente';
@@ -18,12 +19,12 @@ import iziToast from 'izitoast';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
-import { ExpedienteModalComponent } from "./expediente-modal/expediente-modal.component";
 
 @Component({
   selector: 'app-expedientes',
   imports: [DatePipe, ReactiveFormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent],
   templateUrl: './expedientes.component.html',
+  styles: ``
 })
 export class ExpedientesComponent {
 
