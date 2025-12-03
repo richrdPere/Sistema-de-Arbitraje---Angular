@@ -54,12 +54,12 @@ export class NavbarMenuProfileComponent implements OnInit {
     {
       icon: 'assets/icons/navbar/perfil.svg',
       label: 'Perfil',
-      route: '/admin/perfil',
+      route: '/app/perfil',
     },
     {
       icon: 'assets/icons/navbar/settings.svg',
       label: 'Configuración',
-      route: '/dashboard/configuracion',
+      route: '/app/configuracion',
     },
     {
       icon: 'assets/icons/navbar/sign_out.svg',

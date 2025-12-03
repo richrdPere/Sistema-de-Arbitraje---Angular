@@ -1,46 +1,120 @@
 import { Routes } from '@angular/router';
 import { LayoutTrazabilidadComponent } from './layout_trazabilidad/layout_trazabilidad.component';
+import { RoleGuard } from 'src/app/guards/role.guard';
 
 export const trazabilidadRoutes: Routes = [
   // --- Layout trazabilidad ----
   {
     path: '',
     component: LayoutTrazabilidadComponent,
+    canActivate: [RoleGuard],
+    // Permitir acceso al layout a TODOS los roles válidos
+    data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO', 'PARTICIPE', 'ADJUDICADOR'] },
     children: [
 
-      // Para expedientes
+      // ----------------------------
+      //  Expedientes
+      // ----------------------------
       {
         path: 'expedientes',
         loadComponent: () => import('../../pages/modules/expedientes/expedientes.component').then(m => m.ExpedientesComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'expedientes/:id/documentos',
-        loadComponent: () => import('../../pages/modules/expedientes/ver-documentos/ver-documentos.component').then(m => m.VerDocumentosComponent)
+        loadComponent: () =>
+          import('../../pages/modules/expedientes/ver-documentos/ver-documentos.component')
+            .then(m => m.VerDocumentosComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
-       {
+      {
         path: 'expedientes/:id/participes',
-        loadComponent: () => import('../../pages/modules/expedientes/gestionar-participes/gestionar-participes.component').then(m => m.GestionarParticipesComponent)
+        loadComponent: () =>
+          import('../../pages/modules/expedientes/gestionar-participes/gestionar-participes.component')
+            .then(m => m.GestionarParticipesComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'expedientes/:id/historial',
-        loadComponent: () => import('../../pages/modules/expedientes/ver-historial/ver-historial.component').then(m => m.VerHistorialComponent)
+        loadComponent: () =>
+          import('../../pages/modules/expedientes/ver-historial/ver-historial.component')
+            .then(m => m.VerHistorialComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
 
-      // Para participe
 
-      { path: 'participes', loadComponent: () => import('../../pages/modules/participes/participes.component').then(m => m.ParticipesComponent) },
-      { path: 'perfil', loadComponent: () => import('../../pages/modules/perfil/perfil.component').then(m => m.PerfilComponent) },
-      { path: 'usuarios', loadComponent: () => import('../../pages/modules/usuarios/usuarios.component').then(m => m.UsuariosComponent) },
-      { path: 'casos', loadComponent: () => import('../../pages/modules/casos/casos.component').then(m => m.CasosComponent) },
-      { path: 'resoluciones', loadComponent: () => import('../../pages/modules/resolucion/resolucion.component').then(m => m.ResolucionComponent) },
-      { path: 'auditoria', loadComponent: () => import('../../pages/modules/auditorias/auditorias.component').then(m => m.AuditoriasComponent) },
-      { path: 'solicitudes', loadComponent: () => import('../../pages/modules/solicitudes/solicitudes.component').then(m => m.SolicitudesComponent) },
-      { path: 'calendario', loadComponent: () => import('../../pages/modules/calendario/calendario.component').then(m => m.CalendarioComponent) },
-      { path: '', redirectTo: 'expedientes', pathMatch: 'full' },
+      // ----------------------------
+      //  Otros módulos
+      // ----------------------------
+      {
+        path: 'participes',
+        loadComponent: () =>
+          import('../../pages/modules/participes/participes.component')
+            .then(m => m.ParticipesComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
+      },
+      {
+        path: 'designaciones',
+        loadComponent: () =>
+          import('../../pages/modules/designaciones/designaciones.component')
+            .then(m => m.DesignacionesComponent),
+        data: { roles: ['ADMIN', 'ARBITRO'] }
+      },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('../../pages/modules/perfil/perfil.component')
+            .then(m => m.PerfilComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO', 'PARTICIPE'] }
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () =>
+          import('../../pages/modules/usuarios/usuarios.component')
+            .then(m => m.UsuariosComponent),
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'casos',
+        loadComponent: () =>
+          import('../../pages/modules/casos/casos.component')
+            .then(m => m.CasosComponent),
+        data: { roles: ['ADMIN', 'ARBITRO'] }
+      },
+      {
+        path: 'resoluciones',
+        loadComponent: () =>
+          import('../../pages/modules/resolucion/resolucion.component')
+            .then(m => m.ResolucionComponent),
+        data: { roles: ['ADMIN', 'ARBITRO'] }
+      },
+      {
+        path: 'auditoria',
+        loadComponent: () =>
+          import('../../pages/modules/auditorias/auditorias.component')
+            .then(m => m.AuditoriasComponent),
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'solicitudes',
+        loadComponent: () =>
+          import('../../pages/modules/solicitudes/solicitudes.component')
+            .then(m => m.SolicitudesComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
+      },
+      {
+        path: 'calendario',
+        loadComponent: () =>
+          import('../../pages/modules/calendario/calendario.component')
+            .then(m => m.CalendarioComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
+      },
 
+      // Redirect default
+      { path: '', redirectTo: 'expedientes', pathMatch: 'full' }
     ]
-
-
   }
+];
 
-]
+
+export default trazabilidadRoutes;

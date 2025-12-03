@@ -104,8 +104,11 @@ export class TrazabilidadComponent implements OnInit {
     const { correo, password } = this.formTrazabilidad.value;
 
     this.authService.login(correo!, password!).subscribe({
+
       next: (res) => {
-        console.log('Login exitoso:', res);
+        // console.log('Login exitoso:', res);
+
+          // Save token & user
         iziToast.success({
           title: 'Exito',
           message: res.message || 'Inicio de sesión exitoso',
@@ -119,22 +122,23 @@ export class TrazabilidadComponent implements OnInit {
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
 
         // Redirección según rol
-        switch (res.usuario.rol) {
-          case 'admin':
-            this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
-            break;
-          case 'secretaria':
-            this._router.navigate(['/secretaria']); // Lazy load admin -> redirige a expedientes
-            break;
-          case 'participe':
-            this._router.navigate(['/participe']);
-            break;
-          case 'arbitro':
-            this._router.navigate(['/arbitro']);
-            break;
-          default:
-            this._router.navigate(['/']);
-        }
+         this._router.navigate(['/app']);
+        // switch (res.usuario.rol) {
+        //   case 'admin':
+        //     this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
+        //     break;
+        //   case 'secretaria':
+        //     this._router.navigate(['/secretaria']); // Lazy load admin -> redirige a expedientes
+        //     break;
+        //   case 'participe':
+        //     this._router.navigate(['/participe']);
+        //     break;
+        //   case 'arbitro':
+        //     this._router.navigate(['/arbitro']);
+        //     break;
+        //   default:
+        //     this._router.navigate(['/']);
+        // }
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Error en el inicio de sesión';

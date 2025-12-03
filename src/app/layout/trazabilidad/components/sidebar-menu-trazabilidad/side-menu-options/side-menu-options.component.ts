@@ -6,82 +6,95 @@ interface MenuOptions {
   label: string;
   route: string;
   sublabel: string;
+  roles: string[];  //  NUEVO
 }
 
 @Component({
   selector: 'side-menu-options',
-  imports: [],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './side-menu-options.component.html',
 })
 export class SideMenuOptionsComponent {
-constructor(private router: Router) { }
 
- menuOptions: MenuOptions[] = [
+  rolUsuario = '';
+
+  constructor(private router: Router) {
+    const user = JSON.parse(localStorage.getItem('usuario') || '{}');
+    this.rolUsuario = (user?.rol || '').toUpperCase();
+  }
+
+  menuOptions: MenuOptions[] = [
     {
       icon: 'fa-solid fa-file',
       label: 'Expedientes',
       sublabel: 'Accede al mapa en tiempo real',
-      route: '/admin/expedientes',
-    },
-     {
-      icon: 'fa-solid fa-building-columns',
-      label: 'Casos',
-      sublabel: 'Casos abiertos de las solicitudes aprobadas',
-      route: '/admin/casos',
+      route: '/app/expedientes',
+      roles: ['ADMIN', 'SECRETARIA'],
     },
     {
       icon: 'fa-solid fa-user-tie',
       label: 'Participes',
       sublabel: 'Resumen de las actividades realizadas',
-      route: '/admin/participes',
+      route: '/app/participes',
+      roles: ['ADMIN', 'SECRETARIA'],
+    },
+    {
+      icon: 'fa-solid fa-building-columns',
+      label: 'Casos',
+      sublabel: 'Casos abiertos de las solicitudes aprobadas',
+      route: '/app/casos',
+      roles: ['ADMIN', 'ARBITRO'],
+    },
+    {
+      icon: 'fa-solid fa-user-tie',
+      label: 'Designaciones',
+      sublabel: 'Casos abiertos de las solicitudes aprobadas',
+      route: '/app/designaciones',
+      roles: ['ADMIN', 'ARBITRO'],
     },
     {
       icon: 'fa-solid fa-users',
       label: 'Usuarios',
       sublabel: 'Gestióna zonas de patrullaje',
-      route: '/admin/usuarios',
+      route: '/app/usuarios',
+      roles: ['ADMIN'],
     },
     {
       icon: 'fa-solid fa-file-word',
       label: 'Resoluciones',
       sublabel: 'Reporta los avances del dia',
-      route: '/admin/resoluciones',
+      route: '/app/resoluciones',
+      roles: ['ADMIN', 'ARBITRO'],
     },
     {
       icon: 'fa-solid fa-scale-balanced',
       label: 'Auditoria',
       sublabel: 'Reporta los avances del dia',
-      route: '/admin/auditoria',
+      route: '/app/auditoria',
+      roles: ['ADMIN'],
     },
     {
       icon: 'fa-solid fa-gavel',
       label: 'Solicitudes',
       sublabel: 'Evalua la logistica dentro de los bienes del almacén',
-      route: '/admin/solicitudes',
+      route: '/app/solicitudes',
+      roles: ['ADMIN', 'SECRETARIA'],
     },
-        {
+    {
       icon: 'fa-solid fa-calendar-days',
       label: 'Calendario',
       sublabel: 'Calendario de actividades',
-      route: '/admin/calendario',
+      route: '/app/calendario',
+      roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'],
     },
-
-    // {
-    //   icon: 'fa-solid fa-comment',
-    //   label: 'Chats',
-    //   sublabel: 'Conversa y asigna acciones a los serenos u otros operadores',
-    //   route: '/dashboard/chats',
-    // },
-
-    // {
-    //   icon: 'fa-solid fa-flask-vial',
-    //   label: 'Test pages',
-    //   sublabel: 'Ruta de paginas de prueba',
-    //   route: '/dashboard/test_pages',
-    // },
   ];
 
+  get filteredMenu() {
+    return this.menuOptions.filter(item => item.roles.includes(this.rolUsuario));
+  }
+
   logout() {
+    localStorage.removeItem('usuario');
     this.router.navigate(['/trazabilidad']);
   }
 }
