@@ -69,8 +69,8 @@ export class ArbitrajeComponent {
 
   // Archivos de Arbitraje
   arbitrajeFiles = {
-    reglamentoInternoArbitraje: 'https://firmalegalordonezterrazas.com/ARBITRAJE/REGLAMENTO INTERNO DEL CENTRO DE ARBITRAJE - FIRMA LEGAL ORDOÑEZ.1.0.pdf',
-    codigoDeEtica: 'https://firmalegalordonezterrazas.com/ARBITRAJE/REGLAMENTO DEL CODIGO DE ETICA - FIRMA LEGAL ORDOÑEZ. 1.0.pdf',
+    reglamentoInternoArbitraje: 'https://firmalegalordonezterrazas.com/JPRD/REGLAMENTO INTERNO DEL CENTRO DE ARBITRAJE - FIRMA LEGAL ORDOÑEZ 3.0.pdf',
+    codigoDeEtica: 'https://firmalegalordonezterrazas.com/JPRD/REGLAMENTO DEL CODIGO DE ETICA - FIRMA LEGAL ORDOÑEZ 3.0.pdf',
     requisitosArbitros: 'https://firmalegalordonezterrazas.com/ARBITRAJE/REQUISITOS PARA INCORPORARTE A LA NÓMINA DE ÁRBITROS DEL CENTRO DE ARBITRAJE - FIRMA LEGAL ORDOÑEZ 1.01.pdf',
     reglamentoProcesal: 'https://firmalegalordonezterrazas.com/ARBITRAJE/REGLAMENTO%20PROCESAL%20DE%20ARBITRAJE%20DEL%20CENTRO%20DE%20ARBITRAJE%20-%20FIRMA%20LEGAL%20ORDO%C3%91EZ.pdf',
     reglamentoCostosArbitraje: 'https://firmalegalordonezterrazas.com/ARBITRAJE/REGLAMENTO%20DE%20COSTOS%20ADMINISTRATIVOS%2C%20HONORARIOS%20DE%20%C3%81RBITROS%20Y%20DEVOLUCI%C3%93N%20DE%20HONORARIOS%20-%20FIRMA%20LEGAL%20ORDO%C3%91EZ%20-%20CHAMBI.pdf',

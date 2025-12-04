@@ -60,6 +60,10 @@ export const mainRoutes: Routes = [
         loadComponent: () => import('../../pages/auth/cajprd/cajprd.component').then(m => m.CajprdComponent),
       },
       {
+        path: 'jprd/montos_maximos_controversias',
+        loadComponent: () => import('../../pages/auth/cajprd/montos-maximos-controversias/montos-maximos-controversias.component').then(m => m.MontosMaximosControversiasComponent),
+      },
+      {
         path: 'trazabilidad',
         loadComponent: () => import('../../pages/auth/trazabilidad/trazabilidad.component').then(m => m.TrazabilidadComponent),
       },
