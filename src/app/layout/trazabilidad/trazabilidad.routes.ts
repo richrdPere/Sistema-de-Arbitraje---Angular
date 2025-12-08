@@ -58,7 +58,7 @@ export const trazabilidadRoutes: Routes = [
         loadComponent: () =>
           import('../../pages/modules/designaciones/designaciones.component')
             .then(m => m.DesignacionesComponent),
-        data: { roles: ['ADMIN', 'ARBITRO'] }
+        data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
       },
       {
         path: 'perfil',

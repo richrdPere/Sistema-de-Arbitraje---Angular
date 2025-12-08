@@ -117,12 +117,12 @@ export class ExpedientesComponent {
   }
 
   // Ejemplo de funciones base:
-  verDocumentos(exp: any) { this.router.navigate([`secretaria/expedientes/${exp.id_expediente}/documentos`]); }
+  verDocumentos(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
   gestionarParticipes(exp: any) {
-    this.router.navigate([`secretaria/expedientes/${exp.id_expediente}/participes`]);
+    this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);
   }
 
-  verHistorial(exp: any) { this.router.navigate([`secretaria/expedientes/${exp.id_expediente}/historial`]); }
+  verHistorial(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/historial`]); }
   editarExpediente(exp: Expediente): void {
     this.modoEdicion = true;
     this.expedienteSeleccionado = exp;

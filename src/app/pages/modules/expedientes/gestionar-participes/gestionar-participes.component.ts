@@ -1,18 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import iziToast from 'izitoast';
 
 // Services
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
-import { DesignacionService } from 'src/app/services/designacion.service';
+import { DesignacionService, IAsignarArbitrosRequest } from 'src/app/services/designacion.service';
 import { ParticipeService } from 'src/app/services/admin/participes.service';
 import { ArbitrosService } from 'src/app/services/admin/arbitros.service';
-
-
-
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioSecretaria } from 'src/app/interfaces/users/secretariaUser';
 
 @Component({
   selector: 'app-gestionar-participes',
@@ -21,30 +21,22 @@ import { ArbitrosService } from 'src/app/services/admin/arbitros.service';
   styles: ``
 })
 export class GestionarParticipesComponent implements OnInit {
-  // -----------------------------
-  // Inyecciones
-  // -----------------------------
-  route = inject(ActivatedRoute);
-  router = inject(Router);
-
-  constructor(
-    private expedientesService: ExpedientesService,
-    private participesService: ParticipeService,
-    private arbitroService: ArbitrosService,
-    private designacionService: DesignacionService
-  ) { }
 
   // -----------------------------
   // Variables
   // -----------------------------
+  rol: string = '';
+  nombre: string = '';
+  id: number = 0;
+  usuario: UsuarioSecretaria = inject(AuthService).getUser() as UsuarioSecretaria;
   expedienteId!: number;
   expediente: any = null;
   participes: any[] = [];
+
   arbitrosDisponibles: any[] = [];
   arbitrosSeleccionados: number[] = [];
 
   tipoSeleccionado: string = '';
-
   arbSolicitante!: number;
   arbRequerido!: number;
   arbInstitucion!: number;
@@ -65,12 +57,32 @@ export class GestionarParticipesComponent implements OnInit {
     { value: 'aleatoria', label: 'Designación aleatoria' }
   ];
 
+  constructor(
+    private expedientesService: ExpedientesService,
+    private participesService: ParticipeService,
+    private authService: AuthService,
+    private arbitroService: ArbitrosService,
+    private designacionService: DesignacionService,
+    private route: ActivatedRoute,
+    public router: Router,
+  ) {
+
+    // const usuario = authService.getUser()
+
+    // if (usuario) {
+    //   this.id = usuario.id;
+    //   this.rol = usuario.rol;
+    //   this.nombre = usuario.nombre;
+    // }
+  }
+
   // ============================================================
   //  INIT
   // ============================================================
   ngOnInit() {
     this.expedienteId = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarDatosIniciales();
+
   }
 
   // ============================================================
@@ -88,7 +100,7 @@ export class GestionarParticipesComponent implements OnInit {
         this.expediente = resp.expediente;
         this.participes = resp.participes;
         this.arbitrosDisponibles = resp.arbitros;
-
+        console.log("ARBITROS DISPONIBLES: ", this.arbitrosDisponibles);
         this.loading = false;
       },
       error: err => {
@@ -140,9 +152,13 @@ export class GestionarParticipesComponent implements OnInit {
 
     const payload: any = {
       expediente_id: this.expedienteId,
+      adjudicador_id: this.usuario.id,
       tipo_designacion: this.tipoSeleccionado,
-      adjudicador_id: Number(localStorage.getItem('usuario_id')),
+      usuario_responsable: this.usuario,
+
     };
+
+
 
     // -------------------------
     //  INDIVIDUAL
@@ -157,14 +173,18 @@ export class GestionarParticipesComponent implements OnInit {
       }
 
       payload.arbitro_ids = [this.arbitroUnico];
+
+      console.log('arbitro unico: ', this.arbitroUnico);
     }
+
+    console.log('ENVIANDO: ', payload);
 
     // -------------------------
     //  TRIBUNAL
     // -------------------------
     if (this.tipoSeleccionado === 'tribunal') {
 
-      if (!this.arbitroDemandante || !this.arbitroDemandado || !this.arbitroInstitucion) {
+      if (!this.arbSolicitante || !this.arbRequerido || !this.arbInstitucion) {
         return iziToast.error({
           title: "Error",
           message: "Debe seleccionar los 3 árbitros del tribunal."
@@ -172,9 +192,9 @@ export class GestionarParticipesComponent implements OnInit {
       }
 
       payload.arbitro_ids = [
-        this.arbitroDemandante,
-        this.arbitroDemandado,
-        this.arbitroInstitucion
+        this.arbSolicitante,
+        this.arbRequerido,
+        this.arbInstitucion
       ];
     }
 
@@ -209,5 +229,44 @@ export class GestionarParticipesComponent implements OnInit {
         });
       }
     });
+  }
+
+  //  crearDesignacion() {
+  //   let payload: any = { tipo_designacion: this.tipoSeleccionado };
+
+  //   if (this.tipoSeleccionado === 'individual') {
+  //     payload.arbitro_unico = this.arbitroUnico;
+  //   }
+
+  //   if (this.tipoSeleccionado === 'tribunal') {
+  //     payload.solicitante = this.arbSolicitante;
+  //     payload.requerido = this.arbRequerido;
+  //     payload.institucional = this.arbInstitucion;
+  //   }
+
+  //   this.designacionService.crearDesignacion(this.expedienteId, payload)
+  //     .subscribe({
+  //       next: (resp) => {
+  //         alert('Designación creada correctamente');
+  //       },
+  //       error: (err) => console.error(err)
+  //     });
+  // }
+
+  // ======================================================
+  // ============= ASIGNAR ÁRBITROS =======================
+  // ======================================================
+  asignarArbitros() {
+    const payload: IAsignarArbitrosRequest = {
+      arbitro_ids: this.arbitrosSeleccionados
+    };
+
+    this.designacionService.asignarArbitros(this.expedienteId, payload)
+      .subscribe({
+        next: () => {
+          alert('Árbitros asignados correctamente');
+        },
+        error: (err) => console.error(err)
+      });
   }
 }

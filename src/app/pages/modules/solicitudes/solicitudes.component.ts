@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from 'src/app/utils/form-utils';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 import Swal from 'sweetalert2';
 
 // Service
@@ -14,7 +16,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [    CommonModule,ReactiveFormsModule, FormsModule],
   templateUrl: './solicitudes.component.html',
   styles: ``
 })

@@ -2,7 +2,7 @@
 
   <h2 class="text-2xl font-bold mb-4">Gestionar Partícipes del Expediente</h2>
 
-  <button class="btn btn-outline mb-4" (click)="router.navigate(['/secretaria/expedientes'])">
+  <button class="btn btn-outline mb-4" (click)="router.navigate(['/app/expedientes'])">
     ← Volver
   </button>
 
@@ -41,15 +41,15 @@
       <option value="" disabled>Seleccione</option>
       <option value="individual">Árbitro Único</option>
       <option value="tribunal">Tribunal Arbitral (3 árbitros)</option>
-      <option value="aleatoria">Aleatoria</option>
+      <!-- <option value="aleatoria">Aleatoria</option> -->
     </select>
 
     <!-- Para arbitro único -->
     <div *ngIf="tipoSeleccionado === 'individual'">
       <label class="font-semibold">Árbitro único</label>
       <select class="select select-bordered w-full" [(ngModel)]="arbitroUnico">
-        <option *ngFor="let a of arbitrosDisponibles" [value]="a.id">
-          {{ a.nombre }}
+        <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+          {{ a.usuario.nombre }}  {{ a.usuario.apellidos }}
         </option>
       </select>
     </div>
@@ -60,8 +60,8 @@
       <div>
         <label class="font-semibold">Árbitro del solicitante</label>
         <select class="select select-bordered w-full" [(ngModel)]="arbSolicitante">
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id">
-            {{ a.nombre }}
+          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
           </option>
         </select>
       </div>
@@ -69,8 +69,8 @@
       <div>
         <label class="font-semibold">Árbitro del requerido</label>
         <select class="select select-bordered w-full" [(ngModel)]="arbRequerido">
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id">
-            {{ a.nombre }}
+          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
           </option>
         </select>
       </div>
@@ -78,8 +78,8 @@
       <div>
         <label class="font-semibold">Árbitro institucional</label>
         <select class="select select-bordered w-full" [(ngModel)]="arbInstitucion">
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id">
-            {{ a.nombre }}
+          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
           </option>
         </select>
       </div>
@@ -118,7 +118,7 @@
       }
     </div>
 
-    <button class="btn btn-primary mt-6" (click)="guardarDesignacion()">
+    <button class="btn btn-primary mt-6" (click)="asignarArbitros()">
       Asignar Árbitros
     </button>
   </div>

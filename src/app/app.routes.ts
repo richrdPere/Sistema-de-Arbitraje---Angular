@@ -16,6 +16,20 @@ export const routes: Routes = [
     data: { roles: ['admin', 'secretaria', 'arbitro', 'participe', 'adjudicador'] },
     loadChildren: () => import('./layout/trazabilidad/trazabilidad.routes'),
   },
+
+
+  // ✅ CORREGIDO: ÚNICA ruta comodín en toda la aplicación
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/shared/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
+  },
+];
+
+
+
   // {
   //   path: 'admin',
   //   loadChildren: () => import('./pages/admin/admin.routes'),
@@ -36,14 +50,3 @@ export const routes: Routes = [
   //   path: 'adjudicador',
   //   loadChildren: () => import('./pages/adjudicador/adjudicador.routes'),
   // },
-
-  // ✅ CORREGIDO: ÚNICA ruta comodín en toda la aplicación
-  {
-    path: '**',
-    loadComponent: () =>
-      import('./pages/shared/not-found/not-found.component').then(
-        (m) => m.NotFoundComponent
-      ),
-  },
-];
-

@@ -50,7 +50,7 @@ export class SideMenuOptionsComponent {
       label: 'Designaciones',
       sublabel: 'Casos abiertos de las solicitudes aprobadas',
       route: '/app/designaciones',
-      roles: ['ADMIN', 'ARBITRO'],
+      roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'],
     },
     {
       icon: 'fa-solid fa-users',

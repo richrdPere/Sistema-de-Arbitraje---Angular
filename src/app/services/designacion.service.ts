@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '@environments/environment';
+import { UsuarioSecretaria } from '../interfaces/users/secretariaUser';
 
 
 // Interfaces opcionales (si deseas usarlas)
 export interface ICrearDesignacionRequest {
   expediente_id: number;
-  usuario_responsable: string;
+  usuario_responsable: UsuarioSecretaria;
   adjudicador_id: number;
   tipo_designacion: 'individual' | 'tribunal' | 'aleatoria';
   arbitro_ids?: number[];
@@ -37,7 +38,7 @@ export class DesignacionService {
   envs = environment;
 
   // 2.- variables publicas
-  private baseUrl: string = this.envs.main_url_prueba + 'designacion/'; // Cambiar a la URL real
+  private baseUrl = `${this.envs.main_url_prueba}designaciones`; // Resultado final: http://localhost:4000/api/
 
   constructor(private http: HttpClient) { }
 
@@ -45,14 +46,17 @@ export class DesignacionService {
   // ✨ 1. Crear designación
   // -------------------------------------------------------
   crearDesignacion(body: ICrearDesignacionRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}designar`, body);
+
+    console.log('CREANDO DESIGNACION: ', body);
+
+    return this.http.post(`${this.baseUrl}/designar`, body);
   }
 
   // -------------------------------------------------------
   // ✨ 2. Asignar árbitros
   // -------------------------------------------------------
   asignarArbitros(id: number, body: IAsignarArbitrosRequest): Observable<any> {
-    return this.http.put(`${this.baseUrl}designar/${id}/asignar-arbitros`, body);
+    return this.http.put(`${this.baseUrl}/designar/${id}/asignar-arbitros`, body);
   }
 
   // -------------------------------------------------------
@@ -77,7 +81,7 @@ export class DesignacionService {
       });
     }
 
-    return this.http.get<IListarDesignacionesResponse>(`${this.baseUrl}designaciones`, { params: httpParams });
+    return this.http.get<IListarDesignacionesResponse>(`${this.baseUrl}`, { params: httpParams });
   }
 
   // -------------------------------------------------------
