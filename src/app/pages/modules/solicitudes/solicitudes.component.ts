@@ -16,7 +16,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [    CommonModule,ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './solicitudes.component.html',
   styles: ``
 })
@@ -207,21 +207,29 @@ export class SolicitudesComponent implements OnInit {
       ...this.solicitudesAprobadasFiltradas,
       ...this.solicitudesRechazadasFiltradas
     ];
-    // const aplicar = (lista: any[]) =>
-    //   lista.filter(item =>
-    //     (!this.filtroTipo || item.tipo === this.filtroTipo) &&
-    //     (!this.filtroEstado || item.estado === this.filtroEstado) &&
-    //     (
-    //       item.numero_expediente.toString().toLowerCase().includes(buscar) ||
-    //       item.solicitante.toLowerCase().includes(buscar) ||
-    //       item.correo.toLowerCase().includes(buscar) ||
-    //       item.tipo.toLowerCase().includes(buscar) ||
-    //       item.estado.toLowerCase().includes(buscar)
-    //     )
-    //   );
 
-    // this.solicitudesFiltradas = aplicar(this.solicitudes);
   }
+
+  verDetalle(item: any) {
+    console.log("Ver detalle:", item);
+    // Lógica para navegar o abrir modal
+  }
+
+  verArchivo(item: any) {
+    if(!item?.documento) {
+      console.warn("No existe un archivo en este registro");
+      return;
+    }
+
+    const url = item.documento; // debe ser un link válido (https://...)
+    window.open(url, "_blank");
+  }
+
+  aprobarSolicitud(item: any) {
+    console.log("Aprobar solicitud:", item);
+    // Lógica para aprobar solicitud
+  }
+
 
 
   siguientePagina(): void {

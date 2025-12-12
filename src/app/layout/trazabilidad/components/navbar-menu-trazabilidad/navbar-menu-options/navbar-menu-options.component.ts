@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
+import { NotificationBellComponent } from "src/app/notifications/components/notification-bell/notification-bell.component";
 
 @Component({
   selector: 'navbar-menu-options',
-  imports: [],
+  imports: [NotificationBellComponent],
   templateUrl: './navbar-menu-options.component.html',
 })
 export class NavbarMenuOptionsComponent {

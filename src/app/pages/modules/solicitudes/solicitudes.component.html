@@ -144,7 +144,7 @@
                 <th>Etapa</th>
                 <th>Solicitante</th>
                 <th>Correo</th>
-                <!-- <th>Condición</th> -->
+                <th>Acciones</th>
                 <th></th>
               </tr>
             </thead>
@@ -164,9 +164,28 @@
                 <td>{{ solicitud.etapa_procesal }}</td>
                 <td>{{ solicitud.solicitante }}</td>
                 <td>{{ solicitud.correo }}</td>
-                <!-- <td>{{ solicitud.condicion }}</td> -->
 
-                <td class="relative">
+                <td class="space-x-2 flex items-center">
+
+                  <!-- Ver detalle -->
+                  <button class="btn btn-sm btn-info text-white" (click)="verDetalle(solicitud)" title="Ver detalle">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+
+                  <!-- Ver archivo -->
+                  <button class="btn btn-sm btn-warning text-white" (click)="verArchivo(solicitud)" title="Ver archivo">
+                    <i class="fa-solid fa-file"></i>
+                  </button>
+
+                  <!-- Aprobar solicitud -->
+                  <button class="btn btn-sm btn-success text-white" (click)="abrirModal(solicitud)"
+                    title="Aprobar solicitud">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+
+                </td>
+
+                <!-- <td class="relative">
                   <div class="dropdown dropdown-end inline-block">
                     <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -182,7 +201,7 @@
                         Acciones
                       </li>
 
-                      <!-- Ver Documentos -->
+
                       <li>
                         <button
                           class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-base-content">
@@ -195,7 +214,7 @@
 
                       <hr class="my-1 border-base-300" />
 
-                      <!-- Aprobar Expediente -->
+
                       <li>
                         <button
                           class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-primary hover:underline"
@@ -206,7 +225,7 @@
                       </li>
                     </ul>
                   </div>
-                </td>
+                </td> -->
               </tr>
               }
             </tbody>
@@ -375,7 +394,7 @@
                 <th>Etapa</th>
                 <th>Solicitante</th>
                 <th>Correo</th>
-                <!-- <th>Condición</th> -->
+                <th>Acciones</th>
 
               </tr>
             </thead>
@@ -431,15 +450,6 @@
       }
     </div>
 
-    <!-- TAB 4 -->
-    <!-- <input type="radio" name="my_tabs_2" id="tab4" class="tab peer/tab4 hidden" />
-    <label for="tab4"
-      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab4:bg-info peer-checked/tab4:text-red-600 peer-checked/tab4:font-bold text-base-content transition-colors">
-      Prueba
-    </label>
-    <div class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab4:block">
-      <h2 class="text-2xl font-bold text-base-content mb-4">Prueba</h2>
-    </div> -->
+
   </div>
 </div>
-

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
@@ -10,7 +10,7 @@ import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
   imports: [ReactiveFormsModule],
   templateUrl: './mesa_partes.component.html',
 })
-export class MesaPartesComponent {
+export class MesaPartesComponent implements OnInit {
 
   // STEP CONTROL
   currentStep: number = 1;
@@ -22,6 +22,19 @@ export class MesaPartesComponent {
   respuesta: any;
   mensajeExito: string = '';
   mensajeError: string = '';
+  maxDocumentoDemandante = 8; // valor por defecto
+  maxDocumentoDemandado = 8;
+
+  tipoSolicitudToCodigo: any = {
+    "Arbitraje de Emergencia": "AE-FIRMA-LEGAL",
+    "Arbitraje Ad Hoc": "AD HOC-FIRMA-LEGAL",
+    "Arbitraje Institucional": "CA-FIRMA-LEGAL",
+    "Recusación de árbitro": "RECUSACIÓN-FIRMA-LEGAL",
+    "Recusación de adjudicador": "RECUSACIÓN-FIRMA-LEGAL",
+    "Designación residual": "DESIGNACIÓN",
+    "Instalación de arbitraje": "INSTALACIÓN"
+  };
+
 
   constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService) {
     this.formTramiteMPV = this.fb.group({
@@ -36,14 +49,14 @@ export class MesaPartesComponent {
       documento_identidad: ['', Validators.required],
 
       // STEP 2 — Datos del Demandado
-      tipo_demandado: ['', Validators.required],
-      nombre_demandado: ['', Validators.required],
-      apellidos_demandado: ['', Validators.required],
-      correo_demandado: ['', [Validators.required, Validators.email]],
-      direccion_demandado: ['', [Validators.required]],
-      telefono_demandado: ['', Validators.required],
-      tipo_documento_demandado: ['', [Validators.required]],
-      doc_identidad_demandado: ['', Validators.required],
+      tipo_demandado: [''],
+      nombre_demandado: [''],
+      apellidos_demandado: [''],
+      correo_demandado: ['',],
+      direccion_demandado: ['',],
+      telefono_demandado: ['',],
+      tipo_documento_demandado: [''],
+      doc_identidad_demandado: [''],
 
 
       // STEP 3 — Tipo de solicitud
@@ -55,6 +68,73 @@ export class MesaPartesComponent {
       fileInput: [null, Validators.required]
     });
   }
+
+  ngOnInit() {
+    this.onTipoDemandadoChange(); // Inicializar validaciones al cargar
+    this.dniRucDemandante();
+    this.dniRucDemandado();
+    this.autoAsignarCodigo();
+  }
+
+  dniRucDemandante(): void {
+    this.formTramiteMPV.get("tipo_documento_demandado")?.valueChanges.subscribe(tipo => {
+      if (tipo === "DNI") {
+        this.maxDocumentoDemandante = 8;
+        this.formTramiteMPV.get("doc_identidad_demandado")?.setValidators([
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(8),
+          Validators.pattern(/^[0-9]*$/)
+        ]);
+      } else if (tipo === "RUC") {
+        this.maxDocumentoDemandante = 11;
+        this.formTramiteMPV.get("doc_identidad_demandado")?.setValidators([
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.minLength(11),
+          Validators.pattern(/^[0-9]*$/)
+        ]);
+      }
+
+      // Actualizar validaciones
+      this.formTramiteMPV.get("doc_identidad_demandado")?.updateValueAndValidity();
+      this.formTramiteMPV.get("doc_identidad_demandado")?.setValue(""); // limpiar input al cambiar tipo
+    });
+  }
+
+  dniRucDemandado(): void {
+    this.formTramiteMPV.get("tipo_documento")?.valueChanges.subscribe(tipo => {
+      if (tipo === "DNI") {
+        this.maxDocumentoDemandado = 8;
+        this.formTramiteMPV.get("documento_identidad")?.setValidators([
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(8),
+          Validators.pattern(/^[0-9]*$/)
+        ]);
+      } else if (tipo === "RUC") {
+        this.maxDocumentoDemandado = 11;
+        this.formTramiteMPV.get("documento_identidad")?.setValidators([
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.minLength(11),
+          Validators.pattern(/^[0-9]*$/)
+        ]);
+      }
+
+      // Actualizar validaciones
+      this.formTramiteMPV.get("documento_identidad")?.updateValueAndValidity();
+      this.formTramiteMPV.get("documento_identidad")?.setValue(""); // limpiar input al cambiar tipo
+    });
+  }
+
+  autoAsignarCodigo(): void {
+    this.formTramiteMPV.get("tipo_solicitud")?.valueChanges.subscribe(tipo => {
+      const codigo = this.tipoSolicitudToCodigo[tipo] || "";
+      this.formTramiteMPV.get("codigo")?.setValue(codigo, { emitEvent: false });
+    });
+  }
+
 
   /* ----------------------------- FILE ----------------------------- */
   onFileSelected(e: Event) {
@@ -79,17 +159,11 @@ export class MesaPartesComponent {
       apellidos?.clearValidators();
       apellidos?.setValue('');
       apellidos?.updateValueAndValidity();
-      // this.formTramiteMPV.patchValue({
-      //   nombre_demandado: '',
-      //   apellidos_demandado: ''
-      // });
     } else {
       // Limpia el campo de entidad
       apellidos?.setValidators([Validators.required]);
       apellidos?.updateValueAndValidity();
-      // this.formTramiteMPV.patchValue({
-      //   nombre_demandado: ''
-      // });
+
     }
 
     nombre?.setValidators([Validators.required]);
@@ -100,8 +174,7 @@ export class MesaPartesComponent {
   /* ----------------------------- STEPS ----------------------------- */
   // Pasar al siguiente paso si es válido
   nextStep() {
-    // if (!this.validarStepActual()) return;
-    // if (this.currentStep < 3) this.currentStep++;
+
     if (this.validarStepActual()) {
       this.currentStep++;
     }
@@ -246,14 +319,20 @@ export class MesaPartesComponent {
     this.tramiteService.registrarTramite(fd).subscribe({
       next: (response) => {
         this.respuesta = response; //  guarda respuesta
-        this.enviado = true;
 
         Swal.fire({
+          title: 'Trámite registrado correctamente',
+          html: `
+        <div class="text-left">
+          <p><strong>Número de trámite:</strong> ${response.tramite.numero_tramite}</p>
+          <p><strong>Estado:</strong> ${response.tramite.estado}</p>
+        </div>
+      `,
           icon: 'success',
-          title: '¡Solicitud enviada!',
-          text: response.message || 'Tu trámite fue registrado correctamente.',
-          confirmButtonColor: '#16a34a'
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#198754',
         });
+        this.enviado = true;
 
         // this.mensajeExito = ` ${response.message}`;
         console.log('Trámite registrado:', response.tramite);
