@@ -73,36 +73,19 @@ export class CajprdComponent {
 
   // Archivos de Arbitraje
   arbitrajeFiles = {
-    reglamentoInternoArbitraje: 'https://firmalegalordonezterrazas.com/JPRD/REGLAMENTO INTERNO DEL CENTRO DE ARBITRAJE - FIRMA LEGAL ORDOÑEZ 3.0.pdf',
-    codigoDeEtica: 'https://firmalegalordonezterrazas.com/JPRD/REGLAMENTO DEL CODIGO DE ETICA - FIRMA LEGAL ORDOÑEZ 3.0.pdf',
-    procedimientoDeIncorporacionDeAdjudicadores: `${this.baseUrl}/JPRD/REQUISITOS PARA INCORPORARTE A LA NÓMINA DE ADJUDICADORES - FIRMA LEGAL ORDOÑEZ 1.0.pdf`,
-    reglamentoInterno: `${this.baseUrl}/JPRD/REGLAMENTO%20INTERNO%20DEL%20CENTRO.pdf`,
+    reglamentoInterno: `${this.baseUrl}/JPRD/REGLAMENTO INTERNO DEL CENTRO 6.0.pdf`,
+    codigoDeEtica: `${this.baseUrl}/JPRD/codigo de etica 4.0.pdf`,
+    procedimientoParaIncorporacionALaNominaDeAdjudicadores: `${this.baseUrl}/JPRD/REQUISITOS PARA INCORPORARTE A LA NÓMINA DE ADJUDICADORES 4.0.pdf`,
+    // reglamentoInterno: `${this.baseUrl}/JPRD/REGLAMENTO%20INTERNO%20DEL%20CENTRO.pdf`,
     reglamentoJunta: `${this.baseUrl}/JPRD/REGLAMENTO%20DE%20JUNTA%20DE%20RESOLUCI%C3%93N%20DE%20DISPUTAS%20DEL%20CENTRO%20-%20FIRMA%20LEGAL%20ORDO%C3%91EZ.pdf`,
     reglamentoCostos: `${this.baseUrl}/JPRD/Reglamento%20de%20costos-JPRD%20-%20firma%20legal%20ordo%C3%B1ez.pdf`,
     formulaAplicableDeCostos: `${this.baseUrl}/JPRD/FORMULA APLICABLE 2.0.pdf`,
     reglamentoConfirmacion: `${this.baseUrl}/JPRD/Reglamento%20de%20confirmacion%20de%20adjudicadores.pdf`,
     estatuto: `${this.baseUrl}/JPRD/ESTATUTO%20DEL%20CENTRO.pdf`,
-    codigoEtica: `${this.baseUrl}/JPRD/CODIGO-DE-ETICA-JRD.pdf`,
+    // codigoEtica: `${this.baseUrl}/JPRD/CODIGO-DE-ETICA-JRD.pdf`,
     clausulaModelo: `${this.baseUrl}/JPRD/CL%C3%81USULA%20MODELO%20DE%20JUNTA%20DE%20PREVENCI%C3%93N%20Y%20RESOLUCI%C3%93N%20DE%20DISPUTAS%20DEL%20CENTRO.pdf`,
 
   };
 
-
-
-  // Gestion de archivos
-  // JPRDFiles = {
-  //   requisitosAdjudicadores: `${this.baseUrl}/JPRD/REQUISITOS%20PARA%20INCORPORARTE%20A%20LA%20N%C3%93MINA%20DE%20ADJUDICADORES%20-%20FIRMA%20LEGAL%20ORDO%C3%91EZ.pdf`,
-  //   reglamentoInterno: `${this.baseUrl}/JPRD/REGLAMENTO%20INTERNO%20DEL%20CENTRO.pdf`,
-  //   reglamentoJunta: `${this.baseUrl}/JPRD/REGLAMENTO%20DE%20JUNTA%20DE%20RESOLUCI%C3%93N%20DE%20DISPUTAS%20DEL%20CENTRO%20-%20FIRMA%20LEGAL%20ORDO%C3%91EZ.pdf`,
-  //   reglamentoCostos: `${this.baseUrl}/JPRD/Reglamento%20de%20costos-JPRD%20-%20firma%20legal%20ordo%C3%B1ez.pdf`,
-  //   reglamentoConfirmacion: `${this.baseUrl}/JPRD/Reglamento%20de%20confirmacion%20de%20adjudicadores.pdf`,
-  //   estatuto: `${this.baseUrl}/JPRD/ESTATUTO%20DEL%20CENTRO.pdf`,
-  //   codigoEtica: `${this.baseUrl}/JPRD/CODIGO-DE-ETICA-JRD.pdf`,
-  //   clausulaModelo: `${this.baseUrl}/JPRD/CL%C3%81USULA%20MODELO%20DE%20JUNTA%20DE%20PREVENCI%C3%93N%20Y%20RESOLUCI%C3%93N%20DE%20DISPUTAS%20DEL%20CENTRO.pdf`
-  // }
-
-  // get JPRDFilesEntries() {
-  //   return Object.entries(this.JPRDFiles);
-  // }
 
 }

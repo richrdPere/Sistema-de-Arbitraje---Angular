@@ -60,6 +60,13 @@ export const trazabilidadRoutes: Routes = [
             .then(m => m.DesignacionesComponent),
         data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
       },
+       {
+        path: 'acta-instalacion',
+        loadComponent: () =>
+          import('../../pages/modules/acta-instalacion/acta-instalacion.component')
+            .then(m => m.ActaInstalacionComponent),
+        data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
+      },
       {
         path: 'perfil',
         loadComponent: () =>
@@ -94,6 +101,20 @@ export const trazabilidadRoutes: Routes = [
           import('../../pages/modules/auditorias/auditorias.component')
             .then(m => m.AuditoriasComponent),
         data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'audiencias',
+        loadComponent: () =>
+          import('../../pages/modules/audiencias/audiencias.component')
+            .then(m => m.AudienciasComponent),
+        data: { roles: ['ADMIN', 'ARBITRO'] }
+      },
+      {
+        path: 'laudos',
+        loadComponent: () =>
+          import('../../pages/modules/laudos/laudos.component')
+            .then(m => m.LaudosComponent),
+        data: { roles: ['ADMIN','ARBITRO'] }
       },
       {
         path: 'solicitudes',

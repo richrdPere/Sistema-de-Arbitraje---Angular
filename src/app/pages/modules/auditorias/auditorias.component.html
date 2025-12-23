@@ -1,31 +1,54 @@
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+
+  <!-- Titulo -->
+  <h1 class="text-2xl font-bold mb-5 text-base-content ">Auditorias</h1>
+
+
   <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">Gestión de Partícipes</h2>
-    <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
-      Crear Nuevo Expediente
-    </button>
-  </div>
+  <div class="p-4 mb-7 card bg-base-100 shadow-md">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
 
-  <!-- Modal Form -->
-  <!-- <dialog id="my_modal_1" class="modal text-white">
-    <expediente-modal [formExpediente]="formExpediente" (submitForm)="onSubmitExpediente()" />
-  </dialog> -->
+      <!--  BUSCADOR -->
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
 
+        <!-- Select tipo -->
+        <select class="select select-bordered w-full md:w-60">
+          <option value="" disabled selected>Seleccione tipo</option>
+          <option value="Secretaria">Secretaria</option>
+          <option value="Arbitro">Arbitro</option>
+          <option value="Adjudicadores">Adjudicadores</option>
+          <option value="Admin">Admin</option>
+        </select>
 
-  <!-- Buscador -->
-  <div class="flex justify-between items-center mb-4">
-    <input type="text"
-      class="input input-bordered w-full max-w-xs bg-base-100 text-white rounded-md h-11 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      placeholder="Buscar por cualquier campo...">
+        <!-- Input buscar -->
+        <div class="relative w-full md:max-w-xs">
+          <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por Expediente" />
+          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
 
+      </div>
+
+      <!--  BOTONES -->
+      <div class="flex gap-2 justify-end w-full md:w-auto">
+
+        <button class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none" onclick="my_modal_1.showModal()">
+          Generar Auditoria
+        </button>
+
+        <!-- <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+        (click)="abrirModal()">
+        + Nuevo Usuario
+      </button> -->
+      </div>
+    </div>
   </div>
 
 
   <!-- Tabla -->
-  <div class="overflow-x-auto bg-white shadow rounded-lg ">
+  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
     <table class="table w-full">
-      <thead class="bg-gray-100 text-base-100">
+      <thead class="bg-base-300/90">
         <tr>
           <th>Expediente</th>
           <th>Fecha</th>
@@ -83,4 +106,3 @@
     </div>
   </div>
 </div>
-

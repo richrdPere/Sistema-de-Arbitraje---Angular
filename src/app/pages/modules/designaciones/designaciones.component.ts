@@ -47,6 +47,8 @@ export class DesignacionesComponent implements OnInit {
     this.designacionService.listarDesignaciones(params).subscribe({
       next: (resp) => {
         this.designaciones = resp.designaciones;
+
+        console.log("DESIGNACIONES: ", resp.designaciones);
         this.total = resp.total;
         this.pagina_actual = resp.pagina_actual;
         this.por_pagina = resp.por_pagina;

@@ -1,100 +1,118 @@
-<div class="p-4">
+<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
 
+  <!-- Titulo -->
   <h2 class="text-xl font-bold mb-4">Listado de Designaciones</h2>
 
-  <!-- FILTROS -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+  <!-- Header -->
 
-    <input type="text" placeholder="ID Expediente" class="input input-bordered w-full" [(ngModel)]="filtroExpediente" />
+  <div class="p-4 mb-7 card bg-base-100 shadow-md">
 
-    <input type="text" placeholder="ID Adjudicador" class="input input-bordered w-full"
-      [(ngModel)]="filtroAdjudicador" />
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
+      <!-- BUSCADOR Y FILTROS -->
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+        <input type="text" placeholder="ID Expediente" class="input input-bordered w-full"
+          [(ngModel)]="filtroExpediente" />
 
-    <select class="select select-bordered w-full" [(ngModel)]="filtroEstado">
-      <option value="">Estado (todos)</option>
-      <option value="pendiente">pendiente</option>
-      <option value="designado">designado</option>
-    </select>
+        <input type="text" placeholder="ID Adjudicador" class="input input-bordered w-full"
+          [(ngModel)]="filtroAdjudicador" />
 
-    <button class="btn btn-primary w-full" (click)="aplicarFiltros()">
-      Aplicar filtros
-    </button>
-  </div>
+        <select class="select select-bordered w-full" [(ngModel)]="filtroEstado">
+          <option value="">Estado (todos)</option>
+          <option value="pendiente">pendiente</option>
+          <option value="designado">designado</option>
+        </select>
+      </div>
 
-  <button class="btn btn-secondary mb-4" (click)="limpiarFiltros()">
-    Limpiar filtros
-  </button>
+      <!--  BOTONES -->
+      <div class="flex gap-2 justify-end w-full md:w-auto">
+        <button class="btn btn-primary w-full" (click)="aplicarFiltros()">
+          Aplicar filtros
+        </button>
 
-
-  <!-- TABLA -->
-  <div *ngIf="!loading; else cargando">
-    <table class="table w-full">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Expediente</th>
-          <th>Adjudicador</th>
-          <th>Tipo</th>
-          <th>Estado</th>
-          <th>Árbitros</th>
-          <th>Opciones</th>
-        </tr>
-      </thead>
-
-
-      <tbody>
-        @for (d of designaciones; track $index) {
-        <tr>
-          <td>{{ d.id_designacion }}</td>
-          <td>{{ d.expediente?.id_expediente }}</td>
-          <td>{{ d.adjudicador?.nombre }} {{ d.adjudicador?.apellidos }}</td>
-          <td>{{ d.tipo_designacion }}</td>
-          <td>
-            <span class="badge badge-info">{{ d.estado }}</span>
-          </td>
-
-          <td>
-            <ul>
-              <li *ngFor="let a of d.arbitros_designados">
-                • {{ a.arbitro?.nombre }} ({{ a.rol }})
-              </li>
-            </ul>
-          </td>
-
-          <td class="space-x-2">
-            <button class="btn btn-sm btn-info">Ver</button>
-            <button class="btn btn-sm btn-warning">Editar</button>
-            <button class="btn btn-sm btn-error">Eliminar</button>
-          </td>
-        </tr>
-        }
-
-      </tbody>
-    </table>
-  </div>
-
-  <!-- PAGINACIÓN -->
-  <div class="mt-4 flex justify-between items-center">
-
-    <button class="btn" [disabled]="pagina_actual === 1" (click)="cambiarPagina(pagina_actual - 1)">
-      « Anterior
-    </button>
-
-    <span>Página {{ pagina_actual }} de {{ total_paginas }}</span>
-
-    <button class="btn" [disabled]="pagina_actual === total_paginas" (click)="cambiarPagina(pagina_actual + 1)">
-      Siguiente »
-    </button>
-
-  </div>
-
-  <!-- LOADING -->
-  <ng-template #cargando>
-    <div class="text-center py-10">
-      <span class="loading loading-spinner loading-lg"></span>
-      <p>Cargando designaciones...</p>
+        <button class="btn btn-secondary " (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      </div>
     </div>
-  </ng-template>
+
+
+
+  </div>
+
+
+  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+    <!-- TABLA -->
+    <div *ngIf="!loading; else cargando" class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Expediente</th>
+            <th>Adjudicador</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Árbitros</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+
+
+        <tbody>
+          @for (d of designaciones; track $index) {
+          <tr>
+            <td>{{ d.id_designacion }}</td>
+            <td>{{ d.expediente?.id_expediente }}</td>
+            <td>{{ d.adjudicador?.nombre }} {{ d.adjudicador?.apellidos }}</td>
+            <td>{{ d.tipo_designacion }}</td>
+            <td>
+              <span class="badge badge-info">{{ d.estado }}</span>
+            </td>
+
+            <td>
+              <ul>
+                <li *ngFor="let a of d.arbitros_designados">
+                  • {{ a.arbitro?.nombre }} ({{ a.rol }})
+                </li>
+              </ul>
+            </td>
+
+            <td class="space-x-2">
+              <button class="btn btn-sm btn-info">Ver</button>
+              <button class="btn btn-sm btn-warning">Editar</button>
+              <button class="btn btn-sm btn-error">Eliminar</button>
+            </td>
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINACIÓN -->
+    <div class="mt-4 flex justify-between items-center">
+
+      <button class="btn" [disabled]="pagina_actual === 1" (click)="cambiarPagina(pagina_actual - 1)">
+        « Anterior
+      </button>
+
+      <span>Página {{ pagina_actual }} de {{ total_paginas }}</span>
+
+      <button class="btn" [disabled]="pagina_actual === total_paginas" (click)="cambiarPagina(pagina_actual + 1)">
+        Siguiente »
+      </button>
+
+    </div>
+
+    <!-- LOADING -->
+    <ng-template #cargando>
+      <div class="text-center py-10">
+        <span class="loading loading-spinner loading-lg"></span>
+        <p>Cargando designaciones...</p>
+      </div>
+    </ng-template>
+  </div>
+
+
+
 
 </div>
-

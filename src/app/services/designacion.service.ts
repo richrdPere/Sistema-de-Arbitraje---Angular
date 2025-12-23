@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // Environment
@@ -42,6 +42,22 @@ export class DesignacionService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+ * Devuelve las cabeceras HTTP con el token JWT si existe
+ */
+  private getAuthHeaders(): { headers: HttpHeaders } {
+    const token = localStorage.getItem('token'); // o sessionStorage según tu login
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return { headers };
+  }
+
   // -------------------------------------------------------
   // ✨ 1. Crear designación
   // -------------------------------------------------------
@@ -81,8 +97,12 @@ export class DesignacionService {
       });
     }
 
-    return this.http.get<IListarDesignacionesResponse>(`${this.baseUrl}`, { params: httpParams });
+    return this.http.get<IListarDesignacionesResponse>(
+      this.baseUrl,
+      { params: httpParams }
+    );
   }
+
 
   // -------------------------------------------------------
   // ✨ 4. Ver detalle

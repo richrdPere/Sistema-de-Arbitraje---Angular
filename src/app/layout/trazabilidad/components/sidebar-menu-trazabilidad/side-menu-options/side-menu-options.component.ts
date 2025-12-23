@@ -39,6 +39,13 @@ export class SideMenuOptionsComponent {
       roles: ['ADMIN', 'SECRETARIA'],
     },
     {
+      icon: 'fa-solid fa-book-journal-whills',
+      label: 'Acta Instalación',
+      sublabel: 'Casos abiertos de las solicitudes aprobadas',
+      route: '/app/acta-instalacion',
+      roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'],
+    },
+    {
       icon: 'fa-solid fa-building-columns',
       label: 'Casos',
       sublabel: 'Casos abiertos de las solicitudes aprobadas',
@@ -46,7 +53,7 @@ export class SideMenuOptionsComponent {
       roles: ['ADMIN', 'ARBITRO'],
     },
     {
-      icon: 'fa-solid fa-user-tie',
+      icon: 'fas fa-arrow-right text-muted',
       label: 'Designaciones',
       sublabel: 'Casos abiertos de las solicitudes aprobadas',
       route: '/app/designaciones',
@@ -66,6 +73,21 @@ export class SideMenuOptionsComponent {
       route: '/app/resoluciones',
       roles: ['ADMIN', 'ARBITRO'],
     },
+    {
+      icon: 'fas fa-users',
+      label: 'Audiencias',
+      sublabel: 'Reporta los avances del dia',
+      route: '/app/audiencias',
+      roles: ['ADMIN', 'ARBITRO'],
+    },
+    {
+      icon: 'fas fa-file-contract',
+      label: 'Laudos',
+      sublabel: 'Reporta los avances del dia',
+      route: '/app/laudos',
+      roles: ['ADMIN', 'ARBITRO'],
+    },
+
     {
       icon: 'fa-solid fa-scale-balanced',
       label: 'Auditoria',

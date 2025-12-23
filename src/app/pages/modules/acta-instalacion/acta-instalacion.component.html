@@ -1,0 +1,150 @@
+<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+
+  <!-- Titulo -->
+  <h1 class="text-2xl font-bold mb-5 text-base-content ">Actas de Instalación</h1>
+
+  <div class="p-4 mb-7 card bg-base-100 shadow-md">
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
+
+      <!--  BUSCADOR -->
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+
+        <!-- Select tipo -->
+        <select class="select select-bordered w-full md:w-60">
+          <option value="" disabled selected>Seleccione tipo</option>
+          <option value="Secretaria">Secretaria</option>
+          <option value="Arbitro">Arbitro</option>
+          <option value="Adjudicadores">Adjudicadores</option>
+          <option value="Admin">Admin</option>
+        </select>
+
+        <!-- Input buscar -->
+        <div class="relative w-full md:max-w-xs">
+          <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por Nombres o DNI"
+            [(ngModel)]="filtro" />
+          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+
+      </div>
+
+      <!--  BOTONES -->
+      <div class="flex gap-2 justify-end w-full md:w-auto">
+        <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+          (click)="openInstalacion()">
+          <i class="fa-solid fa-plus"></i>
+          Instalación
+        </button>
+      </div>
+    </div>
+
+        <!-- Modal -->
+    <instalacion-form
+      [mostrarModal]="mostrarModal"
+      [modoEdicion]="modoEdicion"
+      [actaSeleccionado]="actaSeleccionado" (modalCerrado)="cerrarModal()"
+      (expedienteCreado)="getActasInstalacion()">
+    </instalacion-form>
+  </div>
+
+  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+
+    <!-- Tabla -->
+    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+
+      <table class="table w-full">
+        <thead class="bg-base-300/90">
+          <tr>
+            <th>#</th>
+            <th>N° EXPEDIENTE</th>
+            <th>SECRETARIA</th>
+            <th>ARBITRO</th>
+            <th>ESTADO</th>
+            <th>FECHA CONVOCATORIA</th>
+            <th>FECHA INSTALACION</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody class=" text-black">
+          @if (loading) {
+          <tr>
+            <td colspan="7" class="text-center py-4">Cargando actas...</td>
+          </tr>
+          }
+
+          @for (acta of actas_instalacion; track $index) {
+          <tr class="hover ">
+
+            <!-- Numeracion -->
+            <td>{{ $index + 1 }}
+            </td>
+
+            <!-- Expediente -->
+            <td>
+              {{acta.expediente}}
+
+            </td>
+
+            <!-- Secretaria -->
+            <td>{{ acta.secretaria }}</td>
+
+            <!-- Arbitro -->
+            <td>{{ acta.arbitro}}</td>
+
+            <!-- Estado -->
+            <td>{{ acta.estado}}</td>
+
+            <!-- Fecha convocatoria -->
+            <td>{{acta.fecha_convocatoria}}</td>
+
+            <!-- Fecha instalacion -->
+            <td>{{acta.fecha_instalacion}}</td>
+
+            <!-- Acciones -->
+            <td class="relative flex gap-2">
+
+              <!-- Reporte acta -->
+              <button class="btn btn-circle" title="Ver detalle" (click)="reportePDF(acta)">
+                <i class="fa-solid fa-file-pdf"></i>
+
+              </button>
+
+              <!-- Editar acta -->
+              <button class="btn btn-circle" title="Editar" (click)="editarActa(acta)">
+                <i class="fa-solid fa-pencil"></i>
+
+              </button>
+
+
+              <!-- Eliminar acta -->
+              <button class="btn btn-circle" title="Eliminar" (click)="eliminarActa(acta.id)">
+                <i class="fa-solid fa-trash"></i>
+
+              </button>
+            </td>
+
+
+            @if (!loading && actas_instalacion.length === 0) {
+          <tr>
+            <td colspan="5" class="text-center text-gray-500 py-4">No se encontraron actas</td>
+          </tr>
+          }
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- <instalacion-form
+  [open]="modalOpen"
+  [acta]="actaSeleccionada"
+  (guardar)="guardarActa($event)"
+  (cerrar)="cerrarModal()"
+  >
+</instalacion-form> -->

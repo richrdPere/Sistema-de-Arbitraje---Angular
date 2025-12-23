@@ -1,0 +1,509 @@
+@if (mostrarModal) {
+<div class="modal modal-open">
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8">
+
+    <!-- header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-4 mb-6">
+      <h3 class="text-2xl font-semibold">{{ modoEdicion ? 'Editar Acta Instalación' : 'Generar Acta Instalación' }}</h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+
+    <!-- Mensajes -->
+    @if (mensajeError) {
+    <div class="alert alert-error text-sm mb-4 shadow-sm">
+      <span>{{ mensajeError }}</span>
+    </div>
+    }
+
+    @if (mensajeExito) {
+    <div class="alert alert-success text-sm mb-4 shadow-sm">
+      <span>{{ mensajeExito }}</span>
+    </div>
+    }
+
+
+    <!-- STEPPER -->
+    <ul class="steps w-full mb-6">
+      <li class="step step-primary">Tribunal</li>
+      <li class="step" [class.step-primary]="currentStep >= 2">Aspectos Legales</li>
+      <li class="step" [class.step-primary]="currentStep >= 3">Fechas y Plazos</li>
+      <li class="step" [class.step-primary]="currentStep >= 4">Partes y Economía</li>
+      <li class="step" [class.step-primary]="currentStep >= 5">Cierre</li>
+    </ul>
+
+
+
+    <!-- Formulario -->
+    <form [formGroup]="formActaInstalacion" (ngSubmit)="crearOEditarActaInstalacion()" class="space-y-6">
+
+      <!-- STEP 1 -->
+      @if (currentStep === 1) {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body  ">
+
+          <h2 class="md:col-span-2 text-lg font-bold">
+            Identificación y Tribunal Arbitral
+          </h2>
+
+          <!-- <input class="input input-bordered" placeholder="Secretaría" formControlName="secretariaId" /> -->
+
+
+          <div class="grid grid-cols-12 gap-4">
+            <!-- Expediente -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  N° Expediente
+                </span>
+              </label>
+
+              <input class="input input-bordered w-full" placeholder="Expediente" formControlName="expedienteId" />
+            </div>
+
+            <!-- Tipo de Tribunal -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Tipo de Tribuna
+                </span>
+              </label>
+
+              <select class="select select-bordered w-full" formControlName="tribunal_tipo">
+                <option value="" disabled>Tipo de Tribunal</option>
+                <option value="UNICO">Único</option>
+                <option value="COLEGIADO">Colegiado</option>
+              </select>
+            </div>
+
+            <!-- Clase de arbitraje -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Clase de arbitraje
+                </span>
+              </label>
+
+              <select class="select select-bordered" formControlName="clase_arbitraje">
+                <option value="" disabled selected>Clase de Arbitraje</option>
+                <option value="DERECHO">De Derecho</option>
+                <option value="CONCIENCIA">De Conciencia</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="grid grid-cols-12 gap-4">
+
+            <!-- Institución arbitral -->
+            <div class="col-span-12 md:col-span-4">
+
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Institución arbitral
+                </span>
+              </label>
+              <input class="input input-bordered w-full" placeholder="Institución" formControlName="expedienteId" />
+            </div>
+
+            <!-- Normas Legales -->
+            <div class="col-span-12 md:col-span-8">
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text font-semibold">
+                    Normas legales aplicables
+                  </span>
+                </label>
+
+                <!-- Input + botón -->
+                <div class="flex gap-2">
+                  <input type="text" class="input input-bordered w-full"
+                    placeholder="Ej: Artículo 45 de la Ley General de Arbitraje" [(ngModel)]="nuevaNorma"
+                    [ngModelOptions]="{ standalone: true }" (keydown.enter)="agregarNorma(); $event.preventDefault()" />
+
+                  <button type="button" class="btn btn-primary" (click)="agregarNorma()">
+                    Agregar
+                  </button>
+                </div>
+
+                <!-- Tags -->
+                @if (normasLegalesArray.length > 0) {
+                <div class="mt-3 flex flex-wrap gap-2">
+                  @for (norma of normasLegalesArray.controls; track $index; let i = $index) {
+                  <div class="badge badge-outline badge-lg flex items-center gap-2">
+                    <span class="font-semibold">{{ i + 1 }}.</span>
+                    <span>{{ norma.value }}</span>
+
+                    <button type="button" class="btn btn-xs btn-circle btn-ghost" (click)="eliminarNorma(i)">
+                      ✕
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+
+                <!-- Error -->
+                @if (normasLegalesArray.invalid && normasLegalesArray.touched) {
+                <label class="label">
+                  <span class="label-text-alt text-error">
+                    Debe agregar al menos una norma legal
+                  </span>
+                </label>
+                }
+              </div>
+            </div>
+
+
+
+          </div>
+
+
+          <!-- <input type="number" class="input input-bordered" placeholder="Número de árbitros"
+            formControlName="numero_arbitros" />
+
+          <input class="input input-bordered md:col-span-2" placeholder="Presidente Arbitral"
+            formControlName="presidente_arbitral" /> -->
+
+        </div>
+      </div>
+      }
+
+
+      <!-- STEP 2 -->
+      @if (currentStep === 2) {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body ">
+
+          <h2 class="md:col-span-2 text-lg font-bold">
+            Fechas, Lugar y Plazos
+          </h2>
+
+          <div class="grid grid-cols-12 gap-4">
+
+            <!-- Modalidad -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Modalidad
+                </span>
+              </label>
+
+              <select class="select select-bordered" formControlName="modalidad">
+                <option value="" disabled selected>Modalidad</option>
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="VIRTUAL">Virtual</option>
+              </select>
+            </div>
+
+            <!-- Opcion 1: Lugar -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Lugar
+                </span>
+              </label>
+
+              <input class="input input-bordered" placeholder="Lugar" formControlName="lugar" />
+            </div>
+
+
+            <!-- Opcion 2: Sala -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Sala
+                </span>
+              </label>
+
+              <input class="input input-bordered" placeholder="Link (si es virtual)" formControlName="link" />
+            </div>
+
+
+            <!-- Clase de arbitraje -->
+            <!-- <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Clase de arbitraje
+                </span>
+              </label>
+
+              <select class="select select-bordered" formControlName="clase_arbitraje">
+                <option value="" disabled selected>Clase de Arbitraje</option>
+                <option value="DERECHO">De Derecho</option>
+                <option value="CONCIENCIA">De Conciencia</option>
+              </select>
+            </div> -->
+
+          </div>
+
+          <div class="grid grid-cols-12 gap-4">
+
+            <!-- Fecha convocatoria -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Fecha convocatoria
+                </span>
+              </label>
+
+              <input type="date" class="input input-bordered" formControlName="fecha_convocatoria" />
+            </div>
+
+            <!-- Fecha instalacion -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Fecha instalación
+                </span>
+              </label>
+
+              <input type="date" class="input input-bordered" formControlName="fecha_instalacion" />
+            </div>
+
+            <!-- Hora instalacion -->
+            <div class="col-span-12 md:col-span-4">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  Hora instalación
+                </span>
+              </label>
+              <input type="time" class="input input-bordered" formControlName="hora_instalacion" />
+            </div>
+
+          </div>
+
+
+          <!-- <select class="select select-bordered" formControlName="clase_arbitraje">
+            <option value="" disabled selected>Clase de Arbitraje</option>
+            <option value="DERECHO">De Derecho</option>
+            <option value="CONCIENCIA">De Conciencia</option>
+          </select>
+
+          <input class="input input-bordered" placeholder="Institución arbitral (opcional)"
+            formControlName="institucion_arbitral" />
+
+          <textarea class="textarea textarea-bordered md:col-span-2" placeholder="Normas procesales"
+            formControlName="normas_procesales"></textarea>
+
+          <label class="flex gap-2 items-center">
+            <input type="checkbox" class="checkbox" formControlName="recurso_apelacion" />
+            Recurso de apelación
+          </label>
+
+          <label class="flex gap-2 items-center">
+            <input type="checkbox" class="checkbox" formControlName="segunda_instancia_arbitral" />
+            Segunda instancia arbitral
+          </label> -->
+
+        </div>
+      </div>
+      }
+
+      <!-- STEP 3 -->
+      @if (currentStep === 3) {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body grid md:grid-cols-3 gap-4">
+
+          <h2 class="md:col-span-3 text-lg font-bold">
+            Fechas, Lugar y Plazos
+          </h2>
+
+          <input type="date" class="input input-bordered" formControlName="fecha_convocatoria" />
+
+          <input type="date" class="input input-bordered" formControlName="fecha_instalacion" />
+
+          <input type="time" class="input input-bordered" formControlName="hora_instalacion" />
+
+          <select class="select select-bordered" formControlName="modalidad">
+            <option value="" disabled selected>Modalidad</option>
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+          </select>
+
+          <input class="input input-bordered" placeholder="Lugar" formControlName="lugar" />
+
+          <input class="input input-bordered" placeholder="Link (si es virtual)" formControlName="link" />
+
+          <input type="number" class="input input-bordered md:col-span-3" placeholder="Plazo para laudo (días)"
+            formControlName="plazo_laudo" />
+
+        </div>
+      </div>
+      }
+
+
+      <!-- STEP 4 -->
+      @if (currentStep === 4) {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body grid md:grid-cols-2 gap-4">
+
+          <h2 class="md:col-span-2 text-lg font-bold">
+            Partes y Aspectos Económicos
+          </h2>
+
+          <input class="input input-bordered" placeholder="Representante Demandante"
+            formControlName="representante_demandante" />
+
+          <input class="input input-bordered" placeholder="Representante Demandado"
+            formControlName="representante_demandado" />
+
+          <input class="input input-bordered" placeholder="Honorarios árbitros" formControlName="honorarios_arbitros" />
+
+          <input class="input input-bordered" placeholder="Forma de pago" formControlName="forma_pago_honorarios" />
+
+        </div>
+      </div>
+      }
+
+
+      <!-- STEP 5 -->
+      @if (currentStep === 5) {
+      <div class="card bg-base-100 shadow">
+        <div class="card-body grid md:grid-cols-2 gap-4">
+
+          <h2 class="md:col-span-2 text-lg font-bold">
+            Comunicaciones y Cierre
+          </h2>
+
+          <input class="input input-bordered" placeholder="Email notificaciones"
+            formControlName="email_notificaciones" />
+
+          <input class="input input-bordered" placeholder="Domicilio procesal" formControlName="domicilio_procesal" />
+
+          <select class="select select-bordered" formControlName="medio_notificacion">
+            <option value="" disabled selected>Medio de notificación</option>
+            <option value="EMAIL">Email</option>
+            <option value="CASILLA">Casilla electrónica</option>
+          </select>
+
+          <textarea class="textarea textarea-bordered md:col-span-2" placeholder="Cronograma inicial"
+            formControlName="cronograma_inicial"></textarea>
+
+          <textarea class="textarea textarea-bordered md:col-span-2" placeholder="Observaciones"
+            formControlName="observaciones"></textarea>
+
+        </div>
+      </div>
+      }
+
+      <!-- GRID PRINCIPAL -->
+      <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">N° Expediente</span>
+      </label>
+      <input
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Ingrese N° de expediente"
+        formControlName="expediente" />
+    </div>
+
+
+
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">Árbitro Designado</span>
+      </label>
+      <input
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Nombre del árbitro"
+        formControlName="arbitro" />
+    </div>
+
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">Fecha de Convocatoria</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="fecha_convocatoria" />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">Fecha de Instalación</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="fecha_instalacion" />
+    </div>
+
+
+     <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">Fecha de Instalación</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="fecha_instalacion" />
+    </div>
+
+
+        <div class="form-control">
+      <label class="label">
+        <span class="label-text font-semibold">Modalidad</span>
+      </label>
+      <input
+        type="date"
+        class="input input-bordered w-full"
+        formControlName="fecha_instalacion" />
+    </div>
+
+  </div> -->
+
+
+
+      <!-- ACCIONES -->
+      <div class="flex justify-between mt-6">
+        <button class="btn btn-ghost" type="button" [disabled]="currentStep === 1" (click)="prevStep()">
+          Atrás
+        </button>
+
+        @if (currentStep < 5) { <button class="btn btn-primary" type="button" (click)="nextStep()">
+          Siguiente
+          </button>
+          } @else {
+          <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+            Cancelar
+          </button>
+
+          <button class="btn btn-success text-white" type="submit" [disabled]="formActaInstalacion.invalid">
+            Instalar Tribunal
+          </button>
+          }
+      </div>
+
+
+      <!-- <div class="modal-action flex justify-end gap-3 pt-4 border-t border-base-300">
+
+        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary text-white min-w-[160px]"
+          [disabled]="formActaInstalacion.invalid || cargando">
+
+          @if (cargando) {
+          <span class="loading loading-spinner loading-sm mr-2"></span>
+          {{ modoEdicion ? 'Actualizando...' : 'Creando...' }}
+          } @else {
+          {{ modoEdicion ? 'Actualizar Acta' : 'Guardar Acta' }}
+          }
+        </button>
+      </div> -->
+    </form>
+  </div>
+
+  <!-- Fondo oscuro del modal -->
+  <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+</div>
+}

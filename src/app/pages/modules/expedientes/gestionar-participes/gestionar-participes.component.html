@@ -1,129 +1,116 @@
 <div class="p-6">
 
-  <h2 class="text-2xl font-bold mb-4">Gestionar Partícipes del Expediente</h2>
+  <h2 class="text-2xl font-bold mb-4">Designación de Árbitros</h2>
 
-  <button class="btn btn-outline mb-4" (click)="router.navigate(['/app/expedientes'])">
+  <button class="btn btn-outline mb-6" (click)="router.navigate(['/app/expedientes'])">
     ← Volver
   </button>
 
-  @if (loading) {
-  <div class="text-center py-10">
-    <span class="loading loading-spinner loading-lg"></span>
-  </div>
-  } @else {
+  <!-- LOADING -->
+  <ng-container *ngIf="loading; else contenido">
+    <div class="flex justify-center py-10">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  </ng-container>
 
-  <!-- INFORMACIÓN DEL EXPEDIENTE -->
-  <div class="card bg-base-200 p-4 mb-6 shadow">
-    <h3 class="font-semibold text-lg">Expediente {{ expediente?.numero_expediente }}</h3>
-    <p><strong>Estado:</strong> {{ expediente?.estado }}</p>
-    <p><strong>Inicio:</strong> {{ expediente?.fecha_inicio | date:'dd/MM/yyyy' }}</p>
-  </div>
+  <ng-template #contenido>
 
-  <!-- PARTICIPES -->
-  <div class="card bg-base-200 p-4 mb-6 shadow">
-    <h3 class="font-semibold text-lg mb-2">Partícipes</h3>
-    <ul class="list-disc ml-5">
-      <li *ngFor="let p of participes">
-        <strong>{{ p.rol_participe | uppercase }}:</strong>
-        {{ p.usuario.nombre }} {{ p.usuario.apellidos }}
-      </li>
-    </ul>
-  </div>
+    <!-- EXPEDIENTE -->
+    <div class="card bg-base-200 p-4 mb-6 shadow">
+      <h3 class="font-semibold text-lg">
+        Expediente {{ expediente?.numero_expediente }}
+      </h3>
+      <p><strong>Estado:</strong> {{ expediente?.estado }}</p>
+      <p><strong>Inicio:</strong> {{ expediente?.fecha_inicio | date:'dd/MM/yyyy' }}</p>
+    </div>
 
-  <div class="p-4">
+    <!-- PARTICIPES -->
+    <div class="card bg-base-200 p-4 mb-6 shadow">
+      <h3 class="font-semibold text-lg mb-2">Partícipes</h3>
+      <ul class="list-disc ml-5">
+        <li *ngFor="let p of participes">
+          <strong>{{ p.rol_participe | uppercase }}:</strong>
+          {{ p.usuario.nombre }} {{ p.usuario.apellidos }}
+        </li>
+      </ul>
+    </div>
 
-    <h2 class="text-xl font-bold mb-4">Designar Árbitros</h2>
+    <!-- DESIGNACIÓN -->
+    <div class="card bg-base-100 p-6 shadow-md">
 
-    <!-- Tipo de designación -->
-    <label class="font-semibold mb-2 block">Tipo de designación</label>
-    <select class="select select-bordered w-full mb-4" [(ngModel)]="tipoSeleccionado" >
+      <h3 class="text-xl font-bold mb-4">Designar Árbitros</h3>
 
-      <option value="" disabled>Seleccione</option>
-      <option value="individual">Árbitro Único</option>
-      <option value="tribunal">Tribunal Arbitral (3 árbitros)</option>
-      <!-- <option value="aleatoria">Aleatoria</option> -->
-    </select>
+      <!-- TIPO -->
+      <label class="label font-semibold">Tipo de designación</label>
+      <select
+        class="select select-bordered w-full mb-6"
+        [(ngModel)]="tipoSeleccionado">
 
-    <!-- Para arbitro único -->
-    <div *ngIf="tipoSeleccionado === 'individual'">
-      <label class="font-semibold">Árbitro único</label>
-      <select class="select select-bordered w-full" [(ngModel)]="arbitroUnico">
-        <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-          {{ a.usuario.nombre }}  {{ a.usuario.apellidos }}
-        </option>
+        <option value="" disabled selected>Seleccione</option>
+        <option value="individual">Árbitro único</option>
+        <option value="tribunal">Tribunal arbitral (3 árbitros)</option>
+        <!-- <option value="aleatoria">Aleatoria</option> -->
       </select>
-    </div>
 
-    <!-- Tribunal arbitral -->
-    <div *ngIf="tipoSeleccionado === 'tribunal'" class="mt-4 space-y-3">
-
-      <div>
-        <label class="font-semibold">Árbitro del solicitante</label>
-        <select class="select select-bordered w-full" [(ngModel)]="arbSolicitante">
+      <!-- ÁRBITRO ÚNICO -->
+      <div *ngIf="tipoSeleccionado === 'individual'" class="space-y-2">
+        <label class="font-semibold">Árbitro único</label>
+        <select class="select select-bordered w-full" [(ngModel)]="arbitroUnico">
+          <option value="" disabled selected>Seleccione árbitro</option>
           <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
             {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
           </option>
         </select>
       </div>
 
-      <div>
-        <label class="font-semibold">Árbitro del requerido</label>
-        <select class="select select-bordered w-full" [(ngModel)]="arbRequerido">
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label class="font-semibold">Árbitro institucional</label>
-        <select class="select select-bordered w-full" [(ngModel)]="arbInstitucion">
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-          </option>
-        </select>
-      </div>
-
-    </div>
-
-    <button class="btn btn-primary w-full mt-6" (click)="guardarDesignacion()">
-      Guardar Designación
-    </button>
-  </div>
-
-
-  <!-- LISTA DE ÁRBITROS -->
-  <div class="card bg-base-200 p-4 shadow">
-    <h3 class="font-semibold text-lg mb-4">Seleccionar Árbitros</h3>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      @for (arb of arbitrosDisponibles; track $index) {
-      <div class="border p-3 rounded-lg flex items-center gap-3">
-
-        <!-- Checkbox vinculado a arbitrosSeleccionados -->
-        <input type="checkbox" class="checkbox checkbox-primary"
-          [checked]="arbitrosSeleccionados.includes(arb.id_arbitro)" (change)="toggleArbitro(arb.id_arbitro)" />
+      <!-- TRIBUNAL -->
+      <div *ngIf="tipoSeleccionado === 'tribunal'" class="mt-6 space-y-4">
 
         <div>
-          <p class="font-semibold text-gray-700">
-            {{ arb.usuario.nombre }} {{ arb.usuario.apellidos }}
-          </p>
-          <p class="text-sm text-gray-500">
-            Especialidad: {{ arb.especialidad }}
-          </p>
+          <label class="font-semibold">Árbitro de la Parte A</label>
+          <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandante">
+            <option value="" disabled selected>Seleccione</option>
+            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold">Árbitro de la Parte B</label>
+          <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandado">
+            <option value="" disabled selected>Seleccione</option>
+            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold">Árbitro Institucional</label>
+          <select class="select select-bordered w-full" [(ngModel)]="arbitroInstitucion">
+            <option value="" disabled selected>Seleccione</option>
+            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+            </option>
+          </select>
         </div>
 
       </div>
-      }
+
+      <!-- GUARDAR -->
+      <button
+        class="btn btn-primary w-full mt-8"
+        [disabled]="loading"
+        (click)="guardarDesignacion()">
+
+        Guardar Designación
+      </button>
+
     </div>
 
-    <button class="btn btn-primary mt-6" (click)="asignarArbitros()">
-      Asignar Árbitros
-    </button>
-  </div>
-
-  }
+  </ng-template>
 
 </div>
+
 

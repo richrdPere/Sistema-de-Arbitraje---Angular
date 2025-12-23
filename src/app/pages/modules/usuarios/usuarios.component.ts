@@ -36,30 +36,6 @@ export class UsuariosComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // // FORM PARA ÁRBITRO
-    // this.formArbitro = this.fb.group({
-    //   usuario_id: ['', Validators.required],
-    //   cargo: ['Árbitro Técnico', Validators.required],
-    //   especialidad: [''],
-    //   experiencia: [''],
-    //   numero_colegiatura: [''],
-    //   certificado_pdf: [''],
-    //   disponible: [true],
-    //   estado: ['Activo'],
-    // });
-
-    // // FORM PARA ADJUDICADOR
-    // this.formAdjudicador = this.fb.group({
-    //   usuario_id: ['', Validators.required],
-    //   cargo: ['JPRD', Validators.required],
-    //   especialidad: [''],
-    //   experiencia: [''],
-    //   acreditacion_pdf: [''],
-    //   disponible: [true],
-    //   estado: ['Activo'],
-    // });
-
-
     this.formUsuario = this.fb.group({
       id: [null],
       nombre: ['', Validators.required],
@@ -120,28 +96,6 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-  // abrirModalArbitro() {
-  //   this.formArbitro.reset({
-  //     cargo: 'Árbitro Técnico',
-  //     disponible: true,
-  //     estado: 'Activo'
-  //   });
-  //   this.mostrarModal = true;
-  //   this.modoEdicion = false;
-  // }
-
-  // abrirModalAdjudicador() {
-  //   this.formAdjudicador.reset({
-  //     cargo: 'JPRD',
-  //     disponible: true,
-  //     estado: 'Activo'
-  //   });
-  //   this.mostrarModal = true;
-  //   this.modoEdicion = false;
-  // }
-
-
-
   cerrarModal() {
     this.mostrarModal = false;
     this.formUsuario.reset();
@@ -161,14 +115,18 @@ export class UsuariosComponent implements OnInit {
 
       // Normalizar secretarias
       const normalizar = (lista: any[] = [], rol: string) => {
+
         return lista.map(item => ({
           id: item.usuario?.id ?? null,
           nombre: item.usuario?.nombre ?? '',
           apellidos: item.usuario?.apellidos ?? '',
           correo: item.usuario?.correo ?? '',
+          telefono: item.usuario?.telefono ?? '',
+          documento_identidad: item.usuario?.documento_identidad ?? '',
+          foto_perfil: item.usuario?.foto_perfil ?? null,
           rol,
           cargo: item.cargo ?? '',
-          estado: item.activo ? 'Activo' : 'Inactivo',
+          estado: item.usuario?.estado === true,
         }));
       };
 
@@ -179,9 +137,12 @@ export class UsuariosComponent implements OnInit {
           nombre: item.nombre ?? '',
           apellidos: item.apellidos ?? '',
           correo: item.correo ?? '',
+          telefono: item.telefono ?? '',
+          documento_identidad: item.documento_identidad ?? '',
+          foto_perfil: `${this.usuarioService.envs.url_image}${item.foto_perfil}?t=${Date.now()}`,
           rol,
-          cargo: item.cargo ?? '',
-          estado: item.estado ? 'Activo' : 'Desactivado',
+          cargo: '',
+          estado: item.estado === true,
         }));
       };
 
@@ -193,12 +154,22 @@ export class UsuariosComponent implements OnInit {
 
       ];
 
+      //  LOG SOLO DE foto_perfil
+      this.usuarios.forEach(u => {
+        console.log(`Usuario ID ${u.id} | Rol ${u.rol} | estado:`, u.estado);
+      });
+
     } catch (err) {
       console.error('Error al cargar usuarios:', err);
     } finally {
       this.loading = false;
     }
   }
+
+  isUsuarioActivo(user: any): boolean {
+    return user.estado === true;
+  }
+
 
   private manejarErroresBackend(err: any) {
     console.error("Error backend:", err);
@@ -231,6 +202,50 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
+  toggleEstadoUsuario(user: any): void {
+    const accion = user.estado ? 'deshabilitar' : 'habilitar';
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `¿Deseas ${accion} la cuenta de ${user.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, continuar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const request$ = user.estado
+        ? this.usuarioService.deshabilitarUsuario(user.id)
+        : this.usuarioService.habilitarUsuario(user.id);
+
+      request$.subscribe({
+        next: () => {
+          user.estado = !user.estado;
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: `Usuario ${user.estado ? 'habilitado' : 'deshabilitado'} correctamente`,
+            timer: 1500,
+            showConfirmButton: false
+          });
+        },
+        error: (err) => {
+          console.error(err);
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar el estado del usuario'
+          });
+        }
+      });
+    });
+  }
 
 
   // Filtro por nombre o correo

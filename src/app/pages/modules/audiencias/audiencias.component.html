@@ -1,34 +1,37 @@
 <div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
 
   <!-- Titulo -->
-  <h2 class="text-2xl font-bold mb-5 text-base-content">Mis Resoluciones</h2>
+  <h2 class="text-2xl font-bold mb-5 text-base-content">Mis Audiencias</h2>
 
   <!-- Header -->
+
+
   <div class="p-4 mb-7 card bg-base-100 shadow-md">
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
 
-      <!--  BUSCADOR -->
-      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
 
+      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
         <!-- Filtros -->
-        <div class="flex gap-4 w-full">
+        <div class="flex gap-4">
           <select class="select select-bordered" [(ngModel)]="filtroEstado">
             <option value="">Todos los estados</option>
-            <option value="Borrador">Borrador</option>
-            <option value="Firmada">Firmada</option>
-            <option value="Notificada">Notificada</option>
+            <option value="Programada">Programada</option>
+            <option value="Reprogramada">Reprogramada</option>
+            <option value="Realizada">Realizada</option>
+            <option value="Suspendida">Suspendida</option>
           </select>
         </div>
 
-        <!-- Input buscar -->
-        <div class="relative w-full md:max-w-xs">
-          <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
+        <!--  BUSCADOR -->
+        <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+          <div class="relative w-full md:max-w-xs">
+            <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
                  focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por N° Expediente" />
-          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
         </div>
-
       </div>
 
       <!--  BOTONES -->
@@ -36,52 +39,64 @@
         <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
           (click)="abrirModal()">
           <i class="fa-solid fa-plus"></i>
-          Emisión
+          Activar
         </button>
       </div>
+
     </div>
 
     <!-- Modal -->
 
+
+
+
   </div>
 
+
+
+
+  <!-- Tabla -->
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
 
-    <!-- Tabla -->
     <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
-      <table class="table table-zebra">
+      <table class="table w-full">
         <thead class="bg-base-300/90">
           <tr>
             <th>#</th>
             <th>Expediente</th>
             <th>Tipo</th>
+            <th>Modalidad</th>
+            <th>Fecha</th>
+            <th>Hora</th>
             <th>Estado</th>
-            <th>Fecha Creación</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of resolucionesFiltradas(); let i = index">
+          <tr *ngFor="let a of audienciasFiltradas(); let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ r.expediente }}</td>
-            <td>{{ r.tipo }}</td>
+            <td>{{ a.expediente }}</td>
+            <td>{{ a.tipo }}</td>
+            <td>{{ a.modalidad }}</td>
+            <td>{{ a.fecha }}</td>
+            <td>{{ a.hora }}</td>
             <td>
               <span class="badge" [ngClass]="{
-'badge-warning': r.estado === 'Borrador',
-'badge-success': r.estado === 'Firmada',
-'badge-info': r.estado === 'Notificada'
+'badge-warning': a.estado === 'Programada',
+'badge-accent': a.estado === 'Reprogramada',
+'badge-success': a.estado === 'Realizada',
+'badge-error': a.estado === 'Suspendida'
 }">
-                {{ r.estado }}
+                {{ a.estado }}
               </span>
             </td>
-            <td>{{ r.fechaCreacion }}</td>
             <td class="flex gap-2">
-              <button class="btn btn-sm btn-outline" (click)="verResolucion(r)">Ver</button>
-              <button class="btn btn-sm btn-primary" *ngIf="r.estado === 'Borrador'" (click)="editarResolucion(r)">
-                Editar
+              <button class="btn btn-sm btn-outline" (click)="verAudiencia(a)">Ver</button>
+              <button class="btn btn-sm btn-primary" *ngIf="a.estado !== 'Realizada'" (click)="reprogramarAudiencia(a)">
+                Reprogramar
               </button>
-              <button class="btn btn-sm btn-success" *ngIf="r.estado === 'Borrador'" (click)="firmarResolucion(r)">
-                Firmar
+              <button class="btn btn-sm btn-success" *ngIf="a.estado === 'Programada'" (click)="marcarRealizada(a)">
+                Marcar realizada
               </button>
             </td>
           </tr>
@@ -97,7 +112,6 @@
         </div>
       </div>
     </div>
-
 
   </div>
 </div>

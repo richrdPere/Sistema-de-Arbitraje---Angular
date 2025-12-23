@@ -107,16 +107,46 @@ export class UsuarioService {
     return this.http.post(`${this.url}/nuevo`, data, this.getAuthHeaders());
   }
 
+  /**
+  * Actualizar usuario
+  */
   actualizarUsuario(id: number, data: any) {
     return this.http.put(`${this.url}/${id}`, data);
   }
 
+  /**
+  * Eliminar usuario
+  */
   eliminarUsuario(id: number) {
     return this.http.delete(`${this.url}/${id}`);
   }
 
+  /**
+  * Ver usuario
+  */
   verUsuario(id: number) {
     return this.http.get(`${this.url}/${id}`);
+  }
+
+  /**
+ * Habilitar usuario
+ */
+  habilitarUsuario(id: number): Observable<any> {
+    return this.http.patch(
+      `${this.url}/habilitar/${id}`,
+      {},
+      this.getAuthHeaders()
+    );
+  }
+  /**
+* Deshabilitar usuario
+*/
+  deshabilitarUsuario(id: number): Observable<any> {
+    return this.http.patch(
+      `${this.url}/deshabilitar/${id}`,
+      {},
+      this.getAuthHeaders()
+    );
   }
 
 

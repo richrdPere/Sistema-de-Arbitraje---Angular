@@ -1,0 +1,101 @@
+@if (mostrarModal) {
+<div class="modal modal-open">
+
+  <!-- Header -->
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8" [ngClass]="modalWidthClass">
+
+    <!-- Title -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-4 mb-6">
+      <h3 class="text-2xl font-semibold">{{ modoEdicion ? 'Editar Actividad' : 'Nueva Actividad' }}</h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+    <!-- Mensajes -->
+    @if (mensajeError) {
+    <div class="alert alert-error text-sm mb-4 shadow-sm">
+      <span>{{ mensajeError }}</span>
+    </div>
+    }
+
+    @if (mensajeExito) {
+    <div class="alert alert-success text-sm mb-4 shadow-sm">
+      <span>{{ mensajeExito }}</span>
+    </div>
+    }
+
+    <!-- Formulario -->
+    <form [formGroup]="formActividad">
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- TÍTULO (fila completa) -->
+        <div class="col-span-12">
+          <label class="label">
+            <span class="label-text font-semibold">Título</span>
+          </label>
+
+          <input class="input input-bordered w-full" placeholder="Título de su actividad" formControlName="titulo" />
+        </div>
+
+        <!-- DESCRIPCIÓN (fila completa) -->
+        <div class="col-span-12">
+          <label class="label">
+            <span class="label-text font-semibold">Descripción</span>
+          </label>
+
+          <textarea class="textarea textarea-bordered w-full min-h-[120px]" placeholder="Describa la actividad"
+            formControlName="descripcion">      </textarea>
+        </div>
+
+        <!-- FECHA (media fila) -->
+        <div class="col-span-12 md:col-span-6">
+          <label class="label">
+            <span class="label-text font-semibold">Fecha</span>
+          </label>
+
+          <input type="date" class="input input-bordered w-full" formControlName="fecha_actividad" />
+        </div>
+
+        <!-- TIPO DE ACTIVIDAD (media fila) -->
+        <div class="col-span-12 md:col-span-6">
+          <label class="label">
+            <span class="label-text font-semibold">Tipo de actividad</span>
+          </label>
+
+          <select class="select select-bordered w-full" formControlName="tipo_actividad">
+            <option value="" disabled selected>Seleccione tipo</option>
+            <option value="reunion">Reunión</option>
+            <option value="cita">Cita</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- ========== ACCIONES ========== -->
+      <div class="modal-action flex justify-end gap-3 mt-6">
+
+        <!-- Cancelar -->
+        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+          Cancelar
+        </button>
+
+        <!-- Guardar / Actualizar -->
+        <button type="submit" class="btn btn-primary text-white flex items-center gap-2"
+          [disabled]="formActividad.invalid || loading">
+
+          @if (loading) {
+          <span class="loading loading-spinner loading-sm"></span>
+          <span>{{ modoEdicion ? 'Actualizando actividad...' : 'Guardando actividad...' }}</span>
+          } @else {
+          <span>{{ modoEdicion ? 'Actualizar actividad' : 'Guardar actividad' }}</span>
+          }
+
+        </button>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Fondo oscuro del modal -->
+  <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+</div>
+}

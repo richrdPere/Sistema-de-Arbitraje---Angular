@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CalendarioFormComponent } from "./calendario-form/calendario-form.component";
 
 // Interface
 interface CalendarEvent {
@@ -15,10 +16,19 @@ interface CalendarEvent {
 
 @Component({
   selector: 'app-calendario',
-  imports: [],
+  imports: [CalendarioFormComponent],
   templateUrl: './calendario.component.html',
 })
 export class CalendarioComponent implements OnInit {
+
+
+  // Variables
+  mostrarModal = false;
+  modoEdicion = false;
+  actividadSeleccionado: any | null = null;
+
+
+
   days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
 
   today = new Date();
@@ -79,4 +89,21 @@ export class CalendarioComponent implements OnInit {
       default: return 'border-purple-200 text-purple-800 bg-purple-100';
     }
   }
+
+  abrirModal() {
+    this.modoEdicion = false;
+    this.actividadSeleccionado = null;
+    this.mostrarModal = true;
+  }
+  cerrarModal() {
+    this.mostrarModal = false;
+
+  }
+
+  addActivity() {
+    throw new Error('Method not implemented.');
+  }
+
 }
+
+

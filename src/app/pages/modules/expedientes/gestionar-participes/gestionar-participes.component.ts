@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import iziToast from 'izitoast';
 
@@ -22,9 +22,25 @@ import { UsuarioSecretaria } from 'src/app/interfaces/users/secretariaUser';
 })
 export class GestionarParticipesComponent implements OnInit {
 
+
+
   // -----------------------------
   // Variables
   // -----------------------------
+
+  form!: FormGroup;
+
+  tipos = [
+    { value: 'individual', label: 'Árbitro único' },
+    { value: 'tribunal', label: 'Tribunal arbitral' },
+    { value: 'aleatoria', label: 'Designación aleatoria' }
+  ];
+
+  rolesTribunal = ['parteA', 'parteB', 'institucion'];
+
+  loading = false;
+
+
   rol: string = '';
   nombre: string = '';
   id: number = 0;
@@ -35,20 +51,22 @@ export class GestionarParticipesComponent implements OnInit {
 
   arbitrosDisponibles: any[] = [];
   arbitrosSeleccionados: number[] = [];
+  arbitros: any[] = [];
 
-  tipoSeleccionado: string = '';
+
   arbSolicitante!: number;
   arbRequerido!: number;
   arbInstitucion!: number;
 
   // Roles según el tipo
+  tipoSeleccionado: 'individual' | 'tribunal' | 'aleatoria' | '' = '';
+
   arbitroUnico: number | null = null;
   arbitroDemandante: number | null = null;
   arbitroDemandado: number | null = null;
   arbitroInstitucion: number | null = null;
 
   designacionActual: any = null;
-  loading = false;
   mensaje: string = '';
 
   tiposDesignacion = [
@@ -58,32 +76,41 @@ export class GestionarParticipesComponent implements OnInit {
   ];
 
   constructor(
+    private fb: FormBuilder,
+    private designacionService: DesignacionService,
     private expedientesService: ExpedientesService,
     private participesService: ParticipeService,
     private authService: AuthService,
     private arbitroService: ArbitrosService,
-    private designacionService: DesignacionService,
     private route: ActivatedRoute,
     public router: Router,
   ) {
 
-    // const usuario = authService.getUser()
-
-    // if (usuario) {
-    //   this.id = usuario.id;
-    //   this.rol = usuario.rol;
-    //   this.nombre = usuario.nombre;
-    // }
   }
 
   // ============================================================
   //  INIT
   // ============================================================
   ngOnInit() {
+
     this.expedienteId = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarDatosIniciales();
+    this.initForm();
+
+    this.form.get('tipo_designacion')?.valueChanges.subscribe(tipo => {
+
+    });
 
   }
+
+  initForm() {
+    this.form = this.fb.group({
+      expediente_id: ['', Validators.required],
+      tipo_designacion: ['', Validators.required],
+      arbitros: this.fb.array([])
+    });
+  }
+
 
   // ============================================================
   //  CARGAR EXPEDIENTE + PARTICIPES + ARBITROS
@@ -154,11 +181,10 @@ export class GestionarParticipesComponent implements OnInit {
       expediente_id: this.expedienteId,
       adjudicador_id: this.usuario.id,
       tipo_designacion: this.tipoSeleccionado,
-      usuario_responsable: this.usuario,
+      usuario: this.usuario,
+      arbitros: this.arbitros
 
     };
-
-
 
     // -------------------------
     //  INDIVIDUAL
@@ -172,9 +198,11 @@ export class GestionarParticipesComponent implements OnInit {
         });
       }
 
-      payload.arbitro_ids = [this.arbitroUnico];
+      payload.arbitros.push({
+        arbitro_id: this.arbitroUnico,
+        rol: 'arbitro'
+      });
 
-      console.log('arbitro unico: ', this.arbitroUnico);
     }
 
     console.log('ENVIANDO: ', payload);
@@ -213,6 +241,8 @@ export class GestionarParticipesComponent implements OnInit {
     this.designacionService.crearDesignacion(payload).subscribe({
       next: resp => {
         this.designacionActual = resp.designacion;
+
+        console.log("ENVIANDO: ", this.designacionActual)
         this.loading = false;
 
         iziToast.success({
@@ -231,27 +261,6 @@ export class GestionarParticipesComponent implements OnInit {
     });
   }
 
-  //  crearDesignacion() {
-  //   let payload: any = { tipo_designacion: this.tipoSeleccionado };
-
-  //   if (this.tipoSeleccionado === 'individual') {
-  //     payload.arbitro_unico = this.arbitroUnico;
-  //   }
-
-  //   if (this.tipoSeleccionado === 'tribunal') {
-  //     payload.solicitante = this.arbSolicitante;
-  //     payload.requerido = this.arbRequerido;
-  //     payload.institucional = this.arbInstitucion;
-  //   }
-
-  //   this.designacionService.crearDesignacion(this.expedienteId, payload)
-  //     .subscribe({
-  //       next: (resp) => {
-  //         alert('Designación creada correctamente');
-  //       },
-  //       error: (err) => console.error(err)
-  //     });
-  // }
 
   // ======================================================
   // ============= ASIGNAR ÁRBITROS =======================

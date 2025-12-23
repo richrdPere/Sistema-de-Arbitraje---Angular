@@ -22,7 +22,7 @@ export class NavbarMenuProfileComponent implements OnInit {
   // variables
   public name: string = '';
   public email: string = '';
-  public avatar: String = '';
+  public avatar: string = '';
 
 
   constructor(
@@ -30,13 +30,7 @@ export class NavbarMenuProfileComponent implements OnInit {
     private perfilService: PerfilService,
     private _router: Router
   ) {
-    // const usuario = _authService.getUser()
 
-    // if (usuario) {
-    //   this.name = usuario.nombre;
-    //   this.email = usuario.correo;
-    //   this.avatar = `${this.perfilService.envs.url_image}${usuario.foto_perfil}`;
-    // }
 
   }
   ngOnInit(): void {
@@ -47,6 +41,8 @@ export class NavbarMenuProfileComponent implements OnInit {
         this.avatar = `${this.perfilService.envs.url_image}${usuario.foto_perfil}?t=${Date.now()}`;
         //        ↑ evita cache del navegador
       }
+
+      console.log('Perfil:', this.avatar);
     });
   }
 
