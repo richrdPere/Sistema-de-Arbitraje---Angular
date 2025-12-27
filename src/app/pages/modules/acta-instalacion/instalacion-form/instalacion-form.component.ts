@@ -93,14 +93,12 @@ export class InstalacionFormComponent implements OnInit, OnChanges {
       numero_arbitros: ['', Validators.required], // 1, 3, 5...
       arbitros: this.fb.array([], Validators.required), // Array de árbitros
       presidente_arbitral: ['', Validators.required], // Árbitro presidente
-      // suplentes: this.fb.array([]), // Árbitros suplentes
+
 
       // ASPECTOS LEGALES
       clase_arbitraje: ['', Validators.required],  // 'De Derecho' o 'De Conciencia'
       institucion_arbitral: [''],  // Si se encomienda a una institución (Art. 6 LGA)
       normas_procesales: this.fb.array([], Validators.required),
-      // recurso_apelacion: [false], // Si se pacta recurso de apelación (Art. 33 LGA)
-      // segunda_instancia_arbitral: [false],  // Si la apelación es ante segunda instancia arbitral
 
       // PASO 2: FECHAS Y LUGAR
       fecha_convocatoria: ['', Validators.required],
@@ -115,29 +113,6 @@ export class InstalacionFormComponent implements OnInit, OnChanges {
       etapa_probatoria_inicio: [''], // Fecha inicio de pruebas
       etapa_probatoria_fin: [''], // Fecha fin de pruebas
 
-      // PARTES
-      // representante_demandante: ['', Validators.required],
-      // representante_demandado: ['', Validators.required],
-      // poderes_especiales: [false], // Si los representantes tienen poderes especiales (Art. 23 LGA)
-
-      // ASPECTOS ECONÓMIC// OS
-      // honorarios_arbitros: [''],
-      // forma_pago_honorarios: [''], // 'Por partes iguales', 'por la vencida', etc.
-      // costas_procesales: [''],
-
-      // MEDIDAS CAUTELARES
-      // medidas_cautelares_solicitadas: [false],
-      // medidas_cautelares_concedidas: [false],
-      // contracautela: [''], // Si se exige contracautela (Art. 81 LGA)
-
-      // COMUNICACIONES
-      // email_notificaciones: ['', [Validators.email]],
-      // domicilio_procesal: ['', Validators.required],
-      // medio_notificacion: ['', Validators.required],
-
-      // DOCUMENTACIÓN Y SEGUIMIENTO
-      // cronograma_inicial: ['', Validators.required],
-      // observaciones: [''],
       estado: ['INSTALADO', Validators.required] // 'INSTALADO', 'EN PROCESO', 'FINALIZADO'
     });
   }
@@ -244,4 +219,18 @@ export class InstalacionFormComponent implements OnInit, OnChanges {
     this.modalCerrado.emit();
     this.formActaInstalacion.reset();
   }
+
+
+  guardarActa() {
+    if (this.formActaInstalacion.invalid) return;
+
+    const payload = {
+      ...this.formActaInstalacion.value,
+      arbitros: this.formActaInstalacion.value.arbitros,
+      normas_procesales: this.formActaInstalacion.value.normas_procesales
+    };
+
+    // this.actaService.crear(payload).subscribe();
+  }
+
 }

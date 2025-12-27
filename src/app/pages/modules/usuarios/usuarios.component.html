@@ -35,51 +35,69 @@
       <div class="flex gap-2 justify-end w-full md:w-auto">
         <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
           (click)="abrirModal()">
-          + Nuevo Usuario
+          <i class="fa-solid fa-plus"></i>
+          Nuevo
         </button>
       </div>
 
     </div>
 
+    <!-- Modal -->
+
+    <usuarios-form [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion" [usuarioSeleccionado]="usuarioSeleccionado"
+      (modalCerrado)="cerrarModal()" (usuarioCreado)="cargarDatos()"></usuarios-form>
   </div>
 
 
-  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+  <!-- Tabla -->
+  <div class="p-6 bg-base-100 rounded-xl shadow-xl">
 
-    <!-- Tabla -->
     <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+
+      <!-- Selector de cantidad -->
+      <div class="flex items-center gap-2 text-sm p-5">
+        <label for="">Mostrar: </label>
+        <select class="select select-bordered select-sm" [(ngModel)]="limit" (change)="cambiarLimite()">
+
+          <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Tabla -->
       <table class="table w-full">
         <thead class="bg-base-300/90">
           <tr>
             <th>#</th>
             <th>USUARIO</th>
-            <!-- <th>Apellidos</th> -->
             <th>CORREO ELECTRÓNICO</th>
             <th>DNI</th>
             <th>TÉLEFONO</th>
-            <!-- <th>ROL</th> -->
             <th>ESTADO</th>
             <th>ACCIONES</th>
           </tr>
         </thead>
-        <tbody class=" text-black">
+
+        <tbody class="text-black">
+
+          <!-- Loading -->
           @if (loading) {
           <tr>
             <td colspan="7" class="text-center py-4">Cargando usuarios...</td>
           </tr>
           }
 
-          @for (user of usuariosFiltrados(); track $index) {
-          <tr class="hover ">
-            <td>{{ $index + 1 }}
-            </td>
+          <!-- Data -->
+          @for (user of usuarios; track user.id) {
+          <tr class="hover">
+            <td>{{ (page - 1) * limit + $index + 1 }}</td>
+
             <td>
               <div class="flex items-center gap-3">
                 <div class="avatar">
                   <div class="mask mask-squircle h-12 w-12">
-                    <!-- <img src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                      alt="Avatar Tailwind CSS Component" /> -->
-                    <img [src]="user.foto_perfil || 'assets/img/default-avatar.png'" alt="Avatar del user" />
+                    <img [src]="user.foto_perfil || 'assets/img/default-avatar.png'" alt="Avatar del usuario" />
                   </div>
                 </div>
                 <div>
@@ -87,416 +105,67 @@
                   <div class="text-sm opacity-50">{{ user.rol }}</div>
                 </div>
               </div>
-
             </td>
-            <!-- <td>{{ user.apellidos }}</td> -->
-            <td>{{ user.correo }}</td>
-            <td>{{ user.documento_identidad}}</td>
-            <td>{{ user.telefono}}</td>
-            <!-- <td>{{ user.rol }}</td> -->
-            <td>
 
-              <input type="checkbox" class="toggle border-2 transition-all duration-200" [ngClass]="isUsuarioActivo(user)
-    ? 'border-success bg-success checked:bg-success'
-    : 'border-error bg-error checked:bg-error'" [checked]="isUsuarioActivo(user)"
+            <td>{{ user.correo }}</td>
+            <td>{{ user.documento_identidad }}</td>
+            <td>{{ user.telefono }}</td>
+
+            <td>
+              <input type="checkbox" class="toggle border-2 transition-all duration-200" [checked]="user.estado"
                 (change)="toggleEstadoUsuario(user)" />
 
               <span class="text-sm ml-2" [ngClass]="user.estado ? 'text-success' : 'text-error'">
                 {{ user.estado ? 'Activo' : 'Desactivado' }}
               </span>
-
             </td>
 
-            <td class="relative flex gap-2">
-
-              <!-- Ver usuario -->
-              <button class="btn btn-circle" title="Ver detalle" (click)="verUsuario(user)">
+            <td class="flex gap-2">
+              <button class="btn btn-circle" (click)="verUsuario(user)">
                 <i class="fa-solid fa-eye"></i>
-
               </button>
 
-              <!-- Editar usuario -->
-              <button class="btn btn-circle" title="Editar" (click)="abrirModal('editar', user)">
+              <button class="btn btn-circle" (click)="abrirModal('editar', user)">
                 <i class="fa-solid fa-pencil"></i>
-
               </button>
 
-
-              <!-- Eliminar usuario -->
-              <button class="btn btn-circle" title="Eliminar" (click)="eliminarUsuario(user.id)">
+              <button class="btn btn-circle" (click)="eliminarUsuario(user.id)">
                 <i class="fa-solid fa-trash"></i>
-
               </button>
             </td>
-
-
-            @if (!loading && usuariosFiltrados().length === 0) {
-          <tr>
-            <td colspan="5" class="text-center text-gray-500 py-4">No se encontraron usuarios</td>
           </tr>
           }
+
+          <!-- Empty -->
+          @if (!loading && usuarios.length === 0) {
+          <tr>
+            <td colspan="7" class="text-center text-gray-500 py-4">
+              No se encontraron usuarios
+            </td>
           </tr>
           }
 
         </tbody>
       </table>
 
-      <!-- Paginación -->
+      <!-- Paginador -->
       <div class="flex justify-end items-center p-4 border-t bg-gray-50 text-sm">
-        <span>Página 1 de 1</span>
+        <span>
+          Página {{ page }} de {{ totalItems }} registros
+        </span>
+
         <div class="join ml-4">
-          <button class="join-item btn btn-sm" disabled>Anterior</button>
-          <button class="join-item btn btn-sm">Siguiente</button>
+          <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
+            Anterior
+          </button>
+
+          <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
+            Siguiente
+          </button>
         </div>
       </div>
+
     </div>
-
-    <!-- MODAL CREAR USUARIO -->
-    @if (mostrarModal) {
-    <div class="modal modal-open">
-      <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg">
-        <!-- Header -->
-        <div class="flex justify-between items-center border-b border-base-300 pb-3 mb-4">
-          <h3 class="text-xl font-semibold"> {{ modoEdicion ? "Editar Usuario" : "Crear Nuevo Usuario" }}</h3>
-          <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
-        </div>
-
-        <!-- Formulario -->
-        <form [formGroup]="formUsuario" (ngSubmit)="crearOEditarUsuario()" class="space-y-4">
-
-          <!--  Nombre + Apellidos -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-            <!-- Nombre -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Nombre</span>
-              </label>
-              <input type="text" formControlName="nombre" placeholder="Ej. Juan" class="input input-bordered w-full"
-                [class.input-error]="formUsuario.get('nombre')?.invalid && formUsuario.get('nombre')?.touched" />
-
-              <!-- Error local -->
-              @if (formUsuario.get('nombre')?.hasError('required') && formUsuario.get('nombre')?.touched) {
-              <p class="text-red-500 text-sm">
-                El nombre es obligatorio.
-              </p>
-              }
-
-              <!-- Error backend -->
-              @if (backendErrors?.nombre) {
-              <p class="text-red-500 text-sm">
-                {{ backendErrors.nombre }}
-              </p>
-              }
-            </div>
-
-            <!-- Apellidos -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Apellidos</span>
-              </label>
-              <input type="text" formControlName="apellidos" placeholder="Ej. Pérez López"
-                class="input input-bordered w-full"
-                [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched" />
-
-              @if (formUsuario.get('apellidos')?.hasError('required') && formUsuario.get('apellidos')?.touched) {
-              <p class="text-red-500 text-sm">
-                Los apellidos son obligatorios.
-              </p>
-              }
-
-              @if (backendErrors?.apellidos) {
-              <p class="text-red-500 text-sm">
-                {{ backendErrors.apellidos }}
-              </p>
-              }
-
-            </div>
-          </div>
-
-          <!--  Correo -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Correo</span>
-            </label>
-            <input type="email" formControlName="correo" placeholder="ejemplo@correo.com"
-              class="input input-bordered w-full"
-              [class.input-error]="formUsuario.get('correo')?.invalid && formUsuario.get('correo')?.touched" />
-
-            @if (formUsuario.get('correo')?.hasError('required') && formUsuario.get('correo')?.touched) {
-            <p class="text-red-500 text-sm">
-              El correo es obligatorio.
-            </p>
-            }
-
-            @if (formUsuario.get('correo')?.hasError('email') && formUsuario.get('correo')?.touched) {
-            <p class="text-red-500 text-sm">
-              Ingresa un correo válido.
-            </p>
-            }
-
-            <!-- Error backend: correo duplicado -->
-            @if (backendErrors?.correo) {
-            <p class="text-red-500 text-sm">
-              {{ backendErrors.correo }}
-            </p>
-            }
-          </div>
-
-
-
-          <!--  Rol -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Rol</span>
-            </label>
-            <select formControlName="rol" class="select select-bordered w-full"
-              [class.select-error]="formUsuario.get('rol')?.invalid && formUsuario.get('rol')?.touched">
-              <option value="" disabled selected>Selecciona un rol</option>
-              <option value="admin">Administrador</option>
-              <option value="secretaria">Secretaria</option>
-              <option value="arbitro">Árbitro</option>
-              <option value="adjudicador">Adjudicador</option>
-            </select>
-
-            @if (backendErrors?.rol) {
-            <p class="text-red-500 text-sm">
-              {{ backendErrors.rol }}
-            </p>
-            }
-
-          </div>
-
-          <!-- Campos dinámicos según el rol seleccionado -->
-          <!-- ADJUDICADOR -->
-          @if (formUsuario.get('rol')?.value === 'adjudicador') {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Cargo</span>
-              </label>
-              <input type="text" formControlName="cargo" placeholder="Ej. JPRD" class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Documento de Identidad</span>
-              </label>
-              <input type="text" formControlName="documento_identidad" placeholder="DNI"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Teléfono</span>
-              </label>
-              <input type="text" formControlName="telefono" placeholder="987654321"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Especialidad</span>
-              </label>
-              <input type="text" formControlName="especialidad" placeholder="Ej. Arbitraje comercial"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Experiencia</span>
-              </label>
-              <input type="text" formControlName="experiencia" placeholder="Años de experiencia"
-                class="input input-bordered w-full" />
-            </div>
-
-          </div>
-          }
-
-
-          <!-- CLIENTE -->
-          @if (formUsuario.get('rol')?.value === 'cliente') {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Tipo de Persona</span>
-              </label>
-              <select formControlName="tipo_persona" class="select select-bordered w-full">
-                <option value="" disabled selected>Seleccione tipo</option>
-                <option value="Natural">Natural</option>
-                <option value="Jurídica">Jurídica</option>
-              </select>
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Documento de Identidad</span>
-              </label>
-              <input type="text" formControlName="documento_identidad" placeholder="DNI / RUC"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Razón Social</span>
-              </label>
-              <input type="text" formControlName="razon_social" placeholder="Ej. Empresa SAC"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Teléfono</span>
-              </label>
-              <input type="text" formControlName="telefono" placeholder="987654321"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control md:col-span-2">
-              <label class="label">
-                <span class="label-text">Dirección</span>
-              </label>
-              <input type="text" formControlName="direccion" placeholder="Av. Ejemplo 123"
-                class="input input-bordered w-full" />
-            </div>
-          </div>
-          }
-
-
-          <!-- ÁRBITRO -->
-          @if (formUsuario.get('rol')?.value === 'arbitro') {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Cargo</span>
-              </label>
-              <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Documento de Identidad</span>
-              </label>
-              <input type="text" formControlName="documento_identidad" placeholder="DNI"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Teléfono</span>
-              </label>
-              <input type="text" formControlName="telefono" placeholder="987654321"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Especialidad</span>
-              </label>
-              <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
-                class="input input-bordered w-full" />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Experiencia</span>
-              </label>
-              <input type="text" formControlName="experiencia" placeholder="5 años"
-                class="input input-bordered w-full" />
-            </div>
-          </div>
-          }
-
-          <!-- SECRETARIA -->
-          @if (formUsuario.get('rol')?.value === 'secretaria') {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Cargo</span>
-              </label>
-              <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
-                class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" />
-
-              @if (backendErrors?.cargo) {
-              <p class="text-red-500 text-sm">{{ backendErrors.cargo }}</p>
-              }
-
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Documento de Identidad</span>
-              </label>
-              <input type="text" formControlName="documento_identidad" placeholder="DNI"
-                class="input input-bordered w-full" [class.input-error]="backendErrors?.documento_identidad" />
-
-              @if (backendErrors?.documento_identidad) {
-              <p class="text-red-500 text-sm">
-                {{ backendErrors.documento_identidad }}
-              </p>
-              }
-
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Teléfono</span>
-              </label>
-              <input type="text" formControlName="telefono" placeholder="987654321"
-                class="input input-bordered w-full" />
-            </div>
-          </div>
-          }
-
-          <!-- ADMIN -->
-          @if (formUsuario.get('rol')?.value === 'admin') {
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Documento de Identidad</span>
-              </label>
-              <input type="text" formControlName="documento_identidad" placeholder="DNI"
-                class="input input-bordered w-full" [class.input-error]="backendErrors?.documento_identidad" />
-
-              @if (backendErrors?.documento_identidad) {
-              <p class="text-red-500 text-sm">
-                {{ backendErrors.documento_identidad }}
-              </p>
-              }
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Teléfono</span>
-              </label>
-              <input type="text" formControlName="telefono" placeholder="987654321"
-                class="input input-bordered w-full" />
-            </div>
-          </div>
-          }
-
-          <!-- Footer Buttons -->
-          <div class="modal-action">
-            <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
-            <button type="submit" class="btn bg-primary text-white hover:bg-primary-focus"
-              [disabled]="formUsuario.invalid">
-              Guardar Usuario
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Fondo oscuro del modal -->
-      <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
-    </div>
-    }
-
   </div>
-
 
 </div>

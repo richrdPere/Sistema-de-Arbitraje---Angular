@@ -74,13 +74,13 @@
           </tr>
           }
 
-          @if (!loading && expedientes.length === 0) {
+          <!-- @if (!loading && expedientes.length === 0) {
           <tr>
             <td colspan="8" class="text-center py-4 text-gray-500">
               No hay expedientes registrados.
             </td>
           </tr>
-          }
+          } -->
 
           @for (exp of expedientes; track exp.id_expediente; let i = $index) {
           <tr class="hover:bg-base-300 transition text-base-content">
@@ -176,6 +176,15 @@
         </tbody>
       </table>
 
+      @if (!loading && expedientes.length === 0) {
+      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+        <h3 class="text-lg font-semibold text-base-content mb-2">
+          No hay expedientes registrados
+        </h3>
+        <p class="text-sm max-w-md">Cuando se registren nuevos expedientes, aparecerán aquí automáticamente.</p>
+      </div>}
+
       <!-- Paginación -->
       <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
         <span>Página 1 de 1</span>
@@ -185,6 +194,8 @@
         </div>
       </div>
     </div>
+
+
   </div>
 </div>
 

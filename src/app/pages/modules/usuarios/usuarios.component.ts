@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule, FormGroup } from '@angular/forms';
 import { FormUtils } from 'src/app/utils/form-utils';
 import { CommonModule } from '@angular/common';
@@ -6,14 +6,34 @@ import Swal from 'sweetalert2';
 
 // Service
 import { UsuarioService } from 'src/app/services/admin/usuarios.service';
+import { UsuariosFormComponent } from "./usuarios-form/usuarios-form.component";
+
+
+export interface Usuario {
+  id: number;
+  nombre: string;
+  correo: string;
+  documento_identidad: string;
+  telefono: string;
+  rol: string;
+  estado: boolean;
+  foto_perfil?: string;
+}
 
 
 @Component({
   selector: 'app-usuarios',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    UsuariosFormComponent,
+
+  ],
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
+
   // Usuarios combinados
   usuarios: any[] = [];
 
@@ -31,6 +51,20 @@ export class UsuariosComponent implements OnInit {
   usuarioSeleccionado: any = null;
 
   backendErrors: any = {};
+
+  // Paginado
+  page = 1;
+  limit = 5;
+  totalItems = 0;
+  totalPages = 0;
+  currentPage = 1;
+
+  pageSizeOptions = [5, 10, 20, 50];
+
+  onPageSizeChange() {
+    this.currentPage = 1; // vuelve a la primera página
+  }
+
 
   constructor(private usuarioService: UsuarioService) { }
 
@@ -63,7 +97,38 @@ export class UsuariosComponent implements OnInit {
 
     // Opcional: limpiar campos cuando cambia el rol
     this.formUsuario.get('rol')?.valueChanges.subscribe(() => this.resetCamposRol());
-    this.cargarDatos();
+    // this.cargarDatos();
+    this.cargarUsuarios();
+  }
+
+  cargarUsuarios() {
+
+    console.log('PAGE:', this.page, 'LIMIT:', this.limit);
+    this.loading = true;
+
+    this.usuarioService.getUsuariosPaginados({
+      page: this.page,
+      limit: this.limit,
+      // rol: 'arbitro',       // opcional
+      // search: this.search // opcional
+    }).subscribe(res => {
+      this.usuarios = res.data;
+      this.totalItems = res.total;
+      this.totalPages = res.totalPages;
+      this.loading = false;
+    });
+  }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPages) return;
+    this.page = nuevaPagina;
+    this.cargarUsuarios();
+  }
+
+  cambiarLimite() {
+    this.limit = Number(this.limit);
+    this.page = 1;
+    this.cargarUsuarios();
   }
 
   private resetCamposRol() {
@@ -80,27 +145,49 @@ export class UsuariosComponent implements OnInit {
   }
 
   abrirModal(modo: 'crear' | 'editar' = 'crear', usuario?: any) {
-    this.mostrarModal = true;
-    this.modoEdicion = modo === 'editar';
 
-    if (modo === 'editar' && usuario) {
-      this.usuarioSeleccionado = usuario;
-      this.formUsuario.patchValue(usuario);
-      this.formUsuario.get('password')?.clearValidators();
-      this.formUsuario.get('password')?.updateValueAndValidity();
-    } else {
-      this.usuarioSeleccionado = null;
-      this.formUsuario.reset();
-      this.formUsuario.get('password')?.setValidators([Validators.required]);
-      this.formUsuario.get('password')?.updateValueAndValidity();
-    }
+    this.modoEdicion = false;
+    this.usuarioSeleccionado = null;
+    this.mostrarModal = true;
+
+    // this.mostrarModal = true;
+    // this.modoEdicion = modo === 'editar';
+
+    // if (modo === 'editar' && usuario) {
+    //   this.usuarioSeleccionado = usuario;
+    //   this.formUsuario.patchValue(usuario);
+    //   this.formUsuario.get('password')?.clearValidators();
+    //   this.formUsuario.get('password')?.updateValueAndValidity();
+    // } else {
+    //   this.usuarioSeleccionado = null;
+    //   this.formUsuario.reset();
+    //   this.formUsuario.get('password')?.setValidators([Validators.required]);
+    //   this.formUsuario.get('password')?.updateValueAndValidity();
+    // }
   }
 
   cerrarModal() {
     this.mostrarModal = false;
     this.formUsuario.reset();
-    this.modoEdicion = false;
   }
+
+  displayedColumns: string[] = [
+    'index',
+    'usuario',
+    'correo',
+    'dni',
+    'telefono',
+    'estado',
+    'acciones'
+  ];
+
+
+
+
+
+  // toggleEstadoUsuario(user: Usuario) {
+  //   user.estado = !user.estado;
+  // }
 
   async cargarDatos(): Promise<void> {
     this.loading = true;

@@ -33,6 +33,7 @@
               }
             ],
             "styles": [
+
               "src/styles.css",
               "node_modules/izitoast/dist/css/iziToast.min.css"
             ],
@@ -101,6 +102,7 @@
               }
             ],
             "styles": [
+
               "src/styles.css"
             ],
             "scripts": []

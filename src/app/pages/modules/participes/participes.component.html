@@ -67,19 +67,16 @@
           </tr>
         </thead>
         <tbody class="">
-          @if (loading) {
-          <tr>
-            <td colspan="7" class="text-center py-4">Cargando participes...</td>
-          </tr>
-          }
 
+
+          <!--
           @if (!loading && participes.length === 0) {
           <tr>
             <td colspan="8" class="text-center py-4 text-base-content/70">
               No hay partícipes registrados.
             </td>
           </tr>
-          }
+          }-->
 
           @for (p of participes; track p.id_expediente; let i = $index) {
           <tr class="hover">
@@ -149,6 +146,21 @@
 
         </tbody>
       </table>
+
+      @if (loading) {
+      <tr>
+        <td colspan="7" class="text-center py-4">Cargando participes...</td>
+      </tr>
+      }
+
+      @if (!loading && participes.length === 0) {
+      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+        <h3 class="text-lg font-semibold text-base-content mb-2">
+          No hay participes registrados
+        </h3>
+        <p class="text-sm max-w-md">Cuando se registren nuevas participes, aparecerán aquí automáticamente.</p>
+      </div>}
 
       <!-- Paginación -->
       <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">

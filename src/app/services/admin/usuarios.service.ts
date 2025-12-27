@@ -55,6 +55,36 @@ export class UsuarioService {
   }
 
   /**
+ * Obtener usuarios paginados (general)
+ * @param params page, limit, rol, search, estado
+ */
+  getUsuariosPaginados(params: {
+    page?: number;
+    limit?: number;
+    rol?: string;
+    search?: string;
+    estado?: number;
+  }): Observable<any> {
+
+    return this.http.get<any>(
+      `${this.url}`,
+      {
+        ...this.getAuthHeaders(),
+        params: {
+          ...(params.page && { page: params.page }),
+          ...(params.limit && { limit: params.limit }),
+          ...(params.rol && { rol: params.rol }),
+          ...(params.search && { search: params.search }),
+          ...(params.estado !== undefined && { estado: params.estado }),
+        }
+      }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+  /**
    * Obtener árbitros
    */
   getArbitros(): Observable<any[]> {
@@ -150,22 +180,4 @@ export class UsuarioService {
   }
 
 
-  // // Obtener árbitros
-  // getArbitros(): Observable<any[]> {
-  //   let headers = new HttpHeaders().set('Content-Type', 'application/json');
-
-  //   return this.http.get<any[]>(`${this.url}/arbitros`, { headers: headers });
-  // }
-
-  // // Obtener secretarias
-  // getSecretarias(): Observable<any[]> {
-  //   let headers = new HttpHeaders().set('Content-Type', 'application/json');
-  //   return this.http.get<any[]>(`${this.url}/secretarias`, { headers: headers });
-  // }
-
-  // // Obtener participes
-  // getParticipes(): Observable<any[]> {
-  //   let headers = new HttpHeaders().set('Content-Type', 'application/json');
-  //   return this.http.get<any[]>(`${this.url}/participes`, { headers: headers });
-  // }
 }
