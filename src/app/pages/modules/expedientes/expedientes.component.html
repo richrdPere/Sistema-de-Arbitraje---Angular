@@ -31,26 +31,58 @@
       </div>
 
       <!--  BOTONES -->
-      <div>
+      <!-- <div>
         <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
           (click)="abrirModal()">
           <i class="fa-solid fa-plus"></i>
-          Nuevo Expediente
+          Expediente
         </button>
-      </div>
+      </div> -->
     </div>
-
-    <!-- Modal -->
-    <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
-      [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModal()"
-      (expedienteCreado)="cargarExpedientes()">
-    </expediente-modal>
 
   </div>
 
+  <!-- Modal -->
+  <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
+    [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModal()"
+    (expedienteCreado)="cargarExpedientes()">
+  </expediente-modal>
+
+
+  <!-- Tabla -->
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
-    <!-- Tabla -->
+
     <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+
+
+      <!-- Header acciones -->
+      <div class="flex justify-between items-center p-5">
+
+        <!-- Selector de cantidad -->
+        <div class="flex items-center gap-2 text-sm">
+          <label>Mostrar:</label>
+
+          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+              {{ size }}
+            </option>
+          </select>
+
+          <span>items por página</span>
+        </div>
+
+        <!-- Botón -->
+        <div>
+          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+            (click)="abrirModal()">
+            <i class="fa-solid fa-plus mr-1"></i>
+            Expediente
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Tabla  -->
       <table class="table w-full">
 
         <thead class="bg-base-300/90">

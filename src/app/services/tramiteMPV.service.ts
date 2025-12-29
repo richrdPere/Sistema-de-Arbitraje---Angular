@@ -59,35 +59,46 @@ export class TramiteMPVService {
   // ===========================================================
   // 3.- Listar tramites con paginación
   // ===========================================================
-  listarTramites(filtros: any): Observable<TramiteMPVResponse> {
+  listarTramites(filtros: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    estado?: string;
+    tipo?: string;
+    rol?: string;
+    id_usuario?: number;
+    fecha_inicio?: string;
+    fecha_fin?: string;
+  }): Observable<TramiteMPVResponse> {
+
     let params = new HttpParams();
 
-    Object.keys(filtros).forEach(key => {
-      if (filtros[key] !== null && filtros[key] !== undefined && filtros[key] !== '') {
-        params = params.set(key, filtros[key]);
+    Object.entries(filtros).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
       }
     });
 
     const headers = this.getAuthHeaders().headers;
 
-    return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers });
+    return this.http.get<TramiteMPVResponse>(
+      `${this.url}/listar`,
+      { params, headers }
+    );
   }
-  // listarTramites(pagina: number = 1, limite: number = 10, rol: string): Observable<TramiteMPVResponse> {
-  //   const params = new HttpParams()
-  //     .set('page', pagina)
-  //     .set('limit', limite)
-  //     .set('rol', rol); //  o 'secretaria', según corresponda
 
-  //   const headers = this.getAuthHeaders().headers; // extrae solo los headers
+  // listarTramites(filtros: any): Observable<TramiteMPVResponse> {
+  //   let params = new HttpParams();
 
-  //   console.log(' Enviando petición GET a:', `${this.url}/listar`);
-  //   console.log(' Parámetros:', { page: pagina, limit: limite, rol });
+  //   Object.keys(filtros).forEach(key => {
+  //     if (filtros[key] !== null && filtros[key] !== undefined && filtros[key] !== '') {
+  //       params = params.set(key, filtros[key]);
+  //     }
+  //   });
 
-  //   return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers }).pipe(
-  //     tap((resp) => {
-  //       console.log(' Respuesta del backend:', resp);
-  //     })
-  //   );
+  //   const headers = this.getAuthHeaders().headers;
+
+  //   return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers });
   // }
 
   // ===========================================================

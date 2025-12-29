@@ -35,8 +35,6 @@ export class SolicitudesComponent implements OnInit {
   razonRechazo: string = '';
 
   loading = true;
-  paginaActual = 1;
-  totalPaginas = 1;
 
   usuario: any = null;
   rol: string = '';
@@ -50,7 +48,31 @@ export class SolicitudesComponent implements OnInit {
   filtroSearch: string = '';
   filtroTipo: string = '';
   filtroEstado: string = '';
-  // solicitudesFiltradas: any[] = [];
+
+  // Paginado
+  page = 1;
+  limit = 5;
+  totalItems = 0;
+  totalPages = 0;
+  currentPage = 1;
+
+  pageSizeOptions = [5, 10, 20, 50];
+
+  onPageSizeChange() {
+    this.currentPage = 1; // vuelve a la primera página
+  }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPages) return;
+    this.page = nuevaPagina;
+    this.cargarTramites();
+  }
+
+  cambiarLimite() {
+    this.limit = Number(this.limit);
+    this.page = 1;
+    this.cargarTramites();
+  }
 
   // ya las tienes, pero añade:
   solicitudesFiltradas: any[] = [];             // opcional global
@@ -118,12 +140,13 @@ export class SolicitudesComponent implements OnInit {
   // ======================================================
   //  Cargar trámites usando el nuevo service con filtros
   // ======================================================
-  cargarTramites(page: number = 1): void {
+  cargarTramites(): void {
+    console.log('PAGE:', this.page, 'LIMIT:', this.limit);
     this.loading = true;
 
     const filtros: any = {
-      page,
-      limit: 20,
+      page: this.page,
+      limit: this.limit,
       rol: this.rol,
       search: this.search,
       estado: this.estado,
@@ -138,32 +161,26 @@ export class SolicitudesComponent implements OnInit {
     }
 
     this.tramiteService.listarTramites(filtros).subscribe({
-      next: (data) => {
-        const tramites = data.tramites || [];
+      next: (resp) => {
 
+        console.log('Respuesta trámites:', resp);
+        const tramites = resp.data ?? [];
 
         // Clasificación por estado
-        this.solicitudes = tramites.filter(
-          (t: any) => t.estado === 'pendiente'
-        );
-        this.solicitudesAprobadas = tramites.filter(
-          (t: any) => t.estado === 'aprobada'
-        );
-        this.solicitudesRechazadas = tramites.filter(
-          (t: any) => t.estado === 'rechazada'
-        );
+        this.solicitudes = tramites.filter(t => t.estado === 'pendiente');
+        this.solicitudesAprobadas = tramites.filter(t => t.estado === 'aprobada');
+        this.solicitudesRechazadas = tramites.filter(t => t.estado === 'rechazada');
 
-        // console.log(' Pendientes:', this.solicitudes);
-        // console.log(' Aprobadas:', this.solicitudesAprobadas);
-        // console.log(' Rechazadas:', this.solicitudesRechazadas);
 
-        this.paginaActual = data.pagina_actual;
-        this.totalPaginas = data.total_paginas;
+        // Paginación
+        // this.page = resp.page;
+        this.totalPages = resp.totalPages;
+        this.totalItems = resp.total;
 
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al listar trámites:', err);
+        console.error('Error al listar trámites:', err.message);
         this.loading = false;
       },
     });
@@ -216,7 +233,7 @@ export class SolicitudesComponent implements OnInit {
   }
 
   verArchivo(item: any) {
-    if(!item?.documento) {
+    if (!item?.documento) {
       console.warn("No existe un archivo en este registro");
       return;
     }
@@ -232,17 +249,17 @@ export class SolicitudesComponent implements OnInit {
 
 
 
-  siguientePagina(): void {
-    if (this.paginaActual < this.totalPaginas) {
-      this.cargarTramites(this.paginaActual + 1);
-    }
-  }
+  // siguientePagina(): void {
+  //   if (this.paginaActual < this.totalPaginas) {
+  //     this.cargarTramites(this.paginaActual + 1);
+  //   }
+  // }
 
-  paginaAnterior(): void {
-    if (this.paginaActual > 1) {
-      this.cargarTramites(this.paginaActual - 1);
-    }
-  }
+  // paginaAnterior(): void {
+  //   if (this.paginaActual > 1) {
+  //     this.cargarTramites(this.paginaActual - 1);
+  //   }
+  // }
 
   // ======================================================
   //  Cambiar estado del trámite + expediente

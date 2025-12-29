@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 // Service
 import { UsuarioService } from 'src/app/services/admin/usuarios.service';
@@ -13,7 +14,7 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './usuarios-form.component.html',
   styles: ``
 })
-export class UsuariosFormComponent implements OnInit {
+export class UsuariosFormComponent implements OnInit, OnChanges {
 
 
   @Input() mostrarModal = false;
@@ -46,9 +47,11 @@ export class UsuariosFormComponent implements OnInit {
   }
 
 
+
+
   constructor(
     private fb: FormBuilder,
-    private usuariosService: UsuarioService,
+    private usuarioService: UsuarioService,
     private authService: AuthService
 
   ) { }
@@ -59,6 +62,75 @@ export class UsuariosFormComponent implements OnInit {
     this.setModalWidth('lg');
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    //  Si el formulario aún no está creado, salir
+    if (!this.formUsuario) return;
+
+    console.log("USUARIOS EDIT: ", this.usuarioSeleccionado);
+
+    // EDITAR
+    if (changes['usuarioSeleccionado'] && this.usuarioSeleccionado) {
+      this.modoEdicion = true;
+      const rol = this.usuarioSeleccionado.rol?.toUpperCase();
+
+      // Campos comunes
+      let formData: any = {
+        id: this.usuarioSeleccionado.id,
+        nombre: this.usuarioSeleccionado.nombre,
+        apellidos: this.usuarioSeleccionado.apellidos,
+        correo: this.usuarioSeleccionado.correo,
+        rol: this.usuarioSeleccionado.rol,
+        telefono: this.usuarioSeleccionado.telefono,
+        documento_identidad: this.usuarioSeleccionado.documento_identidad,
+        estado: this.usuarioSeleccionado.estado,
+        disponible: this.usuarioSeleccionado.disponible,
+      };
+
+      //  ARBITRO o ADJUDICADOR
+      if (rol === 'ARBITRO') {
+        formData = {
+          ...formData,
+          cargo: this.usuarioSeleccionado.arbitro?.cargo || '',
+          numero_colegiatura: this.usuarioSeleccionado.arbitro.numero_colegiatura || '',
+          certificado_pdf: this.usuarioSeleccionado.arbitro.certificado_pdf || '',
+          especialidad: this.usuarioSeleccionado.arbitro.especialidad || '',
+          experiencia: this.usuarioSeleccionado.arbitro.experiencia || '',
+        };
+      }
+
+      // ADJUDICADOR
+      if (rol === 'ADJUDICADOR') {
+        formData = {
+          ...formData,
+          cargo: this.usuarioSeleccionado.adjudicador?.cargo || '',
+          numero_colegiatura: this.usuarioSeleccionado.adjudicador.numero_colegiatura || '',
+          certificado_pdf: this.usuarioSeleccionado.adjudicador.certificado_pdf || '',
+          especialidad: this.usuarioSeleccionado.adjudicador.especialidad || '',
+          experiencia: this.usuarioSeleccionado.adjudicador.experiencia || '',
+        };
+      }
+
+      //  SECRETARIA
+      if (rol === 'SECRETARIA') {
+        formData = {
+          ...formData,
+          cargo: this.usuarioSeleccionado.secretaria?.cargo || '',
+        };
+      }
+
+      // Aplicar al formulario
+      this.formUsuario.patchValue(formData);
+
+    }
+
+    // CREAR / CERRAR MODAL
+    if (changes['mostrarModal'] && !this.mostrarModal) {
+      this.formUsuario.reset();
+      this.modoEdicion = false;
+    }
+  };
+
+
 
   initFormUsuarios() {
     this.formUsuario = this.fb.group({
@@ -68,8 +140,24 @@ export class UsuariosFormComponent implements OnInit {
       correo: ['', [Validators.required, Validators.email]],
       // password: ['', Validators.required],
       rol: ['', Validators.required],
-      telefono: [''],
-      documento_identidad: [''],
+      telefono: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]+$'),
+          Validators.minLength(9),
+          Validators.maxLength(9),
+        ],
+      ],
+      documento_identidad: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]+$'),
+          Validators.minLength(8),
+          Validators.maxLength(8),
+        ],
+      ],
 
       // Campos opcionales (dependen del rol)
       tipo_persona: [''],
@@ -87,14 +175,84 @@ export class UsuariosFormComponent implements OnInit {
     });
   }
 
-  crearOEditarUsuario() {
-    throw new Error('Method not implemented.');
-  }
   cerrarModal() {
-    this.mostrarModal = false;
-    this.modalCerrado.emit();
     this.formUsuario.reset();
+    this.modoEdicion = false;
+    this.usuarioSeleccionado = null;
+    this.modalCerrado.emit();
 
   }
 
+  // Crear o Editar usuario
+  crearOEditarUsuario() {
+    // Limpiar errores previos del backend
+    this.backendErrors = {};
+
+    if (this.formUsuario.invalid) {
+      this.formUsuario.markAllAsTouched();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Por favor completa todos los campos requeridos.',
+      });
+      return;
+    }
+
+    const usuario = this.formUsuario.value;
+
+    console.log('Formulario de usuario enviado:', usuario);
+
+    // ============================
+    // MODO EDICIÓN
+    // ============================
+    if (this.modoEdicion && usuario.id) {
+
+      this.usuarioService.actualizarUsuario(usuario.id, usuario).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Usuario actualizado correctamente' });
+          this.usuarioCreado.emit(); // refrescar tabla
+          this.cerrarModal();
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar usuario',
+            text: err.error?.message || 'Error desconocido.',
+          });
+        },
+      });
+
+      return;
+    }
+
+    // ============================
+    // MODO CREACIÓN
+    // ============================
+    this.usuarioService.crearUsuario(usuario).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario creado correctamente',
+          text: 'Se envió un correo con las credenciales y enlace de confirmación.'
+        });
+
+        this.usuarioCreado.emit(); // refrescar tabla
+        this.cerrarModal();
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al crear usuario',
+          text: err.error?.message || 'Error desconocido',
+        });
+      }
+    });
+  }
+
+  soloNumeros(event: KeyboardEvent) {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  }
 }

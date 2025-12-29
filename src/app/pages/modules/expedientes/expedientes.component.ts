@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, HostListener, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { DatePipe } from '@angular/common';
@@ -22,7 +22,7 @@ import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
@@ -56,6 +56,35 @@ export class ExpedientesComponent {
 
   // Control de error (opcional)
   errorMessage: string = '';
+
+  // Search
+  search: string = '';
+  rolFiltro: string = '';
+
+  // Paginado
+  page = 1;
+  limit = 5;
+  totalItems = 0;
+  totalPages = 0;
+  currentPage = 1;
+
+  pageSizeOptions = [5, 10, 20, 50];
+
+  onPageSizeChange() {
+    this.currentPage = 1; // vuelve a la primera página
+  }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPages) return;
+    this.page = nuevaPagina;
+    this.cargarExpedientes();
+  }
+
+  cambiarLimite() {
+    this.limit = Number(this.limit);
+    this.page = 1;
+    this.cargarExpedientes();
+  }
 
   toggleDropdown(index: number, event: MouseEvent) {
     // Si se vuelve a hacer click en el mismo menú, se cierra

@@ -52,6 +52,10 @@ export class UsuariosComponent implements OnInit {
 
   backendErrors: any = {};
 
+  // Search
+  search: string = '';
+  rolFiltro: string = '';
+
   // Paginado
   page = 1;
   limit = 5;
@@ -65,58 +69,52 @@ export class UsuariosComponent implements OnInit {
     this.currentPage = 1; // vuelve a la primera página
   }
 
-
   constructor(private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
-
-    this.formUsuario = this.fb.group({
-      id: [null],
-      nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]],
-      // password: ['', Validators.required],
-      rol: ['', Validators.required],
-      telefono: [''],
-      documento_identidad: [''],
-
-      // Campos opcionales (dependen del rol)
-      tipo_persona: [''],
-      razon_social: [''],
-      direccion: [''],
-      cargo: [''],
-      especialidad: [''],
-      experiencia: [''],
-
-      // Para arbitro y adjudicador
-      numero_colegiatura: [''],
-      certificado_pdf: [''],
-      disponible: [true],
-      estado: ['Activo'],
-    });
-
-    // Opcional: limpiar campos cuando cambia el rol
-    this.formUsuario.get('rol')?.valueChanges.subscribe(() => this.resetCamposRol());
-    // this.cargarDatos();
     this.cargarUsuarios();
   }
 
   cargarUsuarios() {
-
     console.log('PAGE:', this.page, 'LIMIT:', this.limit);
     this.loading = true;
 
     this.usuarioService.getUsuariosPaginados({
       page: this.page,
       limit: this.limit,
-      // rol: 'arbitro',       // opcional
-      // search: this.search // opcional
+      rol: this.rolFiltro || undefined,
+      search: this.search?.trim() || undefined,
     }).subscribe(res => {
       this.usuarios = res.data;
+
+      console.log('Usuarios cargados:', this.usuarios);
       this.totalItems = res.total;
       this.totalPages = res.totalPages;
       this.loading = false;
     });
+  }
+
+  getCargoUsuario(user: any): string {
+    const rol = user?.rol?.toUpperCase();
+
+    switch (rol) {
+      case 'SECRETARIA':
+        return user?.secretaria?.cargo || '-';
+
+      case 'ARBITRO':
+        return user?.arbitro?.cargo || '-';
+
+      case 'ADJUDICADOR':
+        return user?.adjudicador?.cargo || '-';
+
+      default:
+        return '-';
+    }
+  }
+
+  onFiltroChange() {
+    this.page = 1;
+    this.cargarUsuarios();
   }
 
   cambiarPagina(nuevaPagina: number) {
@@ -131,44 +129,24 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios();
   }
 
-  private resetCamposRol() {
-    this.formUsuario.patchValue({
-      tipo_persona: '',
-      documento_identidad: '',
-      razon_social: '',
-      telefono: '',
-      direccion: '',
-      cargo: '',
-      especialidad: '',
-      experiencia: '',
-    });
-  }
+
 
   abrirModal(modo: 'crear' | 'editar' = 'crear', usuario?: any) {
 
-    this.modoEdicion = false;
-    this.usuarioSeleccionado = null;
     this.mostrarModal = true;
 
-    // this.mostrarModal = true;
-    // this.modoEdicion = modo === 'editar';
+    if (modo === 'editar' && usuario) {
 
-    // if (modo === 'editar' && usuario) {
-    //   this.usuarioSeleccionado = usuario;
-    //   this.formUsuario.patchValue(usuario);
-    //   this.formUsuario.get('password')?.clearValidators();
-    //   this.formUsuario.get('password')?.updateValueAndValidity();
-    // } else {
-    //   this.usuarioSeleccionado = null;
-    //   this.formUsuario.reset();
-    //   this.formUsuario.get('password')?.setValidators([Validators.required]);
-    //   this.formUsuario.get('password')?.updateValueAndValidity();
-    // }
+      this.modoEdicion = true;
+      this.usuarioSeleccionado = { ...usuario }; // copia segura
+    } else {
+      this.modoEdicion = false;
+      this.usuarioSeleccionado = null;
+    }
   }
 
   cerrarModal() {
     this.mostrarModal = false;
-    this.formUsuario.reset();
   }
 
   displayedColumns: string[] = [
@@ -180,78 +158,6 @@ export class UsuariosComponent implements OnInit {
     'estado',
     'acciones'
   ];
-
-
-
-
-
-  // toggleEstadoUsuario(user: Usuario) {
-  //   user.estado = !user.estado;
-  // }
-
-  async cargarDatos(): Promise<void> {
-    this.loading = true;
-
-    try {
-      const [secretarias, admins, arbitros, adjudicadores] = await Promise.all([
-        this.usuarioService.getSecretarias().toPromise(),
-        this.usuarioService.getAdmins().toPromise(),
-        this.usuarioService.getArbitros().toPromise(),
-        this.usuarioService.getAdjudicadores().toPromise()
-      ]);
-
-      // Normalizar secretarias
-      const normalizar = (lista: any[] = [], rol: string) => {
-
-        return lista.map(item => ({
-          id: item.usuario?.id ?? null,
-          nombre: item.usuario?.nombre ?? '',
-          apellidos: item.usuario?.apellidos ?? '',
-          correo: item.usuario?.correo ?? '',
-          telefono: item.usuario?.telefono ?? '',
-          documento_identidad: item.usuario?.documento_identidad ?? '',
-          foto_perfil: item.usuario?.foto_perfil ?? null,
-          rol,
-          cargo: item.cargo ?? '',
-          estado: item.usuario?.estado === true,
-        }));
-      };
-
-      // Normalizar admins (estructura directa)
-      const normalizarDirecto = (lista: any[] = [], rol: string) => {
-        return lista.map(item => ({
-          id: item.id,
-          nombre: item.nombre ?? '',
-          apellidos: item.apellidos ?? '',
-          correo: item.correo ?? '',
-          telefono: item.telefono ?? '',
-          documento_identidad: item.documento_identidad ?? '',
-          foto_perfil: `${this.usuarioService.envs.url_image}${item.foto_perfil}?t=${Date.now()}`,
-          rol,
-          cargo: '',
-          estado: item.estado === true,
-        }));
-      };
-
-      this.usuarios = [
-        ...normalizarDirecto(admins, 'Admin'),
-        ...normalizar(secretarias, 'Secretaria'),
-        ...normalizar(arbitros, 'Arbitros'),
-        ...normalizar(adjudicadores, 'Adjudicadores'),
-
-      ];
-
-      //  LOG SOLO DE foto_perfil
-      this.usuarios.forEach(u => {
-        console.log(`Usuario ID ${u.id} | Rol ${u.rol} | estado:`, u.estado);
-      });
-
-    } catch (err) {
-      console.error('Error al cargar usuarios:', err);
-    } finally {
-      this.loading = false;
-    }
-  }
 
   isUsuarioActivo(user: any): boolean {
     return user.estado === true;
@@ -289,7 +195,10 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  toggleEstadoUsuario(user: any): void {
+  toggleEstadoUsuario(user: any, event: Event): void {
+    event.preventDefault();
+
+    const estadoActual = user.estado;
     const accion = user.estado ? 'deshabilitar' : 'habilitar';
 
     Swal.fire({
@@ -346,64 +255,6 @@ export class UsuariosComponent implements OnInit {
     );
   }
 
-  crearOEditarUsuario() {
-    // Limpiar errores previos del backend
-    this.backendErrors = {};
-
-    if (this.formUsuario.invalid) {
-      this.formUsuario.markAllAsTouched();
-      Swal.fire({
-        icon: 'warning',
-        title: 'Formulario incompleto',
-        text: 'Por favor completa todos los campos requeridos.',
-      });
-      return;
-    }
-
-    const usuario = this.formUsuario.value;
-
-    //  MODO EDICIÓN
-    if (this.modoEdicion) {
-
-      this.usuarioService.actualizarUsuario(usuario.id, usuario).subscribe({
-        next: () => {
-          Swal.fire({ icon: 'success', title: 'Usuario actualizado correctamente' });
-          this.cerrarModal();
-          this.cargarDatos();
-        },
-        error: (err) => {
-          this.manejarErroresBackend(err);
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Error al actualizar usuario',
-            text: err.error?.message || 'Error desconocido.',
-          });
-        },
-
-
-      });
-
-    }
-
-    //  MODO CREACIÓN
-    this.usuarioService.crearUsuario(usuario).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Usuario creado correctamente',
-          text: 'Se envió un correo con las credenciales y enlace de confirmación.'
-        });
-
-        this.cerrarModal();
-        this.cargarDatos();
-      },
-      error: (err) => {
-        this.manejarErroresBackend(err);
-      }
-    });
-  }
-
   verUsuario(usuario: any) {
     Swal.fire({
       title: 'Detalles del Usuario',
@@ -433,7 +284,7 @@ export class UsuariosComponent implements OnInit {
         this.usuarioService.eliminarUsuario(id).subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Usuario eliminado correctamente' });
-            this.cargarDatos();
+            this.cargarUsuarios();
           },
           error: (err) => {
             Swal.fire({
