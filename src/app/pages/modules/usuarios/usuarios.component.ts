@@ -84,8 +84,10 @@ export class UsuariosComponent implements OnInit {
       limit: this.limit,
       rol: this.rolFiltro || undefined,
       search: this.search?.trim() || undefined,
+
     }).subscribe(res => {
       this.usuarios = res.data;
+      // this.usuarios = res.data.filter((u: any) => u.rol !== 'participe');
 
       console.log('Usuarios cargados:', this.usuarios);
       this.totalItems = res.total;

@@ -138,7 +138,7 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      // password: ['', Validators.required],
+      password: [''],
       rol: ['', Validators.required],
       telefono: [
         '',
@@ -198,7 +198,8 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    const usuario = this.formUsuario.value;
+    // Clonamos el value para poder manipularlo
+    const usuario: any = { ...this.formUsuario.value };
 
     console.log('Formulario de usuario enviado:', usuario);
 
@@ -206,6 +207,13 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
     // MODO EDICIÓN
     // ============================
     if (this.modoEdicion && usuario.id) {
+
+
+      // console.log("Actualizando usuario: ", usuario.pasword);
+      //  SI NO SE INGRESÓ PASSWORD → NO ENVIARLO
+      if (!usuario.password || usuario.password.trim() === '') {
+        delete usuario.password;
+      }
 
       this.usuarioService.actualizarUsuario(usuario.id, usuario).subscribe({
         next: () => {

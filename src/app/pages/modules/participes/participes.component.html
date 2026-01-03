@@ -12,32 +12,23 @@
       <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
 
         <!-- Select tipo -->
-        <select class="select select-bordered w-full md:w-60">
-          <option value="" disabled selected>Seleccione tipo</option>
-          <option value="Secretaria">Secretaria</option>
-          <option value="Arbitro">Arbitro</option>
-          <option value="Adjudicadores">Adjudicadores</option>
-          <option value="Admin">Admin</option>
+        <select class="select select-bordered w-full md:w-60" [(ngModel)]="rolParticipeFiltro"
+          (change)="onFiltroChange()">
+          <!-- <option value="" disabled selected>Seleccione tipo</option> -->
+          <option value="">TODOS</option>
+          <option value="demandante">DEMANDANTE</option>
+          <option value="demandado">DEMANDADO</option>
         </select>
 
         <!-- Input buscar -->
         <div class="relative w-full md:max-w-xs">
-          <input type="text" [(ngModel)]="filtro" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por N° Expediente" />
+          <input type="text" [(ngModel)]="search" (input)="onFiltroChange()" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por nombres o DNI" />
           <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         </div>
 
       </div>
-
-      <!--  BOTONES -->
-      <div>
-        <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
-          (click)="abrirModal()">
-          + Nuevo Participe
-        </button>
-      </div>
     </div>
-
   </div>
 
   <!-- Modal -->
@@ -47,11 +38,38 @@
   </participe-modal>
 
 
+  <!-- Tabla -->
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
-
-
     <!-- Tabla -->
     <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg ">
+
+      <!-- Header acciones -->
+      <div class="flex justify-between items-center p-5">
+
+        <!-- Selector de cantidad -->
+        <div class="flex items-center gap-2 text-sm">
+          <label>Mostrar:</label>
+
+          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+              {{ size }}
+            </option>
+          </select>
+
+          <span>items por página</span>
+        </div>
+
+        <!-- Botón -->
+        <div>
+          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+            (click)="abrirModal()">
+            <i class="fa-solid fa-plus mr-1"></i>
+            Participe
+          </button>
+        </div>
+
+      </div>
+
       <table class="table w-full ">
         <thead class="bg-base-300/90">
           <tr>
@@ -67,16 +85,6 @@
           </tr>
         </thead>
         <tbody class="">
-
-
-          <!--
-          @if (!loading && participes.length === 0) {
-          <tr>
-            <td colspan="8" class="text-center py-4 text-base-content/70">
-              No hay partícipes registrados.
-            </td>
-          </tr>
-          }-->
 
           @for (p of participes; track p.id_expediente; let i = $index) {
           <tr class="hover">
@@ -143,7 +151,6 @@
             </td>
           </tr>
           }
-
         </tbody>
       </table>
 
@@ -163,11 +170,19 @@
       </div>}
 
       <!-- Paginación -->
-      <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
-        <span>Página 1 de 1</span>
-        <div class="join ml-4">
-          <button class="join-item btn btn-sm" disabled>Anterior</button>
-          <button class="join-item btn btn-sm">Siguiente</button>
+      <div class="flex justify-end items-center p-4 bg-base-300/90 text-sm">
+        <span>
+          Página {{ page }} de {{ totalPages }} registros
+        </span>
+
+        <div class="join ml-4 gap-2">
+          <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
+            Anterior
+          </button>
+
+          <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
+            Siguiente
+          </button>
         </div>
       </div>
     </div>

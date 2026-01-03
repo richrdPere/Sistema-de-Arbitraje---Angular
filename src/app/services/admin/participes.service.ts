@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 
 // Environment
@@ -8,6 +8,11 @@ import { environment } from '@environments/environment';
 @Injectable({
   providedIn: 'root',
 })
+
+
+
+
+
 export class ParticipeService {
 
   // 1.- Environment
@@ -58,8 +63,21 @@ export class ParticipeService {
   }
 
   // Listar todos
-  obtenerParticipes(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.url}`, this.getAuthHeaders()).pipe(catchError(this.handleError));
+  getParticipesPaginado(filtros: any): Observable<any> {
+    // return this.http.get<any[]>(`${this.url}`, this.getAuthHeaders()).pipe(catchError(this.handleError));
+    let params = new HttpParams();
+
+     Object.keys(filtros).forEach(key => {
+    if (
+      filtros[key] !== null &&
+      filtros[key] !== undefined &&
+      filtros[key] !== ''
+    ) {
+      params = params.set(key, filtros[key]);
+    }
+  });
+
+    return this.http.get<any>(`${this.url}`, { params });
   }
 
   // Obtener por ID

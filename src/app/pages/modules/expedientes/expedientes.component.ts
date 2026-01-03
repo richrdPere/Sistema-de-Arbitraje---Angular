@@ -27,6 +27,9 @@ import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
   styles: ``
 })
 export class ExpedientesComponent {
+  anularExpediente(arg0: any) {
+    throw new Error('Method not implemented.');
+  }
 
   // Expedientes
   expedientes: any = [];
@@ -54,12 +57,38 @@ export class ExpedientesComponent {
 
   rol: string = '';
 
+  menuActivo: any = null;
+  dropdownStyle: any = {};
+
   // Control de error (opcional)
   errorMessage: string = '';
 
-  // Search
+  // Search y filtros
   search: string = '';
   rolFiltro: string = '';
+
+  meses = [
+    { value: 1, label: 'Enero' },
+    { value: 2, label: 'Febrero' },
+    { value: 3, label: 'Marzo' },
+    { value: 4, label: 'Abril' },
+    { value: 5, label: 'Mayo' },
+    { value: 6, label: 'Junio' },
+    { value: 7, label: 'Julio' },
+    { value: 8, label: 'Agosto' },
+    { value: 9, label: 'Septiembre' },
+    { value: 10, label: 'Octubre' },
+    { value: 11, label: 'Noviembre' },
+    { value: 12, label: 'Diciembre' },
+  ];
+
+  anios: number[] = [];
+
+  filtroMes: number | '' = '';
+  filtroAnio: number | '' = '';
+  filtroSearch = '';
+
+
 
   // Paginado
   page = 1;
@@ -86,16 +115,38 @@ export class ExpedientesComponent {
     this.cargarExpedientes();
   }
 
-  toggleDropdown(index: number, event: MouseEvent) {
-    // Si se vuelve a hacer click en el mismo menú, se cierra
-    event.stopPropagation(); // Evita que se cierre inmediatamente
-    this.menuAbierto = this.menuAbierto === index ? null : index;
+  // toggleDropdown(index: number, event: MouseEvent) {
+  //   // Si se vuelve a hacer click en el mismo menú, se cierra
+  //   event.stopPropagation(); // Evita que se cierre inmediatamente
+  //   this.menuAbierto = this.menuAbierto === index ? null : index;
+  // }
+
+  // cerrarDropdown() {
+  //   this.menuAbierto = null;
+  // }
+
+  toggleDropdown(event: MouseEvent, expediente: any) {
+    event.stopPropagation();
+
+    const button = event.currentTarget as HTMLElement;
+    const rect = button.getBoundingClientRect();
+
+    this.menuActivo = expediente;
+
+    this.dropdownStyle = {
+      top: `${rect.bottom + 8}px`,
+      left: `${rect.right - 200}px`, // ancho del menú
+    };
   }
 
-
+  // Cerrar al hacer click fuera
+  @HostListener('document:click')
   cerrarDropdown() {
-    this.menuAbierto = null;
+    this.menuActivo = null;
   }
+
+
+
 
   // Constructor
   constructor(
@@ -115,6 +166,11 @@ export class ExpedientesComponent {
   // onInit
   ngOnInit(): void {
 
+    const anioActual = new Date().getFullYear();
+    for (let i = anioActual; i >= anioActual - 5; i--) {
+      this.anios.push(i);
+    }
+
     this.formExpediente = this.fb.group({
       numero_expediente: ['', Validators.required],
       anio: ['', Validators.required],
@@ -133,6 +189,19 @@ export class ExpedientesComponent {
 
     this.cargarExpedientes();
   }
+
+  aplicarFiltros() {
+    this.page = 1; // reinicia paginación
+
+    this.cargarExpedientes(
+    //   {
+    //   mes: this.filtroMes || undefined,
+    //   anio: this.filtroAnio || undefined,
+    //   search: this.filtroSearch?.trim() || undefined,
+    // }
+  );
+  }
+
 
   abrirModal() {
     this.modoEdicion = false;

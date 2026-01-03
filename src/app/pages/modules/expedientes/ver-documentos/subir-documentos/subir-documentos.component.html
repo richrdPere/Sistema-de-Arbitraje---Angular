@@ -1,1 +1,53 @@
-<p>subir-documentos works!</p>
+<!-- MODAL PARA SUBIR DOCUMENTO -->
+<div class="modal modal-open">
+
+  <div class="modal-box">
+    <h2 class="text-xl font-bold mb-4">Subir Documento</h2>
+    <form [formGroup]="formDocumento" (ngSubmit)="subirDocumento()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Título</label>
+        <input type="text" formControlName="titulo" class="input input-bordered w-full" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Descripción</label>
+        <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"></textarea>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Versión</label>
+        <input type="number" formControlName="version" class="input input-bordered w-full" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Tipo de Documento</label>
+        <select formControlName="tipo_documento" class="select select-bordered w-full">
+          <!-- Opciones de tipo de documento -->
+          <option value="">Seleccionar tipo</option>
+          <!-- Agregar opciones dinámicamente -->
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Archivo PDF</label>
+        <input type="file" (change)="onArchivoSeleccionado($event)" accept=".pdf" />
+      </div>
+
+      <!-- Mensajes de error o éxito -->
+      @if (mensajeError) {
+        <p class="text-red-500">{{ mensajeError }}</p>
+      }
+      @if (mensajeExito) {
+        <p class="text-green-500">{{ mensajeExito }}</p>
+      }
+
+      <!-- Botones -->
+      <button type="submit" [disabled]="cargando || formDocumento.invalid"
+              class="btn btn-primary bg-[#0a1a35] hover:bg-[#13244a] border-none mr-2"
+              [class.loading]="cargando">
+        {{ cargando ? 'Subiendo...' : 'Subir Documento' }}
+      </button>
+
+    </form>
+
+    <!-- Botón cerrar modal -->
+    <button (click)="cerrarModal()" class="btn btn-outline mt-4">Cerrar</button>
+
+  </div>
+</div>

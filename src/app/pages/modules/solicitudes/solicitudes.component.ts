@@ -13,10 +13,11 @@ import { AuthService } from 'src/app/services/auth.service';
 
 // Pipes
 import { DatePipe } from '@angular/common';
+import { SolicitudDetailComponent } from "./solicitud-detail/solicitud-detail.component";
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, SolicitudDetailComponent],
   templateUrl: './solicitudes.component.html',
   styles: ``
 })
@@ -39,6 +40,12 @@ export class SolicitudesComponent implements OnInit {
   usuario: any = null;
   rol: string = '';
 
+  mostrarDetalle = false;
+  tramiteSeleccionado: any = null;
+  tramiteDetalle: any = null;
+
+
+
   // Filtros
   search = '';
   estado = '';
@@ -57,6 +64,7 @@ export class SolicitudesComponent implements OnInit {
   currentPage = 1;
 
   pageSizeOptions = [5, 10, 20, 50];
+
 
   onPageSizeChange() {
     this.currentPage = 1; // vuelve a la primera página
@@ -86,7 +94,6 @@ export class SolicitudesComponent implements OnInit {
   // Dropdown
   menuAbierto: number | null = null;
 
-
   menuPosX = 0;
   menuPosY = 0;
 
@@ -103,21 +110,10 @@ export class SolicitudesComponent implements OnInit {
 
   // MODAL
   modalVisible = false;
-  tramiteSeleccionado: any = null;
   nuevoEstado: string = '';
+  tipoModal: 'detalle' | 'estado' | null = null;
 
-  abrirModal(solicitud: any) {
-    this.tramiteSeleccionado = solicitud;
-    this.modalVisible = true;
-    this.razonRechazo = ''; // limpiar cada vez que se abra el modal
-  }
 
-  cerrarModal() {
-    this.modalVisible = false;
-    this.tramiteSeleccionado = null;
-    this.nuevoEstado = '';
-    this.razonRechazo = '';
-  }
 
   constructor(
     private tramiteService: TramiteMPVService,
@@ -227,9 +223,33 @@ export class SolicitudesComponent implements OnInit {
 
   }
 
-  verDetalle(item: any) {
-    console.log("Ver detalle:", item);
-    // Lógica para navegar o abrir modal
+  abrirModal(solicitud: any) {
+    this.tramiteSeleccionado = solicitud;
+    this.nuevoEstado = '';
+    this.razonRechazo = '';
+    // this.modalVisible = true;
+    // this.razonRechazo = ''; // limpiar cada vez que se abra el modal
+  }
+
+  cerrarModal() {
+    this.tipoModal = null;
+    // this.modalVisible = false;
+    this.tramiteSeleccionado = null;
+    this.tramiteDetalle = null;
+    // this.nuevoEstado = '';
+    // this.razonRechazo = '';
+  }
+
+  verDetalle(tramite: any) {
+
+    this.tramiteDetalle = tramite;
+    // this.mostrarDetalle = true;
+    this.tipoModal = 'detalle';
+  }
+
+  cerrarDetalle() {
+    this.mostrarDetalle = false;
+    this.tramiteSeleccionado = null;
   }
 
   verArchivo(item: any) {

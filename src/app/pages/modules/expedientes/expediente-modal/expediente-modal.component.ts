@@ -27,6 +27,11 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   mensajeExito = '';
   secretariaId: number | null = null;
 
+  // Step
+  currentStep = 1;
+  totalSteps = 3;
+
+
   constructor(
     private fb: FormBuilder,
     private expedientesService: ExpedientesService,
@@ -119,6 +124,18 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
       fecha_laudo: [''],
       fecha_resolucion: [''],
     });
+  }
+
+  nextStep() {
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+    }
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
   }
 
   // Enviar Formulario

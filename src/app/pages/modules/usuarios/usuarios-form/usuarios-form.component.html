@@ -69,36 +69,67 @@
         </div>
       </div>
 
-      <!--  Correo -->
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text flex items-center gap-1">
-            Correo
-            <span class="text-red-500 font-bold">*</span>
-          </span>
-        </label>
-        <input type="email" formControlName="correo" placeholder="ejemplo@correo.com"
-          class="input input-bordered w-full"
-          [class.input-error]="formUsuario.get('correo')?.invalid && formUsuario.get('correo')?.touched" />
+      <!--  Correo y Password -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-        @if (formUsuario.get('correo')?.hasError('required') && formUsuario.get('correo')?.touched) {
-        <p class="text-red-500 text-sm">
-          El correo es obligatorio.
-        </p>
+        <!-- Correo -->
+        <div class="form-control" [ngClass]="{ 'md:col-span-2': !modoEdicion }">
+          <label class="label">
+            <span class="label-text flex items-center gap-1">
+              Correo
+              <span class="text-red-500 font-bold">*</span>
+            </span>
+          </label>
+          <input type="email" formControlName="correo" placeholder="ejemplo@gmail.com"
+            class="input input-bordered w-full"
+            [class.input-error]="formUsuario.get('correo')?.invalid && formUsuario.get('correo')?.touched" />
+
+          @if (formUsuario.get('correo')?.hasError('required') && formUsuario.get('correo')?.touched) {
+          <p class="text-red-500 text-sm">
+            El correo es obligatorio.
+          </p>
+          }
+
+          @if (formUsuario.get('correo')?.hasError('email') && formUsuario.get('correo')?.touched) {
+          <p class="text-red-500 text-sm">
+            Ingresa un correo válido.
+          </p>
+          }
+
+          <!-- Error backend: correo duplicado -->
+          @if (backendErrors?.correo) {
+          <p class="text-red-500 text-sm">
+            {{ backendErrors.correo }}
+          </p>
+          }
+        </div>
+
+        @if (modoEdicion) {
+        <!-- Password -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text flex items-center gap-1">
+              Contraseña
+              <span class="text-red-500 font-bold">*</span>
+            </span>
+          </label>
+          <input type="password" formControlName="password" placeholder="Cambiar Contraseña" class="input input-bordered w-full"
+            [class.input-error]="formUsuario.get('password')?.invalid && formUsuario.get('password')?.touched" />
+
+          @if (formUsuario.get('password')?.hasError('required') && formUsuario.get('password')?.touched) {
+          <p class="text-red-500 text-sm">
+            La contraseña es obligatoria.
+          </p>
+          }
+
+          @if (backendErrors?.password) {
+          <p class="text-red-500 text-sm">
+            {{ backendErrors.password }}
+          </p>
+          }
+        </div>
         }
 
-        @if (formUsuario.get('correo')?.hasError('email') && formUsuario.get('correo')?.touched) {
-        <p class="text-red-500 text-sm">
-          Ingresa un correo válido.
-        </p>
-        }
-
-        <!-- Error backend: correo duplicado -->
-        @if (backendErrors?.correo) {
-        <p class="text-red-500 text-sm">
-          {{ backendErrors.correo }}
-        </p>
-        }
       </div>
 
       <!-- Documento de identidad y Teléfono -->
@@ -160,7 +191,7 @@
         </label>
 
         <select formControlName="rol" class="select select-md w-full ">
-          <option value="" >Selecciona un rol</option>
+          <option value="">Selecciona un rol</option>
           <option value="admin">ADMINISTRADOR</option>
           <option value="secretaria">SECRETARIA</option>
           <option value="arbitro">ARBITRO</option>

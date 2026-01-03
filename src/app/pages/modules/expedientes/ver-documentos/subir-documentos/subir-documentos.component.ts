@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class SubirDocumentosComponent {
   @Input() mostrarModal = false;
+  @Input() modoEdicion = false;
   @Input() expedienteId!: number; // ID del expediente (por ejemplo 11)
 
   @Output() modalCerrado = new EventEmitter<void>();

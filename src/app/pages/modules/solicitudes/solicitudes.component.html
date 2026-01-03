@@ -17,7 +17,7 @@
       </div>
 
       <!-- Modal -->
-      @if (modalVisible) {
+      @if (tipoModal === 'estado') {
       <dialog class="modal modal-open text-base-content">
         <div class="modal-box bg-base-100 rounded-2xl shadow-2xl max-w-md transition-all duration-300">
           <h3 class="font-bold text-lg text-center mb-3">Cambiar estado del trámite</h3>
@@ -93,6 +93,11 @@
         </div>
       </dialog>
 
+
+      <solicitud-detail [mostrarModal]="mostrarDetalle" [tramite]="tramiteDetalle" (cerrar)="cerrarDetalle()">
+      </solicitud-detail>
+
+
       <form method="dialog" class="modal-backdrop bg-black/40" (click)="cerrarModal()"></form>
       }
 
@@ -140,14 +145,7 @@
             <span>items por página</span>
           </div>
 
-          <!-- Botón -->
-          <!-- <div>
-            <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
-              (click)="abrirModal()">
-              <i class="fa-solid fa-plus mr-1"></i>
-              Usuario
-            </button>
-          </div> -->
+
 
         </div>
 
@@ -189,66 +187,28 @@
               <td>{{ solicitud.solicitante }}</td>
               <td>{{ solicitud.correo }}</td>
 
-              <td class="space-x-2 flex items-center">
+              <!-- Acciones -->
+              <td class="text-right relative">
 
-                <!-- Ver detalle -->
-                <button class="btn btn-circle" (click)="verDetalle(solicitud)" title="Ver detalle">
-                  <i class="fa-solid fa-eye"></i>
-                </button>
+                <!-- ACCIONES PRINCIPALES -->
+                <div class="flex justify-start items-center gap-1">
 
-                <!-- Ver archivo -->
-                <button class="btn btn-circle" (click)="verArchivo(solicitud)" title="Ver archivo">
-                  <i class="fa-solid fa-file"></i>
-                </button>
+                  <!-- Ver detalle -->
+                  <button class="btn btn-ghost btn-circle btn-md" (click)="verDetalle(solicitud)" title="Ver detalle">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
 
-                <!-- Aprobar solicitud -->
-                <button class="btn btn-circle" (click)="abrirModal(solicitud)" title="Aprobar solicitud">
-                  <i class="fa-regular fa-circle-check"></i>
-                </button>
+                  <!-- Ver archivo -->
+                  <button class="btn btn-ghost btn-circle btn-md" (click)="verArchivo(solicitud)" title="Ver archivo">
+                    <i class="fa-solid fa-file"></i>
+                  </button>
 
+                  <!-- Aprobar solicitud -->
+                  <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal(solicitud)" title="Aprobar solicitud">
+                    <i class="fa-regular fa-circle-check"></i>
+                  </button>
+                </div>
               </td>
-
-              <!-- <td class="relative">
-                  <div class="dropdown dropdown-end inline-block">
-                    <button tabindex="0" class="btn btn-ghost btn-circle btn-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M6 12h.01M12 12h.01M18 12h.01" />
-                      </svg>
-                    </button>
-
-                    <ul tabindex="0"
-                      class="menu menu-sm dropdown-content bg-base-100 shadow-lg rounded-xl w-52 mt-2 z-[100]">
-                      <li class="menu-title px-4 py-1 text-xs text-base-content/60">
-                        Acciones
-                      </li>
-
-
-                      <li>
-                        <button
-                          class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-base-content">
-                          <i class="fa-solid fa-file-lines w-5 text-center"></i>
-                          <a [href]="solicitud.documento" target="_blank" class="text-primary hover:underline">
-                            Ver archivo
-                          </a>
-                        </button>
-                      </li>
-
-                      <hr class="my-1 border-base-300" />
-
-
-                      <li>
-                        <button
-                          class="flex items-center gap-2 hover:bg-base-200 px-4 py-2 w-full text-sm text-primary hover:underline"
-                          (click)="abrirModal(solicitud)">
-                          <i class="fa-solid fa-pen w-5 text-center"></i>
-                          Aprobar Expediente
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                </td> -->
             </tr>
             }
           </tbody>
@@ -270,19 +230,7 @@
             </button>
           </div>
         </div>
-        <!-- <div class="flex flex-wrap justify-end items-center p-4 border-t bg-base-200 text-sm gap-3">
-          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="paginaAnterior()"
-            [disabled]="paginaActual === 1">
-            Anterior
-          </button>
 
-          <p class="text-base-content">Página {{ paginaActual }} de {{ totalPaginas }}</p>
-
-          <button class="px-4 py-2 bg-base-300 rounded hover:bg-base-100" (click)="siguientePagina()"
-            [disabled]="paginaActual === totalPaginas">
-            Siguiente
-          </button>
-        </div> -->
       </div>
       }
       @else if (!loading && solicitudes.length === 0) {

@@ -36,6 +36,19 @@ export class ParticipesComponent implements OnInit {
   mostrarModal = false;
   participeSeleccionado: any | null = null;
 
+  // Paginación
+  page = 1;
+  limit = 5;
+  totalItems = 0;
+  totalPages = 0;
+
+    pageSizeOptions = [5, 10, 20, 50];
+
+  // Filtros
+  rolParticipeFiltro: string = '';
+  search: string = '';
+
+
   menuAbierto: number | null = null;
   seleccionado?: Participe;
 
@@ -81,20 +94,47 @@ export class ParticipesComponent implements OnInit {
     this.formParticipe.reset();
   }
 
+  onFiltroChange() {
+    this.page = 1;
+    this.cargarParticipes();
+  }
 
   // Funciones del Service
   cargarParticipes(): void {
     this.loading = true;
 
-    this.participeService.obtenerParticipes().subscribe({
+    this.participeService.getParticipesPaginado({
+      page: this.page,
+      limit: this.limit,
+      rol_participe: this.rolParticipeFiltro || undefined,
+      search: this.search?.trim() || undefined,
+    }).subscribe({
       next: (res) => {
-        this.participes = res,
-          this.loading = false
-      },
-      error: (err) => console.error('Error al cargar participes:', err)
 
+        console.log("RES: ", res)
+        this.participes = res.data;
+        this.totalItems = res.total;
+        this.totalPages = res.totalPages;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar partícipes:', err);
+        this.loading = false;
+      }
     });
   }
+
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPages) return;
+    this.page = nuevaPagina;
+    this.cargarParticipes();
+  }
+
+  cambiarLimite() {
+    this.page = 1;
+    this.cargarParticipes();
+  }
+
 
 
 
