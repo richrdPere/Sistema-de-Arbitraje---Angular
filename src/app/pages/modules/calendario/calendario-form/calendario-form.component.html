@@ -24,7 +24,7 @@
     }
 
     <!-- Formulario -->
-    <form [formGroup]="formActividad">
+    <form [formGroup]="formActividad" (ngSubmit)="crearOEditarActividad()">
       <div class="grid grid-cols-12 gap-4">
 
         <!-- TÍTULO (fila completa) -->
@@ -63,8 +63,11 @@
 
           <select class="select select-bordered w-full" formControlName="tipo_actividad">
             <option value="" disabled selected>Seleccione tipo</option>
-            <option value="reunion">Reunión</option>
-            <option value="cita">Cita</option>
+            <option value="AUDIENCIA">AUDIENCIA</option>
+            <option value="PLAZO">PLAZO</option>
+            <option value="NOTIFICACION">NOTIFICACION</option>
+            <option value="REUNION">REUNION</option>
+            <option value="OTRO">OTRO</option>
           </select>
         </div>
 

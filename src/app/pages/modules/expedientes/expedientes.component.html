@@ -15,7 +15,8 @@
         <!-- Input buscar -->
         <div class="relative w-full md:max-w-xs">
           <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por N° Expediente" />
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por N° Expediente"
+            autocomplete="off" [(ngModel)]="filtroSearch" (ngModelChange)="onSearchChange()" />
           <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         </div>
 
@@ -45,11 +46,18 @@
 
   </div>
 
-  <!-- Modal -->
+  <!-- Modal Crear Expediente -->
   <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
     [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModal()"
     (expedienteCreado)="cargarExpedientes()">
   </expediente-modal>
+
+
+  <!-- Modal Participes y Arbitros -->
+  <gestionar-participes [mostrarModal]="mostrarModalParticipes"
+    [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModalParticipes()"
+    >
+  </gestionar-participes>
 
 
   <!-- Tabla -->
@@ -110,12 +118,12 @@
 
 
           @for (exp of expedientes; track exp.id_expediente; let i = $index) {
-          <tr class="hover:bg-base-300 transition text-base-content">
+          <tr class="hover ">
             <td>{{i + 1}}</td>
             <td>{{ exp.numero_expediente }}</td>
             <!-- <td>{{ exp.tipo }}</td> -->
             <td>{{ exp.total_participes }}</td>
-            <td>{{exp.fecha_inicio | date: 'dd/MM/yyyy'}}</td>
+            <td>{{ exp.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>
               <span class="badge badge-soft badge-info font-semibold">
                 {{ exp.estado }}
@@ -139,7 +147,7 @@
 
                 <!-- Gestionar partícipes -->
                 <button class="btn btn-ghost btn-circle btn-md" title="Gestionar partícipes"
-                  (click)="gestionarParticipes(exp)">
+                  (click)="gestionarParticipesModal(exp)">
                   <i class="fa-solid fa-users"></i>
                 </button>
 
@@ -151,7 +159,7 @@
 
               </div>
 
-              @if (menuActivo?.id === exp.id) {
+              @if (menuActivo?.id_expediente  === exp.id_expediente ) {
               <div class="fixed bg-base-100 shadow-xl rounded-xl w-auto border border-base-300 z-[9999]"
                 [ngStyle]="dropdownStyle">
                 <ul class="menu menu-md ">
@@ -179,110 +187,19 @@
                       Anular expediente
                     </button>
                   </li>
-                  <!--
-                  <li>
-                    <button (click)="verDocumentos(menuActivo)">
-                      <i class="fa-solid fa-file-lines"></i>
-                      Ver Documentos
-                    </button>
-                  </li>
 
-                  <li>
-                    <button (click)="gestionarParticipes(menuActivo)">
-                      <i class="fa-solid fa-users"></i>
-                      Gestionar Partícipes
-                    </button>
-                  </li>
-
-                  <li>
-                    <button (click)="verHistorial(menuActivo)">
-                      <i class="fa-solid fa-clock-rotate-left"></i>
-                      Ver Historial
-                    </button>
-                  </li>
-
-                  <hr />
-
-                  <li>
-                    <button (click)="editarExpediente(menuActivo)">
-                      <i class="fa-solid fa-pen"></i>
-                      Editar Expediente
-                    </button>
-                  </li>
-
-                  <li>
-                    <button (click)="anularExpediente(menuActivo)">
-                      <i class="fa-solid fa-pen"></i>
-                      Anular Expediente
-                    </button>
-                  </li> -->
                 </ul>
               </div>
               }
 
-              <!-- <div class="dropdown dropdown-end inline-block">
-
-
-
-                 <ul tabindex="-1"
-                  class="menu menu-sm dropdown-content fixed bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[9999]"
-                  [class.hidden]="menuAbierto == i">
-                  <li class="menu-title px-4 py-1 text-xs text-gray-400">
-                    Acciones
-                  </li>
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="verDocumentos(exp)">
-                      <i class="fa-solid fa-file-lines text-gray-600 w-5 text-center"></i>
-                      Ver Documentos
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="gestionarParticipes(exp)">
-                      <i class="fa-solid fa-users text-gray-600 w-5 text-center"></i>
-                      Gestionar Partícipes
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="verHistorial(exp)">
-                      <i class="fa-solid fa-clock-rotate-left text-gray-600 w-5 text-center"></i>
-                      Ver Historial
-                    </button>
-                  </li>
-
-
-                  <hr class="my-1 border-gray-200" />
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="editarExpediente(exp)">
-                      <i class="fa-solid fa-pen text-gray-600 w-5 text-center"></i>
-                      Editar Expediente
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-red-600"
-                      (click)="eliminarExpediente(exp.id_expediente!)">
-                      <i class="fa-solid fa-trash text-red-600 w-5 text-center"></i>
-                      Eliminar Expediente
-                    </button>
-                  </li>
-                </ul>
-              </div> -->
             </td>
           </tr>
           }
+
+
         </tbody>
+
+
       </table>
 
       @if (!loading && expedientes.length === 0) {
@@ -296,10 +213,15 @@
 
       <!-- Paginación -->
       <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
-        <span>Página 1 de 1</span>
-        <div class="join ml-4">
-          <button class="join-item btn btn-sm" disabled>Anterior</button>
-          <button class="join-item btn btn-sm">Siguiente</button>
+        <span> Página {{ page }} de {{ totalPages }} registros</span>
+        <div class="join ml-4 gap-2">
+          <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
+            Anterior
+          </button>
+
+          <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
+            Siguiente
+          </button>
         </div>
       </div>
     </div>

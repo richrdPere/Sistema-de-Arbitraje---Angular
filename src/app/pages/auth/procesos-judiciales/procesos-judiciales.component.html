@@ -1,0 +1,891 @@
+<!-- components/procesos-judiciales/procesos-judiciales.component.html -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+  <!-- Header Principal -->
+  <header class="bg-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-600 p-3 rounded-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">⚖️ Sistema de Procesos Judiciales</h1>
+            <p class="text-gray-600">Gestión y Seguimiento de Litigios Judiciales</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Nuevo Proceso
+            </label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a>📄 Demanda Civil</a></li>
+              <li><a>🏢 Demanda Comercial</a></li>
+              <li><a>👨‍💼 Demanda Laboral</a></li>
+              <li><a>👪 Demanda Familiar</a></li>
+              <li><a>🏛️ Demanda Administrativa</a></li>
+            </ul>
+          </div>
+
+          <div class="avatar online">
+            <div class="w-12 rounded-full ring ring-primary ring-offset-2">
+              <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra de Navegación -->
+  <div class="bg-base-200">
+    <div class="container mx-auto px-4">
+      <div class="tabs tabs-boxed">
+        <a class="tab tab-active">📋 Todos los Procesos</a>
+        <a class="tab">⚖️ En Trámite</a>
+        <a class="tab">⏳ Pendientes</a>
+        <a class="tab">✅ Finalizados</a>
+        <a class="tab">📊 Estadísticas</a>
+        <a class="tab">📅 Calendario</a>
+        <a class="tab">📁 Archivo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Filtros Avanzados -->
+    <div class="card bg-base-100 shadow-xl mb-8">
+      <div class="card-body">
+        <h2 class="card-title text-xl mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          Filtros Avanzados
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Juzgado</span>
+            </label>
+            <select class="select select-bordered w-full">
+              <option selected>Todos los juzgados</option>
+              <option>1° Juzgado Civil</option>
+              <option>2° Juzgado Civil</option>
+              <option>1° Juzgado Comercial</option>
+              <option>2° Juzgado Comercial</option>
+              <option>Juzgado de Familia</option>
+              <option>Juzgado Laboral</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Estado Procesal</span>
+            </label>
+            <select class="select select-bordered w-full">
+              <option selected>Todos los estados</option>
+              <option class="text-blue-600">📝 Demandado</option>
+              <option class="text-yellow-600">⏳ En Contestación</option>
+              <option class="text-purple-600">⚖️ En Audiencia</option>
+              <option class="text-green-600">✅ Sentenciado</option>
+              <option class="text-red-600">❌ Archivado</option>
+              <option class="text-gray-600">🔁 En Apelación</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Materia</span>
+            </label>
+            <select class="select select-bordered w-full">
+              <option selected>Todas las materias</option>
+              <option>Civil</option>
+              <option>Comercial</option>
+              <option>Laboral</option>
+              <option>Familiar</option>
+              <option>Administrativo</option>
+              <option>Penal</option>
+              <option>Constitucional</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Fecha Inicio</span>
+            </label>
+            <input type="date" class="input input-bordered w-full" />
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-6">
+          <div class="form-control w-full max-w-xs">
+            <div class="input-group">
+              <input type="text" placeholder="Buscar por número, partes, abogado..."
+                     class="input input-bordered w-full" />
+              <button class="btn btn-square">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button class="btn btn-ghost">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+              </svg>
+              Exportar
+            </button>
+            <button class="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Aplicar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="stats shadow-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <div class="stat">
+          <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="stat-title text-blue-100">Procesos Activos</div>
+          <div class="stat-value">156</div>
+          <div class="stat-desc text-blue-200">↗︎ 12 este mes</div>
+        </div>
+      </div>
+
+      <div class="stats shadow-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <div class="stat">
+          <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <div class="stat-title text-purple-100">En Audiencia</div>
+          <div class="stat-value">24</div>
+          <div class="stat-desc text-purple-200">↗︎ 3 esta semana</div>
+        </div>
+      </div>
+
+      <div class="stats shadow-lg bg-gradient-to-r from-green-500 to-green-600 text-white">
+        <div class="stat">
+          <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>
+          <div class="stat-title text-green-100">Por Sentenciar</div>
+          <div class="stat-value">18</div>
+          <div class="stat-desc text-green-200">↘︎ 2 menos que ayer</div>
+        </div>
+      </div>
+
+      <div class="stats shadow-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <div class="stat">
+          <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="stat-title text-orange-100">Días Promedio</div>
+          <div class="stat-value">127</div>
+          <div class="stat-desc text-orange-200">Para resolución</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Procesos Judiciales -->
+    <div class="card bg-base-100 shadow-xl mb-8">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="card-title text-2xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Procesos Judiciales Activos
+          </h2>
+
+          <div class="flex items-center gap-2">
+            <div class="form-control">
+              <label class="cursor-pointer label">
+                <span class="label-text mr-2">Vista Compacta</span>
+                <input type="checkbox" class="toggle toggle-primary" />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Procesos -->
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr class="bg-base-200">
+                <th class="text-lg">
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </th>
+                <th>N° Expediente</th>
+                <th>Materia / Descripción</th>
+                <th>Juzgado / Juez</th>
+                <th>Estado Procesal</th>
+                <th>Última Actuación</th>
+                <th>Próxima Audiencia</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Proceso 1 -->
+              <tr class="hover:bg-base-300 transition-colors">
+                <td>
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </td>
+                <td>
+                  <div class="font-bold text-primary">EXP-2024-00158</div>
+                  <div class="text-xs text-gray-500">Iniciado: 15/01/2024</div>
+                </td>
+                <td>
+                  <div class="font-semibold">Incumplimiento de Contrato</div>
+                  <div class="text-sm text-gray-600">
+                    <span class="badge badge-sm badge-ghost">Comercial</span>
+                    Constructora vs. Proveedor
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Monto: $250,000 USD</div>
+                </td>
+                <td>
+                  <div class="font-medium">1° Juzgado Civil Comercial</div>
+                  <div class="text-sm">
+                    <span class="badge badge-outline badge-sm">Dra. Laura Martínez</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="badge badge-lg badge-warning gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    En Contestación
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm">Admisión de Demanda</div>
+                  <div class="text-xs text-gray-500">28/01/2024</div>
+                </td>
+                <td>
+                  <div class="text-sm font-semibold">15/02/2024</div>
+                  <div class="text-xs text-gray-500">10:30 AM - Audiencia Preliminar</div>
+                </td>
+                <td>
+                  <div class="flex justify-center gap-1">
+                    <button class="btn btn-xs btn-info">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-primary">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-success">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proceso 2 -->
+              <tr class="hover:bg-base-300 transition-colors">
+                <td>
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </td>
+                <td>
+                  <div class="font-bold text-primary">EXP-2024-00087</div>
+                  <div class="text-xs text-gray-500">Iniciado: 05/12/2023</div>
+                </td>
+                <td>
+                  <div class="font-semibold">Despido Injustificado</div>
+                  <div class="text-sm text-gray-600">
+                    <span class="badge badge-sm badge-ghost">Laboral</span>
+                    Trabajador vs. Empresa S.A.
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Pretensión: $45,000 USD</div>
+                </td>
+                <td>
+                  <div class="font-medium">Juzgado Laboral N°2</div>
+                  <div class="text-sm">
+                    <span class="badge badge-outline badge-sm">Dr. Roberto Sánchez</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="badge badge-lg badge-secondary gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    En Audiencia
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm">Pruebas Confesionales</div>
+                  <div class="text-xs text-gray-500">20/01/2024</div>
+                </td>
+                <td>
+                  <div class="text-sm font-semibold">08/02/2024</div>
+                  <div class="text-xs text-gray-500">09:00 AM - Audiencia de Pruebas</div>
+                </td>
+                <td>
+                  <div class="flex justify-center gap-1">
+                    <button class="btn btn-xs btn-info">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-warning">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proceso 3 -->
+              <tr class="hover:bg-base-300 transition-colors">
+                <td>
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </td>
+                <td>
+                  <div class="font-bold text-primary">EXP-2024-00234</div>
+                  <div class="text-xs text-gray-500">Iniciado: 22/01/2024</div>
+                </td>
+                <td>
+                  <div class="font-semibold">Divorcio Litigioso</div>
+                  <div class="text-sm text-gray-600">
+                    <span class="badge badge-sm badge-ghost">Familiar</span>
+                    Cónyuges: Rodríguez vs. Rodríguez
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Bienes: $180,000 USD</div>
+                </td>
+                <td>
+                  <div class="font-medium">Juzgado de Familia</div>
+                  <div class="text-sm">
+                    <span class="badge badge-outline badge-sm">Dra. Ana Fernández</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="badge badge-lg badge-info gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    En Mediación
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm">Auto de Mediación</div>
+                  <div class="text-xs text-gray-500">28/01/2024</div>
+                </td>
+                <td>
+                  <div class="text-sm font-semibold">12/02/2024</div>
+                  <div class="text-xs text-gray-500">14:00 PM - Sesión de Mediación</div>
+                </td>
+                <td>
+                  <div class="flex justify-center gap-1">
+                    <button class="btn btn-xs btn-info">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-secondary">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proceso 4 -->
+              <tr class="hover:bg-base-300 transition-colors">
+                <td>
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </td>
+                <td>
+                  <div class="font-bold text-primary">EXP-2024-00112</div>
+                  <div class="text-xs text-gray-500">Iniciado: 10/12/2023</div>
+                </td>
+                <td>
+                  <div class="font-semibold">Responsabilidad Civil</div>
+                  <div class="text-sm text-gray-600">
+                    <span class="badge badge-sm badge-ghost">Civil</span>
+                    Asegurado vs. Compañía de Seguros
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Daños: $75,000 USD</div>
+                </td>
+                <td>
+                  <div class="font-medium">3° Juzgado Civil</div>
+                  <div class="text-sm">
+                    <span class="badge badge-outline badge-sm">Dr. Carlos Gutiérrez</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="badge badge-lg badge-success gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Sentenciado
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm">Sentencia Firme</div>
+                  <div class="text-xs text-gray-500">25/01/2024</div>
+                </td>
+                <td>
+                  <div class="text-sm font-semibold">-</div>
+                  <div class="text-xs text-gray-500">Proceso Finalizado</div>
+                </td>
+                <td>
+                  <div class="flex justify-center gap-1">
+                    <button class="btn btn-xs btn-info">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-accent">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proceso 5 -->
+              <tr class="hover:bg-base-300 transition-colors">
+                <td>
+                  <label>
+                    <input type="checkbox" class="checkbox checkbox-primary" />
+                  </label>
+                </td>
+                <td>
+                  <div class="font-bold text-primary">EXP-2024-00345</div>
+                  <div class="text-xs text-gray-500">Iniciado: 30/01/2024</div>
+                </td>
+                <td>
+                  <div class="font-semibold">Nulidad de Acto Administrativo</div>
+                  <div class="text-sm text-gray-600">
+                    <span class="badge badge-sm badge-ghost">Contencioso-Administrativo</span>
+                    Empresa vs. Municipalidad
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Interés: Licencia Comercial</div>
+                </td>
+                <td>
+                  <div class="font-medium">Sala Contencioso-Administrativa</div>
+                  <div class="text-sm">
+                    <span class="badge badge-outline badge-sm">Mag. Pedro Navarro</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="badge badge-lg badge-error gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.22 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    Suspendido
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm">Medida Cautelar</div>
+                  <div class="text-xs text-gray-500">01/02/2024</div>
+                </td>
+                <td>
+                  <div class="text-sm font-semibold">Por definir</div>
+                  <div class="text-xs text-gray-500">Esperando notificación</div>
+                </td>
+                <td>
+                  <div class="flex justify-center gap-1">
+                    <button class="btn btn-xs btn-info">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-xs btn-warning">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex justify-center mt-6">
+          <div class="join">
+            <button class="join-item btn btn-sm">«</button>
+            <button class="join-item btn btn-sm btn-active">1</button>
+            <button class="join-item btn btn-sm">2</button>
+            <button class="join-item btn btn-sm">3</button>
+            <button class="join-item btn btn-sm">4</button>
+            <button class="join-item btn btn-sm">»</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Detalles y Calendario -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Calendario de Audiencias -->
+      <div class="lg:col-span-2">
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title text-xl mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Calendario de Audiencias
+            </h2>
+
+            <div class="overflow-x-auto">
+              <table class="table table-zebra">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Expediente</th>
+                    <th>Tipo</th>
+                    <th>Juzgado</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-semibold">15/02/2024</td>
+                    <td>10:30 AM</td>
+                    <td class="text-primary">EXP-2024-00158</td>
+                    <td>Audiencia Preliminar</td>
+                    <td>1° Juzgado Civil Comercial</td>
+                    <td><span class="badge badge-warning">Confirmada</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-semibold">08/02/2024</td>
+                    <td>09:00 AM</td>
+                    <td class="text-primary">EXP-2024-00087</td>
+                    <td>Audiencia de Pruebas</td>
+                    <td>Juzgado Laboral N°2</td>
+                    <td><span class="badge badge-warning">Confirmada</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-semibold">12/02/2024</td>
+                    <td>02:00 PM</td>
+                    <td class="text-primary">EXP-2024-00234</td>
+                    <td>Sesión de Mediación</td>
+                    <td>Juzgado de Familia</td>
+                    <td><span class="badge badge-info">Pendiente</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-semibold">20/02/2024</td>
+                    <td>11:00 AM</td>
+                    <td class="text-primary">EXP-2023-04567</td>
+                    <td>Vista de Sentencia</td>
+                    <td>2° Juzgado Civil</td>
+                    <td><span class="badge badge-error">Cancelada</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-semibold">25/02/2024</td>
+                    <td>03:00 PM</td>
+                    <td class="text-primary">EXP-2024-00389</td>
+                    <td>Conciliación</td>
+                    <td>Juzgado de Paz Letrado</td>
+                    <td><span class="badge badge-success">Programada</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card-actions justify-end mt-4">
+              <button class="btn btn-secondary btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Ver Calendario Completo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas por Materia -->
+      <div>
+        <div class="card bg-base-100 shadow-xl h-full">
+          <div class="card-body">
+            <h2 class="card-title text-xl mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Distribución por Materia
+            </h2>
+
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    Civil
+                  </span>
+                  <span class="font-semibold">42%</span>
+                </div>
+                <progress class="progress progress-blue w-full" value="42" max="100"></progress>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                    Comercial
+                  </span>
+                  <span class="font-semibold">28%</span>
+                </div>
+                <progress class="progress progress-purple w-full" value="28" max="100"></progress>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    Laboral
+                  </span>
+                  <span class="font-semibold">15%</span>
+                </div>
+                <progress class="progress progress-green w-full" value="15" max="100"></progress>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-pink-500"></div>
+                    Familiar
+                  </span>
+                  <span class="font-semibold">10%</span>
+                </div>
+                <progress class="progress progress-pink w-full" value="10" max="100"></progress>
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                    Administrativo
+                  </span>
+                  <span class="font-semibold">5%</span>
+                </div>
+                <progress class="progress progress-orange w-full" value="5" max="100"></progress>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary">156</div>
+              <div class="text-sm text-gray-500">Procesos Activos Totales</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Rápidas y Widgets -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Widget de Notificaciones -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            Notificaciones Recientes
+          </h2>
+
+          <div class="space-y-3">
+            <div class="alert alert-warning shadow-lg">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.22 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <div>
+                  <h3 class="font-bold">Vencimiento de Plazo!</h3>
+                  <div class="text-xs">Contestación de demanda - EXP-2024-00158</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info shadow-lg">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 h-6 w-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 class="font-bold">Nueva Actuación</h3>
+                  <div class="text-xs">Auto de mediación - EXP-2024-00234</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget de Acciones Rápidas -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Acciones Rápidas
+          </h2>
+
+          <div class="grid grid-cols-2 gap-3">
+            <button class="btn btn-outline btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Nueva Demanda
+            </button>
+
+            <button class="btn btn-outline btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Agendar Audiencia
+            </button>
+
+            <button class="btn btn-outline btn-accent">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Generar Informe
+            </button>
+
+            <button class="btn btn-outline btn-warning">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+              Recurso de Apelación
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget de Plazos -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Plazos por Vencer
+          </h2>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-error/10 rounded-lg">
+              <div>
+                <div class="font-semibold">Contestación</div>
+                <div class="text-sm">EXP-2024-00158</div>
+              </div>
+              <div class="text-error font-bold">3 días</div>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-warning/10 rounded-lg">
+              <div>
+                <div class="font-semibold">Presentación Pruebas</div>
+                <div class="text-sm">EXP-2024-00087</div>
+              </div>
+              <div class="text-warning font-bold">7 días</div>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-info/10 rounded-lg">
+              <div>
+                <div class="font-semibold">Mediación</div>
+                <div class="text-sm">EXP-2024-00234</div>
+              </div>
+              <div class="text-info font-bold">10 días</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer footer-center p-10 bg-base-200 text-base-content">
+    <div>
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <div class="bg-primary p-2 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold">Sistema Judicial Integrado</span>
+      </div>
+      <p class="max-w-2xl mx-auto">
+        Plataforma de gestión procesal integral para el seguimiento y control de litigios judiciales.
+        Cumplimiento normativo, transparencia y eficiencia procesal garantizada.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <span class="footer-title">Contacto</span>
+        <a class="link link-hover">📞 (01) 234-5678</a>
+        <a class="link link-hover">✉️ judicial&ascr;system.com</a>
+        <a class="link link-hover">🏢 Av. Justicia 456, Lima</a>
+      </div>
+
+      <div>
+        <span class="footer-title">Legal</span>
+        <a class="link link-hover">Términos de uso</a>
+        <a class="link link-hover">Política de privacidad</a>
+        <a class="link link-hover">Política de cookies</a>
+      </div>
+
+      <div>
+        <span class="footer-title">Soporte</span>
+        <a class="link link-hover">Centro de ayuda</a>
+        <a class="link link-hover">Manual de usuario</a>
+        <a class="link link-hover">Contactar soporte</a>
+      </div>
+    </div>
+
+    <div>
+      <p>Copyright © 2024 - Sistema Judicial Integrado v2.1</p>
+      <p class="text-sm opacity-70">Todos los derechos reservados</p>
+    </div>
+  </footer>
+</div>

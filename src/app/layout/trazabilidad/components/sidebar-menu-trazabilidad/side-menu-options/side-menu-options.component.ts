@@ -109,6 +109,13 @@ export class SideMenuOptionsComponent {
       route: '/app/calendario',
       roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'],
     },
+    {
+      icon: 'fa-solid fa-magnifying-glass-chart',
+      label: 'Trazabilidad',
+      sublabel: 'Accede al mapa en tiempo real',
+      route: '/app/trazabilidad',
+      roles: ['ADMIN', 'SECRETARIA'],
+    },
   ];
 
   get filteredMenu() {

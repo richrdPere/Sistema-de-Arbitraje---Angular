@@ -39,8 +39,6 @@ export class ParticipeService {
     return { headers };
   }
 
-
-
   /**
    * Manejo centralizado de errores HTTP
    */
@@ -62,7 +60,7 @@ export class ParticipeService {
     return this.http.post(`${this.url}`, data, this.getAuthHeaders());
   }
 
-  // Listar todos
+  // Listar con paginado y filtros
   getParticipesPaginado(filtros: any): Observable<any> {
     // return this.http.get<any[]>(`${this.url}`, this.getAuthHeaders()).pipe(catchError(this.handleError));
     let params = new HttpParams();
@@ -93,6 +91,12 @@ export class ParticipeService {
   // Eliminar
   eliminarParticipe(id: number): Observable<any> {
     return this.http.delete(`${this.url}/${id}`, this.getAuthHeaders()).pipe(catchError(this.handleError));
+  }
+
+  // Listado de participe
+  listaParticipes(): Observable<any>{
+    return this.http.get(`${this.url}/listado`, this.getAuthHeaders()).pipe(catchError(this.handleError));
+
   }
 
 

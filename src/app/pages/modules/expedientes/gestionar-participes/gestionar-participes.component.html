@@ -1,116 +1,519 @@
-<div class="p-6">
+@if (mostrarModal) {
+<div class="modal modal-open">
 
-  <h2 class="text-2xl font-bold mb-4">Designación de Árbitros</h2>
+  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg " [ngClass]="modalWidthClass">
 
-  <button class="btn btn-outline mb-6" (click)="router.navigate(['/app/expedientes'])">
-    ← Volver
-  </button>
-
-  <!-- LOADING -->
-  <ng-container *ngIf="loading; else contenido">
-    <div class="flex justify-center py-10">
-      <span class="loading loading-spinner loading-lg"></span>
-    </div>
-  </ng-container>
-
-  <ng-template #contenido>
-
-    <!-- EXPEDIENTE -->
-    <div class="card bg-base-200 p-4 mb-6 shadow">
-      <h3 class="font-semibold text-lg">
-        Expediente {{ expediente?.numero_expediente }}
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+      <!-- <h3 class="text-2xl font-semibold">{{ modoEdicion ? 'Editar Expediente' : 'Crear Nuevo Expediente' }}</h3> -->
+      <h3 class="text-xl font-semibold">
+        Gestión de Partícipes y Árbitros -
+        <span class="text-xl badge" [ngClass]="{
+      'badge-info': expedienteSeleccionado?.tipo === 'Arbitraje de Emergencia',
+      'badge-primary': expedienteSeleccionado?.tipo === 'Arbitraje Institucional',
+      'badge-accent': expedienteSeleccionado?.tipo === 'Arbitraje Ad Hoc'
+    }">
+          {{ expedienteSeleccionado?.tipo }}
+        </span>
       </h3>
-      <p><strong>Estado:</strong> {{ expediente?.estado }}</p>
-      <p><strong>Inicio:</strong> {{ expediente?.fecha_inicio | date:'dd/MM/yyyy' }}</p>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
     </div>
 
-    <!-- PARTICIPES -->
-    <div class="card bg-base-200 p-4 mb-6 shadow">
-      <h3 class="font-semibold text-lg mb-2">Partícipes</h3>
-      <ul class="list-disc ml-5">
-        <li *ngFor="let p of participes">
-          <strong>{{ p.rol_participe | uppercase }}:</strong>
-          {{ p.usuario.nombre }} {{ p.usuario.apellidos }}
-        </li>
-      </ul>
-    </div>
 
-    <!-- DESIGNACIÓN -->
-    <div class="card bg-base-100 p-6 shadow-md">
+    <!-- STEPPER -->
+    <ul class="steps w-full mt-4">
+      <li class="step" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+        Datos del Demandante
+      </li>
 
-      <h3 class="text-xl font-bold mb-4">Designar Árbitros</h3>
+      <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+        Datos del Demandado
+      </li>
 
-      <!-- TIPO -->
-      <label class="label font-semibold">Tipo de designación</label>
-      <select
-        class="select select-bordered w-full mb-6"
-        [(ngModel)]="tipoSeleccionado">
+      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+        Árbitros Asignados
+      </li>
+    </ul>
 
-        <option value="" disabled selected>Seleccione</option>
-        <option value="individual">Árbitro único</option>
-        <option value="tribunal">Tribunal arbitral (3 árbitros)</option>
-        <!-- <option value="aleatoria">Aleatoria</option> -->
-      </select>
 
-      <!-- ÁRBITRO ÚNICO -->
-      <div *ngIf="tipoSeleccionado === 'individual'" class="space-y-2">
-        <label class="font-semibold">Árbitro único</label>
-        <select class="select select-bordered w-full" [(ngModel)]="arbitroUnico">
-          <option value="" disabled selected>Seleccione árbitro</option>
-          <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-            {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-          </option>
-        </select>
+    <form [formGroup]="formDesginacion">
+
+      <!-- STEP 1: DATOS DEL DEMANDANTE -->
+      @if (currentStep === 1) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" formArrayName="demandantes">
+
+        <!-- TABLA SUPERIOR: DEMANDANTES DISPONIBLES -->
+        <div class="card bg-base-100 shadow">
+          <div class="card-body text-base-content">
+            <h2 class="text-lg font-semibold mb-2">Demandantes disponibles</h2>
+
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Nombre</th>
+                  <th>Rol</th>
+                  <th>Documento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of demandantesDisponibles">
+                  <td>
+                    <button class="btn btn-sm btn-warning" (click)="agregarDemandante(p)">
+                      <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                  </td>
+                  <td>
+                    {{ p.usuario?.nombre }}
+                    {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : '' }}
+                  </td>
+                  <td>{{ p.rol_participe }}</td>
+                  <td>{{ p.usuario?.documento_identidad }}</td>
+                </tr>
+
+                <tr *ngIf="demandantesDisponibles.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No hay demandantes disponibles
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TABLA INFERIOR: DEMANDANTES SELECCIONADOS -->
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="text-lg font-semibold mb-2">Demandantes seleccionados</h2>
+
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Nombre</th>
+                  <th>Rol</th>
+                  <th>Documento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of demandantesSeleccionados">
+                  <td>
+                    <button class="btn btn-sm btn-success" (click)="quitarDemandante(p)">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </td>
+                  <td>
+                    {{ p.usuario?.nombre }}
+                    {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : '' }}
+                  </td>
+                  <td>{{ p.rol_participe }}</td>
+                  <td>{{ p.usuario?.documento_identidad }}</td>
+                </tr>
+
+                <tr *ngIf="demandantesSeleccionados.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No se han agregado demandantes
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- STEP 2: DATOS DEL DEMANDADO -->
+      @if (currentStep === 2) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" formArrayName="demandados">
+
+        <!-- TABLA SUPERIOR: DEMANDADOS DISPONIBLES -->
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="text-lg font-semibold mb-2">Demandados disponibles</h2>
+
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Nombre</th>
+                  <th>Rol</th>
+                  <th>Documento</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let p of demandadosDisponibles">
+                  <td>
+                    <button class="btn btn-sm btn-warning" (click)="agregarDemandando(p)">
+                      <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                  </td>
+                  <td>
+                    {{ p.usuario?.nombre }}
+                    {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : '' }}
+                  </td>
+                  <td>{{ p.rol_participe }}</td>
+                  <td>{{ p.usuario?.documento_identidad }}</td>
+                </tr>
+
+                <tr *ngIf="demandadosDisponibles.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No hay demandados disponibles
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TABLA INFERIOR: DEMANDADOS SELECCIONADOS -->
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="text-lg font-semibold mb-2">Demandados seleccionados</h2>
+
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Nombre</th>
+                  <th>Rol</th>
+                  <th>Documento</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let p of demandadosSeleccionados">
+                  <td>
+                    <button class="btn btn-sm btn-success" (click)="quitarDemandando(p)">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </td>
+                  <td>
+                    {{ p.usuario?.nombre }}
+                    {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : '' }}
+                  </td>
+                  <td>{{ p.rol_participe }}</td>
+                  <td>{{ p.usuario?.documento_identidad }}</td>
+                </tr>
+
+                <tr *ngIf="demandadosSeleccionados.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No se han agregado demandados
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- VALIDACIÓN -->
+            <!-- <p *ngIf="demandadosFA.touched && demandadosFA.length === 0" class="text-error text-sm mt-2">
+              Debe asignar al menos un demandado
+            </p> -->
+          </div>
+        </div>
+
+      </div>
+      }
+
+
+      <!-- STEP 3: ARBITROS ASIGNADOS -->
+      @if (currentStep === 3) {
+
+      <!-- <div class="card bg-base-100 shadow" formGroupName="arbitros">
+
+        <div class="card-body text-base-content">
+
+
+          <ng-container *ngIf="loading; else contenido">
+            <div class="flex justify-center py-10">
+              <span class="loading loading-spinner loading-lg"></span>
+            </div>
+          </ng-container>
+
+
+          <ng-template #contenido>
+
+
+          </ng-template>
+
+        </div>
+      </div> -->
+
+      <div class="card bg-base-100 shadow" formGroupName="arbitros">
+        <div class="card-body text-base-content">
+
+          <!-- ARBITRAJE DE EMERGENCIA -->
+          @if (expedienteSeleccionado?.tipo === 'Arbitraje de Emergencia') {
+
+          <div class="space-y-4">
+            <h3 class="font-semibold text-lg">Designación de Árbitro de Emergencia</h3>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">Árbitro</span>
+              </label>
+
+              <select class="select select-bordered w-full  "
+                (change)="onSeleccionarArbitroEmergencia($any($event.target).value)">
+                <option value="" disabled selected>Seleccione un árbitro</option>
+                <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                  {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                </option>
+              </select>
+
+              <div class="mt-6">
+                <h4 class="font-semibold mb-2">Estado de la Designación</h4>
+
+                <table class="table table-zebra w-full h-20">
+                  <thead>
+                    <tr>
+                      <th>Árbitro</th>
+                      <th>Especialidad</th>
+                      <th>Estado</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @if (arbitroEmergenciaSeleccionado) {
+                    <tr>
+                      <td>
+                        {{ arbitroEmergenciaSeleccionado.usuario.nombre }}
+                        {{ arbitroEmergenciaSeleccionado.usuario.apellidos }}
+                      </td>
+
+                      <td>{{ arbitroEmergenciaSeleccionado.especialidad || '—' }}</td>
+
+                      <td>
+                        <span class="badge" [ngClass]="{
+              'badge-warning': arbitroEmergenciaSeleccionado.estado === 'PENDIENTE',
+              'badge-success': arbitroEmergenciaSeleccionado.estado === 'ACEPTADO',
+              'badge-error': arbitroEmergenciaSeleccionado.estado === 'RECHAZADO'
+            }">
+                          {{ arbitroEmergenciaSeleccionado.estado }}
+                        </span>
+                      </td>
+
+                      <td class="space-x-2">
+                        <button class="btn btn-xs btn-success"
+                          (click)="arbitroEmergenciaSeleccionado.estado = 'ACEPTADO'">
+                          Acepta
+                        </button>
+
+                        <button class="btn btn-xs btn-error"
+                          (click)="arbitroEmergenciaSeleccionado.estado = 'RECHAZADO'">
+                          Rechaza
+                        </button>
+                      </td>
+                    </tr>
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+
+
+            </div>
+          </div>
+          }
+
+          <!-- ARBITRAJE INSTITUCIONAL -->
+          @if (expedienteSeleccionado?.tipo === 'Arbitraje Institucional') {
+
+          <div class="space-y-6">
+            <h3 class="font-semibold text-lg">Tribunal Arbitral</h3>
+
+            <!-- Fila de selects -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              <!-- Árbitro Parte A -->
+              <div class="form-control">
+                <label class="label font-semibold">Árbitro de la Parte A</label>
+                <select class="select select-bordered w-full"
+                  (change)="seleccionarArbitroInstitucional('PARTE_A', $any($event.target).value)">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Árbitro Parte B -->
+              <div class="form-control">
+                <label class="label font-semibold">Árbitro de la Parte B</label>
+                <select class="select select-bordered w-full"
+                  (change)="seleccionarArbitroInstitucional('PARTE_B', $any($event.target).value)">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Árbitro Institucional -->
+              <div class="form-control">
+                <label class="label font-semibold">Árbitro Institucional</label>
+                <select class="select select-bordered w-full"
+                  (change)="seleccionarArbitroInstitucional('INSTITUCIONAL', $any($event.target).value)">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- Tabla de árbitros seleccionados -->
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full h-40">
+                <thead>
+                  <tr>
+                    <th>Árbitro</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (arbitrosFA.length > 0) {
+                  <tr *ngFor="let ctrl of arbitrosFA.controls">
+                    <td>
+                      {{
+                      getNombreArbitro(ctrl.value.arbitro_id)
+                      }}
+                    </td>
+
+                    <td class="font-semibold">
+                      {{ ctrl.value.rol }}
+                    </td>
+
+                    <td>
+                      <span class="badge badge-warning">
+                        {{ ctrl.value.estado }}
+                      </span>
+                    </td>
+
+                    <td class="space-x-2">
+                      <button class="btn btn-xs btn-success" (click)="actualizarEstadoArbitro(ctrl, 'ACEPTADO')">
+                        Acepta
+                      </button>
+
+                      <button class="btn btn-xs btn-error" (click)="actualizarEstadoArbitro(ctrl, 'RECHAZADO')">
+                        Rechaza
+                      </button>
+                    </td>
+                  </tr>
+                  }
+
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          }
+
+          <!-- ARBITRAJE AD HOC -->
+          @if (expedienteSeleccionado?.tipo === 'Arbitraje Ad Hoc') {
+
+          <div class="space-y-6">
+            <h3 class="font-semibold text-lg">Designación Ad Hoc</h3>
+
+            <label class="label font-semibold">Modalidad de Designación</label>
+            <select class="select select-bordered w-full mb-4" [(ngModel)]="tipoSeleccionado">
+              <option value="" disabled selected>Seleccione</option>
+              <option value="individual">Árbitro único</option>
+              <option value="tribunal">Tribunal arbitral</option>
+            </select>
+
+            <!-- Árbitro único -->
+            @if (tipoSeleccionado === 'individual') {
+            <div class="form-control">
+              <label class="label font-semibold">Árbitro Único</label>
+              <select class="select select-bordered w-full" [(ngModel)]="arbitroUnico">
+                <option value="" disabled selected>Seleccione</option>
+                <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                  {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                </option>
+              </select>
+            </div>
+            }
+
+            <!-- Tribunal -->
+            @if (tipoSeleccionado === 'tribunal') {
+            <div class="space-y-4">
+              <div class="form-control">
+                <label class="font-semibold">Árbitro Parte A</label>
+                <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandante">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-control">
+                <label class="font-semibold">Árbitro Parte B</label>
+                <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandado">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-control">
+                <label class="font-semibold">Árbitro Neutral</label>
+                <select class="select select-bordered w-full" [(ngModel)]="arbitroInstitucion">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                    {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            }
+          </div>
+          }
+
+        </div>
+
+      </div>
+      }
+
+      <!-- ACCIONES -->
+      <div class="flex justify-around gap-4 mt-6">
+
+        <!-- ATRÁS -->
+        <button class="btn btn-ghost" type="button" [disabled]="currentStep === 1" (click)="prevStep()">
+          Atrás
+        </button>
+
+        <!-- SIGUIENTE -->
+        @if (currentStep < 3) { <button class="btn btn-primary" type="button" (click)="nextStep()"
+          [disabled]="!puedeAvanzar()">
+          Siguiente
+          </button>
+          }
+
+          <!-- ASIGNAR -->
+          @else {
+          <!-- <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+          Cancelar
+        </button> -->
+
+          <button class="btn btn-success text-white" type="button" (click)="asignarAlExpediente()" [disabled]="
+        formDesginacion.invalid ||
+        demandantesFA.length === 0 ||
+        demandadosFA.length === 0 ||
+        arbitrosFA.length === 0
+      ">
+            Asignar Expediente
+          </button>
+          }
       </div>
 
-      <!-- TRIBUNAL -->
-      <div *ngIf="tipoSeleccionado === 'tribunal'" class="mt-6 space-y-4">
+    </form>
 
-        <div>
-          <label class="font-semibold">Árbitro de la Parte A</label>
-          <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandante">
-            <option value="" disabled selected>Seleccione</option>
-            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label class="font-semibold">Árbitro de la Parte B</label>
-          <select class="select select-bordered w-full" [(ngModel)]="arbitroDemandado">
-            <option value="" disabled selected>Seleccione</option>
-            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label class="font-semibold">Árbitro Institucional</label>
-          <select class="select select-bordered w-full" [(ngModel)]="arbitroInstitucion">
-            <option value="" disabled selected>Seleccione</option>
-            <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
-              {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
-            </option>
-          </select>
-        </div>
-
-      </div>
-
-      <!-- GUARDAR -->
-      <button
-        class="btn btn-primary w-full mt-8"
-        [disabled]="loading"
-        (click)="guardarDesignacion()">
-
-        Guardar Designación
-      </button>
-
-    </div>
-
-  </ng-template>
-
+  </div>
 </div>
-
-
+}

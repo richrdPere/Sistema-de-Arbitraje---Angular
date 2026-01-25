@@ -1,0 +1,142 @@
+<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+
+  <!-- Titulo -->
+  <h1 class="text-2xl font-bold mb-5 text-base-content ">Trazabilidad de Expedientes Arbitrales</h1>
+
+  <!-- Header -->
+  <div class="card bg-base-100 shadow-md mb-7">
+
+    <div class="p-6">
+
+      <!-- CONTENEDOR PRINCIPAL -->
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+        <!-- FILTROS -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+
+          <!-- BUSCADOR -->
+          <div class="relative w-full sm:w-96">
+            <input type="text" class="input input-bordered w-full pl-10" placeholder="Buscar por código de expediente"
+              [(ngModel)]="busqueda" />
+            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          </div>
+
+          <!-- FILTRO ESTADO -->
+          <select class="select select-bordered w-full sm:w-56" [(ngModel)]="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="INICIADO">Iniciado</option>
+            <option value="ARBITRO_DESIGNADO">Árbitro designado</option>
+            <option value="ACEPTADO">Aceptado</option>
+            <option value="INSTALADO">Instalado</option>
+            <option value="EN_TRAMITE">En trámite</option>
+            <option value="LAUDO_EMITIDO">Laudo emitido</option>
+            <option value="CERRADO">Cerrado</option>
+          </select>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Tabla -->
+
+  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+
+    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+
+      <!-- Header acciones -->
+      <div class="flex justify-between items-center p-5">
+
+        <!-- Selector de cantidad -->
+        <div class="flex items-center gap-2 text-sm">
+          <label>Mostrar:</label>
+
+          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+              {{ size }}
+            </option>
+          </select>
+
+          <span>items por página</span>
+        </div>
+
+        <!-- Botón -->
+        <!-- <div>
+          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
+            (click)="abrirModal()">
+            <i class="fa-solid fa-plus mr-1"></i>
+            Expediente
+          </button>
+        </div> -->
+
+      </div>
+
+      <!-- Tabla  -->
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Expediente</th>
+            <th>Partes</th>
+            <th>Estado procesal</th>
+            <th>Último movimiento</th>
+            <th>Documentos clave</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let exp of expedientesFiltrados">
+
+            <!-- Código -->
+            <td class="font-medium">
+              {{ exp.codigoExpediente }}
+            </td>
+
+            <!-- Partes -->
+            <td>
+              <div class="text-sm">
+                <p><b>Demandante:</b> {{ exp.demandante }}</p>
+                <p><b>Demandado:</b> {{ exp.demandado }}</p>
+              </div>
+            </td>
+
+            <!-- Estado -->
+            <td>
+              <span [class]="getBadgeEstado(exp.estadoProcesal)">
+                {{ exp.estadoProcesal }}
+              </span>
+            </td>
+
+            <!-- Último movimiento -->
+            <td class="text-sm">
+              {{ exp.ultimoMovimiento | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+
+            <!-- Checklist documentos -->
+            <td>
+              <ul class="text-xs">
+                <li>📄 Solicitud: {{ exp.tieneSolicitud ? '✔️' : '❌' }}</li>
+                <li>⚖️ Acta: {{ exp.tieneActa ? '✔️' : '❌' }}</li>
+                <li>📜 Laudo: {{ exp.tieneLaudo ? '✔️' : '❌' }}</li>
+              </ul>
+            </td>
+
+            <!-- Acciones -->
+            <td>
+              <button class="btn btn-xs btn-outline">
+                Ver expediente
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+
+
+</div>

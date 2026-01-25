@@ -46,9 +46,6 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
     this.modalWidthClass = map[size];
   }
 
-
-
-
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,

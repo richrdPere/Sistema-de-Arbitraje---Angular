@@ -56,6 +56,14 @@ export const mainRoutes: Routes = [
         loadComponent: () => import('../../pages/auth/hoja-vida/hoja-vida.component').then(m => m.HojaVidaComponent),
       },
       {
+        path: 'conciliaciones',
+        loadComponent: () => import('../../pages/auth/conciliaciones/conciliaciones.component').then(m => m.ConciliacionesComponent),
+      },
+      {
+        path: 'procesos_judiciales',
+        loadComponent: () => import('../../pages/auth/procesos-judiciales/procesos-judiciales.component').then(m => m.ProcesosJudicialesComponent),
+      },
+      {
         path: 'jprd',
         loadComponent: () => import('../../pages/auth/cajprd/cajprd.component').then(m => m.CajprdComponent),
       },

@@ -42,7 +42,7 @@ export class ParticipesComponent implements OnInit {
   totalItems = 0;
   totalPages = 0;
 
-    pageSizeOptions = [5, 10, 20, 50];
+  pageSizeOptions = [5, 10, 20, 50];
 
   // Filtros
   rolParticipeFiltro: string = '';
@@ -110,8 +110,7 @@ export class ParticipesComponent implements OnInit {
       search: this.search?.trim() || undefined,
     }).subscribe({
       next: (res) => {
-
-        console.log("RES: ", res)
+        console.log("PARTICIPES: ", res.data)
         this.participes = res.data;
         this.totalItems = res.total;
         this.totalPages = res.totalPages;

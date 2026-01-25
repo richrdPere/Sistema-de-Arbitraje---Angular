@@ -16,15 +16,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class VerDocumentosComponent implements OnInit {
 
-
   idExpediente!: number;
   documentos: any[] = [];
   loading = true;
   mensajeError = '';
   mensajeExito = '';
-  mostrarModal = false;
 
-  mostrarModalDocumento = false;
+  mostrarModal = false;
   expedienteSeleccionadoId!: number;
 
   // Paginado
@@ -49,6 +47,7 @@ export class VerDocumentosComponent implements OnInit {
 
   ngOnInit(): void {
     this.idExpediente = Number(this.route.snapshot.paramMap.get('id'));
+
     this.cargarDocumentos();
   }
 
@@ -84,21 +83,30 @@ export class VerDocumentosComponent implements OnInit {
   abrirModal() {
     this.mostrarModal = true;
     // this.expedienteSeleccionadoId = id;
-    this.mostrarModalDocumento = true;
+    this.mostrarModal = true;
   }
 
 
   abrirModalDocumento(id: number) {
     this.expedienteSeleccionadoId = id;
-    this.mostrarModalDocumento = true;
+    this.mostrarModal = true;
   }
 
   cerrarModalDocumento() {
-    this.mostrarModalDocumento = false;
-      this.mostrarModal = false;
+    this.mostrarModal = false;
+    this.mostrarModal = false;
   }
 
   volver() {
-    this.router.navigate(['/secretaria/expedientes']);
+    this.router.navigate(['/app/expedientes']);
+  }
+
+
+
+  eliminarDocumento(id: any) {
+    throw new Error('Method not implemented.');
+  }
+  verDocumento(doc: any) {
+    throw new Error('Method not implemented.');
   }
 }

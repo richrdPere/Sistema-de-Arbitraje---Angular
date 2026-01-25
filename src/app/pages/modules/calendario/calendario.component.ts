@@ -1,22 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CalendarioFormComponent } from "./calendario-form/calendario-form.component";
+import { CalendarioActividad } from 'src/app/interfaces/calendario.model';
+
+// Service
+import { CalendarioService } from 'src/app/services/calendario.service';
+import { DatePipe } from '@angular/common';
 
 // Interface
 interface CalendarEvent {
-  event_date: Date;
+  id: number;
   event_title: string;
-  event_theme: string;
-}
-
-interface CalendarEvent {
   event_date: Date;
-  event_title: string;
   event_theme: string;
+  descripcion?: string;
 }
 
 @Component({
   selector: 'app-calendario',
-  imports: [CalendarioFormComponent],
+  imports: [CalendarioFormComponent, DatePipe],
   templateUrl: './calendario.component.html',
 })
 export class CalendarioComponent implements OnInit {
@@ -26,6 +27,9 @@ export class CalendarioComponent implements OnInit {
   mostrarModal = false;
   modoEdicion = false;
   actividadSeleccionado: any | null = null;
+
+  actividades: CalendarioActividad[] = [];
+  events: CalendarEvent[] = [];
 
 
 
@@ -38,21 +42,89 @@ export class CalendarioComponent implements OnInit {
   emptyDays: number[] = [];
   numOfDays: number[] = [];
 
-  events: CalendarEvent[] = [
-    { event_date: new Date(2021, 9, 4), event_title: 'My Birthday :)', event_theme: 'red' },
-    { event_date: new Date(2021, 11, 25), event_title: 'Xmas Day', event_theme: 'green' },
-    { event_date: new Date(2021, 9, 31), event_title: 'Halloween', event_theme: 'yellow' },
-    { event_date: new Date(2021, 11, 31), event_title: 'New Years Eve', event_theme: 'yellow' }
-  ];
+  // events: CalendarEvent[] = [
+  //   { event_date: new Date(2021, 9, 4), event_title: 'My Birthday :)', event_theme: 'red' },
+  //   { event_date: new Date(2021, 11, 25), event_title: 'Xmas Day', event_theme: 'green' },
+  //   { event_date: new Date(2021, 9, 31), event_title: 'Halloween', event_theme: 'yellow' },
+  //   { event_date: new Date(2021, 11, 31), event_title: 'New Years Eve', event_theme: 'yellow' }
+  // ];
 
   get currentMonthName(): string {
     return new Date(this.year, this.month).toLocaleString('default', { month: 'long' });
   }
 
+  constructor(private calendarioService: CalendarioService) { }
+
+  // =====================================================
+  // INIT
+  // =====================================================
   ngOnInit(): void {
     this.getNoOfDays();
+    this.cargarActividades();
   }
 
+  // =====================================================
+  // API
+  // =====================================================
+  cargarActividades() {
+    this.calendarioService
+      .listarActividades({ estado: 'PROGRAMADO' })
+      .subscribe((resp: any) => {
+
+        console.log("ACTIVIDADES: ", resp);
+
+        this.actividades = resp.data ?? resp;
+        // this.mapearEventos();
+        this.events = this.actividades.map((item: any) => ({
+          id: item.id,
+          event_title: item.titulo,
+          event_date: this.parseFechaLocal(item.fecha_actividad),
+          event_theme: this.mapTipoActividad(item.tipo_actividad),
+          descripcion: item.descripcion
+        }));
+      });
+  }
+
+  parseFechaLocal(fechaIso: string): Date {
+    const [year, month, day] = fechaIso.substring(0, 10).split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  mapTipoActividad(tipo: string): string {
+    switch (tipo) {
+      case 'PLAZO':
+        return 'bg-red-100 border-red-400 text-red-700';
+      case 'AUDIENCIA':
+        return 'bg-blue-100 border-blue-400 text-blue-700';
+      default:
+        return 'bg-gray-100 border-gray-400 text-gray-700';
+    }
+  }
+
+  // =====================================================
+  // MAPEO ACTIVIDADES → EVENTOS
+  // =====================================================
+  // mapearEventos(): void {
+  //   this.events = this.actividades.map(act => ({
+  //     event_date: new Date(act.fecha_actividad),
+  //     event_title: act.titulo,
+  //     event_theme: this.obtenerTema(act.tipo_actividad),
+  //   }));
+  // }
+
+  obtenerTema(tipo: string): string {
+    switch (tipo) {
+      case 'AUDIENCIA': return 'red';
+      case 'PLAZO': return 'yellow';
+      case 'REUNION': return 'blue';
+      case 'NOTIFICACION': return 'green';
+      default: return 'purple';
+    }
+  }
+
+  // =====================================================
+  // CALENDARIO
+  // =====================================================
   isToday(date: number): boolean {
     const d = new Date(this.year, this.month, date);
     return this.today.toDateString() === d.toDateString();
@@ -90,6 +162,9 @@ export class CalendarioComponent implements OnInit {
     }
   }
 
+  // =====================================================
+  // MODAL
+  // =====================================================
   abrirModal() {
     this.modoEdicion = false;
     this.actividadSeleccionado = null;
@@ -97,7 +172,10 @@ export class CalendarioComponent implements OnInit {
   }
   cerrarModal() {
     this.mostrarModal = false;
+  }
 
+  onActividadCreada(): void {
+    this.cargarActividades();
   }
 
   addActivity() {

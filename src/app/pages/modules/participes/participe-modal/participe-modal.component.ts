@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 
+// Directives
+import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
+
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
 
@@ -12,7 +15,7 @@ import { Participe } from 'src/app/interfaces/users/participeUser';
 
 @Component({
   selector: 'participe-modal',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, UppercaseDirective],
   templateUrl: './participe-modal.component.html',
   styles: ``
 })
@@ -24,25 +27,34 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
   @Output() modalCerrado = new EventEmitter<void>();
   @Output() participeCreado = new EventEmitter<void>();
 
+  modalWidthClass = 'max-w-4xl'; // default
+
+  setModalWidth(size: 'sm' | 'md' | 'lg' | 'xl' | 'full') {
+    const map = {
+      sm: 'max-w-md',
+      md: 'max-w-xl',
+      lg: 'max-w-4xl',
+      xl: 'max-w-6xl',
+      full: 'max-w-full w-[95vw]'
+    };
+
+    this.modalWidthClass = map[size];
+  }
+
   formParticipe!: FormGroup;
+  isEntidad: boolean = false;
+
   cargando = false;
   mensajeError = '';
   mensajeExito = '';
 
   constructor(private fb: FormBuilder, private participeService: ParticipeService) {
-    this.formParticipe = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(3)]],
-      apellidos: ['', [Validators.required, Validators.minLength(3)]],
-      correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      cargo: ['', [Validators.required]],
-      rol_participe: ['', [Validators.required]],
-      rol: ['participe'],
-    });
+
   }
 
   ngOnInit(): void {
     this.inicializarFormulario();
+    this.setModalWidth('lg');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,14 +69,15 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellidos: ['', [Validators.required, Validators.minLength(3)]],
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      documento_identidad: ['', [Validators.required, Validators.pattern('^[0-8]+$')]],
+      tipo_documento: ['', [Validators.required]],
+      tipo_demandado: ['', Validators.required],
+      documento_identidad: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       cargo: ['', Validators.required],
       rol_participe: ['', Validators.required],
 
       // rol fijo según tu backend
-      rol: ['participe'],
+      // rol: ['participe'],
     });
   }
 
@@ -75,42 +88,18 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
       correo: participe.usuario?.correo,
       telefono: participe.usuario?.telefono,
       documento_identidad: participe.usuario?.documento_identidad,
+      tipo_documento: participe.usuario?.tipo_documento,
+      tipo_demandado: participe.tipo_demandado,
       cargo: participe.cargo,
       rol_participe: participe.rol_participe,
     });
+
+    // Ajustar estado entidad/persona
+    this.isEntidad = participe.tipo_demandado === 'entidad';
   }
-
-  guardar() {
-    if (this.formParticipe.invalid) {
-      Swal.fire('Atención', 'Por favor, completa todos los campos requeridos.', 'warning');
-      return;
-    }
-
-    if (this.modoEdicion && this.participeSeleccionado) {
-      this.actualizarParticipe();
-    } else {
-      this.crearParticipe();
-    }
-  }
-
-  private actualizarParticipe() {
-    const id = this.participeSeleccionado!.id_participe;
-    this.participeService.actualizarParticipe(id, this.formParticipe.value).subscribe({
-      next: () => {
-        Swal.fire('Actualizado', 'Partícipe actualizado correctamente', 'success');
-        this.participeCreado.emit();
-        this.cerrarModal();
-      },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo actualizar el partícipe', 'error');
-      },
-    });
-  }
-
 
   //  Enviar formulario
-  crearParticipe(): void {
+  crearOEditarParticipe(): void {
     if (this.formParticipe.invalid) {
       this.mensajeError = 'Por favor completa todos los campos requeridos.';
       return;
@@ -120,14 +109,19 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
     this.mensajeError = '';
     this.mensajeExito = '';
 
-    const data = this.formParticipe.value;
+    const participe: any = { ...this.formParticipe.value }
 
-    if (this.modoEdicion && this.participeSeleccionado) {
+    console.log('Formulario de participe enviado:', participe);
 
-      //  Editar
-      const id = this.participeSeleccionado.id_participe;
-      this.participeService.crearParticipe(data).subscribe({
-        next: (resp) => {
+    if (this.modoEdicion && this.participeSeleccionado?.id_participe) {
+
+      // ============================
+      // MODO EDICIÓN
+      // ============================
+      const id = this.participeSeleccionado?.id_participe;
+
+      this.participeService.actualizarParticipe(id, participe).subscribe({
+        next: () => {
           this.cargando = false;
           Swal.fire('Actualizado', 'El partícipe fue actualizado correctamente.', 'success');
           this.mensajeExito = ' Partícipe creado exitosamente.';
@@ -148,22 +142,50 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
           Swal.fire('Error', 'No se pudo actualizar el partícipe.', 'error');
         },
       });
-    } else {
-      //  Crear
-      this.participeService.crearParticipe(data).subscribe({
-        next: (resp) => {
-          this.cargando = false;
-          Swal.fire('Creado', 'Partícipe creado exitosamente.', 'success');
-          this.participeCreado.emit();
-          this.cerrarModal();
-        },
-        error: (err) => {
-          this.cargando = false;
-          console.error('Error al crear el partícipe:', err);
-          this.mensajeError = err.error?.message || 'Error al crear el partícipe.';
-        },
-      });
+
+      return;
     }
+
+    // ============================
+    // MODO CREACIÓN
+    // ============================
+    this.participeService.crearParticipe(participe).subscribe({
+      next: () => {
+        this.cargando = false;
+        Swal.fire('Creado', 'Partícipe creado exitosamente.', 'success');
+        this.participeCreado.emit();
+        this.cerrarModal();
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error al crear el partícipe:', err);
+        this.mensajeError = err.error?.message || 'Error al crear el partícipe.';
+      },
+    });
+  }
+
+  onTipoDemandadoChange() {
+    const tipo = this.formParticipe.get('tipo_demandado')?.value;
+
+    this.isEntidad = tipo === 'entidad';
+
+    // const nombre = this.formParticipe.get('nombre');
+    const apellidos = this.formParticipe.get('apellidos');
+
+    if (this.isEntidad) {
+      // Limpia campos de persona
+      apellidos?.clearValidators();
+      apellidos?.setValue('DATO NO PROPORCIONADO');
+      // apellidos?.updateValueAndValidity();
+    } else {
+      // Limpia el campo de entidad
+      apellidos?.setValidators([Validators.required, Validators.minLength(3)]);
+      apellidos?.setValue('');
+      // apellidos?.updateValueAndValidity();
+
+    }
+
+    apellidos?.updateValueAndValidity();
   }
 
   //  Cerrar el modal

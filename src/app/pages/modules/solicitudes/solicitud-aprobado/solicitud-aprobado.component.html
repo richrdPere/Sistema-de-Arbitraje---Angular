@@ -1,1 +1,75 @@
-<p>solicitud-aprobado works!</p>
+@if (visible && tramite) {
+<dialog class="modal modal-open text-base-content">
+  <div class="modal-box bg-base-100 rounded-2xl shadow-2xl max-w-md">
+
+    <h3 class="font-bold text-lg text-center mb-3">
+      Cambiar estado del trámite
+    </h3>
+
+    <p class="text-center text-base-content/80 mb-6">
+      ¿Deseas
+      <span class="font-semibold text-success">admitir</span> o
+      <span class="font-semibold text-error">desestimar</span>
+      la solicitud
+      <span class="text-primary font-bold">
+        {{ tramite?.numero_expediente }}
+      </span>?
+    </p>
+
+    <!-- BOTONES PRINCIPALES -->
+    @if (nuevoEstado === '') {
+    <div class="flex justify-center gap-3 mt-4">
+
+      <button class="btn btn-success btn-sm text-white"
+        (click)="confirmarAprobacion()">
+        <i class="fa-solid fa-check mr-1"></i>
+        Admitir
+      </button>
+
+      <button class="btn btn-error btn-sm text-white"
+        (click)="nuevoEstado = 'rechazada'">
+        <i class="fa-solid fa-xmark mr-1"></i>
+        No admitir
+      </button>
+
+      <button class="btn btn-ghost btn-sm" (click)="cerrarModal()">
+        Cancelar
+      </button>
+
+    </div>
+    }
+
+    <!-- RECHAZO -->
+    @if (nuevoEstado === 'rechazada') {
+    <div class="mt-4">
+
+      <label class="block font-semibold mb-2">Observaciones:</label>
+
+      <textarea
+        [(ngModel)]="razonRechazo"
+        class="textarea textarea-bordered w-full h-28"
+        placeholder="Describe brevemente los motivos del rechazo...">
+      </textarea>
+
+      <div class="flex justify-center gap-3 mt-4">
+
+        <button class="btn btn-error btn-sm text-white"
+          [disabled]="!razonRechazo"
+          (click)="confirmarRechazo()">
+          Confirmar Rechazo
+        </button>
+
+        <button class="btn btn-ghost btn-sm"
+          (click)="nuevoEstado = ''; razonRechazo = ''">
+          Volver
+        </button>
+
+      </div>
+
+    </div>
+    }
+
+  </div>
+</dialog>
+}
+

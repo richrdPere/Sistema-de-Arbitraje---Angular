@@ -42,6 +42,6 @@ export class VerHistorialComponent implements OnInit {
   }
 
   volver() {
-    this.router.navigate(['/secretaria/expedientes']);
+    this.router.navigate(['/app/expedientes']);
   }
 }

@@ -1,98 +1,128 @@
 @if (mostrarModal) {
 <div class="modal modal-open">
-  <div class="modal-box max-w-3xl">
+  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg" [ngClass]="modalWidthClass">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="font-bold text-xl">
-        Detalle del Trámite
-      </h3>
-      <button class="btn btn-sm btn-circle btn-ghost" (click)="cerrarModal()">✕</button>
+    <!-- ================= HEADER ================= -->
+    <div class="flex justify-between items-start gap-4 mb-6">
+      <div>
+        <h3 class="text-2xl font-bold text-base-content">
+          Detalle del Trámite
+        </h3>
+        <p class="text-sm text-base-content/60">
+          Información completa del expediente
+        </p>
+      </div>
+
+
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
+      <!-- <button class="btn btn-sm btn-circle btn-ghost hover:bg-error/10 hover:text-error" (click)="cerrarModal()">
+        ✕
+      </button> -->
     </div>
 
-    <!-- Contenido -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+    <!-- ================= INFO GRID ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
 
-      <!-- Número expediente -->
-      <div>
-        <p class="text-gray-500">N° Expediente</p>
-        <p class="font-medium text-primary">
+      <!-- N° Expediente -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          N° Expediente
+        </p>
+        <p class="font-semibold text-primary text-lg mt-1">
           {{ tramite.numero_expediente }}
         </p>
       </div>
 
       <!-- Tipo -->
-      <div>
-        <p class="text-gray-500">Tipo</p>
-        <p class="font-medium">
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Tipo
+        </p>
+        <p class="font-medium mt-1">
           {{ tramite.tipo }}
         </p>
       </div>
 
       <!-- Estado -->
-      <div>
-        <p class="text-gray-500">Estado</p>
-        <span class="badge badge-soft font-semibold" [ngClass]="badgeEstadoClass">
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60 mb-1">
+          Estado
+        </p>
+        <span class="badge badge-lg font-semibold px-4" [ngClass]="badgeEstadoClass">
           {{ tramite.estado | titlecase }}
         </span>
       </div>
 
       <!-- Etapa procesal -->
-      <div>
-        <p class="text-gray-500">Etapa Procesal</p>
-        <p class="font-medium">
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Etapa procesal
+        </p>
+        <p class="font-medium mt-1">
           {{ tramite.etapa_procesal }}
         </p>
       </div>
 
       <!-- Fecha inicio -->
-      <div>
-        <p class="text-gray-500">Fecha de Inicio</p>
-        <p class="font-medium">
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Fecha de inicio
+        </p>
+        <p class="font-medium mt-1">
           {{ tramite.fecha_inicio | date:'dd/MM/yyyy HH:mm' }}
         </p>
       </div>
 
       <!-- Condición -->
-      <div>
-        <p class="text-gray-500">Condición</p>
-        <span class="badge badge-outline">
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60 mb-1">
+          Condición
+        </p>
+        <span class="badge badge-outline badge-sm">
           {{ tramite.condicion }}
         </span>
       </div>
 
       <!-- Solicitante -->
-      <div class="md:col-span-2">
-        <p class="text-gray-500">Solicitante</p>
-        <p class="font-medium">
+      <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Solicitante
+        </p>
+        <p class="font-medium mt-1">
           {{ tramite.solicitante }}
         </p>
       </div>
 
       <!-- Correo -->
-      <div class="md:col-span-2">
-        <p class="text-gray-500">Correo</p>
-        <p class="font-medium">
+      <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Correo electrónico
+        </p>
+        <p class="font-medium break-all">
           {{ tramite.correo }}
         </p>
       </div>
 
     </div>
 
-    <!-- Documento -->
+    <!-- ================= DOCUMENTO ================= -->
     @if (tramite.documento) {
-    <div class="mt-6">
-      <p class="text-gray-500 mb-1">Documento adjunto</p>
-      <a [href]="tramite.documento" target="_blank" class="btn btn-outline btn-sm gap-2">
+    <div class="mt-8 p-5 rounded-xl border border-dashed border-primary/40 bg-primary/5">
+      <p class="text-sm font-semibold mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-paperclip text-primary"></i>
+        Documento adjunto
+      </p>
+
+      <a [href]="tramite.documento" target="_blank" class="btn btn-outline btn-primary btn-sm gap-2">
         <i class="fa-solid fa-file-pdf"></i>
         Ver documento
       </a>
     </div>
     }
 
-    <!-- Footer -->
-    <div class="modal-action mt-6">
-      <button class="btn btn-outline" (click)="cerrarModal()">
+    <!-- ================= FOOTER ================= -->
+    <div class="modal-action mt-8">
+      <button class="btn btn-outline btn-wide" (click)="cerrarModal()">
         Cerrar
       </button>
     </div>

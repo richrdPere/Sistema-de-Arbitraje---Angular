@@ -57,7 +57,7 @@ export class NavbarMainComponent {
 
     {
       label: 'Proceso\nJudiciales',
-      path: '/proceso_judiciales',
+      path: '/procesos_judiciales',
       activeClass: 'bg-info text-base-100'
     },
 

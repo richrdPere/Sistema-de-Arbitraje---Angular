@@ -14,14 +14,16 @@ import { AuthService } from 'src/app/services/auth.service';
 // Pipes
 import { DatePipe } from '@angular/common';
 import { SolicitudDetailComponent } from "./solicitud-detail/solicitud-detail.component";
+import { SolicitudAprobadoComponent } from "./solicitud-aprobado/solicitud-aprobado.component";
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, SolicitudDetailComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, SolicitudDetailComponent, SolicitudAprobadoComponent],
   templateUrl: './solicitudes.component.html',
   styles: ``
 })
 export class SolicitudesComponent implements OnInit {
+
 
 
   // Variables
@@ -115,6 +117,7 @@ export class SolicitudesComponent implements OnInit {
 
 
 
+
   constructor(
     private tramiteService: TramiteMPVService,
     private expedientesService: ExpedientesService,
@@ -137,7 +140,7 @@ export class SolicitudesComponent implements OnInit {
   //  Cargar trámites usando el nuevo service con filtros
   // ======================================================
   cargarTramites(): void {
-    console.log('PAGE:', this.page, 'LIMIT:', this.limit);
+    // console.log('PAGE:', this.page, 'LIMIT:', this.limit);
     this.loading = true;
 
     const filtros: any = {
@@ -159,8 +162,27 @@ export class SolicitudesComponent implements OnInit {
     this.tramiteService.listarTramites(filtros).subscribe({
       next: (resp) => {
 
-        console.log('Respuesta trámites:', resp);
+        console.log('Trámites cargados:', resp);
+
+
         const tramites = resp.data ?? [];
+
+
+
+        // ================================
+        // 1. Paginación REAL (BACKEND MANDA)
+        // ================================
+        this.totalItems = resp.total;
+        this.totalPages = resp.totalPages;
+
+        // ================================
+        // 2. AJUSTE AUTOMÁTICO DE PÁGINA
+        // ================================
+        if (this.page > this.totalPages && this.totalPages > 0) {
+          this.page = this.totalPages;
+          this.cargarTramites(); //  recargar con página válida
+          return;
+        }
 
         // Clasificación por estado
         this.solicitudes = tramites.filter(t => t.estado === 'pendiente');
@@ -170,8 +192,8 @@ export class SolicitudesComponent implements OnInit {
 
         // Paginación
         // this.page = resp.page;
-        this.totalPages = resp.totalPages;
-        this.totalItems = resp.total;
+        // this.totalPages = resp.totalPages;
+        // this.totalItems = resp.total;
 
         this.loading = false;
       },
@@ -223,28 +245,27 @@ export class SolicitudesComponent implements OnInit {
 
   }
 
+  abrirModalEstado(tramite: any) {
+    this.tramiteSeleccionado = tramite;
+    this.tipoModal = 'estado';
+  }
+
   abrirModal(solicitud: any) {
     this.tramiteSeleccionado = solicitud;
-    this.nuevoEstado = '';
-    this.razonRechazo = '';
-    // this.modalVisible = true;
-    // this.razonRechazo = ''; // limpiar cada vez que se abra el modal
+    this.tipoModal = 'estado';
   }
 
   cerrarModal() {
     this.tipoModal = null;
-    // this.modalVisible = false;
+
     this.tramiteSeleccionado = null;
     this.tramiteDetalle = null;
-    // this.nuevoEstado = '';
-    // this.razonRechazo = '';
+
   }
 
   verDetalle(tramite: any) {
-
     this.tramiteDetalle = tramite;
-    // this.mostrarDetalle = true;
-    this.tipoModal = 'detalle';
+    this.mostrarDetalle = true;
   }
 
   cerrarDetalle() {
@@ -262,24 +283,17 @@ export class SolicitudesComponent implements OnInit {
     window.open(url, "_blank");
   }
 
-  aprobarSolicitud(item: any) {
-    console.log("Aprobar solicitud:", item);
-    // Lógica para aprobar solicitud
+  aprobarSolicitud() {
+    this.nuevoEstado = 'aprobada';
+    this.confirmarCambioEstado();
   }
 
+  rechazarSolicitud(motivo: string) {
+    this.nuevoEstado = 'rechazada';
+    this.razonRechazo = motivo;
+    this.confirmarCambioEstado();
+  }
 
-
-  // siguientePagina(): void {
-  //   if (this.paginaActual < this.totalPaginas) {
-  //     this.cargarTramites(this.paginaActual + 1);
-  //   }
-  // }
-
-  // paginaAnterior(): void {
-  //   if (this.paginaActual > 1) {
-  //     this.cargarTramites(this.paginaActual - 1);
-  //   }
-  // }
 
   // ======================================================
   //  Cambiar estado del trámite + expediente
@@ -293,7 +307,7 @@ export class SolicitudesComponent implements OnInit {
     // ================================
     // 1. Preparamos payload
     // ================================
-    const payload = {
+    const payload: any = {
       estado: nuevoEstadoTramite,
       id_expediente: tramite.id_expediente,
       usuario_responsable: this.usuario?.nombre || 'Administrador del sistema',
@@ -303,6 +317,10 @@ export class SolicitudesComponent implements OnInit {
       nombre_solicitante: tramite.solicitante,
       // correo_asociado: { ... }   <-- si luego usas webhooks, aquí entra
     };
+
+    if (nuevoEstadoTramite === 'rechazada') {
+      payload.observaciones = this.razonRechazo;
+    }
 
     // ================================
     // 2. Loading inicial
@@ -320,11 +338,10 @@ export class SolicitudesComponent implements OnInit {
     this.tramiteService.actualizarEstado(tramite.id, payload)
       .subscribe({
         next: () => {
-          // console.log(` Trámite ${tramite.id} actualizado a: ${nuevoEstadoTramite}`);
+          // const totalAntes = this.totalItems;
 
-          const expedienteId = tramite.expediente_id;
-          const nuevoEstadoExpediente =
-            nuevoEstadoTramite === 'aprobada' ? 'En trámite' : 'Suspendido';
+          const expedienteId = tramite.id_expediente;
+
 
           if (!expedienteId) {
             Swal.fire({
@@ -340,11 +357,28 @@ export class SolicitudesComponent implements OnInit {
           // ================================
           // 4. Actualizamos EXPEDIENTE
           // ================================
+          const nuevoEstadoExpediente =
+            nuevoEstadoTramite === 'aprobada' ? 'En trámite' : 'Suspendido';
+
+          // ================================
+          // 5. ACTUALIZAR EXPEDIENTE
+          // ================================
+
           this.expedientesService.actualizarExpediente(expedienteId, {
             estado: nuevoEstadoExpediente
           })
             .subscribe({
               next: () => {
+                // ================================
+                //  REAJUSTE DE PAGINACIÓN
+                // ================================
+                // const totalDespues = totalAntes - 1;
+                // const nuevasTotalPages = Math.ceil(totalDespues / this.limit);
+
+                // if (this.page > nuevasTotalPages) {
+                //   this.page = nuevasTotalPages > 0 ? nuevasTotalPages : 1;
+                // }
+                // ================================
                 Swal.fire({
                   icon: nuevoEstadoTramite === 'aprobada' ? 'success' : 'error',
                   title:
@@ -358,8 +392,11 @@ export class SolicitudesComponent implements OnInit {
                 });
 
                 this.cerrarModal();
-                this.cargarTramites();
                 this.razonRechazo = '';
+
+
+
+                this.cargarTramites();
               },
 
               error: (err) => {

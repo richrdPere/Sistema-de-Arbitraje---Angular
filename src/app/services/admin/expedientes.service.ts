@@ -41,17 +41,31 @@ export class ExpedientesService {
   // ===========================
   // 2.- LISTAR TODOS LOS EXPEDIENTES
   // ===========================
-  listarExpedientes(rol: string): Observable<any> {
-    const params = new HttpParams().set('rol', rol);
+  listarExpedientes(filters: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    estado?: string;
+    tipo?: string;
+    mes?: number;
+    anio?: number;
+    rol?: string;
+  }): Observable<any> {
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
 
     const headers = this.getAuthHeaders().headers;
 
-    return this.http.get(`${this.url}/`, { params, headers });
+    return this.http.get(`${this.url}`, {
+      params,
+      headers,
+    });
   }
-
-  // getExpedientes(): Observable<Expediente[]> {
-  //   return this.http.get<Expediente[]>(`${this.url}`);
-  // }
 
   // ===========================
   // 3.- BUSCAR EXPEDIENTE
@@ -91,6 +105,10 @@ export class ExpedientesService {
   // *****************************************************
   //  PARTICIPES
   // *****************************************************
+  asignarParticipesYDesignacion(expediente_id: number, payload: any) {
+    return this.http.post(`${this.url}/${expediente_id}/designacion`, payload, this.getAuthHeaders());
+  }
+
   agregarParticipante(idExpediente: number, data: any): Observable<any> {
     return this.http.post(`${this.url}/${idExpediente}/participes`, data, this.getAuthHeaders());
   }

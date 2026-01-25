@@ -19,20 +19,21 @@ import iziToast from 'izitoast';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
 export class ExpedientesComponent {
-  anularExpediente(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
+
 
   // Expedientes
   expedientes: any = [];
+
+  searchTimeout: any;
 
 
   // =========================
@@ -110,7 +111,7 @@ export class ExpedientesComponent {
   }
 
   cambiarLimite() {
-    this.limit = Number(this.limit);
+    // this.limit = Number(this.limit);
     this.page = 1;
     this.cargarExpedientes();
   }
@@ -194,12 +195,7 @@ export class ExpedientesComponent {
     this.page = 1; // reinicia paginación
 
     this.cargarExpedientes(
-    //   {
-    //   mes: this.filtroMes || undefined,
-    //   anio: this.filtroAnio || undefined,
-    //   search: this.filtroSearch?.trim() || undefined,
-    // }
-  );
+    );
   }
 
 
@@ -216,16 +212,42 @@ export class ExpedientesComponent {
 
   // Ejemplo de funciones base:
   verDocumentos(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
-  gestionarParticipes(exp: any) {
-    this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);
+
+  gestionarParticipesModal(exp: any) {
+    // this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);
+
+    console.log("GES. PARTICIPES: ", exp);
+    this.expedienteSeleccionado = exp;
+    this.mostrarModalParticipes = true;
+
   }
 
+  cerrarModalParticipes() {
+    this.mostrarModalParticipes = false;
+    this.expedienteSeleccionado = null;
+  }
+
+
   verHistorial(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/historial`]); }
+
   editarExpediente(exp: Expediente): void {
+
+    console.log("EDITANDO EXP: ", exp)
+
     this.modoEdicion = true;
     this.expedienteSeleccionado = exp;
     this.mostrarModal = true;
   }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      this.page = 1;
+      this.cargarExpedientes();
+    }, 200);
+  }
+
 
   // =========================================================
   // 1.- LOAD EXPDIENTES
@@ -233,14 +255,28 @@ export class ExpedientesComponent {
   cargarExpedientes() {
     this.loading = true;
 
-    this.expedienteService.listarExpedientes('secretaria').subscribe({
-      next: (data) => {
-        this.expedientes = data;
+    console.log("MES: ", this.filtroMes);
+    console.log("ANIO: ", this.filtroAnio);
+
+    this.expedienteService.listarExpedientes({
+      page: this.page,
+      limit: this.limit,
+      search: this.filtroSearch?.trim() || undefined,
+      mes: this.filtroMes || undefined,
+      anio: this.filtroAnio || undefined,
+      rol: this.rol || 'secretaria',
+    }).subscribe({
+      next: (resp) => {
+        this.expedientes = resp.data;
+        this.totalItems = resp.total;
+        this.totalPages = resp.totalPages;
+        this.currentPage = resp.page;
         this.loading = false;
       },
       error: (err) => {
         console.error('Error al cargar expedientes:', err);
         this.loading = false;
+        this.errorMessage = 'Error al cargar los expedientes';
       },
     });
   }
@@ -264,9 +300,12 @@ export class ExpedientesComponent {
     }
   }
 
-  cerrarModalParticipes() {
-    this.mostrarModalParticipes = false;
-    this.expedienteSeleccionado = null;
+
+
+
+
+  anularExpediente(arg0: any) {
+    throw new Error('Method not implemented.');
   }
 
 }

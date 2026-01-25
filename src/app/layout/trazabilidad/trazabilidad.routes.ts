@@ -47,6 +47,13 @@ export const trazabilidadRoutes: Routes = [
       //  Otros módulos
       // ----------------------------
       {
+        path: 'trazabilidad',
+        loadComponent: () =>
+          import('../../pages/modules/trazabilidad/trazabilidad.component')
+            .then(m => m.TrazabilidadComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
+      },
+      {
         path: 'participes',
         loadComponent: () =>
           import('../../pages/modules/participes/participes.component')
@@ -60,7 +67,7 @@ export const trazabilidadRoutes: Routes = [
             .then(m => m.DesignacionesComponent),
         data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
       },
-       {
+      {
         path: 'acta-instalacion',
         loadComponent: () =>
           import('../../pages/modules/acta-instalacion/acta-instalacion.component')
@@ -114,7 +121,7 @@ export const trazabilidadRoutes: Routes = [
         loadComponent: () =>
           import('../../pages/modules/laudos/laudos.component')
             .then(m => m.LaudosComponent),
-        data: { roles: ['ADMIN','ARBITRO'] }
+        data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'solicitudes',

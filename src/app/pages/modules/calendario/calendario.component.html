@@ -45,16 +45,10 @@
     </div>
 
     <!-- Modal -->
-    <calendario-form
-    [mostrarModal]="mostrarModal"
-    [modoEdicion]="modoEdicion"
-
-    [actividadSeleccionado]="actividadSeleccionado"
-    (modalCerrado)="cerrarModal()"
-    (actividadCreado)="events">
-
+    <calendario-form [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
+      [actividadSeleccionado]="actividadSeleccionado" (modalCerrado)="cerrarModal()"
+      (actividadCreado)="onActividadCreada()">
     </calendario-form>
-
   </div>
 
   <!-- calendar.component.html -->
@@ -101,11 +95,12 @@
           <div class="text-sm font-bold">{{ date }}</div>
 
           @for (event of events; track $index) {
-          <div class="absolute top-6 left-0 right-0 px-1">
+          <div class="mt-1 w-full space-y-1">
             @if (event.event_date.getDate() === date && event.event_date.getMonth() === month) {
             <div class="text-[10px] sm:text-xs rounded px-1 py-0.5 border text-center truncate"
               [class]="eventClass(event.event_theme)">
               {{ event.event_title }}
+              <p>{{event.event_date | date}}</p>
             </div>
             }
           </div>

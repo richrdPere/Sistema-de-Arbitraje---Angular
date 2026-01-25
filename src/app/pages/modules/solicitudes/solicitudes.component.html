@@ -16,91 +16,14 @@
         <h2 class="text-2xl font-bold text-base-content">Solicitudes Pendientes</h2>
       </div>
 
-      <!-- Modal -->
-      @if (tipoModal === 'estado') {
-      <dialog class="modal modal-open text-base-content">
-        <div class="modal-box bg-base-100 rounded-2xl shadow-2xl max-w-md transition-all duration-300">
-          <h3 class="font-bold text-lg text-center mb-3">Cambiar estado del trámite</h3>
 
-          <p class="text-center text-base-content/80 mb-6">
-            ¿Deseas
-            <span class="font-semibold text-success">admitir</span> o
-            <span class="font-semibold text-error">desestimar</span>
-            la solicitud
-            <span class="text-primary font-bold">{{ tramiteSeleccionado?.numero_expediente }}</span>?
-          </p>
-
-          <!-- ============================= -->
-          <!-- 1. BOTONES PRINCIPALES        -->
-          <!-- ============================= -->
-
-          @if (nuevoEstado === '') {
-          <div class="flex justify-center gap-3 mt-4">
-
-            <!-- ADMITIR -->
-            <button class="btn btn-success btn-sm text-white"
-              (click)="nuevoEstado = 'aprobada'; confirmarCambioEstado()">
-              <i class="fa-solid fa-check mr-1"></i>
-              Admitir
-            </button>
-
-            <!-- RECHAZAR: SOLO CAMBIA DE ESTADO, NO ENVÍA AL BACKEND -->
-            <button class="btn btn-error btn-sm text-white" (click)="nuevoEstado = 'rechazada';
-
-              ">
-              <i class="fa-solid fa-xmark mr-1"></i>
-              No admitir
-            </button>
-
-            <button class="btn btn-ghost btn-sm" (click)="cerrarModal()">
-              <i class="fa-solid fa-ban mr-1"></i>
-              Cancelar
-            </button>
-          </div>
-          }
-
-
-          <!-- ============================= -->
-          <!-- 2. TEXTAREA PARA RECHAZO     -->
-          <!-- ============================= -->
-          @if (nuevoEstado === 'rechazada') {
-
-          <div class="mt-4">
-
-            <label class="block font-semibold mb-2">Observaciones:</label>
-
-            <textarea [(ngModel)]="razonRechazo" placeholder="Describe brevemente los motivos del rechazo..."
-              class="textarea textarea-bordered w-full h-28">
-            </textarea>
-
-            <div class="flex justify-center gap-3 mt-4">
-
-              <!-- CONFIRMAR RECHAZO: AQUÍ recién llama al backend -->
-              <button class="btn btn-error btn-sm text-white" [disabled]="!razonRechazo"
-                (click)="confirmarCambioEstado()">
-                <i class="fa-solid fa-xmark mr-1"></i>
-                Confirmar Rechazo
-              </button>
-
-              <button class="btn btn-ghost btn-sm" (click)="nuevoEstado = ''; razonRechazo = ''">
-                Volver
-              </button>
-
-            </div>
-
-          </div>
-          }
-        </div>
-      </dialog>
-
-
+      <!-- MODALES -->
       <solicitud-detail [mostrarModal]="mostrarDetalle" [tramite]="tramiteDetalle" (cerrar)="cerrarDetalle()">
       </solicitud-detail>
 
-
-      <form method="dialog" class="modal-backdrop bg-black/40" (click)="cerrarModal()"></form>
-      }
-
+      <solicitud-aprobado [visible]="tipoModal === 'estado'" [tramite]="tramiteSeleccionado" (cerrar)="cerrarModal()"
+        (aprobar)="aprobarSolicitud()" (rechazar)="rechazarSolicitud($event)">
+      </solicitud-aprobado>
 
       <!-- CONTENEDOR PRINCIPAL -->
       <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
@@ -204,7 +127,8 @@
                   </button>
 
                   <!-- Aprobar solicitud -->
-                  <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal(solicitud)" title="Aprobar solicitud">
+                  <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal(solicitud)"
+                    title="Aprobar solicitud">
                     <i class="fa-regular fa-circle-check"></i>
                   </button>
                 </div>
@@ -267,15 +191,6 @@
         <option value="">Todos los tipos</option>
         <option *ngFor="let t of tiposTramite" [value]="t">{{ t }}</option>
       </select>
-
-      <!-- Filtro Estado -->
-      <!-- <select class="select select-bordered h-11 bg-base-100 text-base-content" [(ngModel)]="filtroEstado"
-        (change)="aplicarFiltros()">
-        <option value="">Todos los estados</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="aprobada">Aprobada</option>
-        <option value="rechazada">Rechazada</option>
-      </select> -->
 
       <!-- Tabla -->
       @if (!loading && solicitudesAprobadas.length > 0) {
