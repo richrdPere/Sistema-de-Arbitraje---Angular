@@ -1,30 +1,25 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SubirDocumentosComponent } from "./subir-documentos/subir-documentos.component";
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Service
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 
-
 @Component({
-  selector: 'app-ver-documentos',
-  imports: [CommonModule, FormsModule, DatePipe, SubirDocumentosComponent],
-  templateUrl: './ver-documentos.component.html',
+  selector: 'app-documentos',
+  imports: [CommonModule, FormsModule, DatePipe],
+  templateUrl: './documentos.component.html',
+  styles: ``
 })
-export class VerDocumentosComponent implements OnInit {
+export class DocumentosComponent {
 
   idExpediente!: number;
   documentos: any[] = [];
   loading = true;
-  mensajeError = '';
-  mensajeExito = '';
 
   mostrarModal = false;
-  expedienteSeleccionadoId!: number;
 
   // Paginado
   page = 1;
@@ -45,6 +40,7 @@ export class VerDocumentosComponent implements OnInit {
     private documentoService: DocumentoService,
     private router: Router
   ) { }
+
 
 
   ngOnInit(): void {
@@ -80,57 +76,12 @@ export class VerDocumentosComponent implements OnInit {
     this.cargarDocumentos();
   }
 
-
   onFiltroChange() {
     throw new Error('Method not implemented.');
   }
-  abrirModal() {
-    this.mostrarModal = true;
-    // this.expedienteSeleccionadoId = id;
-    this.mostrarModal = true;
-  }
-
-
-  abrirModalDocumento(id: number) {
-    this.expedienteSeleccionadoId = id;
-    this.mostrarModal = true;
-  }
-
-  cerrarModalDocumento() {
-    this.mostrarModal = false;
-    this.mostrarModal = false;
-  }
 
   volver() {
-    this.router.navigate(['/app/expedientes']);
-  }
-
-  eliminarDocumento(id: any) {
-    Swal.fire({
-      title: '¿Eliminar documento?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.documentoService.eliminarDocumento(id).subscribe({
-          next: () => {
-            Swal.fire({ icon: 'success', title: 'Documento eliminado correctamente' });
-            this.cargarDocumentos();
-          },
-          error: (err) => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error al eliminar documento',
-              text: err.error?.message || 'Error inesperado',
-            });
-          },
-        });
-      }
-    });
+    this.router.navigate(['/app/trazabilidad']);
   }
 
   verDocumento(doc: any) {
@@ -142,4 +93,5 @@ export class VerDocumentosComponent implements OnInit {
     const url = doc.url_s3; // debe ser un link válido (https://...)
     window.open(url, "_blank");
   }
+
 }

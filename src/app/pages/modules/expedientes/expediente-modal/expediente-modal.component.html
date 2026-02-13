@@ -38,11 +38,15 @@
             <div class="md:col-span-1">
               <label class="block text-sm font-semibold mb-1">Tipo de Arbitraje</label>
               <select formControlName="tipo" class="select select-bordered w-full">
-                <option value="" disabled>Seleccione arbitraje...</option>
+                <option [ngValue]="null" disabled>Seleccione arbitraje...</option>
                 <option value="Arbitraje Institucional">ARB. INSTITUCIONAL</option>
                 <option value="Arbitraje de Emergencia">ARB. DE EMERGENCIA</option>
                 <option value="Arbitraje Ad Hoc">ARB. AD HOC</option>
               </select>
+
+               @if (f['tipo'].invalid && f['tipo'].touched) {
+              <small class="text-error text-xs">Seleccione el tipo de arbitraje</small>
+              }
             </div>
 
             <!-- Título (2/3) -->
@@ -61,6 +65,10 @@
               <label class="block text-sm font-semibold mb-1">Descripción</label>
               <textarea formControlName="descripcion" rows="3" placeholder="Descripción del expediente" appUppercase
                 class="textarea textarea-bordered w-full focus:outline-none resize-none"></textarea>
+
+              @if (f['descripcion'].invalid && f['descripcion'].touched) {
+              <small class="text-error text-xs">Ingrese la descripción</small>
+              }
             </div>
 
           </div>

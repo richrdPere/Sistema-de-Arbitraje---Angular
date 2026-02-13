@@ -44,7 +44,7 @@ export const trazabilidadRoutes: Routes = [
 
 
       // ----------------------------
-      //  Otros módulos
+      //  Trazabilidad
       // ----------------------------
       {
         path: 'trazabilidad',
@@ -53,6 +53,18 @@ export const trazabilidadRoutes: Routes = [
             .then(m => m.TrazabilidadComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
+      {
+        path: 'trazabilidad/:id/documentos',
+        loadComponent: () =>
+          import('../../pages/modules/trazabilidad/documentos/documentos.component')
+            .then(m => m.DocumentosComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
+      },
+
+
+      // ----------------------------
+      //  Otros módulos
+      // ----------------------------
       {
         path: 'participes',
         loadComponent: () =>
@@ -72,7 +84,7 @@ export const trazabilidadRoutes: Routes = [
         loadComponent: () =>
           import('../../pages/modules/acta-instalacion/acta-instalacion.component')
             .then(m => m.ActaInstalacionComponent),
-        data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
+        data: { roles: ['ADMIN', 'ARBITRO', ] }// 'SECRETARIA'
       },
       {
         path: 'perfil',
@@ -135,7 +147,7 @@ export const trazabilidadRoutes: Routes = [
         loadComponent: () =>
           import('../../pages/modules/calendario/calendario.component')
             .then(m => m.CalendarioComponent),
-        data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
+        data: { roles: ['ADMIN',  'ARBITRO'] } // 'SECRETARIA',
       },
 
       // Redirect default

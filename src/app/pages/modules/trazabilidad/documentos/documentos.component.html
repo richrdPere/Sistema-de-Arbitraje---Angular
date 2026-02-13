@@ -32,13 +32,6 @@
   </div>
 
 
-  <!-- Modal Subir documento -->
-  <subir-documentos [mostrarModal]="mostrarModal" [expedienteId]="expedienteSeleccionadoId"
-    (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="cargarDocumentos()"></subir-documentos>
-
-
-
-
   <!-- Tabla de documentos -->
   <div class="p-6 bg-base-100 rounded-xl shadow-xl">
 
@@ -61,13 +54,13 @@
         </div>
 
         <!-- Botón -->
-        <div>
+        <!-- <div>
           <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
             (click)="abrirModal()">
             <i class="fa-solid fa-plus mr-1"></i>
             Documento
           </button>
-        </div>
+        </div> -->
       </div>
 
 
@@ -129,9 +122,9 @@
                   </button> -->
 
                   <!-- Eliminar -->
-                  <button class="btn btn-ghost btn-circle btn-md" title="Eliminar documento" (click)="eliminarDocumento(doc.id_documento)">
+                  <!-- <button class="btn btn-ghost btn-circle btn-md" title="Eliminar documento" (click)="eliminarDocumento(doc.id_documento)">
                     <i class="fa-solid fa-trash"></i>
-                  </button>
+                  </button> -->
                 </div>
 
               </td>
@@ -178,3 +171,4 @@
 
 
 </div>
+

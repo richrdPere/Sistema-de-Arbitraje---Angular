@@ -103,7 +103,7 @@ export class ExpedientesService {
   }
 
   // *****************************************************
-  //  PARTICIPES
+  //  8.- PARTICIPES
   // *****************************************************
   asignarParticipesYDesignacion(expediente_id: number, payload: any) {
     return this.http.post(`${this.url}/${expediente_id}/designacion`, payload, this.getAuthHeaders());
@@ -118,7 +118,7 @@ export class ExpedientesService {
   }
 
   // *****************************************************
-  //  DOCUMENTOS
+  // 9.- DOCUMENTOS
   // *****************************************************
   subirDocumento(idExpediente: number, data: any): Observable<any> {
     const token = localStorage.getItem('token'); // o donde guardes tu JWT
@@ -141,9 +141,27 @@ export class ExpedientesService {
   }
 
   // *****************************************************
-  //  HISTORIAL
+  // 10.- HISTORIAL
   // *****************************************************
   obtenerHistorial(idExpediente: number): Observable<any> {
     return this.http.get(`${this.url}/${idExpediente}/historial`, this.getAuthHeaders());
+  }
+
+
+  // ===========================
+  // 11.- TRAZABILIDAD
+  // ===========================
+  obtenerTrazabilidad(id: number): Observable<any> {
+    return this.http.get(
+      `${this.url}/${id}/trazabilidad`,
+      this.getAuthHeaders()
+    );
+  }
+
+  obtenerPartesYResumen(id: number): Observable<any> {
+    return this.http.get(
+      `${this.url}/${id}/partes-resumen`,
+      this.getAuthHeaders()
+    );
   }
 }

@@ -87,20 +87,6 @@ export class TramiteMPVService {
     );
   }
 
-  // listarTramites(filtros: any): Observable<TramiteMPVResponse> {
-  //   let params = new HttpParams();
-
-  //   Object.keys(filtros).forEach(key => {
-  //     if (filtros[key] !== null && filtros[key] !== undefined && filtros[key] !== '') {
-  //       params = params.set(key, filtros[key]);
-  //     }
-  //   });
-
-  //   const headers = this.getAuthHeaders().headers;
-
-  //   return this.http.get<TramiteMPVResponse>(`${this.url}/listar`, { params, headers });
-  // }
-
   // ===========================================================
   // 4.- Obtener Tramites aprobados
   // ===========================================================

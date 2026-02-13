@@ -15,10 +15,14 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DatePipe } from '@angular/common';
 import { SolicitudDetailComponent } from "./solicitud-detail/solicitud-detail.component";
 import { SolicitudAprobadoComponent } from "./solicitud-aprobado/solicitud-aprobado.component";
+import { SolicitudDocsComponent } from "./solicitud-docs/solicitud-docs.component";
+import { Router } from '@angular/router';
+import { ListAprobadosComponent } from "./list-aprobados/list-aprobados.component";
+import { ListRechazadosComponent } from "./list-rechazados/list-rechazados.component";
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, SolicitudDetailComponent, SolicitudAprobadoComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, SolicitudDetailComponent, SolicitudAprobadoComponent, SolicitudDocsComponent, ListAprobadosComponent, ListRechazadosComponent],
   templateUrl: './solicitudes.component.html',
   styles: ``
 })
@@ -37,26 +41,27 @@ export class SolicitudesComponent implements OnInit {
   // Nuevo campo para razón o comentario
   razonRechazo: string = '';
 
-  loading = true;
+  loading = false;
 
   usuario: any = null;
   rol: string = '';
 
+  mostrarModal = false;
   mostrarDetalle = false;
   tramiteSeleccionado: any = null;
   tramiteDetalle: any = null;
 
-
+  documentosSeleccionados: any[] = [];
 
   // Filtros
   search = '';
-  estado = '';
+  estado = 'pendiente';
   tipo = '';
   fecha_inicio = '';
   fecha_fin = '';
   filtroSearch: string = '';
   filtroTipo: string = '';
-  filtroEstado: string = '';
+  // filtroEstado: string = '';
 
   // Paginado
   page = 1;
@@ -75,20 +80,22 @@ export class SolicitudesComponent implements OnInit {
   cambiarPagina(nuevaPagina: number) {
     if (nuevaPagina < 1 || nuevaPagina > this.totalPages) return;
     this.page = nuevaPagina;
-    this.cargarTramites();
+    this.cargarTramitesPorEstado();
   }
 
   cambiarLimite() {
     this.limit = Number(this.limit);
     this.page = 1;
-    this.cargarTramites();
+    this.cargarTramitesPorEstado();
   }
 
   // ya las tienes, pero añade:
   solicitudesFiltradas: any[] = [];             // opcional global
   solicitudesPendientesFiltradas: any[] = [];   // PARA TAB PENDIENTES
-  solicitudesAprobadasFiltradas: any[] = [];    // PARA TAB APROBADAS
-  solicitudesRechazadasFiltradas: any[] = [];   // PARA TAB RECHAZADAS
+  // solicitudesAprobadasFiltradas: any[] = [];    // PARA TAB APROBADAS
+  // solicitudesRechazadasFiltradas: any[] = [];   // PARA TAB RECHAZADAS
+
+  tabActivo: 'pendiente' | 'aprobado' | 'rechazado' = 'pendiente';
 
   // lista de tipos (si no la tienes)
   tiposTramite: string[] = ['Arbitraje Ad Hoc', 'Arbitraje Institucional', 'Arbitraje de Emergencia', 'Recusación', 'Designación residual', 'Instalación'];
@@ -115,10 +122,8 @@ export class SolicitudesComponent implements OnInit {
   nuevoEstado: string = '';
   tipoModal: 'detalle' | 'estado' | null = null;
 
-
-
-
   constructor(
+    private router: Router,
     private tramiteService: TramiteMPVService,
     private expedientesService: ExpedientesService,
     private authService: AuthService
@@ -133,25 +138,24 @@ export class SolicitudesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.cargarTramites();
+    this.cargarTramitesPorEstado();
   }
 
   // ======================================================
   //  Cargar trámites usando el nuevo service con filtros
   // ======================================================
-  cargarTramites(): void {
-    // console.log('PAGE:', this.page, 'LIMIT:', this.limit);
+  cargarTramitesPorEstado(estado?: 'pendiente' | 'aprobada' | 'rechazada'): void {
     this.loading = true;
 
     const filtros: any = {
       page: this.page,
       limit: this.limit,
-      rol: this.rol,
-      search: this.search,
-      estado: this.estado,
-      tipo: this.tipo,
-      fecha_inicio: this.fecha_inicio,
-      fecha_fin: this.fecha_fin
+      // rol: this.rol,
+      search: this.filtroSearch,
+      estado: "pendiente",
+      tipo: this.filtroTipo,
+      // fecha_inicio: this.fecha_inicio,
+      // fecha_fin: this.fecha_fin
     };
 
     // Si es usuario, debe enviarse el id_usuario
@@ -163,11 +167,7 @@ export class SolicitudesComponent implements OnInit {
       next: (resp) => {
 
         console.log('Trámites cargados:', resp);
-
-
-        const tramites = resp.data ?? [];
-
-
+        this.solicitudes = resp.data ?? [];
 
         // ================================
         // 1. Paginación REAL (BACKEND MANDA)
@@ -180,14 +180,14 @@ export class SolicitudesComponent implements OnInit {
         // ================================
         if (this.page > this.totalPages && this.totalPages > 0) {
           this.page = this.totalPages;
-          this.cargarTramites(); //  recargar con página válida
+          this.cargarTramitesPorEstado(estado); //  recargar con página válida
           return;
         }
 
         // Clasificación por estado
-        this.solicitudes = tramites.filter(t => t.estado === 'pendiente');
-        this.solicitudesAprobadas = tramites.filter(t => t.estado === 'aprobada');
-        this.solicitudesRechazadas = tramites.filter(t => t.estado === 'rechazada');
+        // this.solicitudes = tramites.filter(t => t.estado === 'pendiente');
+        // this.solicitudesAprobadas = tramites.filter(t => t.estado === 'aprobada');
+        // this.solicitudesRechazadas = tramites.filter(t => t.estado === 'rechazada');
 
 
         // Paginación
@@ -204,10 +204,25 @@ export class SolicitudesComponent implements OnInit {
     });
   }
 
+  cargarTramitesAprobadas(): void {
+    this.loading = true;
+
+    const filtros: any = {
+      page: this.page,
+      limit: this.limit,
+      rol: this.rol,
+      search: this.search,
+      estado: "aprobado",
+      tipo: this.tipo,
+      fecha_inicio: this.fecha_inicio,
+      fecha_fin: this.fecha_fin
+    };
+  }
+
   aplicarFiltros() {
     const buscar = (this.filtroSearch || '').toLowerCase().trim();
     const tipo = this.filtroTipo;
-    const estado = this.filtroEstado;
+    // const estado = this.filtroEstado;
 
     const matchTexto = (item: any) => {
       if (!buscar) return true;
@@ -227,20 +242,20 @@ export class SolicitudesComponent implements OnInit {
     const aplicarAFiltrar = (lista: any[]) =>
       (lista || []).filter(item =>
         (!tipo || item.tipo === tipo) &&
-        (!estado || item.estado === estado) &&
+        // (!estado || item.estado === estado) &&
         matchTexto(item)
       );
 
     // Filtrar cada lista (originales vienen de cargarTramites)
     this.solicitudesPendientesFiltradas = aplicarAFiltrar(this.solicitudes);
-    this.solicitudesAprobadasFiltradas = aplicarAFiltrar(this.solicitudesAprobadas);
-    this.solicitudesRechazadasFiltradas = aplicarAFiltrar(this.solicitudesRechazadas);
+    // this.solicitudesAprobadasFiltradas = aplicarAFiltrar(this.solicitudesAprobadas);
+    // this.solicitudesRechazadasFiltradas = aplicarAFiltrar(this.solicitudesRechazadas);
 
     // opcional: actualizar la lista global si la usas en algún lugar
     this.solicitudesFiltradas = [
       ...this.solicitudesPendientesFiltradas,
-      ...this.solicitudesAprobadasFiltradas,
-      ...this.solicitudesRechazadasFiltradas
+      // ...this.solicitudesAprobadasFiltradas,
+      // ...this.solicitudesRechazadasFiltradas
     ];
 
   }
@@ -257,6 +272,7 @@ export class SolicitudesComponent implements OnInit {
 
   cerrarModal() {
     this.tipoModal = null;
+    this.mostrarModal = false;
 
     this.tramiteSeleccionado = null;
     this.tramiteDetalle = null;
@@ -264,6 +280,9 @@ export class SolicitudesComponent implements OnInit {
   }
 
   verDetalle(tramite: any) {
+
+    console.log("TRAMITE: ", tramite);
+
     this.tramiteDetalle = tramite;
     this.mostrarDetalle = true;
   }
@@ -273,14 +292,11 @@ export class SolicitudesComponent implements OnInit {
     this.tramiteSeleccionado = null;
   }
 
-  verArchivo(item: any) {
-    if (!item?.documento) {
-      console.warn("No existe un archivo en este registro");
-      return;
-    }
+  verArchivos(item: any) {
+    this.mostrarModal = true;
+    this.documentosSeleccionados = item.documentos;
+    // { this.router.navigate([`app/expedientes/${item.id_expediente}/documentos`]); }
 
-    const url = item.documento; // debe ser un link válido (https://...)
-    window.open(url, "_blank");
   }
 
   aprobarSolicitud() {
@@ -350,7 +366,7 @@ export class SolicitudesComponent implements OnInit {
               text: 'El trámite fue actualizado, pero no se encontró expediente asociado.',
             });
             this.cerrarModal();
-            this.cargarTramites();
+            this.cargarTramitesPorEstado();
             return;
           }
 
@@ -396,7 +412,7 @@ export class SolicitudesComponent implements OnInit {
 
 
 
-                this.cargarTramites();
+                this.cargarTramitesPorEstado();
               },
 
               error: (err) => {
@@ -409,7 +425,7 @@ export class SolicitudesComponent implements OnInit {
                 });
 
                 this.cerrarModal();
-                this.cargarTramites();
+                this.cargarTramitesPorEstado();
               }
             });
         },

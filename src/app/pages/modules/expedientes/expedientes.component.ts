@@ -32,9 +32,7 @@ export class ExpedientesComponent {
 
   // Expedientes
   expedientes: any = [];
-
   searchTimeout: any;
-
 
   // =========================
   // VARIABLES
@@ -89,8 +87,6 @@ export class ExpedientesComponent {
   filtroAnio: number | '' = '';
   filtroSearch = '';
 
-
-
   // Paginado
   page = 1;
   limit = 5;
@@ -116,16 +112,6 @@ export class ExpedientesComponent {
     this.cargarExpedientes();
   }
 
-  // toggleDropdown(index: number, event: MouseEvent) {
-  //   // Si se vuelve a hacer click en el mismo menú, se cierra
-  //   event.stopPropagation(); // Evita que se cierre inmediatamente
-  //   this.menuAbierto = this.menuAbierto === index ? null : index;
-  // }
-
-  // cerrarDropdown() {
-  //   this.menuAbierto = null;
-  // }
-
   toggleDropdown(event: MouseEvent, expediente: any) {
     event.stopPropagation();
 
@@ -145,9 +131,6 @@ export class ExpedientesComponent {
   cerrarDropdown() {
     this.menuActivo = null;
   }
-
-
-
 
   // Constructor
   constructor(
@@ -211,7 +194,8 @@ export class ExpedientesComponent {
   }
 
   // Ejemplo de funciones base:
-  verDocumentos(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
+  verDocumentos(exp: any)
+  { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
 
   gestionarParticipesModal(exp: any) {
     // this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);

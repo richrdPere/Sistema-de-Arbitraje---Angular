@@ -2,15 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
+// Directives
+import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
+
+// Pipes
+import { FileSizePipe } from 'src/app/pipes/size-file.pipe';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
+
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 
+
+
 @Component({
   selector: 'app-mesa-partes',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FileSizePipe, TruncatePipe, UppercaseDirective],
   templateUrl: './mesa_partes.component.html',
 })
 export class MesaPartesComponent implements OnInit {
+
+  fechaActual = new Date().toISOString().substring(0, 10);
+  numeroSolicitud = '10778';
 
   // STEP CONTROL
   currentStep: number = 1;
@@ -22,90 +34,90 @@ export class MesaPartesComponent implements OnInit {
   respuesta: any;
   mensajeExito: string = '';
   mensajeError: string = '';
+
+  archivos: File[] = [];
+
+  placeholderDocumento = 'Seleccione tipo de documento';
+
   maxDocumentoDemandante = 8; // valor por defecto
-  maxDocumentoDemandado = 8;
+
 
   tipoSolicitudToCodigo: any = {
     "Arbitraje de Emergencia": "AE-FIRMA-LEGAL",
     "Arbitraje Ad Hoc": "AD HOC-FIRMA-LEGAL",
     "Arbitraje Institucional": "CA-FIRMA-LEGAL",
-    "Recusación de árbitro": "RECUSACIÓN-FIRMA-LEGAL",
-    "Recusación de adjudicador": "RECUSACIÓN-FIRMA-LEGAL",
-    "Designación residual": "DESIGNACIÓN",
-    "Instalación de arbitraje": "INSTALACIÓN"
+  };
+
+  descripcionTipoArbitraje: string | null = null;
+
+  descripciones: Record<string, string> = {
+    'Arbitraje de Emergencia':
+      'Procedimiento excepcional y rápido destinado a resolver situaciones urgentes que requieren una medida inmediata antes de la constitución del tribunal arbitral.',
+
+    'Arbitraje Ad Hoc':
+      'Arbitraje organizado directamente por las partes, sin intervención de una institución arbitral. Las reglas y el procedimiento son definidos por los propios interesados.',
+
+    'Arbitraje Institucional':
+      'Arbitraje administrado por una institución arbitral, que brinda reglas, soporte administrativo y supervisión del procedimiento.'
   };
 
 
   constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService) {
     this.formTramiteMPV = this.fb.group({
 
-      // STEP 1 — Datos del Demandante
+      // =========================
+      // STEP 1 — DATOS DEL INTERESADO
+      // =========================
+      tipo_documento: ['', Validators.required],
+      documento_identidad: ['', Validators.required],
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
+      tipo_usuario: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      direccion: ['', [Validators.required]],
       telefono: ['', Validators.required],
-      tipo_documento: ['', [Validators.required]],
-      documento_identidad: ['', Validators.required],
+      direccion: ['', Validators.required],
+      cargo: [''],
 
-      // STEP 2 — Datos del Demandado
-      tipo_demandado: [''],
-      nombre_demandado: [''],
-      apellidos_demandado: [''],
-      correo_demandado: ['',],
-      direccion_demandado: ['',],
-      telefono_demandado: ['',],
-      tipo_documento_demandado: [''],
-      doc_identidad_demandado: [''],
-
-
-      // STEP 3 — Tipo de solicitud
+      // =========================
+      // STEP 2 — DATOS DEL ARBITRAJE
+      // =========================
       tipo_solicitud: ['', Validators.required],
-      descripcion: ['', Validators.required],
       codigo: ['', Validators.required], // viene desde el sistema
 
+
+      // =========================
+      // STEP 3 — CONTROL INTERNO
+      // =========================
+      fecha_registro: [this.fechaActual],
+      descripcion: ['', Validators.required],
+
       /* ARCHIVO */
-      fileInput: [null, Validators.required]
+      // fileInput: [null, Validators.required]
     });
   }
 
   ngOnInit() {
-    this.onTipoDemandadoChange(); // Inicializar validaciones al cargar
+    this.formTramiteMPV.get('tipo_solicitud')?.valueChanges.subscribe(tipo => {
+      if (!tipo) return;
+
+      this.formTramiteMPV.patchValue({
+        codigo: this.tipoSolicitudToCodigo[tipo],
+        descripcion: this.descripciones[tipo]
+      });
+
+      this.descripcionTipoArbitraje = this.descripciones[tipo];
+    });
+
     this.dniRucDemandante();
-    this.dniRucDemandado();
     this.autoAsignarCodigo();
+
   }
 
   dniRucDemandante(): void {
-    this.formTramiteMPV.get("tipo_documento_demandado")?.valueChanges.subscribe(tipo => {
-      if (tipo === "DNI") {
-        this.maxDocumentoDemandante = 8;
-        this.formTramiteMPV.get("doc_identidad_demandado")?.setValidators([
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(8),
-          Validators.pattern(/^[0-9]*$/)
-        ]);
-      } else if (tipo === "RUC") {
-        this.maxDocumentoDemandante = 11;
-        this.formTramiteMPV.get("doc_identidad_demandado")?.setValidators([
-          Validators.required,
-          Validators.maxLength(11),
-          Validators.minLength(11),
-          Validators.pattern(/^[0-9]*$/)
-        ]);
-      }
-
-      // Actualizar validaciones
-      this.formTramiteMPV.get("doc_identidad_demandado")?.updateValueAndValidity();
-      this.formTramiteMPV.get("doc_identidad_demandado")?.setValue(""); // limpiar input al cambiar tipo
-    });
-  }
-
-  dniRucDemandado(): void {
     this.formTramiteMPV.get("tipo_documento")?.valueChanges.subscribe(tipo => {
       if (tipo === "DNI") {
-        this.maxDocumentoDemandado = 8;
+        this.placeholderDocumento = 'Ingrese el numero de su DNI';
+        this.maxDocumentoDemandante = 8;
         this.formTramiteMPV.get("documento_identidad")?.setValidators([
           Validators.required,
           Validators.maxLength(8),
@@ -113,7 +125,8 @@ export class MesaPartesComponent implements OnInit {
           Validators.pattern(/^[0-9]*$/)
         ]);
       } else if (tipo === "RUC") {
-        this.maxDocumentoDemandado = 11;
+        this.placeholderDocumento = 'Ingrese el numero de su RUC';
+        this.maxDocumentoDemandante = 11;
         this.formTramiteMPV.get("documento_identidad")?.setValidators([
           Validators.required,
           Validators.maxLength(11),
@@ -123,8 +136,7 @@ export class MesaPartesComponent implements OnInit {
       }
 
       // Actualizar validaciones
-      this.formTramiteMPV.get("documento_identidad")?.updateValueAndValidity();
-      this.formTramiteMPV.get("documento_identidad")?.setValue(""); // limpiar input al cambiar tipo
+      this.formTramiteMPV.get('documento_identidad')?.reset();
     });
   }
 
@@ -132,52 +144,46 @@ export class MesaPartesComponent implements OnInit {
     this.formTramiteMPV.get("tipo_solicitud")?.valueChanges.subscribe(tipo => {
       const codigo = this.tipoSolicitudToCodigo[tipo] || "";
       this.formTramiteMPV.get("codigo")?.setValue(codigo, { emitEvent: false });
+
+      this.descripcionTipoArbitraje = this.descripciones[tipo] || null;
     });
   }
 
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
 
-  /* ----------------------------- FILE ----------------------------- */
-  onFileSelected(e: Event) {
-    const input = e.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
+    Array.from(input.files).forEach(file => {
+      this.archivos.push(file);
+    });
 
-    this.file = input.files[0];
-    this.formTramiteMPV.patchValue({ fileInput: this.file });
+    input.value = '';
   }
 
-  /* ------------------------ TIPO DEMANDADO ------------------ */
-  onTipoDemandadoChange() {
-    const tipo = this.formTramiteMPV.get('tipo_demandado')?.value;
-
-    this.isEntidad = tipo === 'entidad';
-
-    const nombre = this.formTramiteMPV.get('nombre_demandado');
-    const apellidos = this.formTramiteMPV.get('apellidos_demandado');
-
-    if (this.isEntidad) {
-      // Limpia campos de persona
-      apellidos?.clearValidators();
-      apellidos?.setValue('');
-      apellidos?.updateValueAndValidity();
-    } else {
-      // Limpia el campo de entidad
-      apellidos?.setValidators([Validators.required]);
-      apellidos?.updateValueAndValidity();
-
-    }
-
-    nombre?.setValidators([Validators.required]);
-    nombre?.updateValueAndValidity();
+  eliminarArchivo(index: number) {
+    this.archivos.splice(index, 1);
   }
 
+  descargarArchivo(file: File) {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   /* ----------------------------- STEPS ----------------------------- */
   // Pasar al siguiente paso si es válido
   nextStep() {
 
-    if (this.validarStepActual()) {
-      this.currentStep++;
+    if (!this.isStepValido()) {
+      this.getControlesPorStep().forEach(c => {
+        this.formTramiteMPV.get(c)?.markAsTouched();
+      });
+      return;
     }
+    this.currentStep++;
   }
 
   // Retroceder al paso anterior
@@ -211,7 +217,7 @@ export class MesaPartesComponent implements OnInit {
       telefono_demandado: 'Teléfono del Demandado',
       tipo_documento_demandado: 'Tipo de Documento del Demandado',
       doc_identidad_demandado: 'DNI / RUC del Demandado',
-      // documento_demandado: 'Documento del Demandado',
+      documento_demandado: 'Documento del Demandado',
 
       // Para solicitud
       tipo_solicitud: 'Tipo de Solicitud',
@@ -226,43 +232,12 @@ export class MesaPartesComponent implements OnInit {
 
   // Validar los campos de cada step
   private validarStepActual(): boolean {
-    let controles: string[] = [];
-
-    if (this.currentStep === 1) {
-      controles = [
-        'nombre', 'apellidos', 'correo', 'direccion',
-        'telefono', 'tipo_documento', 'documento_identidad'
-      ];
-    }
-
-    if (this.currentStep === 2) {
-      controles = [
-        'tipo_demandado',
-        'nombre_demandado',
-        'correo_demandado',
-        'direccion_demandado',
-        'telefono_demandado',
-        'tipo_documento_demandado',
-        'doc_identidad_demandado'
-      ];
-
-      if (!this.isEntidad) {
-        controles.push('apellidos_demandado');
-      }
-    }
-
-    if (this.currentStep === 3) {
-      controles = ['tipo_solicitud', 'descripcion', 'codigo', 'fileInput'];
-    }
-
+    const controles = this.getControlesPorStep();
     const grupo = this.formTramiteMPV;
 
-    // Marcar campos como tocados
-    controles.forEach(control => grupo.get(control)?.markAsTouched());
+    controles.forEach(c => grupo.get(c)?.markAsTouched());
 
-    // Buscar inválidos
-    const invalidos = controles.filter(c => !grupo.get(c)?.valid);
-
+    const invalidos = controles.filter(c => grupo.get(c)?.invalid);
 
     if (invalidos.length > 0) {
       Swal.fire({
@@ -280,32 +255,98 @@ export class MesaPartesComponent implements OnInit {
     }
 
     return true;
+  }
 
-    // return controles.every(control => grupo.get(control)?.valid);
+  isStepValido(): boolean {
+    const controles = this.getControlesPorStep();
+
+    const formValido = controles.every(c => {
+      const control = this.formTramiteMPV.get(c);
+      return control && control.valid && control.value !== null && control.value !== '';
+    });
+
+    //  Validación adicional para STEP 3
+    if (this.currentStep === 3) {
+      return formValido && this.archivos.length > 0;
+    }
+
+    return formValido;
+  }
+
+  private getControlesPorStep(): string[] {
+
+    if (this.currentStep === 1) {
+      return [
+        'nombre',
+        'apellidos',
+        'correo',
+        'direccion',
+        'telefono',
+        'tipo_documento',
+        'documento_identidad',
+        'tipo_usuario',
+        'cargo'
+      ];
+    }
+
+    if (this.currentStep === 2) {
+      const base = [
+        'tipo_solicitud',
+        'codigo',
+      ];
+      return base;
+    }
+
+    if (this.currentStep === 3) {
+      return ['descripcion'];
+    }
+
+    return [];
+  }
+
+
+  get f() {
+    return this.formTramiteMPV.controls;
+  }
+
+  getResumen() {
+    return this.formTramiteMPV.getRawValue();
   }
 
   /* ----------------------------- REGISTRAR ----------------------------- */
   enviar() {
     if (this.formTramiteMPV.invalid) return this.formTramiteMPV.markAllAsTouched();
 
-    if (this.formTramiteMPV.invalid || !this.file) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Campos incompletos',
-        text: 'Por favor, completa todos los campos y adjunta un archivo antes de enviar.',
-        confirmButtonColor: '#3085d6'
-      });
-      return this.formTramiteMPV.markAllAsTouched();
-    }
-
     const fd = new FormData();
+
+    //  1. Construir JSON limpio del formulario
+    const tramiteData: any = {};
+
     Object.entries(this.formTramiteMPV.value).forEach(([key, value]) => {
-      // fd.append(key, value as string);
-      if (key !== 'fileInput') {
-        fd.append(key, value as string);
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        key !== 'fileInput'
+      ) {
+        tramiteData[key] = value;
       }
     });
-    if (this.file) fd.append('file', this.file, this.file.name);
+
+    //  2. Enviar JSON como string
+    fd.append('data', JSON.stringify(tramiteData));
+
+    //  3. Enviar archivos
+    this.archivos.forEach((file) => {
+      fd.append('archivos', file, file.name);
+    });
+
+    //  4. DEBUG REAL (esto SÍ muestra el contenido)
+    console.log('FORM DATA ENVIADO: ');
+    for (const [key, value] of fd.entries()) {
+      console.log(key, value);
+    }
+
     this.enviado = true;
 
     // Mostramos un loader mientras se envía
@@ -319,6 +360,8 @@ export class MesaPartesComponent implements OnInit {
     this.tramiteService.registrarTramite(fd).subscribe({
       next: (response) => {
         this.respuesta = response; //  guarda respuesta
+
+        console.log(' RESPUESTA BACKEND:', response);
 
         Swal.fire({
           title: 'Trámite registrado correctamente',
@@ -337,7 +380,9 @@ export class MesaPartesComponent implements OnInit {
         // this.mensajeExito = ` ${response.message}`;
         console.log('Trámite registrado:', response.tramite);
         this.formTramiteMPV.reset();
-        this.file = null;
+        this.archivos = [];
+        this.enviado = false;
+        // this.file = null;
       },
       error: (err) => {
         this.enviado = false;

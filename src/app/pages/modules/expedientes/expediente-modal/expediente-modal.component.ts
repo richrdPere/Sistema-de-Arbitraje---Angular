@@ -147,7 +147,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       codigo: ['', Validators.required],
-      tipo: ['', Validators.required],
+      tipo: [null, Validators.required],
       estado: [''],
       fecha_inicio: [this.getFechaHoy()],
       fecha_laudo: [null],

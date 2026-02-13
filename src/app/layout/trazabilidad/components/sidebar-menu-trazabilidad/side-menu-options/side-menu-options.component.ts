@@ -43,7 +43,7 @@ export class SideMenuOptionsComponent {
       label: 'Acta Instalación',
       sublabel: 'Casos abiertos de las solicitudes aprobadas',
       route: '/app/acta-instalacion',
-      roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'],
+      roles: ['ADMIN', 'ARBITRO', ],  // 'SECRETARIA'
     },
     {
       icon: 'fa-solid fa-building-columns',
@@ -107,7 +107,7 @@ export class SideMenuOptionsComponent {
       label: 'Calendario',
       sublabel: 'Calendario de actividades',
       route: '/app/calendario',
-      roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'],
+      roles: ['ADMIN', 'ARBITRO'],  //'SECRETARIA',
     },
     {
       icon: 'fa-solid fa-magnifying-glass-chart',

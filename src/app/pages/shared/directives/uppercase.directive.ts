@@ -1,24 +1,25 @@
 import { Directive, HostListener, ElementRef } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: '[appUppercase]'
 })
 export class UppercaseDirective {
 
-  constructor(private el: ElementRef<HTMLInputElement | HTMLTextAreaElement>) { }
+  constructor(private ngControl: NgControl) { }
 
   @HostListener('input', ['$event'])
   onInput(event: Event) {
-    const input = this.el.nativeElement;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
+    const input = event.target as HTMLInputElement | null;
+    if (!input || !input.value) return;
 
-    input.value = input.value.toUpperCase();
+    const upper = input.value.toUpperCase();
 
-    // Mantener cursor
-    input.setSelectionRange(start!, end!);
-
-    // Disparar evento para Reactive Forms
-    input.dispatchEvent(new Event('input', { bubbles: true }));
+    if (upper !== input.value) {
+      this.ngControl.control?.setValue(upper, {
+        emitEvent: false,
+        emitModelToViewChange: true
+      });
+    }
   }
 }

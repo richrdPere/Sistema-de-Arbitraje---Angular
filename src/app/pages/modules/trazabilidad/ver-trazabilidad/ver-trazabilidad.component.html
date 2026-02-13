@@ -1,0 +1,104 @@
+@if (mostrarModal) {
+
+<div class="modal modal-open">
+
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8" [ngClass]="modalWidthClass">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+      <h3 class="text-2xl font-semibold">Trazabilidad</h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+
+    <!-- ===== RESUMEN DEL EXPEDIENTE ===== -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+      <div class="card bg-base-200 p-4">
+        <p class="text-xs text-gray-500">EXPEDIENTE:</p>
+        <p class="font-semibold">{{ trazabilidad?.expediente.numero }}</p>
+      </div>
+
+      <div class="card bg-base-200 p-4">
+        <p class="text-xs text-gray-500">ARBITRAJE</p>
+        <p class="font-semibold">{{ trazabilidad?.expediente.tipo }}</p>
+      </div>
+
+      <div class="card bg-base-200 p-4">
+        <p class="text-xs text-gray-500">ASUNTO</p>
+        <p class="font-semibold">{{ trazabilidad?.expediente.titulo }}</p>
+      </div>
+
+    </div>
+
+    <!-- ===== TABLA DE TRAZABILIDAD ===== -->
+    <div class="overflow-x-auto">
+
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr class="bg-base-200">
+            <th>#</th>
+            <th>CÓDIGO</th>
+            <th>FECHA</th>
+            <th>ACCIÓN</th>
+            <th>DETALLE</th>
+            <th>RESPONSABLE</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (timeline.length > 0) {
+
+          @for (item of timeline; track $index) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+
+            <td>{{ trazabilidad?.expediente.codigo}}</td>
+
+            <td class="text-sm">
+              <div>{{ item.fecha | date:'dd/MM/yyyy' }}</div>
+              <div class="text-gray-500">
+                {{ item.fecha | date:'HH:mm' }}
+              </div>
+            </td>
+
+            <td class="font-medium">
+              {{ item.accion }}
+            </td>
+
+            <td class="max-w-xs truncate" title="{{ item.detalle }}">
+              {{ item.detalle || '—' }}
+            </td>
+
+            <td>
+              {{ item.usuario }}
+            </td>
+          </tr>
+          }
+
+          } @else {
+
+          <tr>
+            <td colspan="6" class="text-center text-gray-400 py-6">
+              No existe trazabilidad registrada para este expediente
+            </td>
+          </tr>
+
+          }
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-end mt-6">
+      <button class="btn btn-outline" (click)="cerrarModal()">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+}

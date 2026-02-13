@@ -4,200 +4,398 @@
   ">
 
     <div class="absolute inset-0 bg-black/40 "></div>
-
-
-    <div class="relative flex flex-col items-center justify-center min-h-screen px-6 py-8 ">
+    <div class="relative flex flex-col items-center justify-center  px-6 py-8 ">
 
 
       <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
-        MESA DE PARTES VIRTUALES
+        MESA DE PARTES VIRTUAL
       </h1>
 
-      <div class="card w-full max-w-lg bg-base-200  shadow-xl p-6 ">
-        <!-- STEPPER -->
+      <div class="w-full max-w-4xl">
 
-        <div class="flex justify-between mb-6">
-          <button class="btn w-1/3" [class.btn-active]="currentStep === 1" (click)="irAlPaso(1)">
-            Demandante
-          </button>
-          <button class="btn w-1/3" [class.btn-active]="currentStep === 2" (click)="irAlPaso(2)">
-            Demandado
-          </button>
-          <button class="btn w-1/3" [class.btn-active]="currentStep === 3" (click)="irAlPaso(3)">
-            Solicitud
-          </button>
+        <!-- CABECERA -->
+        <div class=" mb-6">
+          <div class="card bg-base-200 shadow-xl p-6 space-y-6">
+
+            <div class="flex flex-row sm:flex-row justify-center gap-6 text-sm font-semibold">
+              <div>
+                <span class="mr-2">Fecha :</span>
+                <input type="date" class="input input-bordered input-sm w-28" [value]="fechaActual" disabled />
+              </div>
+
+              <div>
+                <span class="mr-2">Nro de Solicitud :</span>
+                <input type="text" class="input input-bordered input-sm w-28" [value]="numeroSolicitud" disabled />
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
 
+      <!-- FORMULARIO -->
+      <div class="card w-full max-w-6xl bg-base-200  shadow-xl p-6 ">
+
+
+        <!-- STEPPER -->
+        <div class="w-full max-w-7xl mb-6">
+          <ul class="steps steps-horizontal w-full">
+
+            <!-- STEP 1 -->
+            <li class="step" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+              <button type="button" class="btn">
+                <span class="text-primary font-semibold">DATOS DEL INTERESADO</span>
+              </button>
+            </li>
+
+            <!-- STEP 2 -->
+            <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+              <button class="btn " [class.btn-active]="currentStep === 2">
+                <span class="text-primary font-semibold">DATOS DEL ARBITRAJE</span>
+              </button>
+            </li>
+
+            <!-- STEP 3 -->
+            <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+              <button class="btn" [class.btn-active]="currentStep === 3">
+
+                <span class="text-primary font-semibold">ARCHIVO DIGITAL</span>
+              </button>
+            </li>
+
+            <!-- STEP 4 -->
+            <li class="step" [class.step-primary]="currentStep >= 4" (click)="irAlPaso(4)">
+
+
+              <button class="btn" [class.btn-active]="currentStep === 4">
+                <span class="text-primary font-semibold">CONFIRMAR DATOS</span>
+              </button>
+            </li>
+          </ul>
+        </div>
 
 
         <form [formGroup]="formTramiteMPV" (ngSubmit)="enviar()" class="space-y-6">
           <!-- STEP 1 ---------------------------------------------------------->
           @if (currentStep === 1) {
-          <label class="label">
-            <span class="label-text font-semibold text-xl text-info">Datos del Demandante</span>
-          </label>
+          <section class="border border-primary p-6 rounded-md bg-base-100">
+            <!-- Título -->
+            <div class="mb-4">
+              <label class="label">
+                <span class="label-text font-semibold text-xl text-info">Datos del Interesado</span>
+              </label>
+            </div>
 
-          <h2 class="text-sm font-semibold mb-4">Nombres y Apellidos</h2>
-          <div class="grid grid-cols-2 gap-3 mb-4">
-            <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full" />
-            <input type="text" formControlName="apellidos" placeholder="Apellidos"
-              class="input input-bordered w-full " />
-          </div>
+            <!-- <h2 class="text-sm font-semibold mb-4">Documento de Identidad</h2> -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+
+              <!-- SELECT (1/3) -->
+              <div>
+                <label for="" class="block text-sm font-semibold mb-1">Tipo de Documento</label>
+                <select formControlName="tipo_documento" class="select select-bordered w-full">
+                  <option value="" disabled selected>Seleccione documento</option>
+                  <option value="DNI">DNI</option>
+                  <option value="RUC">RUC</option>
+
+                </select>
+              </div>
+
+              <!-- INPUT (2/3) -->
+              <div class="md:col-span-2">
+                <label for="" class="block text-sm font-semibold mb-1">Numero de Documento</label>
+                <input type="text" formControlName="documento_identidad" [placeholder]="placeholderDocumento"
+                  class="input input-bordered w-full" [maxlength]="maxDocumentoDemandante" />
+              </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+              <!-- Nombres -->
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Nombres</label>
+                <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full"
+                  appUppercase />
+              </div>
+
+              <!-- Apellidos -->
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Apellidos</label>
+                <input type="text" formControlName="apellidos" placeholder="Apellidos"
+                  class="input input-bordered w-full" appUppercase />
+              </div>
 
 
-          <h2 class="text-sm font-semibold mb-4">Correo electrónico</h2>
-          <div class="form-control mb-4 ">
-            <input type="email" formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
-          </div>
+              <!-- Tipo de usuario -->
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Tipo de usuario</label>
+                <select formControlName="tipo_usuario" class="select select-bordered w-full">
+                  <option value="" disabled selected>Seleccione tipo</option>
+                  <option value="entidad_publica">ENTIDAD PÚBLICA</option>
+                  <option value="proveedor">PROVEEDOR</option>
+                </select>
+              </div>
+            </div>
 
-          <h2 class="text-sm font-semibold mb-4">Dirección</h2>
-          <div class="form-control mb-4 ">
-            <input type="text" formControlName="direccion" placeholder="Dirección"
-              class="input input-bordered w-full " />
-          </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          <h2 class="text-sm font-semibold mb-4">Teléfono</h2>
-          <div class="form-control mb-4 ">
-            <input type="text" formControlName="telefono" placeholder="Teléfono" class="input input-bordered w-full " />
-          </div>
+              <!-- Email -->
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Email</label>
+                <input type="email" formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
+              </div>
 
-          <!-- <h2 class="text-sm font-semibold mb-4">Contraseña</h2>
-          <div class="form-control mb-4 ">
-            <input type="password" formControlName="password" placeholder="Contraseña"
-              class="input input-bordered w-full " />
-          </div> -->
+              <!-- Direccion -->
+              <div class="md:col-span-2">
+                <label for="" class="block text-sm font-semibold mb-1">Dirección</label>
+                <input type="text" formControlName="direccion" placeholder="Dirección"
+                  class="input input-bordered w-full " appUppercase />
+              </div>
 
+              <!-- Telefono -->
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Teléfono</label>
+                <input type="text" formControlName="telefono" placeholder="Teléfono"
+                  class="input input-bordered w-full " appUppercase />
+              </div>
 
-          <h2 class="text-sm font-semibold mb-4">Documento de Identidad</h2>
-          <div class="grid grid-cols-3 gap-3 mb-4">
+              <!-- Cargo -->
+              <div class="md:col-span-2 ">
+                <label for="" class="block text-sm font-semibold mb-1">Cargo/Profesión</label>
+                <input type="text" formControlName="cargo" placeholder="Cargo" class="input input-bordered w-full "
+                  appUppercase />
+              </div>
 
-            <!-- SELECT (1/3) -->
-            <select formControlName="tipo_documento" class="select select-bordered w-full col-span-1 dropdown-bottom">
-              <option value="" disabled selected>Tipo Documento</option>
-              <option value="DNI">DNI</option>
-              <option value="RUC">RUC</option>
+            </div>
 
-            </select>
-
-            <!-- INPUT (2/3) -->
-            <input type="text" formControlName="documento_identidad" placeholder="Número de documento"
-              class="input input-bordered w-full col-span-2" [maxlength]="maxDocumentoDemandante" />
-          </div>
+          </section>
           }
 
           <!-- STEP 2 ---------------------------------------------------------->
           @if (currentStep === 2) {
-          <label class="label">
-            <span class="label-text font-semibold text-xl text-info">Datos del Demandado</span>
-          </label>
+          <section class="border border-primary p-6 rounded-md bg-base-100">
+            <!-- Título -->
+            <div class="mb-4">
+              <label class="label">
+                <span class="label-text font-semibold text-xl text-info">Datos del Arbitraje</span>
+              </label>
+            </div>
 
-          <!-- TIPO DE DEMANDADO -->
-          <h2 class="text-sm font-semibold mb-4">Tipo de Demandado</h2>
-          <div class="form-control mb-4">
-            <select formControlName="tipo_demandado" (change)="onTipoDemandadoChange()"
-              class="select select-bordered w-full">
-              <option value="" disabled selected>Seleccione</option>
-              <option value="persona">Persona Natural</option>
-              <option value="entidad">Entidad / Institución</option>
-            </select>
-          </div>
+            <h2 class="text-sm font-semibold mb-4">Tipo de arbitraje y codigo</h2>
+            <div class="grid grid-cols-2 gap-3 mb-4">
 
-          <!-- CUANDO ES ENTIDAD -->
-          @if (isEntidad) {
-          <h2 class="text-sm font-semibold mb-4">Nombre de la Entidad</h2>
-          <div class="form-control mb-4">
-            <input type="text" formControlName="nombre_demandado" placeholder="Nombre de la entidad"
-              class="input input-bordered w-full" />
-          </div>
-          }
+              <select formControlName="tipo_solicitud" class="select select-bordered w-full">
+                <option value="" disabled selected>Seleccione un tipo...</option>
+                <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
+                <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
+                <option value="Arbitraje Institucional">Arbitraje Institucional</option>
+              </select>
 
-          <!-- CUANDO ES PERSONA -->
-          @if (!isEntidad) {
+              <input type="text" formControlName="codigo" class="input input-bordered w-full bg-gray-100" readonly />
+            </div>
 
-          <h2 class="text-sm font-semibold mb-4">Nombres y Apellidos</h2>
-          <div class="grid grid-cols-2 gap-3 mb-4">
-            <input type="text" formControlName="nombre_demandado" placeholder="Nombres"
-              class="input input-bordered w-full" />
-            <input type="text" formControlName="apellidos_demandado" placeholder="Apellidos"
-              class="input input-bordered w-full " />
-          </div>
-          }
+            <!-- DESCRIPCIÓN DINÁMICA -->
+            @if (
+            descripcionTipoArbitraje
+            ) {
+            <div class="alert alert-info shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+              </svg>
 
-          <!-- CAMPOS COMUNES -->
-          <h2 class="text-sm font-semibold mb-4">Correo electrónico</h2>
-          <div class="form-control mb-4 ">
-            <input type="email" formControlName="correo_demandado" placeholder="Correo"
-              class="input input-bordered w-full" />
-          </div>
+              <div>
+                <h3 class="font-semibold">
+                  ¿Qué es este tipo de arbitraje?
+                </h3>
+                <p class="text-sm">
+                  {{ descripcionTipoArbitraje }}
+                </p>
+              </div>
+            </div>
+            }
 
-          <h2 class="text-sm font-semibold mb-4">Dirección</h2>
-          <div class="form-control mb-4 ">
-            <input type="text" formControlName="direccion_demandado" placeholder="Dirección"
-              class="input input-bordered w-full " />
-          </div>
-
-          <h2 class="text-sm font-semibold mb-4">Teléfono</h2>
-          <div class="form-control mb-4 ">
-            <input type="text" formControlName="telefono_demandado" placeholder="Teléfono"
-              class="input input-bordered w-full " />
-          </div>
-
-          <h2 class="text-sm font-semibold mb-4">Documento de Identidad</h2>
-          <div class="grid grid-cols-3 gap-3 mb-4">
-
-            <!-- SELECT (1/3) -->
-            <select formControlName="tipo_documento_demandado"
-              class="select select-bordered w-full col-span-1 dropdown-bottom">
-              <option value="" disabled selected>Tipo Documento</option>
-              <option value="DNI">DNI</option>
-              <option value="RUC">RUC</option>
-
-            </select>
-
-            <!-- INPUT (2/3) -->
-            <input type="text" formControlName="doc_identidad_demandado" placeholder="Número de documento"
-              class="input input-bordered w-full col-span-2" [maxlength]="maxDocumentoDemandante" />
-          </div>
+          </section>
           }
 
           <!-- STEP 3 ---------------------------------------------------------->
 
           @if (currentStep === 3) {
-          <label class="label">
-            <span class="label-text font-semibold text-xl text-info">Datos del Arbitraje</span>
-          </label>
+          <section class="border border-primary p-6 rounded-md bg-base-100">
 
-          <h2 class="text-sm font-semibold mb-4">Tipo de arbitraje y codigo</h2>
-          <div class="grid grid-cols-2 gap-3 mb-4">
+            <!-- Título -->
+            <div class="mb-4">
+              <!-- <label class="font-semibold text-sm">Archivo Virtual :</label> -->
 
-            <select formControlName="tipo_solicitud" class="select select-bordered w-full">
-              <option disabled selected>Seleccione un tipo...</option>
-              <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
-              <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-              <option value="Arbitraje Institucional">Arbitraje Institucional</option>
-              <option value="Recusación de árbitro">Recusación de árbitro</option>
-              <option value="Recusación de adjudicador">Recusación de adjudicador</option>
-              <option value="Designación residual">Designación residual</option>
-              <option value="Instalación de arbitraje">Instalación de arbitraje</option>
-            </select>
+              <label class="label">
+                <span class="label-text font-semibold text-xl text-info">Archivo digital</span>
+              </label>
+            </div>
 
-            <input type="text" formControlName="codigo" class="input input-bordered w-full bg-gray-100" readonly />
-          </div>
+            <!-- CONTENEDOR ARCHIVOS -->
+            <div class="border border-gray-400 rounded-md p-6 min-h-[160px]">
+
+              <!-- VISTA PREVIA -->
+              <div class="flex gap-6 flex-wrap">
+
+                @for (file of archivos; track file; let i = $index) {
+                <div class="w-28 h-28 bg-base-200 rounded-xl flex flex-col items-center justify-center shadow">
+
+                  <div class="text-xs text-success font-semibold mb-1">
+                    {{ file.size | fileSize }}
+                  </div>
+
+                  <div class="text-center text-xs px-2 truncate">
+                    {{ file.name | truncate:10 }}
+                  </div>
+                </div>
+                }
+
+                <!-- BOTÓN SUBIR -->
+                <label
+                  class="w-28 h-28 border-2 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-base-200">
+                  <span class="text-3xl">+</span>
+                  <span class="text-xs mt-1">Agregar</span>
+                  <input type="file" multiple hidden (change)="onFileSelect($event)" />
+                </label>
+
+              </div>
+            </div>
+
+            <!-- TABLA -->
+            <div class="mt-6 overflow-x-auto">
+              <table class="table table-zebra w-full text-sm">
+                <thead>
+                  <tr>
+                    <th class="w-20 text-center">NRO</th>
+                    <th>ARCHIVO</th>
+                    <th class="w-32 text-center">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  @for (file of archivos; track file; let i = $index) {
+                  <tr>
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td>{{ file.name }}</td>
+                    <td class="flex justify-center gap-2">
+                      <button type="button" class="btn btn-error btn-sm" (click)="eliminarArchivo(i)">
+                        <i class="fa-solid fa-trash-can text-white"></i>
+                      </button>
+
+                      <button type="button" class="btn btn-info btn-sm" (click)="descargarArchivo(file)">
+                        <i class="fa-solid fa-cloud-arrow-down text-white"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  }
+
+                  @if (!archivos.length) {
+                  <tr>
+                    <td colspan="3" class="text-center text-gray-400 py-4">
+                      No se han agregado archivos
+                    </td>
+                  </tr>
+                  }
+
+                </tbody>
+              </table>
+            </div>
 
 
-          <div>
-            <h2 class="text-sm font-semibold mb-4">Descripción</h2>
-            <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
-              placeholder="Describa brevemente su solicitud..." rows="3"></textarea>
-          </div>
+            <!-- Descripcion -->
+            <div>
+              <h2 class="text-sm font-semibold my-4">Aclare su petición</h2>
+              <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
+                placeholder="Describa brevemente su solicitud..." rows="3" appUppercase></textarea>
+            </div>
 
 
-          <div>
-            <h2 class="text-sm font-semibold mb-4">Adjuntar archivos </h2>
-            <input type="file" class="file-input file-input-bordered w-full" multiple
-              (change)="onFileSelected($event)" />
-          </div>
+          </section>
 
+          }
+
+          <!-- STEP 4 ---------------------------------------------------------->
+
+          @if (currentStep === 4) {
+          <section class="border border-primary p-6 rounded-md bg-base-100">
+
+            <!-- Título -->
+            <div class="mb-4">
+              <label class="label">
+                <span class="label-text font-semibold text-xl text-info">Confirmar Datos del trámite</span>
+              </label>
+            </div>
+
+
+            <!-- ================= DATOS DEL INTERESADO ================= -->
+            <div class="card bg-base-200 shadow-sm mb-4">
+              <div class="card-body">
+                <h3 class="font-semibold text-info mb-3">Datos del interesado</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <p><b>Tipo documento:</b> {{ f['tipo_documento'].value }}</p>
+                  <p><b>N° Documento:</b> {{ f['documento_identidad'].value }}</p>
+
+                  <p><b>Nombres:</b> {{ f['nombre'].value }}</p>
+                  <p><b>Apellidos:</b> {{ f['apellidos'].value }}</p>
+
+                  <p><b>Tipo usuario:</b> {{ f['tipo_usuario'].value }}</p>
+                  <p><b>Email:</b> {{ f['correo'].value }}</p>
+
+                  <p><b>Teléfono:</b> {{ f['telefono'].value }}</p>
+                  <p><b>Dirección:</b> {{ f['direccion'].value }}</p>
+
+                  <p class="md:col-span-2"><b>Cargo:</b> {{ f['cargo'].value }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= DATOS DEL ARBITRAJE ================= -->
+            <div class="card bg-base-200 shadow-sm mb-4">
+              <div class="card-body">
+                <h3 class="font-semibold text-info mb-3">Datos del arbitraje</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <p><b>Tipo de arbitraje:</b> {{ f['tipo_solicitud'].value }}</p>
+                  <p><b>Código:</b> {{ f['codigo'].value }}</p>
+                </div>
+
+                @if (descripcionTipoArbitraje) {
+                <div class="alert alert-info mt-3 text-sm">
+                  {{ descripcionTipoArbitraje }}
+                </div>
+                }
+              </div>
+            </div>
+
+            <!-- ================= ARCHIVOS ================= -->
+            <div class="card bg-base-200 shadow-sm mb-4">
+              <div class="card-body">
+                <h3 class="font-semibold text-info mb-3">Archivos adjuntos</h3>
+
+                @if (archivos.length) {
+                <ul class="list-disc list-inside text-sm space-y-1">
+                  @for (file of archivos; track file) {
+                  <li>
+                    {{ file.name }}
+                    <span class="text-xs text-gray-500">
+                      ({{ file.size | fileSize }})
+                    </span>
+                  </li>
+                  }
+                </ul>
+                } @else {
+                <p class="text-sm text-gray-400">
+                  No se adjuntaron archivos
+                </p>
+                }
+              </div>
+            </div>
+
+
+          </section>
           }
 
           <!-- BOTONES DE NAVEGACIÓN -->
@@ -210,12 +408,13 @@
             </button>
             }
 
-            @if (currentStep < 3) { <button type="button" class="btn btn-primary ml-auto" (click)="nextStep()">
+            @if (currentStep < 4) { <button type="button" class="btn btn-primary ml-auto" [disabled]="!isStepValido()"
+              (click)="nextStep()">
               Siguiente
               </button>
               }
 
-              @if (currentStep === 3) {
+              @if (currentStep === 4) {
               <button type="submit" class="btn btn-success ml-auto">
                 <i class="fa-solid fa-paper-plane mr-2"></i> Registrar Solicitud
               </button>
@@ -258,13 +457,7 @@
         </div>
         }
 
-        <!-- @if (enviado) {
-        <div>
-          <h3>Trámite registrado</h3>
-          <p>Número: {{ respuesta.tramite.numero_tramite }}</p>
-          <p>Estado: {{ respuesta.tramite.estado }}</p>
-        </div>
-        } -->
+
 
       </div>
 

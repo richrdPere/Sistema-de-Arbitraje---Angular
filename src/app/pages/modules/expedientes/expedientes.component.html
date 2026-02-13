@@ -62,10 +62,7 @@
 
   <!-- Tabla -->
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
-
     <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
-
-
       <!-- Header acciones -->
       <div class="flex justify-between items-center p-5">
 
@@ -73,7 +70,8 @@
         <div class="flex items-center gap-2 text-sm">
           <label>Mostrar:</label>
 
-          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
+          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
+          (change)="cambiarLimite()">
             <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
               {{ size }}
             </option>
@@ -141,7 +139,8 @@
               <!-- ACCIONES PRINCIPALES -->
               <div class="flex justify-start items-center gap-1">
                 <!-- Ver documentos -->
-                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos" (click)="verDocumentos(exp)">
+                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos"
+                (click)="verDocumentos(exp)">
                   <i class="fa-solid fa-file-lines"></i>
                 </button>
 

@@ -17,7 +17,7 @@
           <!-- BUSCADOR -->
           <div class="relative w-full sm:w-96">
             <input type="text" class="input input-bordered w-full pl-10" placeholder="Buscar por código de expediente"
-              [(ngModel)]="busqueda" />
+              [(ngModel)]="filtroSearch" />
             <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
 
@@ -38,6 +38,9 @@
     </div>
   </div>
 
+  <!-- Modal de trazabilidad -->
+  <ver-trazabilidad *ngIf="mostrarModal && expedienteId" [mostrarModal]="mostrarModal" [expedienteId]="expedienteId"
+    (modalCerrado)="cerrarModal()"></ver-trazabilidad>
 
 
   <!-- Tabla -->
@@ -77,21 +80,27 @@
       <table class="table table-zebra w-full">
         <thead>
           <tr>
+            <th>#</th>
             <th>Expediente</th>
             <th>Partes</th>
+            <th>Arbitros</th>
+            <th>Estado</th>
             <th>Estado procesal</th>
             <th>Último movimiento</th>
-            <th>Documentos clave</th>
+            <!-- <th>Documentos clave</th> -->
             <th>Acciones</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr *ngFor="let exp of expedientesFiltrados">
+          @for (exp of expedientes; track exp.id_expediente; let i = $index) {
+          <tr>
+            <!-- Numeración -->
+            <td>{{i + 1}}</td>
 
             <!-- Código -->
             <td class="font-medium">
-              {{ exp.codigoExpediente }}
+              {{ exp.numero_expediente }}
             </td>
 
             <!-- Partes -->
@@ -102,35 +111,81 @@
               </div>
             </td>
 
+            <!-- Árbitros -->
+            <td>
+              <ul class="text-xs space-y-1">
+                @for (arb of exp.arbitros; track arb.nombre) {
+                <li>
+                  <span class="font-medium">{{ arb.nombre }}</span>
+                  <span class="badge badge-outline ml-1">{{ arb.rol }}</span>
+                </li>
+                }
+              </ul>
+            </td>
+
             <!-- Estado -->
             <td>
-              <span [class]="getBadgeEstado(exp.estadoProcesal)">
-                {{ exp.estadoProcesal }}
+              <span [class]="getBadgeEstado(exp.estado)">
+                {{ exp.estado }}
+              </span>
+            </td>
+
+            <!-- Estado Procesal -->
+            <td>
+              <span [class]="getBadgeEstadoProcesal(exp.estado_procesal)">
+                {{ exp.estado_procesal }}
               </span>
             </td>
 
             <!-- Último movimiento -->
             <td class="text-sm">
-              {{ exp.ultimoMovimiento | date:'dd/MM/yyyy HH:mm' }}
+              <div class="flex flex-col gap-1">
+                <span class="font-medium">
+                  {{ exp.ultimoMovimiento }}
+                </span>
+
+                <span class="text-xs text-gray-500">
+                  {{ exp.fechaUltimoMovimiento | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+
+                <!-- Tooltip -->
+                <span *ngIf="exp.detalleUltimoMovimiento" class="text-xs text-info cursor-help"
+                  title="{{ exp.detalleUltimoMovimiento }}">
+                  Ver detalle
+                </span>
+              </div>
             </td>
 
             <!-- Checklist documentos -->
-            <td>
+            <!-- <td>
               <ul class="text-xs">
                 <li>📄 Solicitud: {{ exp.tieneSolicitud ? '✔️' : '❌' }}</li>
                 <li>⚖️ Acta: {{ exp.tieneActa ? '✔️' : '❌' }}</li>
                 <li>📜 Laudo: {{ exp.tieneLaudo ? '✔️' : '❌' }}</li>
               </ul>
-            </td>
+            </td> -->
 
             <!-- Acciones -->
-            <td>
-              <button class="btn btn-xs btn-outline">
-                Ver expediente
-              </button>
-            </td>
+            <td class="text-right relative">
 
+              <!-- ACCIONES PRINCIPALES -->
+              <div class="flex justify-start items-center gap-1">
+
+                <!-- Ver documentos -->
+                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos" (click)="verDocumentos(exp)">
+                  <i class="fa-solid fa-file-lines"></i>
+                </button>
+
+                <!-- Ver trazabilidad -->
+                <button class="btn btn-ghost btn-circle btn-md" title="Ver trazabilidad" (click)="verTrazabilidad(exp)">
+                  <i class="fa-solid fa-timeline"></i>
+                </button>
+
+              </div>
+            </td>
           </tr>
+          }
+
         </tbody>
       </table>
 
