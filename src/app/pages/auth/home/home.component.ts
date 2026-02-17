@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface NoticiaEvento {
   id: number;
@@ -10,11 +12,37 @@ interface NoticiaEvento {
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
 
+
+  // ISOS
+  imagesIsos: string[] = [
+    'assets/isos/doc2.png',
+    'assets/isos/doc3.png',
+  ];
+
+  // Cetificados
+  imagesCertificados: string[] = [
+    'assets/isos/doc1.png',
+    'assets/isos/doc4.png',
+  ]
+
+
+  currentIndexIsos = 0;
+  currentIndexCertificados = 0;
+  itemsPerView = 4;
+
+  currentIndex = 0;
+
+  // Modal
+  modalAbierto = false;
+  imagenSeleccionada: string | null = null;
+
+
+  // Noticias
   noticiasEventos: NoticiaEvento[] = [
     {
       id: 1,
@@ -42,4 +70,58 @@ export class HomeComponent {
     }
   ];
 
+
+  // Methods
+  get visibleImagesIsos() {
+    return this.imagesIsos.slice(
+      this.currentIndexIsos,
+      this.currentIndexIsos + this.itemsPerView
+    );
+  }
+
+  get visibleImagesCertificados() {
+    return this.imagesCertificados.slice(
+      this.currentIndexCertificados,
+      this.currentIndexCertificados + this.itemsPerView
+    );
+  }
+
+  // ==== Navegación certificados ====
+  nextCertificados() {
+    if (this.currentIndexCertificados + this.itemsPerView < this.imagesCertificados.length) {
+      this.currentIndexCertificados += this.itemsPerView;
+    }
+  }
+
+  prevCertificados() {
+    if (this.currentIndexCertificados - this.itemsPerView >= 0) {
+      this.currentIndexCertificados -= this.itemsPerView;
+    }
+  }
+
+  // ==== Navegación ISOS ====
+
+  nextIsos() {
+    if (this.currentIndexIsos + this.itemsPerView < this.imagesIsos.length) {
+      this.currentIndexIsos += this.itemsPerView;
+    }
+  }
+
+  prevIsos() {
+    if (this.currentIndexIsos - this.itemsPerView >= 0) {
+      this.currentIndexIsos -= this.itemsPerView;
+    }
+  }
+
+  // ==== Modal ====
+
+  abrirModal(img: string) {
+    this.imagenSeleccionada = img;
+    this.modalAbierto = true;
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
+    this.imagenSeleccionada = null;
+  }
 }

@@ -5,19 +5,29 @@ import { FormsModule } from '@angular/forms';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
+import { SolicitudDetailComponent } from "../solicitud-detail/solicitud-detail.component";
+import { SolicitudDocsComponent } from "../solicitud-docs/solicitud-docs.component";
 
 @Component({
   selector: 'list-aprobados',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, SolicitudDetailComponent, SolicitudDocsComponent],
   templateUrl: './list-aprobados.component.html',
   styles: ``
 })
 export class ListAprobadosComponent implements OnInit {
 
 
-  solicitudesAprobadas: any[] = []
+
+  solicitudesAprobadas: any[] = [];
   solicitudesFiltradas: any[] = [];
   isLoading = false;
+
+  mostrarModal = false;
+  mostrarDetalle = false;
+  documentosSeleccionados: any[] = [];
+  tramiteDetalle: any = null;
+  tramiteSeleccionado: any = null;
+  tipoModal: 'detalle' | 'estado' | null = null;
 
   // Filtros
   filtroSearch: string = '';
@@ -66,7 +76,6 @@ export class ListAprobadosComponent implements OnInit {
         console.log('Trámites cargados:', resp);
         this.solicitudesAprobadas = resp.data ?? [];
 
-        // IMPORTANTE
         this.solicitudesFiltradas = [...this.solicitudesAprobadas];
 
         this.totalItems = resp.total;
@@ -101,50 +110,34 @@ export class ListAprobadosComponent implements OnInit {
 
       return matchTexto && matchTipo;
     });
+  }
 
+  verArchivos(item: any) {
+    this.mostrarModal = true;
+    this.documentosSeleccionados = item.documentos;
 
-
-    // const matchTexto = (item: any) => {
-    //   if (!buscar) return true;
-
-    //   return (
-    //     (item.numero_expediente || '').toLowerCase().includes(buscar) ||
-    //     (item.solicitante || '').toLowerCase().includes(buscar) ||
-    //     (item.correo || '').toLowerCase().includes(buscar) ||
-    //     (item.tipo || '').toLowerCase().includes(buscar) ||
-    //     (item.estado || '').toLowerCase().includes(buscar)
-    //   );
-
-    //   // const ne = (item.numero_expediente || '').toString().toLowerCase();
-    //   // const solicitante = (item.solicitante || '').toLowerCase();
-    //   // const correo = (item.correo || '').toLowerCase();
-    //   // const tipoIt = (item.tipo || '').toLowerCase();
-    //   // const estadoIt = (item.estado || '').toLowerCase();
-
-    //   // return ne.includes(buscar) ||
-    //   //   solicitante.includes(buscar) ||
-    //   //   correo.includes(buscar) ||
-    //   //   tipoIt.includes(buscar) ||
-    //   //   estadoIt.includes(buscar);
-    // };
-
-    // this.solicitudesFiltradas = this.solicitudesAprobadas.filter(item =>
-    //   (!tipo || item.tipo === tipo) &&
-    //   matchTexto(item)
-    // );
-
-
-    // const aplicarAFiltrar = (lista: any[]) =>
-    //   (lista || []).filter(item =>
-    //     (!tipo || item.tipo === tipo) &&
-    //     (!estado || item.estado === estado) &&
-    //     matchTexto(item)
-    //   );
-
+  }
+  verDetalle(tramite: any) {
+    this.tramiteDetalle = tramite;
+    this.mostrarDetalle = true;
   }
 
 
   // Helpers
+  cerrarModal() {
+    this.tipoModal = null;
+    this.mostrarModal = false;
+
+    this.tramiteSeleccionado = null;
+    this.tramiteDetalle = null;
+
+  }
+
+  cerrarDetalle() {
+    this.mostrarDetalle = false;
+    this.tramiteSeleccionado = null;
+  }
+
   onPageSizeChange() {
     this.currentPage = 1; // vuelve a la primera página
   }
@@ -160,5 +153,7 @@ export class ListAprobadosComponent implements OnInit {
     this.page = 1;
     this.cargarTramitesAprobados();
   }
+
+
 
 }

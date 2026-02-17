@@ -28,15 +28,12 @@ import { ListRechazadosComponent } from "./list-rechazados/list-rechazados.compo
 })
 export class SolicitudesComponent implements OnInit {
 
-
-
   // Variables
   fb = inject(FormBuilder);
   formUtils = FormUtils;
 
   solicitudes: any[] = [];
-  solicitudesAprobadas: any[] = [];
-  solicitudesRechazadas: any[] = [];
+  solicitudesFiltradas: any[] = [];
 
   // Nuevo campo para razón o comentario
   razonRechazo: string = '';
@@ -90,8 +87,8 @@ export class SolicitudesComponent implements OnInit {
   }
 
   // ya las tienes, pero añade:
-  solicitudesFiltradas: any[] = [];             // opcional global
-  solicitudesPendientesFiltradas: any[] = [];   // PARA TAB PENDIENTES
+
+  // solicitudesPendientesFiltradas: any[] = [];   // PARA TAB PENDIENTES
   // solicitudesAprobadasFiltradas: any[] = [];    // PARA TAB APROBADAS
   // solicitudesRechazadasFiltradas: any[] = [];   // PARA TAB RECHAZADAS
 
@@ -150,12 +147,9 @@ export class SolicitudesComponent implements OnInit {
     const filtros: any = {
       page: this.page,
       limit: this.limit,
-      // rol: this.rol,
       search: this.filtroSearch,
-      estado: "pendiente",
       tipo: this.filtroTipo,
-      // fecha_inicio: this.fecha_inicio,
-      // fecha_fin: this.fecha_fin
+      estado: "pendiente",
     };
 
     // Si es usuario, debe enviarse el id_usuario
@@ -169,9 +163,8 @@ export class SolicitudesComponent implements OnInit {
         console.log('Trámites cargados:', resp);
         this.solicitudes = resp.data ?? [];
 
-        // ================================
-        // 1. Paginación REAL (BACKEND MANDA)
-        // ================================
+        this.solicitudesFiltradas = [...this.solicitudes];
+
         this.totalItems = resp.total;
         this.totalPages = resp.totalPages;
 
@@ -183,17 +176,6 @@ export class SolicitudesComponent implements OnInit {
           this.cargarTramitesPorEstado(estado); //  recargar con página válida
           return;
         }
-
-        // Clasificación por estado
-        // this.solicitudes = tramites.filter(t => t.estado === 'pendiente');
-        // this.solicitudesAprobadas = tramites.filter(t => t.estado === 'aprobada');
-        // this.solicitudesRechazadas = tramites.filter(t => t.estado === 'rechazada');
-
-
-        // Paginación
-        // this.page = resp.page;
-        // this.totalPages = resp.totalPages;
-        // this.totalItems = resp.total;
 
         this.loading = false;
       },
@@ -224,39 +206,55 @@ export class SolicitudesComponent implements OnInit {
     const tipo = this.filtroTipo;
     // const estado = this.filtroEstado;
 
-    const matchTexto = (item: any) => {
-      if (!buscar) return true;
-      const ne = (item.numero_expediente || '').toString().toLowerCase();
-      const solicitante = (item.solicitante || '').toLowerCase();
-      const correo = (item.correo || '').toLowerCase();
-      const tipoIt = (item.tipo || '').toLowerCase();
-      const estadoIt = (item.estado || '').toLowerCase();
+    this.solicitudesFiltradas = this.solicitudes.filter(item => {
 
-      return ne.includes(buscar) ||
-        solicitante.includes(buscar) ||
-        correo.includes(buscar) ||
-        tipoIt.includes(buscar) ||
-        estadoIt.includes(buscar);
-    };
+      const matchTexto =
+        !buscar ||
+        (item.numero_expediente || '').toLowerCase().includes(buscar) ||
+        (item.solicitante || '').toLowerCase().includes(buscar) ||
+        (item.correo || '').toLowerCase().includes(buscar) ||
+        (item.tipo || '').toLowerCase().includes(buscar);
 
-    const aplicarAFiltrar = (lista: any[]) =>
-      (lista || []).filter(item =>
-        (!tipo || item.tipo === tipo) &&
-        // (!estado || item.estado === estado) &&
-        matchTexto(item)
-      );
+      const matchTipo =
+        !tipo || item.tipo === tipo;
 
-    // Filtrar cada lista (originales vienen de cargarTramites)
-    this.solicitudesPendientesFiltradas = aplicarAFiltrar(this.solicitudes);
-    // this.solicitudesAprobadasFiltradas = aplicarAFiltrar(this.solicitudesAprobadas);
-    // this.solicitudesRechazadasFiltradas = aplicarAFiltrar(this.solicitudesRechazadas);
+      return matchTexto && matchTipo;
+    });
 
-    // opcional: actualizar la lista global si la usas en algún lugar
-    this.solicitudesFiltradas = [
-      ...this.solicitudesPendientesFiltradas,
-      // ...this.solicitudesAprobadasFiltradas,
-      // ...this.solicitudesRechazadasFiltradas
-    ];
+
+    // const matchTexto = (item: any) => {
+    //   if (!buscar) return true;
+    //   const ne = (item.numero_expediente || '').toString().toLowerCase();
+    //   const solicitante = (item.solicitante || '').toLowerCase();
+    //   const correo = (item.correo || '').toLowerCase();
+    //   const tipoIt = (item.tipo || '').toLowerCase();
+    //   const estadoIt = (item.estado || '').toLowerCase();
+
+    //   return ne.includes(buscar) ||
+    //     solicitante.includes(buscar) ||
+    //     correo.includes(buscar) ||
+    //     tipoIt.includes(buscar) ||
+    //     estadoIt.includes(buscar);
+    // };
+
+    // const aplicarAFiltrar = (lista: any[]) =>
+    //   (lista || []).filter(item =>
+    //     (!tipo || item.tipo === tipo) &&
+    //     // (!estado || item.estado === estado) &&
+    //     matchTexto(item)
+    //   );
+
+    // // Filtrar cada lista (originales vienen de cargarTramites)
+    // this.solicitudesPendientesFiltradas = aplicarAFiltrar(this.solicitudes);
+    // // this.solicitudesAprobadasFiltradas = aplicarAFiltrar(this.solicitudesAprobadas);
+    // // this.solicitudesRechazadasFiltradas = aplicarAFiltrar(this.solicitudesRechazadas);
+
+    // // opcional: actualizar la lista global si la usas en algún lugar
+    // this.solicitudesFiltradas = [
+    //   ...this.solicitudesPendientesFiltradas,
+    //   // ...this.solicitudesAprobadasFiltradas,
+    //   // ...this.solicitudesRechazadasFiltradas
+    // ];
 
   }
 

@@ -82,3 +82,106 @@
     }
   </div>
 </section>
+
+<!-- Seccion de constancias -->
+<!-- Sección Certificaciones e ISOS -->
+<section class="relative bg-gray-100 bg-cover bg-center py-12 md:py-16"
+  style="background-image: url('assets/textura-fondo.png')">
+
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Título General -->
+    <h2 class="text-center text-3xl md:text-4xl font-light text-gray-800 mb-16">
+      Nuestros <span class="font-bold text-info">Certificados</span>
+    </h2>
+
+    <!-- Grid principal: 1 columna móvil, 2 en desktop -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      <!-- ================= CONSTANCIAS ================= -->
+      <div class="bg-base-100 p-8 rounded-3xl shadow-xl flex flex-col">
+
+        <h3 class="text-xl font-semibold text-center mb-8">
+          Constancias
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+
+          <div *ngFor="let img of imagesCertificados"
+            class="card bg-base-200 shadow-lg hover:shadow-2xl transition duration-300 w-64">
+
+            <figure class="px-4 pt-6 flex justify-center">
+              <img [src]="img"
+                (click)="abrirModal(img)"
+                class="rounded-xl h-72 object-contain cursor-pointer hover:scale-105 transition duration-300" />
+            </figure>
+
+            <div class="card-body p-4">
+              <p class="text-sm text-center truncate">
+                {{ img.split('/').pop() }}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= ISOS ================= -->
+      <div class="bg-base-100 p-8 rounded-3xl shadow-xl flex flex-col">
+
+        <h3 class="text-xl font-semibold text-center mb-8">
+          ISOS
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+
+          <div *ngFor="let img of imagesIsos"
+            class="card bg-base-200 shadow-lg hover:shadow-2xl transition duration-300 w-64">
+
+            <figure class="px-4 pt-6 flex justify-center">
+              <img [src]="img"
+                (click)="abrirModal(img)"
+                class="rounded-xl h-72 object-contain cursor-pointer hover:scale-105 transition duration-300" />
+            </figure>
+
+            <div class="card-body p-4">
+              <p class="text-sm text-center truncate">
+                {{ img.split('/').pop() }}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+<input type="checkbox" id="modal-preview" class="modal-toggle" [(ngModel)]="modalAbierto" />
+
+<div class="modal">
+  <div class="modal-box max-w-4xl bg-base-100">
+
+    <div class="flex justify-end">
+      <button class="btn btn-sm btn-circle btn-ghost" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="flex justify-center">
+      <img *ngIf="imagenSeleccionada" [src]="imagenSeleccionada"
+        class="w-full max-h-[85vh] object-contain rounded-xl shadow-xl" />
+    </div>
+
+  </div>
+
+  <label class="modal-backdrop" (click)="cerrarModal()"></label>
+</div>

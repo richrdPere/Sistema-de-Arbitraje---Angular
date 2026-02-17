@@ -57,6 +57,17 @@
 
     </div>
 
+
+    <!-- MODALES -->
+
+    <!-- Modal de detalles -->
+    <solicitud-detail [mostrarModal]="mostrarDetalle" [tramite]="tramiteDetalle" (cerrar)="cerrarDetalle()">
+    </solicitud-detail>
+
+    <!-- Modal de documentos -->
+    <solicitud-docs [mostrarModal]="mostrarModal" [documentos]="documentosSeleccionados" (modalCerrado)="cerrarModal()">
+    </solicitud-docs>
+
     <!-- Tabla  -->
     <table class="table w-full">
       <thead class="bg-base-300 text-base-content">
@@ -65,9 +76,11 @@
           <th>N° Expediente</th>
           <th>Tipo</th>
           <th>Estado</th>
-          <th>Etapa</th>
+          <th>Nro Documentos</th>
+          <!-- <th>Etapa</th> -->
           <th>Solicitante</th>
           <th>Correo</th>
+          <th>Teléfono</th>
           <th>Acciones</th>
 
         </tr>
@@ -109,14 +122,54 @@
         @for (solicitud of solicitudesFiltradas; track $index) {
         <tr class="hover transition-colors text-base-content">
           <td>{{ $index + 1 }}</td>
-          <td class="font-medium text-primary">{{ solicitud.numero_expediente }}</td>
+          <td class="font-bold text-success">{{ solicitud.numero_expediente }}</td>
           <td>{{ solicitud.tipo }}</td>
-          <td>{{ solicitud.estado }}</td>
-          <td>{{ solicitud.etapa_procesal }}</td>
-          <td>{{ solicitud.solicitante }}</td>
-          <td>{{ solicitud.correo }}</td>
           <td>
-            <!-- Acciones aquí -->
+            <span class="badge badge-soft badge-success font-semibold">
+              {{ solicitud.estado }}
+            </span>
+          </td>
+          <!-- <td>{{ solicitud.etapa_procesal }}</td> -->
+
+          <!-- Nro documentos -->
+          <td class="text-center">
+            <span class="badge badge-dash badge-success font-semibold">
+              {{solicitud.documentos.length}}
+            </span>
+          </td>
+
+          <!-- Solicitante -->
+          <td>{{ solicitud.solicitante }}</td>
+
+          <!-- Correo -->
+          <td>{{ solicitud.correo }}</td>
+
+          <!-- Teléfono -->
+          <td>{{ solicitud.telefono }}</td>
+
+          <!-- Acciones aquí -->
+          <td class="text-right relative">
+
+            <!-- ACCIONES PRINCIPALES -->
+            <div class="flex justify-start items-center gap-1">
+
+              <!-- Ver detalle -->
+              <button class="btn btn-ghost btn-circle btn-md" (click)="verDetalle(solicitud)" title="Ver detalle">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+
+              <!-- Ver archivo -->
+              <button class="btn btn-ghost btn-circle btn-md" (click)="verArchivos(solicitud)" title="Ver archivo"
+                [disabled]="!solicitud.documentos?.length">
+                <i class="fa-solid fa-file"></i>
+              </button>
+
+              <!-- Aprobar solicitud -->
+              <!-- <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal(solicitud)" title="Aprobar solicitud">
+                <i class="fa-regular fa-circle-check"></i>
+              </button> -->
+            </div>
+
           </td>
         </tr>
         }
