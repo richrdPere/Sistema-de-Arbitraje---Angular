@@ -31,15 +31,27 @@
         </thead>
         <tbody>
           <tr *ngFor="let doc of documentos; index as i">
-            <td>{{ i + 1 }}</td>
-            <td>{{ doc.titulo }}</td>
-            <td>
+            <td class="w-12 text-center">
+              {{ i + 1 }}
+            </td>
+
+            <td class="w-3/5 ">
+              <span class="" [title]="doc.titulo">
+                {{ doc.titulo }}
+              </span>
+            </td>
+
+            <td class="w-28 text-center">
               <span class="badge badge-outline">
                 {{ doc.tipo_archivo }}
               </span>
             </td>
-            <td>{{ doc.fecha_subida | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="text-center space-x-2">
+
+            <td class="w-44 text-center whitespace-nowrap">
+              {{ doc.fecha_subida | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+
+            <td class="w-28 text-center whitespace-nowrap">
               <button class="btn btn-sm btn-ghost" (click)="verDocumento(doc)" title="Ver">
                 <i class="fa-solid fa-file-pdf"></i>
               </button>

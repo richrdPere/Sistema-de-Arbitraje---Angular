@@ -30,6 +30,7 @@ import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-p
 export class ExpedientesComponent {
 
 
+
   // Expedientes
   expedientes: any = [];
   searchTimeout: any;
@@ -194,8 +195,7 @@ export class ExpedientesComponent {
   }
 
   // Ejemplo de funciones base:
-  verDocumentos(exp: any)
-  { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
+  verDocumentos(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
 
   gestionarParticipesModal(exp: any) {
     // this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);
@@ -289,6 +289,12 @@ export class ExpedientesComponent {
 
 
   anularExpediente(arg0: any) {
+    throw new Error('Method not implemented.');
+  }
+
+
+
+  abrirParticipe() {
     throw new Error('Method not implemented.');
   }
 

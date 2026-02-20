@@ -36,7 +36,7 @@
 <!-- Tabla -->
 <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
 
-  <div class="overflow-x-auto overflow-y-auto h-[40vh] sm:max-h-[65vh] md:max-h-[60vh] lg:max-h-[65vh] xl:max-h-[70vh]">
+  <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
 
     <!-- Header acciones -->
     <div class="flex justify-between items-center p-5">
@@ -103,7 +103,7 @@
               <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-32 h-32 mb-4 opacity-70" />
 
               <h3 class="text-lg font-semibold mb-1">
-                No hay solicitudes no admitidas
+                No hay solicitudes rechazadas
               </h3>
 
               <p class="text-sm">
@@ -119,17 +119,17 @@
         @for (solicitud of solicitudesFiltradas; track $index) {
         <tr class="hover transition-colors text-base-content">
           <td>{{ $index + 1 }}</td>
-          <td class="font-bold text-danger">{{ solicitud.numero_expediente }}</td>
+          <td class="font-bold text-error">{{ solicitud.numero_expediente }}</td>
           <td>{{ solicitud.tipo }}</td>
           <td>
 
-            <span class="badge badge-soft badge-danger font-semibold"> {{ solicitud.estado }}</span>
+            <span class="badge badge-soft badge-error font-semibold"> {{ solicitud.estado }}</span>
           </td>
           <!-- <td>{{ solicitud.etapa_procesal }}</td> -->
 
           <!-- Nro documentos -->
           <td class="text-center">
-            <span class="badge badge-dash badge-danger font-semibold">
+            <span class="badge badge-dash badge-error font-semibold">
               {{solicitud.documentos.length}}
             </span>
           </td>

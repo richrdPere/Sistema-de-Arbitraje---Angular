@@ -54,9 +54,8 @@
 
 
   <!-- Modal Participes y Arbitros -->
-  <gestionar-participes [mostrarModal]="mostrarModalParticipes"
-    [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModalParticipes()"
-    >
+  <gestionar-participes [mostrarModal]="mostrarModalParticipes" [expedienteSeleccionado]="expedienteSeleccionado"
+    (modalCerrado)="cerrarModalParticipes()">
   </gestionar-participes>
 
 
@@ -70,8 +69,7 @@
         <div class="flex items-center gap-2 text-sm">
           <label>Mostrar:</label>
 
-          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
-          (change)="cambiarLimite()">
+          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
             <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
               {{ size }}
             </option>
@@ -80,8 +78,16 @@
           <span>items por página</span>
         </div>
 
-        <!-- Botón -->
-        <div>
+        <!-- Botónes -->
+        <div class="flex flex-row justify-center items-center gap-4">
+
+          <button class="btn btn-warning text-base-content hover:text-white bg-info hover:bg-primary border-none"
+            (click)="abrirParticipe()">
+            <i class="fa-solid fa-plus mr-1"></i>
+            Participe
+          </button>
+
+
           <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
             (click)="abrirModal()">
             <i class="fa-solid fa-plus mr-1"></i>
@@ -114,7 +120,6 @@
           </tr>
           }
 
-
           @for (exp of expedientes; track exp.id_expediente; let i = $index) {
           <tr class="hover ">
             <td>{{i + 1}}</td>
@@ -139,8 +144,7 @@
               <!-- ACCIONES PRINCIPALES -->
               <div class="flex justify-start items-center gap-1">
                 <!-- Ver documentos -->
-                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos"
-                (click)="verDocumentos(exp)">
+                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos" (click)="verDocumentos(exp)">
                   <i class="fa-solid fa-file-lines"></i>
                 </button>
 
@@ -158,7 +162,7 @@
 
               </div>
 
-              @if (menuActivo?.id_expediente  === exp.id_expediente ) {
+              @if (menuActivo?.id_expediente === exp.id_expediente ) {
               <div class="fixed bg-base-100 shadow-xl rounded-xl w-auto border border-base-300 z-[9999]"
                 [ngStyle]="dropdownStyle">
                 <ul class="menu menu-md ">
@@ -202,7 +206,7 @@
       </table>
 
       @if (!loading && expedientes.length === 0) {
-      <div class="flex flex-col items-center justify-center mt-20 text-center text-base-content/70">
+      <div class="flex flex-col items-center justify-center my-10 text-center text-base-content/70">
         <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
         <h3 class="text-lg font-semibold text-base-content mb-2">
           No hay expedientes registrados

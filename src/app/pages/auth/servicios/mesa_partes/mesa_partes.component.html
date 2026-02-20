@@ -20,12 +20,14 @@
             <div class="flex flex-row sm:flex-row justify-center gap-6 text-sm font-semibold">
               <div>
                 <span class="mr-2">Fecha :</span>
-                <input type="date" class="input input-bordered input-sm w-28" [value]="fechaActual" disabled />
+                <!-- <input type="date" class="input input-bordered input-sm w-28" [value]="fechaActual" disabled /> -->
+                <p class="input input-bordered input-sm w-32">{{ fechaActual }}</p>
               </div>
 
               <div>
                 <span class="mr-2">Nro de Solicitud :</span>
-                <input type="text" class="input input-bordered input-sm w-28" [value]="numeroSolicitud" disabled />
+                <!-- <input type="text" class="input input-bordered input-sm w-28" [value]="numeroSolicitud" disabled /> -->
+                <p class="input input-bordered input-sm w-18">{{ numeroSolicitud }}</p>
               </div>
             </div>
           </div>
@@ -198,7 +200,10 @@
             @if (
             descripcionTipoArbitraje
             ) {
-            <div class="alert alert-info shadow-sm">
+            <div class="alert shadow-sm text-white" [ngStyle]="{
+                                                  'background-color': colorAlerta,
+                                                  'color': '#ffffff'
+                                                }">
               <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -220,7 +225,6 @@
           }
 
           <!-- STEP 3 ---------------------------------------------------------->
-
           @if (currentStep === 3) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
 
@@ -280,13 +284,17 @@
                     <td class="text-center">{{ i + 1 }}</td>
                     <td>{{ file.name }}</td>
                     <td class="flex justify-center gap-2">
+
+                      <button type="button" class="btn btn-info btn-sm" (click)="verArchivo(file)">
+                        <!-- <i class="fa-solid fa-cloud-arrow-down text-white"></i> -->
+                        <i class="fa-solid fa-magnifying-glass text-white"></i>
+                      </button>
+
                       <button type="button" class="btn btn-error btn-sm" (click)="eliminarArchivo(i)">
                         <i class="fa-solid fa-trash-can text-white"></i>
                       </button>
 
-                      <button type="button" class="btn btn-info btn-sm" (click)="descargarArchivo(file)">
-                        <i class="fa-solid fa-cloud-arrow-down text-white"></i>
-                      </button>
+
                     </td>
                   </tr>
                   }
@@ -317,7 +325,6 @@
           }
 
           <!-- STEP 4 ---------------------------------------------------------->
-
           @if (currentStep === 4) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
 
@@ -363,7 +370,10 @@
                 </div>
 
                 @if (descripcionTipoArbitraje) {
-                <div class="alert alert-info mt-3 text-sm">
+                <div class="alert mt-3 text-sm" [ngStyle]="{
+                                                  'background-color': colorAlerta,
+                                                  'color': '#ffffff'
+                                                }">
                   {{ descripcionTipoArbitraje }}
                 </div>
                 }

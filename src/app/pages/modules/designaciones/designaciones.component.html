@@ -24,7 +24,7 @@
       </div>
 
       <!--  BOTONES -->
-      <div class="flex gap-2 justify-end w-full md:w-auto">
+      <!-- <div class="flex gap-2 justify-end w-full md:w-auto">
         <button class="btn btn-primary w-full" (click)="aplicarFiltros()">
           Aplicar filtros
         </button>
@@ -32,32 +32,34 @@
         <button class="btn btn-secondary " (click)="limpiarFiltros()">
           Limpiar filtros
         </button>
-      </div>
+      </div> -->
     </div>
-
-
-
   </div>
 
-
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
+
     <!-- TABLA -->
-    <div *ngIf="!loading; else cargando" class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
       <table class="table w-full">
         <thead>
           <tr>
             <th>#</th>
-            <th>Expediente</th>
+            <th>EXPEDIENTE</th>
             <th>Adjudicador</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>Árbitros</th>
-            <th>Opciones</th>
+            <th>TIPO</th>
+            <th>ESTADO</th>
+            <th>ARBITROS</th>
+            <th>ACCIONES</th>
           </tr>
         </thead>
-
-
         <tbody>
+          @if (loading) {
+          <tr>
+            <td colspan="7" class="text-center py-4 text-base-content/70">Cargando designaciones...</td>
+          </tr>
+          }
+
+
           @for (d of designaciones; track $index) {
           <tr>
             <td>{{ d.id_designacion }}</td>
@@ -86,30 +88,56 @@
 
         </tbody>
       </table>
+
+      @if (!loading && designaciones.length === 0) {
+      <div colspan="8" class="text-center py-10">
+        <div class="flex flex-col items-center justify-center text-center text-base-content/70">
+          <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
+          <h3 class="text-lg font-semibold text-base-content mb-2">
+            No hay designaciones registrados
+          </h3>
+          <p class="text-sm max-w-md">Cuando se designen arbitros a los expedientes, aparecerán aquí automáticamente.
+          </p>
+        </div>
+      </div>
+      }
+
+
+      <!-- PAGINACIÓN -->
+      <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
+
+        <span>Página {{ pagina_actual }} de {{ total_paginas }}</span>
+
+        <div class="join ml-4 gap-2">
+          <button class="btn" [disabled]="pagina_actual === 1" (click)="cambiarPagina(pagina_actual - 1)">
+            Anterior
+          </button>
+
+
+          <button class="btn" [disabled]="pagina_actual === total_paginas" (click)="cambiarPagina(pagina_actual + 1)">
+            Siguiente
+          </button>
+        </div>
+
+
+
+
+
+
+      </div>
+
+
     </div>
 
-    <!-- PAGINACIÓN -->
-    <div class="mt-4 flex justify-between items-center">
 
-      <button class="btn" [disabled]="pagina_actual === 1" (click)="cambiarPagina(pagina_actual - 1)">
-        « Anterior
-      </button>
-
-      <span>Página {{ pagina_actual }} de {{ total_paginas }}</span>
-
-      <button class="btn" [disabled]="pagina_actual === total_paginas" (click)="cambiarPagina(pagina_actual + 1)">
-        Siguiente »
-      </button>
-
-    </div>
 
     <!-- LOADING -->
-    <ng-template #cargando>
+    <!-- <ng-template #cargando>
       <div class="text-center py-10">
         <span class="loading loading-spinner loading-lg"></span>
         <p>Cargando designaciones...</p>
       </div>
-    </ng-template>
+    </ng-template> -->
   </div>
 
 

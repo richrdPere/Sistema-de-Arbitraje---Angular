@@ -26,7 +26,7 @@
     <!-- FORMULARIO -->
     <form [formGroup]="formExpediente" (ngSubmit)="crearOEditarExpediente()" class="space-y-6">
 
-      <div class="card-body">
+      <div class="card-body p-0">
 
         <!-- ========== Datos del expediente ========== -->
         <section>
@@ -75,54 +75,11 @@
         </section>
 
         <!-- ========== Tipo, estado y etapa procesal ========== -->
-        <section>
+        <!-- <section>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Tipo -->
-            <!-- <div>
-                <label class="block text-sm font-semibold mb-1">Tipo</label>
-                <select formControlName="tipo" class="select select-bordered w-full">
-                  <option disabled selected>Seleccione un tipo...</option>
-                  <option value="Arbitraje de Emergencia">Arbitraje de Emergencia</option>
-                  <option value="Arbitraje Ad Hoc">Arbitraje Ad Hoc</option>
-                  <option value="Arbitraje Institucional">Arbitraje Institucional</option>
-                  <option value="Recusación de árbitro">Recusación de árbitro</option>
-                  <option value="Recusación de adjudicador">Recusación de adjudicador</option>
-                  <option value="Designación residual">Designación residual</option>
-                  <option value="Instalación de arbitraje">Instalación de arbitraje</option>
-                </select>
-              </div> -->
 
-            <!-- Estado -->
-            <!-- <div>
-                <label class="block text-sm font-semibold mb-1">Estado</label>
-                <select formControlName="estado" class="select select-bordered w-full">
-                  <option disabled selected>Seleccione un estado...</option>
-                  <option value="Archivado">Archivado</option>
-                  <option value="En trámite">En trámite</option>
-                  <option value="Suspendido">Suspendido</option>
-                  <option value="Concluido">Concluido</option>
-                </select>
-              </div> -->
-
-            <!-- Etapa Procesal -->
-            <!-- <div>
-                <label class="block text-sm font-semibold mb-1">Etapa Procesal</label>
-                <select formControlName="estado_procesal" class="select select-bordered w-full">
-                  <option disabled selected>Seleccione una etapa...</option>
-                  <option value="Prearbitral">Prearbitral</option>
-                  <option value="Instalación">Instalación</option>
-                  <option value="Postulatoria">Postulatoria</option>
-                  <option value="Admisión de medios probatorios">Admisión de medios probatorios</option>
-                  <option value="Actuación probatoria">Actuación probatoria</option>
-                  <option value="Cierre de etapa probatoria">Cierre de etapa probatoria</option>
-                  <option value="Alegatos">Alegatos</option>
-                  <option value="Plazo para laudar">Plazo para laudar</option>
-                  <option value="Concluido con Laudo Arbitral Consentido">Concluido con Laudo Arbitral Consentido
-                  </option>
-                </select>
-              </div> -->
           </div>
-        </section>
+        </section> -->
 
         <!-- ========== Fechas ========== -->
         <section>
@@ -132,7 +89,7 @@
               <input formControlName="fecha_inicio" type="date" class="input input-bordered w-full" />
             </div>
 
-            <div>
+            <!-- <div>
               <label class="block text-sm font-semibold mb-1">Fecha de Laudo</label>
               <input formControlName="fecha_laudo" type="date" class="input input-bordered w-full" />
             </div>
@@ -145,7 +102,7 @@
             <div>
               <label class="block text-sm font-semibold mb-1">Fecha de Cierre</label>
               <input formControlName="fecha_cierre" type="date" class="input input-bordered w-full" />
-            </div>
+            </div> -->
           </div>
         </section>
       </div>
@@ -160,101 +117,6 @@
           {{ modoEdicion ? 'Actualizar Expediente' : 'Guardar Expediente' }}
         </button>
       </div>
-
-      <!-- STEP 1 -->
-      <!-- @if (currentStep === 1) {
-
-
-      } -->
-
-      <!-- STEP 2 -->
-      <!-- @if (currentStep === 2) {
-
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h4 class="card-title mb-4">Información del Demandado</h4>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input formControlName="demandado_nombre" type="text" placeholder="Nombre del Demandado"
-              class="input input-bordered w-full focus:outline-none" />
-
-            <input formControlName="demandado_representante" type="text" placeholder="Representante Legal del Demandado"
-              class="input input-bordered w-full focus:outline-none" />
-          </div>
-        </div>
-
-      </div>
-      } -->
-
-      <!-- STEP 3 -->
-      <!-- @if (currentStep === 3) {
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h4 class="card-title mb-4">Información del Demandante</h4>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input formControlName="demandante_nombre" type="text" placeholder="Nombre del Demandante"
-              class="input input-bordered w-full focus:outline-none" />
-
-            <input formControlName="demandante_representante" type="text"
-              placeholder="Representante Legal del Demandante" class="input input-bordered w-full focus:outline-none" />
-          </div>
-
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input formControlName="demandante_correo" type="email" placeholder="Correo del Demandante"
-              class="input input-bordered w-full focus:outline-none" />
-
-            <input formControlName="demandante_direccion" type="text" placeholder="Dirección del Demandante"
-              class="input input-bordered w-full focus:outline-none" />
-          </div>
-
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input formControlName="demandante_telefono" type="email" placeholder="Telefono del Demandante"
-              class="input input-bordered w-full focus:outline-none" />
-
-            <input formControlName="demandante_nro_documento" type="text" placeholder="Numero de documento"
-              class="input input-bordered w-full focus:outline-none" />
-          </div>
-        </div>
-      </div>
-      } -->
-
-
-
-
-      <!-- <div class="flex justify-between mt-6">
-        <button class="btn btn-ghost" type="button" [disabled]="currentStep === 1" (click)="prevStep()">
-          Atrás
-        </button>
-
-        @if (currentStep < 3) { <button class="btn btn-primary" type="button" (click)="nextStep()">
-          Siguiente
-          </button>
-          } @else {
-          <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
-            Cancelar
-          </button>
-
-          <button class="btn btn-success text-white" type="submit" [disabled]="formExpediente.invalid">
-            {{ modoEdicion ? 'Actualizar Expediente' : 'Guardar Expediente' }}
-          </button>
-          }
-      </div> -->
-
-      <!-- <div class="modal-action flex justify-end items-center gap-3 ">
-        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
-        <button type="submit" class="btn btn-primary text-white" [disabled]="formExpediente.invalid || cargando">
-          @if (cargando) {
-          <span class="loading loading-spinner loading-sm"></span>
-          {{ modoEdicion ? 'Actualizando...' : 'Creando...' }}
-          } @else {
-          {{ modoEdicion ? 'Actualizar Expediente' : 'Guardar Expediente' }}
-          }
-        </button>
-      </div> -->
-
     </form>
   </div>
 

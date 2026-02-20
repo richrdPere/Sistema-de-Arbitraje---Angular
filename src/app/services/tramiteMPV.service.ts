@@ -102,4 +102,15 @@ export class TramiteMPVService {
     const headers = this.getAuthHeaders().headers;
     return this.http.put(`${this.url}/actualizar/${id}`, payload, { headers });
   }
+
+  // ===========================================================
+  // 6.- Actualizar estado
+  // ===========================================================
+
+  previewNumeroTramite() {
+    const headers = this.getAuthHeaders().headers; // extrae solo los headers
+    return this.http.get<any>(
+      `${this.url}/preview-numero`
+    );
+  }
 }

@@ -108,9 +108,6 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
       descripcion: this.expedienteSeleccionado.descripcion || '',
       tipo: this.expedienteSeleccionado.tipo || '',
       estado: this.expedienteSeleccionado.estado || '',
-      // estado_procesal: this.expedienteSeleccionado.estado_procesal || '',
-      // numero: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'numero'),
-      // anio: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'anio'),
       codigo: this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'codigo'),
       fecha_inicio: this.formatearFecha(this.expedienteSeleccionado.fecha_inicio),
       fecha_laudo: this.formatearFecha(this.expedienteSeleccionado.fecha_laudo),
@@ -246,7 +243,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
         Swal.fire({
           icon: 'success',
           title: 'Expediente creado correctamente',
-          text: 'Sirvase a asignAr los participes y los arbitros.'
+          text: 'Sirvase a asignar los participes y los arbitros.'
         });
 
         this.expedienteCreado.emit(); // refrescar tabla

@@ -11,18 +11,21 @@ import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
-
-
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-mesa-partes',
-  imports: [ReactiveFormsModule, FileSizePipe, TruncatePipe, UppercaseDirective],
+  imports: [ReactiveFormsModule, FileSizePipe, TruncatePipe, UppercaseDirective, CommonModule],
   templateUrl: './mesa_partes.component.html',
 })
 export class MesaPartesComponent implements OnInit {
 
-  fechaActual = new Date().toISOString().substring(0, 10);
-  numeroSolicitud = '10778';
+  // fechaActual = new Date().toLocaleDateString('en-CA');
+  fechaActual: string = '';
+
+  numeroSolicitud: string = '';
+
+  colorAlerta: string = 'rgb(0, 32, 91)';
 
   // STEP CONTROL
   currentStep: number = 1;
@@ -97,12 +100,23 @@ export class MesaPartesComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.actualizarFechaHora();
+
+    this.obtenerPreview();
+
+    // Actualiza cada segundo
+    setInterval(() => {
+      this.actualizarFechaHora();
+    }, 1000);
+
+
     this.formTramiteMPV.get('tipo_solicitud')?.valueChanges.subscribe(tipo => {
       if (!tipo) return;
 
       this.formTramiteMPV.patchValue({
         codigo: this.tipoSolicitudToCodigo[tipo],
-        descripcion: this.descripciones[tipo]
+        // descripcion: this.descripciones[tipo]
       });
 
       this.descripcionTipoArbitraje = this.descripciones[tipo];
@@ -111,6 +125,27 @@ export class MesaPartesComponent implements OnInit {
     this.dniRucDemandante();
     this.autoAsignarCodigo();
 
+  }
+
+  obtenerPreview() {
+    this.tramiteService.previewNumeroTramite()
+      .subscribe(resp => {
+        this.numeroSolicitud = resp.numero;
+
+      });
+  }
+
+  actualizarFechaHora() {
+    const ahora = new Date();
+
+    const anio = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+
+    const horas = String(ahora.getHours()).padStart(2, '0');
+    const minutos = String(ahora.getMinutes()).padStart(2, '0');
+
+    this.fechaActual = `${anio}/${mes}/${dia} - ${horas}:${minutos}`;
   }
 
   dniRucDemandante(): void {
@@ -164,13 +199,15 @@ export class MesaPartesComponent implements OnInit {
     this.archivos.splice(index, 1);
   }
 
-  descargarArchivo(file: File) {
+  verArchivo(file: File) {
     const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.click();
-    URL.revokeObjectURL(url);
+
+    window.open(url, '_blank');
+
+    // Liberar memoria después de un pequeño delay
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
   }
 
   /* ----------------------------- STEPS ----------------------------- */
