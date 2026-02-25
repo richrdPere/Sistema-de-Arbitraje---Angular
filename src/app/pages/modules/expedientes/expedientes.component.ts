@@ -29,8 +29,6 @@ import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-p
 })
 export class ExpedientesComponent {
 
-
-
   // Expedientes
   expedientes: any = [];
   searchTimeout: any;
@@ -198,12 +196,8 @@ export class ExpedientesComponent {
   verDocumentos(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/documentos`]); }
 
   gestionarParticipesModal(exp: any) {
-    // this.router.navigate([`app/expedientes/${exp.id_expediente}/participes`]);
-
-    console.log("GES. PARTICIPES: ", exp);
     this.expedienteSeleccionado = exp;
     this.mostrarModalParticipes = true;
-
   }
 
   cerrarModalParticipes() {
@@ -216,10 +210,8 @@ export class ExpedientesComponent {
 
   editarExpediente(exp: Expediente): void {
 
-    console.log("EDITANDO EXP: ", exp)
-
     this.modoEdicion = true;
-    this.expedienteSeleccionado = exp;
+    this.expedienteSeleccionado = { ...exp };
     this.mostrarModal = true;
   }
 
@@ -239,9 +231,6 @@ export class ExpedientesComponent {
   cargarExpedientes() {
     this.loading = true;
 
-    console.log("MES: ", this.filtroMes);
-    console.log("ANIO: ", this.filtroAnio);
-
     this.expedienteService.listarExpedientes({
       page: this.page,
       limit: this.limit,
@@ -258,7 +247,6 @@ export class ExpedientesComponent {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar expedientes:', err);
         this.loading = false;
         this.errorMessage = 'Error al cargar los expedientes';
       },
@@ -283,10 +271,6 @@ export class ExpedientesComponent {
       this.cerrarDropdown();
     }
   }
-
-
-
-
 
   anularExpediente(arg0: any) {
     throw new Error('Method not implemented.');

@@ -72,7 +72,7 @@ export class ListRechazadosComponent implements OnInit {
     this.tramiteService.listarTramites(filtros).subscribe({
       next: (resp) => {
 
-        console.log('Trámites cargados:', resp);
+
         this.solicitudesRechazados = resp.data ?? [];
 
         this.solicitudesFiltradas = [...this.solicitudesRechazados];
@@ -83,7 +83,7 @@ export class ListRechazadosComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al listar trámites:', err.message);
+
         this.isLoading = false;
       },
     });

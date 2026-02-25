@@ -48,7 +48,6 @@ export class DesignacionesComponent implements OnInit {
       next: (resp) => {
         this.designaciones = resp.designaciones;
 
-        console.log("DESIGNACIONES: ", resp.designaciones);
         this.total = resp.total;
         this.pagina_actual = resp.pagina_actual;
         this.por_pagina = resp.por_pagina;
@@ -56,7 +55,6 @@ export class DesignacionesComponent implements OnInit {
         this.loading = false;
       },
       error: (e) => {
-        console.error("Error cargando designaciones", e);
         this.loading = false;
       }
     });

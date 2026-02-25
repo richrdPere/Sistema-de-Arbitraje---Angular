@@ -71,8 +71,6 @@ export class CalendarioComponent implements OnInit {
       .listarActividades({ estado: 'PROGRAMADO' })
       .subscribe((resp: any) => {
 
-        console.log("ACTIVIDADES: ", resp);
-
         this.actividades = resp.data ?? resp;
         // this.mapearEventos();
         this.events = this.actividades.map((item: any) => ({

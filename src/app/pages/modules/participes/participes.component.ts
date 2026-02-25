@@ -110,14 +110,13 @@ export class ParticipesComponent implements OnInit {
       search: this.search?.trim() || undefined,
     }).subscribe({
       next: (res) => {
-        console.log("PARTICIPES: ", res.data)
+
         this.participes = res.data;
         this.totalItems = res.total;
         this.totalPages = res.totalPages;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar partícipes:', err);
         this.loading = false;
       }
     });
@@ -152,7 +151,7 @@ export class ParticipesComponent implements OnInit {
       next: (resp) => {
         this.loading = false;
         this.mensajeExito = ' Partícipe creado exitosamente.';
-        console.log('Partícipe creado:', resp);
+
 
         // Puedes redirigir a la lista
         setTimeout(() => {
@@ -161,7 +160,6 @@ export class ParticipesComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        console.error('Error al crear el partícipe:', err);
         this.mensajeError =
           err.error?.message || ' Ocurrió un error al crear el partícipe.';
       },
@@ -203,21 +201,6 @@ export class ParticipesComponent implements OnInit {
       cargo: participe.cargo,
       rol_participe: participe.rol_participe,
     });
-    // if (!this.participeSeleccionado) return;
-
-    // const id = this.participeSeleccionado.id_participe;
-    // const cambios = this.formParticipe.value;
-
-    // this.participeService.actualizarParticipe(id, cambios).subscribe({
-    //   next: (data) => {
-    //     Swal.fire('Actualizado', 'El participante fue actualizado correctamente.', 'success');
-    //     this.cargarParticipes();
-    //   },
-    //   error: (err) => {
-    //     console.error('Error al editar participante:', err);
-    //     Swal.fire('Error', 'No se pudo actualizar el participante.', 'error');
-    //   },
-    // });
   }
 
   //  Nuevo método para guardar cambios
@@ -234,7 +217,7 @@ export class ParticipesComponent implements OnInit {
         this.cargarParticipes();
       },
       error: (err) => {
-        console.error('Error al editar participante:', err);
+
         Swal.fire('Error', 'No se pudo actualizar el participante.', 'error');
       },
     });
@@ -257,7 +240,7 @@ export class ParticipesComponent implements OnInit {
             this.cargarParticipes();
           },
           error: (err) => {
-            console.error('Error al eliminar participante:', err);
+
             Swal.fire('Error', 'No se pudo eliminar el participante.', 'error');
           },
         });

@@ -147,8 +147,6 @@ export class ActaInstalacionComponent implements OnInit {
   }
 
   guardarActa(data: any) {
-    console.log('Payload recibido:', data);
-
     if (data.id) {
       // EDITAR
     } else {

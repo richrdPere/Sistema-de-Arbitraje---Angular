@@ -41,8 +41,6 @@ export class TrazabilidadComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.token);
-
     if (this.token) {
       this._router.navigate(['/admin']);
     }
@@ -64,7 +62,6 @@ export class TrazabilidadComponent implements OnInit {
 
   mostrarConfirmacion(mensaje: string) {
     // Podrías implementar un toast o notificación aquí
-    console.log(mensaje);
 
     // Efecto visual simple
     const button = event?.target as HTMLElement;
@@ -106,9 +103,9 @@ export class TrazabilidadComponent implements OnInit {
     this.authService.login(correo!, password!).subscribe({
 
       next: (res) => {
-        // console.log('Login exitoso:', res);
 
-          // Save token & user
+
+        // Save token & user
         iziToast.success({
           title: 'Exito',
           message: res.message || 'Inicio de sesión exitoso',
@@ -122,7 +119,7 @@ export class TrazabilidadComponent implements OnInit {
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
 
         // Redirección según rol
-         this._router.navigate(['/app']);
+        this._router.navigate(['/app']);
         // switch (res.usuario.rol) {
         //   case 'admin':
         //     this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
@@ -158,7 +155,7 @@ export class TrazabilidadComponent implements OnInit {
   seleccionarUsuario(tipo: 'administracion' | 'usuarios') {
     this.tipoUsuario = tipo;
     // aquí podrías resetear/calcular lo que necesites según tipo
-    console.log('Tipo Usuario seleccionada:', this.tipoUsuario);
+
 
     // Reiniciamos los valores del formulario sin destruir su estructura
     this.formTrazabilidad.reset({

@@ -31,8 +31,6 @@ export class ConsultaExpedientesComponent {
     this.errorMsg = '';
     this.cargando = true;
 
-    // console.log(`CONSULTANDO: ${numero}`);
-
     this.tramiteService.obtenerPorNumero(numero)
       .subscribe({
         next: (data: any) => {
@@ -46,7 +44,7 @@ export class ConsultaExpedientesComponent {
         error: (err) => {
           this.cargando = false;
           this.errorMsg = 'Error al consultar el expediente. Intente nuevamente.';
-          console.error(err);
+
         }
       });
 

@@ -42,7 +42,6 @@ export class VerTrazabilidadComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['expedienteId'] && this.expedienteId) {
-      console.log('Expediente ID recibido:', this.expedienteId);
       this.cargarTrazabilidad();
       this.setModalWidth('full');
     }
@@ -55,15 +54,11 @@ export class VerTrazabilidadComponent implements OnChanges {
       .subscribe({
         next: (resp) => {
           this.trazabilidad = resp;
-          console.log('Trazabilidad cargada:', this.trazabilidad);
-
           this.timeline = resp.timeline || [];
-          console.log('Timeline cargado:', this.timeline);
-
           this.loading = false;
         },
         error: (err) => {
-          console.error('Error al cargar trazabilidad', err);
+
           this.loading = false;
         }
       });

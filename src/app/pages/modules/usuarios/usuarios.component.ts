@@ -76,7 +76,6 @@ export class UsuariosComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    console.log('PAGE:', this.page, 'LIMIT:', this.limit);
     this.loading = true;
 
     this.usuarioService.getUsuariosPaginados({
@@ -87,9 +86,6 @@ export class UsuariosComponent implements OnInit {
 
     }).subscribe(res => {
       this.usuarios = res.data;
-      // this.usuarios = res.data.filter((u: any) => u.rol !== 'participe');
-
-      console.log('Usuarios cargados:', this.usuarios);
       this.totalItems = res.total;
       this.totalPages = res.totalPages;
       this.loading = false;
@@ -167,7 +163,6 @@ export class UsuariosComponent implements OnInit {
 
 
   private manejarErroresBackend(err: any) {
-    console.error("Error backend:", err);
 
     // Si backend envía errors: { campo: "mensaje" }
     if (err?.error?.errors) {
@@ -233,7 +228,7 @@ export class UsuariosComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.error(err);
+
 
           Swal.fire({
             icon: 'error',

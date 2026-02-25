@@ -3,6 +3,9 @@ import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChange
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
+// Directives
+import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
+
 // Service
 import { UsuarioService } from 'src/app/services/admin/usuarios.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -10,7 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'usuarios-form',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, UppercaseDirective],
   templateUrl: './usuarios-form.component.html',
   styles: ``
 })
@@ -62,8 +65,6 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     //  Si el formulario aún no está creado, salir
     if (!this.formUsuario) return;
-
-    console.log("USUARIOS EDIT: ", this.usuarioSeleccionado);
 
     // EDITAR
     if (changes['usuarioSeleccionado'] && this.usuarioSeleccionado) {
@@ -198,15 +199,11 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
     // Clonamos el value para poder manipularlo
     const usuario: any = { ...this.formUsuario.value };
 
-    console.log('Formulario de usuario enviado:', usuario);
-
     // ============================
     // MODO EDICIÓN
     // ============================
     if (this.modoEdicion && usuario.id) {
 
-
-      // console.log("Actualizando usuario: ", usuario.pasword);
       //  SI NO SE INGRESÓ PASSWORD → NO ENVIARLO
       if (!usuario.password || usuario.password.trim() === '') {
         delete usuario.password;

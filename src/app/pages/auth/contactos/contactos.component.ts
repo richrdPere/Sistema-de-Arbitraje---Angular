@@ -43,7 +43,6 @@ export class ContactosComponent {
       .subscribe({
         next: (res) => {
           this.mensaje = 'Mensaje enviado correctamente';
-          console.log(res);
 
           iziToast.success({
             title: 'Éxito',
@@ -66,7 +65,6 @@ export class ContactosComponent {
         },
         error: (err) => {
           this.mensaje = 'Error al enviar el mensaje';
-          console.error(err);
 
           iziToast.error({
             title: 'Error',

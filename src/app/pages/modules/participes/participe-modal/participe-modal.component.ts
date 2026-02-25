@@ -111,8 +111,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
     const participe: any = { ...this.formParticipe.value }
 
-    console.log('Formulario de participe enviado:', participe);
-
     if (this.modoEdicion && this.participeSeleccionado?.id_participe) {
 
       // ============================
@@ -125,7 +123,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
           this.cargando = false;
           Swal.fire('Actualizado', 'El partícipe fue actualizado correctamente.', 'success');
           this.mensajeExito = ' Partícipe creado exitosamente.';
-          // console.log('Respuesta:', resp);
 
           // Notificar al componente padre que se creó un partícipe
           this.participeCreado.emit();
@@ -137,7 +134,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           this.cargando = false;
-          console.error('Error al crear el partícipe:', err);
           this.mensajeError = err.error?.message || ' Error al crear el partícipe.';
           Swal.fire('Error', 'No se pudo actualizar el partícipe.', 'error');
         },
@@ -158,7 +154,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.cargando = false;
-        console.error('Error al crear el partícipe:', err);
         this.mensajeError = err.error?.message || 'Error al crear el partícipe.';
       },
     });

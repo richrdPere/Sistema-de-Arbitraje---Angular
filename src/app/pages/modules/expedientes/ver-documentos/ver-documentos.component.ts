@@ -25,6 +25,7 @@ export class VerDocumentosComponent implements OnInit {
 
   mostrarModal = false;
   expedienteSeleccionadoId!: number;
+  numeroExpediente: string | null = null;
 
   // Paginado
   page = 1;
@@ -46,23 +47,42 @@ export class VerDocumentosComponent implements OnInit {
     private router: Router
   ) { }
 
-
   ngOnInit(): void {
-    this.idExpediente = Number(this.route.snapshot.paramMap.get('id'));
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
 
-    this.cargarDocumentos();
+      if (!id) return;
+
+      this.idExpediente = id;
+
+      this.cargarDatosExpediente();
+      this.cargarDocumentos();
+    });
+  }
+
+  cargarDatosExpediente() {
+    this.expedienteService.obtenerExpedientePorId(this.idExpediente)
+      .subscribe({
+        next: (exp) => {
+
+          console.log("exp:", exp);
+          console.log("numero:", exp.numero_expediente);
+
+          this.numeroExpediente = exp.numero_expediente;
+        },
+        error: () => {
+          this.numeroExpediente = 'No disponible';
+        }
+      });
   }
 
   cargarDocumentos() {
     this.expedienteService.listarDocumentos(this.idExpediente).subscribe({
       next: (data) => {
         this.documentos = data;
-
-        console.log("DOCUMENTOS: ", this.documentos)
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar documentos', err);
         this.loading = false;
       },
     });
@@ -135,7 +155,7 @@ export class VerDocumentosComponent implements OnInit {
 
   verDocumento(doc: any) {
     if (!doc?.url_s3) {
-      console.warn("No existe un archivo en este registro");
+
       return;
     }
 

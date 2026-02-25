@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { CommonModule } from '@angular/common';
 
 // Directives
 import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
@@ -11,7 +12,8 @@ import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
-import { CommonModule } from '@angular/common';
+
+import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
 
 @Component({
   selector: 'app-mesa-partes',
@@ -65,7 +67,7 @@ export class MesaPartesComponent implements OnInit {
   };
 
 
-  constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService) {
+  constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService, private validacionesService: ValidacionesService) {
     this.formTramiteMPV = this.fb.group({
 
       // =========================
@@ -76,7 +78,10 @@ export class MesaPartesComponent implements OnInit {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       tipo_usuario: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: ['',
+        [Validators.required, Validators.email],
+        [this.validacionesService.validarCorreo()]
+      ],
       telefono: ['', Validators.required],
       direccion: ['', Validators.required],
       cargo: [''],
@@ -149,31 +154,117 @@ export class MesaPartesComponent implements OnInit {
   }
 
   dniRucDemandante(): void {
-    this.formTramiteMPV.get("tipo_documento")?.valueChanges.subscribe(tipo => {
+
+    const tipoCtrl = this.formTramiteMPV.get("tipo_documento");
+    const documentoCtrl = this.formTramiteMPV.get("documento_identidad");
+
+    if (!tipoCtrl || !documentoCtrl) return;
+
+    tipoCtrl.valueChanges.subscribe(tipo => {
+
+      let maxLength = 0;
+      let asyncValidator = null;
+
       if (tipo === "DNI") {
         this.placeholderDocumento = 'Ingrese el numero de su DNI';
-        this.maxDocumentoDemandante = 8;
-        this.formTramiteMPV.get("documento_identidad")?.setValidators([
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(8),
-          Validators.pattern(/^[0-9]*$/)
-        ]);
-      } else if (tipo === "RUC") {
-        this.placeholderDocumento = 'Ingrese el numero de su RUC';
-        this.maxDocumentoDemandante = 11;
-        this.formTramiteMPV.get("documento_identidad")?.setValidators([
-          Validators.required,
-          Validators.maxLength(11),
-          Validators.minLength(11),
-          Validators.pattern(/^[0-9]*$/)
-        ]);
+        maxLength = 8;
+        asyncValidator = this.validacionesService.validarDni();
       }
 
-      // Actualizar validaciones
-      this.formTramiteMPV.get('documento_identidad')?.reset();
+      if (tipo === "RUC") {
+        this.placeholderDocumento = 'Ingrese el numero de su RUC';
+        maxLength = 11;
+        asyncValidator = this.validacionesService.validarRuc();
+      }
+
+      this.maxDocumentoDemandante = maxLength;
+
+      // 🔥 Limpiar validadores anteriores
+      documentoCtrl.clearValidators();
+      documentoCtrl.clearAsyncValidators();
+
+      // 🔥 Asignar nuevos validadores
+      documentoCtrl.setValidators([
+        Validators.required,
+        Validators.minLength(maxLength),
+        Validators.maxLength(maxLength),
+        Validators.pattern(/^[0-9]+$/)
+      ]);
+
+      if (asyncValidator) {
+        documentoCtrl.setAsyncValidators(asyncValidator);
+      }
+
+      documentoCtrl.reset();
+      documentoCtrl.updateValueAndValidity();
     });
   }
+
+  // dniRucDemandante(): void {
+  //   this.formTramiteMPV.get("tipo_documento")?.valueChanges.subscribe(tipo => {
+
+  //     const documentoCtrl = this.formTramiteMPV.get("documento_identidad");
+
+  //     if (!documentoCtrl) return;
+
+  //     let maxLength = 0;
+  //     let asyncValidator;
+
+  //     if (tipo === "DNI") {
+
+  //       this.placeholderDocumento = 'Ingrese el numero de su DNI';
+  //       maxLength = 8;
+
+  //       asyncValidator = this.validacionesService.validarDni();
+
+  //     } else if (tipo === "RUC") {
+
+  //       this.placeholderDocumento = 'Ingrese el numero de su RUC';
+  //       maxLength = 11;
+
+  //       asyncValidator = this.validacionesService.validarRuc();
+
+  //     }
+
+  //     this.maxDocumentoDemandante = maxLength;
+
+  //     documentoCtrl.setValidators([
+  //       Validators.required,
+  //       Validators.maxLength(maxLength),
+  //       Validators.minLength(maxLength),
+  //       Validators.pattern(/^[0-9]*$/)
+  //     ]);
+
+  //     documentoCtrl.setAsyncValidators([asyncValidator]);
+
+  //     documentoCtrl.reset();
+  //     documentoCtrl.updateValueAndValidity();
+
+
+  //     // if (tipo === "DNI") {
+  //     //   this.placeholderDocumento = 'Ingrese el numero de su DNI';
+  //     //   this.maxDocumentoDemandante = 8;
+  //     //   this.formTramiteMPV.get("documento_identidad")?.setValidators([
+  //     //     Validators.required,
+  //     //     Validators.maxLength(8),
+  //     //     Validators.minLength(8),
+  //     //     Validators.pattern(/^[0-9]*$/)
+  //     //   ]);
+  //     // } else if (tipo === "RUC") {
+  //     //   this.placeholderDocumento = 'Ingrese el numero de su RUC';
+  //     //   this.maxDocumentoDemandante = 11;
+  //     //   this.formTramiteMPV.get("documento_identidad")?.setValidators([
+  //     //     Validators.required,
+  //     //     Validators.maxLength(11),
+  //     //     Validators.minLength(11),
+  //     //     Validators.pattern(/^[0-9]*$/)
+  //     //   ]);
+  //     // }
+
+  //     // // Actualizar validaciones
+  //     // this.formTramiteMPV.get('documento_identidad')?.reset();
+  //   });
+  // }
 
   autoAsignarCodigo(): void {
     this.formTramiteMPV.get("tipo_solicitud")?.valueChanges.subscribe(tipo => {
@@ -379,10 +470,6 @@ export class MesaPartesComponent implements OnInit {
     });
 
     //  4. DEBUG REAL (esto SÍ muestra el contenido)
-    console.log('FORM DATA ENVIADO: ');
-    for (const [key, value] of fd.entries()) {
-      console.log(key, value);
-    }
 
     this.enviado = true;
 
@@ -398,7 +485,7 @@ export class MesaPartesComponent implements OnInit {
       next: (response) => {
         this.respuesta = response; //  guarda respuesta
 
-        console.log(' RESPUESTA BACKEND:', response);
+
 
         Swal.fire({
           title: 'Trámite registrado correctamente',
@@ -415,7 +502,7 @@ export class MesaPartesComponent implements OnInit {
         this.enviado = true;
 
         // this.mensajeExito = ` ${response.message}`;
-        console.log('Trámite registrado:', response.tramite);
+
         this.formTramiteMPV.reset();
         this.archivos = [];
         this.enviado = false;
@@ -430,7 +517,7 @@ export class MesaPartesComponent implements OnInit {
           text: err?.error?.message || 'Ocurrió un error al procesar tu trámite.',
           confirmButtonColor: '#d33'
         });
-        console.error(err);
+
       }
     });
   }

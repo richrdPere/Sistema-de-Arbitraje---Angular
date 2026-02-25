@@ -62,9 +62,7 @@ export class SubirDocumentosComponent implements OnInit {
 
       if (id) {
         this.expedienteId = Number(id);
-        console.log('EXPEDIENTE ID (ruta):', this.expedienteId);
-      } else {
-        console.error('No se encontró el ID del expediente en la ruta');
+
       }
     });
   }
@@ -129,8 +127,6 @@ export class SubirDocumentosComponent implements OnInit {
     formData.append('file', this.archivoSeleccionado);
     formData.append('fecha_emision', new Date().toISOString());
 
-    console.log("EXPEDIENTE ID: ", this.expedienteId)
-
     this.expedientesService.subirDocumento(this.expedienteId, formData).subscribe({
       next: () => {
         this.cargando = false;
@@ -157,7 +153,7 @@ export class SubirDocumentosComponent implements OnInit {
           confirmButtonColor: '#0a1a35',
         });
 
-        console.error('Error al subir documento:', err);
+
         // this.mensajeError = err.error?.message || 'Error al subir el documento.';
       },
     });

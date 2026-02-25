@@ -71,7 +71,6 @@ export class TrazabilidadComponent implements OnInit {
     }).subscribe({
       next: (resp) => {
         this.expedientes = resp.data;
-        console.log('Expedientes cargados:', this.expedientes);
         this.totalItems = resp.total;
         this.totalPages = resp.totalPages;
         this.currentPage = resp.page;
@@ -83,7 +82,6 @@ export class TrazabilidadComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar trazabilidad', err);
         this.loading = false;
       }
     });
@@ -95,7 +93,6 @@ export class TrazabilidadComponent implements OnInit {
       this.expedientesService.obtenerPartesYResumen(exp.id_expediente)
         .subscribe({
           next: (resp) => {
-            console.log("Partes y Resumen:", resp);
 
             // =========================
             // DEMANDANTES

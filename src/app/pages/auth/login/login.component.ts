@@ -37,7 +37,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.token);
 
     if (this.token) {
       this._router.navigate(['/admin']);
@@ -55,7 +54,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(correo!, password!).subscribe({
       next: (res) => {
-        console.log('Login exitoso:', res);
+
         iziToast.success({
           title: 'Exito',
           message: res.message || 'Inicio de sesión exitoso',
@@ -71,7 +70,7 @@ export class LoginComponent implements OnInit {
         // Redirección según rol
         switch (res.usuario.rol) {
           case 'secretaria':
-            console.log("Redirigiendo a panel de secretaria...");
+
             this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
             break;
           case 'arbitro':

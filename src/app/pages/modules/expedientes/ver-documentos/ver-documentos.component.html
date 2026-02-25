@@ -8,7 +8,10 @@
 
 
   <!-- Titulo -->
-  <h1 class="text-2xl font-bold mb-5 text-base-content "> 📄 Documentos del expediente #{{ idExpediente }}</h1>
+  <h1 class="text-2xl font-bold mb-5 text-base-content "> 📄 Documentos del Expediente N° <span
+      *ngIf="numeroExpediente">
+      {{ numeroExpediente }}
+    </span></h1>
 
 
   <div class="p-4 mb-7 card bg-base-100 shadow-md">
@@ -35,8 +38,6 @@
   <!-- Modal Subir documento -->
   <subir-documentos [mostrarModal]="mostrarModal" [expedienteId]="expedienteSeleccionadoId"
     (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="cargarDocumentos()"></subir-documentos>
-
-
 
 
   <!-- Tabla de documentos -->
@@ -129,7 +130,8 @@
                   </button> -->
 
                   <!-- Eliminar -->
-                  <button class="btn btn-ghost btn-circle btn-md" title="Eliminar documento" (click)="eliminarDocumento(doc.id_documento)">
+                  <button class="btn btn-ghost btn-circle btn-md" title="Eliminar documento"
+                    (click)="eliminarDocumento(doc.id_documento)">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>

@@ -159,8 +159,6 @@ export class SolicitudesComponent implements OnInit {
 
     this.tramiteService.listarTramites(filtros).subscribe({
       next: (resp) => {
-
-        console.log('Trámites cargados:', resp);
         this.solicitudes = resp.data ?? [];
 
         this.solicitudesFiltradas = [...this.solicitudes];
@@ -180,7 +178,6 @@ export class SolicitudesComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al listar trámites:', err.message);
         this.loading = false;
       },
     });
@@ -278,9 +275,6 @@ export class SolicitudesComponent implements OnInit {
   }
 
   verDetalle(tramite: any) {
-
-    console.log("TRAMITE: ", tramite);
-
     this.tramiteDetalle = tramite;
     this.mostrarDetalle = true;
   }
@@ -414,8 +408,6 @@ export class SolicitudesComponent implements OnInit {
               },
 
               error: (err) => {
-                console.error('Error expediente:', err);
-
                 Swal.fire({
                   icon: 'error',
                   title: 'Error al actualizar expediente',
@@ -429,7 +421,6 @@ export class SolicitudesComponent implements OnInit {
         },
 
         error: (err) => {
-          console.error('Error trámite:', err);
 
           Swal.fire({
             icon: 'error',

@@ -120,7 +120,6 @@ export class DesicionesComponent {
   // ===========================================================
   irAPagina(pagina: number) {
     this.paginaActual = pagina;
-    console.log(`Cambiando a la página ${pagina}`);
     // Aquí podrías hacer la petición HTTP a tu backend:
     // this.laudoService.obtenerPorPagina(pagina).subscribe(...)
   }

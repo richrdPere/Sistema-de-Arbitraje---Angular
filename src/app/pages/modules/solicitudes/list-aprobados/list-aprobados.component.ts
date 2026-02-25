@@ -73,7 +73,7 @@ export class ListAprobadosComponent implements OnInit {
     this.tramiteService.listarTramites(filtros).subscribe({
       next: (resp) => {
 
-        console.log('Trámites cargados:', resp);
+
         this.solicitudesAprobadas = resp.data ?? [];
 
         this.solicitudesFiltradas = [...this.solicitudesAprobadas];
@@ -84,7 +84,7 @@ export class ListAprobadosComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al listar trámites:', err.message);
+
         this.isLoading = false;
       },
     });

@@ -131,9 +131,6 @@ export class GestionarParticipesComponent implements OnInit {
 
     // this.expedienteId = this.expedienteSeleccionado.id_expediente;
     this.expediente = this.expedienteSeleccionado;
-
-    // console.log("EXPEDIENTE SELECCIONADO: ", this.expedienteSeleccionado)
-
     this.cargarDatosIniciales();
     this.setModalWidth('xl');
 
@@ -255,15 +252,10 @@ export class GestionarParticipesComponent implements OnInit {
 
         // Guardar arbitros
         this.arbitrosDisponibles = resp.arbitros;
-
-        // console.log("DEMANDANTES DISPONIBLES:", this.demandantesDisponibles);
-        // console.log("DEMANDADOS DISPONIBLES:", this.demandadosDisponibles);
-        // console.log("ARBITROS DISPONIBLES:", this.arbitrosDisponibles);
-
         this.loading = false;
       },
       error: err => {
-        console.error(err);
+
         this.loading = false;
       }
     });
@@ -612,17 +604,12 @@ export class GestionarParticipesComponent implements OnInit {
     // Asignar expediente
 
     const idExpediente = this.expedienteSeleccionado.id_expediente;
-
-    console.log('PAYLOAD FINAL:', payload);
-    console.log('expedienteId:', idExpediente);
-
-
     this.expedientesService.asignarParticipesYDesignacion(idExpediente, payload).subscribe({
       next: (res) => {
         Swal.fire('Éxito', 'Participes y árbitros asignados correctamente', 'success');
       },
       error: (err) => {
-        console.error(err);
+
         Swal.fire('Error', 'No se pudo asignar participantes o árbitros', 'error');
       }
     });

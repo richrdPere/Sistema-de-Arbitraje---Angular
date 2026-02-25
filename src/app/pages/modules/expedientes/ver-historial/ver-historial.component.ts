@@ -35,7 +35,7 @@ export class VerHistorialComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar historial', err);
+
         this.loading = false;
       },
     });

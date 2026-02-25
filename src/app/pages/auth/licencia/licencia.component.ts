@@ -176,13 +176,13 @@ export class LicenciaComponent {
 
   verHojaVidaSecretario(id: number) {
     // Navegar a la hoja de vida del secretario
-    console.log('Ver hoja de vida del secretario:', id);
+
     // this.router.navigate(['/hoja-vida-secretario', id]);
   }
 
   contactarSecretario(secretario: any) {
     // Abrir modal o redirigir para contacto
-    console.log('Contactar secretario:', secretario);
+
     // this.abrirModalContacto(secretario);
   }
 
@@ -199,7 +199,7 @@ export class LicenciaComponent {
 
   verHojaVida(id: number) {
     // Navegar a la hoja de vida del profesional
-    console.log('Ver hoja de vida del profesional:', id);
+
     // this.router.navigate(['/hoja-vida', id]);
   }
 

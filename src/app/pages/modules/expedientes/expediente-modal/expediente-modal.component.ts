@@ -59,13 +59,22 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
     //  Si el formulario aún no está creado, salir
     if (!this.formExpediente) return;
 
-    console.log("EXPEDIENTE EDIT: ", this.expedienteSeleccionado);
-
     // Detecta cuando cambian los inputs
-    if (changes['expedienteSeleccionado'] && this.expedienteSeleccionado) {
-      this.modoEdicion = true;
-      this.patchFormExpediente();
+    if (changes['expedienteSeleccionado']) {
+      if (this.expedienteSeleccionado) {
+        this.modoEdicion = true;
+
+        this.formExpediente.reset(); //  siempre limpia antes
+        this.patchFormExpediente();
+      } else {
+        this.modoEdicion = false;
+        this.formExpediente.reset();
+      }
     }
+    // if (changes['expedienteSeleccionado'] && this.expedienteSeleccionado) {
+    //   this.modoEdicion = true;
+    //   this.patchFormExpediente();
+    // }
   }
 
   private getFechaHoy(): string {
@@ -88,9 +97,6 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
     if (!numeroExpediente) return '';
     const partes = numeroExpediente.match(/^(\d+)-(\d{4})\/([\p{L}\d\s\-ÁÉÍÓÚáéíóúÑñ]+)$/u);
 
-    console.log("numeroExpediente: ", partes);
-
-
     if (!partes) return '';
     switch (parte) {
       case 'numero': return partes[1];
@@ -101,8 +107,6 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   }
   private patchFormExpediente(): void {
 
-    console.log("Expediente numero: ", this.extraerParte(this.expedienteSeleccionado.numero_expediente, 'numero'));
-
     this.formExpediente.patchValue({
       titulo: this.expedienteSeleccionado.titulo || '',
       descripcion: this.expedienteSeleccionado.descripcion || '',
@@ -112,7 +116,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
       fecha_inicio: this.formatearFecha(this.expedienteSeleccionado.fecha_inicio),
       fecha_laudo: this.formatearFecha(this.expedienteSeleccionado.fecha_laudo),
       fecha_resolucion: this.formatearFecha(this.expedienteSeleccionado.fecha_resolucion),
-      fecha_cierre: this.formatearFecha(this.expedienteSeleccionado.fe),
+      fecha_cierre: this.formatearFecha(this.expedienteSeleccionado.fecha_cierre),
     });
   }
 
@@ -122,21 +126,15 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   private obtenerSecretariaId(): void {
     const usuario = this.authService.getUser(); // obtiene desde BehaviorSubject o localStorage
 
-    console.log("SECRETARIA: ", usuario);
-
-
     if (usuario && usuario.rol === 'secretaria' && usuario.detalles) {
       this.secretariaId = usuario.detalles.id_secretaria;
-
-
-      console.log(' Secretaria logueada:', usuario.nombre);
-      console.log(' ID de secretaria:', this.secretariaId);
-      console.log(' ID de secretaria logueada:', this.secretariaId);
-    } else if (usuario) {
-      console.warn(` El usuario logueado (${usuario.nombre}) no es una secretaria o no tiene detalles asociados.`);
-    } else {
-      console.warn(' No se encontró información del usuario logueado.');
     }
+
+    // else if (usuario) {
+    //   console.warn(` El usuario logueado (${usuario.nombre}) no es una secretaria o no tiene detalles asociados.`);
+    // } else {
+    //   console.warn(' No se encontró información del usuario logueado.');
+    // }
   }
 
   inicializarFormulario(): void {
@@ -203,9 +201,6 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
         : null,
     };
 
-
-    console.log('Formulario de expediente enviado:', expediente);
-
     // ============================
     // MODO EDICIÓN
     // ============================
@@ -218,11 +213,10 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
             // this.mensajeExito = 'Expediente actualizado correctamente.';
             Swal.fire({ icon: 'success', title: 'Expediente actualizado correctamente' });
             this.expedienteCreado.emit();
-            // setTimeout(() => this.cerrarModal(), 800);
+            this.cerrarModal();
           },
           error: (err) => {
             this.cargando = false;
-            // console.error(err);
             // this.mensajeError = err.error?.message || 'Error al actualizar expediente.';
             Swal.fire({
               icon: 'error',
@@ -271,7 +265,8 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   cerrarModal(): void {
     this.mostrarModal = false;
     this.modalCerrado.emit();
-    this.formExpediente.reset();
+    //this.formExpediente.reset();
+    this.expedienteSeleccionado = null; //  MUY IMPORTANTE
   }
 
   get f() {

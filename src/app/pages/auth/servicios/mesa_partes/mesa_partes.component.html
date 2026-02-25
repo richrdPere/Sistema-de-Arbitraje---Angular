@@ -43,33 +43,31 @@
         <div class="w-full max-w-7xl mb-6">
           <ul class="steps steps-horizontal w-full">
 
-            <!-- STEP 1 -->
-            <li class="step" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
-              <button type="button" class="btn">
+            <!-- STEP 1 - (click)="irAlPaso(1)" -->
+            <li class="step" [class.step-primary]="currentStep >= 1">
+              <button type="button" class="btn btn-disabled pointer-events-none">
                 <span class="text-primary font-semibold">DATOS DEL INTERESADO</span>
               </button>
             </li>
 
-            <!-- STEP 2 -->
-            <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
-              <button class="btn " [class.btn-active]="currentStep === 2">
+            <!-- STEP 2 - (click)="irAlPaso(2)" -->
+            <li class="step" [class.step-primary]="currentStep >= 2">
+              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 2">
                 <span class="text-primary font-semibold">DATOS DEL ARBITRAJE</span>
               </button>
             </li>
 
-            <!-- STEP 3 -->
-            <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
-              <button class="btn" [class.btn-active]="currentStep === 3">
+            <!-- STEP 3 - (click)="irAlPaso(3)" -->
+            <li class="step" [class.step-primary]="currentStep >= 3">
+              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 3">
 
                 <span class="text-primary font-semibold">ARCHIVO DIGITAL</span>
               </button>
             </li>
 
-            <!-- STEP 4 -->
-            <li class="step" [class.step-primary]="currentStep >= 4" (click)="irAlPaso(4)">
-
-
-              <button class="btn" [class.btn-active]="currentStep === 4">
+            <!-- STEP 4 - (click)="irAlPaso(4)" -->
+            <li class="step" [class.step-primary]="currentStep >= 4">
+              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 4">
                 <span class="text-primary font-semibold">CONFIRMAR DATOS</span>
               </button>
             </li>
@@ -107,11 +105,26 @@
                 <label for="" class="block text-sm font-semibold mb-1">Numero de Documento</label>
                 <input type="text" formControlName="documento_identidad" [placeholder]="placeholderDocumento"
                   class="input input-bordered w-full" [maxlength]="maxDocumentoDemandante" />
+
+                <!-- DNI existente -->
+                <label *ngIf="formTramiteMPV.get('documento_identidad')?.hasError('dniExistente')" class="label">
+                  <span class="label-text-alt text-error">
+                    Este DNI ya se encuentra registrado.
+                  </span>
+                </label>
+
+                <!-- RUC existente -->
+                <label *ngIf="formTramiteMPV.get('documento_identidad')?.hasError('rucExistente')" class="label">
+                  <span class="label-text-alt text-error">
+                    Este RUC ya se encuentra registrado.
+                  </span>
+                </label>
+
               </div>
 
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
 
               <!-- Nombres -->
               <div class="md:col-span-4">
@@ -139,12 +152,16 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 
               <!-- Email -->
               <div class="md:col-span-1">
                 <label for="" class="block text-sm font-semibold mb-1">Email</label>
                 <input type="email" formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
+
+                <div *ngIf="formTramiteMPV.get('correo')?.hasError('correoExistente')" class="text-error text-sm">
+                  Este correo ya está registrado.
+                </div>
               </div>
 
               <!-- Direccion -->

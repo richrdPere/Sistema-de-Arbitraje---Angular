@@ -81,8 +81,6 @@ export class CalculadoraComponent implements OnInit {
   seleccionarCuantia(tipo: 'determinada' | 'indeterminada') {
     this.tipoCuantia = tipo;
     this.resultado = null;
-    // aquí podrías resetear/calcular lo que necesites según tipo
-    // console.log('Cuantía seleccionada:', this.tipoCuantia);
 
     // Reiniciamos los valores del formulario sin destruir su estructura
     this.formCalculadora.reset({

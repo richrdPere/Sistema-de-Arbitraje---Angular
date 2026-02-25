@@ -26,7 +26,8 @@
             </span>
           </label>
           <input type="text" formControlName="nombre" placeholder="Ej. Juan" class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('nombre')?.invalid && formUsuario.get('nombre')?.touched" />
+            [class.input-error]="formUsuario.get('nombre')?.invalid && formUsuario.get('nombre')?.touched"
+            appUppercase />
 
           <!-- Error local -->
           @if (formUsuario.get('nombre')?.hasError('required') && formUsuario.get('nombre')?.touched) {
@@ -52,7 +53,7 @@
           </label>
           <input type="text" formControlName="apellidos" placeholder="Ej. Pérez López"
             class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched" />
+            [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched" appUppercase/>
 
           @if (formUsuario.get('apellidos')?.hasError('required') && formUsuario.get('apellidos')?.touched) {
           <p class="text-red-500 text-sm">
@@ -113,7 +114,8 @@
               <span class="text-red-500 font-bold">*</span>
             </span>
           </label>
-          <input type="password" formControlName="password" placeholder="Cambiar Contraseña" class="input input-bordered w-full"
+          <input type="password" formControlName="password" placeholder="Cambiar Contraseña"
+            class="input input-bordered w-full"
             [class.input-error]="formUsuario.get('password')?.invalid && formUsuario.get('password')?.touched" />
 
           @if (formUsuario.get('password')?.hasError('required') && formUsuario.get('password')?.touched) {
@@ -228,7 +230,7 @@
             <span class="label-text">Especialidad</span>
           </label>
           <input type="text" formControlName="especialidad" placeholder="Ej. Arbitraje comercial"
-            class="input input-bordered w-full" />
+            class="input input-bordered w-full" appUppercase/>
         </div>
 
         <div class="form-control">
@@ -261,7 +263,7 @@
             <span class="label-text">Razón Social</span>
           </label>
           <input type="text" formControlName="razon_social" placeholder="Ej. Empresa SAC"
-            class="input input-bordered w-full" />
+            class="input input-bordered w-full" appUppercase/>
         </div>
 
 
@@ -284,7 +286,7 @@
             <span class="label-text">Cargo</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
-            class="input input-bordered w-full" />
+            class="input input-bordered w-full" appUppercase/>
         </div>
 
         <div class="form-control">
@@ -292,14 +294,14 @@
             <span class="label-text">Especialidad</span>
           </label>
           <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
-            class="input input-bordered w-full" />
+            class="input input-bordered w-full" appUppercase/>
         </div>
 
         <div class="form-control">
           <label class="label">
             <span class="label-text">Experiencia</span>
           </label>
-          <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" />
+          <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" appUppercase/>
         </div>
       </div>
       }
@@ -313,7 +315,7 @@
             <span class="label-text">Cargo</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
-            class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" />
+            class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" appUppercase/>
 
           @if (backendErrors?.cargo) {
           <p class="text-red-500 text-sm">{{ backendErrors.cargo }}</p>

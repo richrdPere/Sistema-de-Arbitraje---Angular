@@ -54,11 +54,11 @@ export class DocumentosComponent {
       next: (data) => {
         this.documentos = data;
 
-        console.log("DOCUMENTOS: ", this.documentos)
+
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error al cargar documentos', err);
+
         this.loading = false;
       },
     });
@@ -86,7 +86,7 @@ export class DocumentosComponent {
 
   verDocumento(doc: any) {
     if (!doc?.url_s3) {
-      console.warn("No existe un archivo en este registro");
+
       return;
     }
 

@@ -35,7 +35,6 @@ export class SolicitudDetailComponent implements OnInit{
 
 
   ngOnInit() {
-    console.log("TRAMITE DETALLE: ", this.tramite);
     this.setModalWidth('lg');
 
   }

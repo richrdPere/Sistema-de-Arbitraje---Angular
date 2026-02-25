@@ -81,11 +81,11 @@
         <!-- Botónes -->
         <div class="flex flex-row justify-center items-center gap-4">
 
-          <button class="btn btn-warning text-base-content hover:text-white bg-info hover:bg-primary border-none"
+          <!-- <button class="btn btn-warning text-base-content hover:text-white bg-info hover:bg-primary border-none"
             (click)="abrirParticipe()">
             <i class="fa-solid fa-plus mr-1"></i>
             Participe
-          </button>
+          </button> -->
 
 
           <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
@@ -124,7 +124,6 @@
           <tr class="hover ">
             <td>{{i + 1}}</td>
             <td>{{ exp.numero_expediente }}</td>
-            <!-- <td>{{ exp.tipo }}</td> -->
             <td>{{ exp.total_participes }}</td>
             <td>{{ exp.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>
