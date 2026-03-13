@@ -14,33 +14,17 @@
     <form [formGroup]="formDocumento" (ngSubmit)="subirDocumento()" class="space-y-6">
 
       <!-- SECCION 1 -->
-      <div class="grid grid-cols-3 gap-4 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <!-- TÍTULO (1/3) -->
-        <div class="col-span-1">
+        <div>
           <label class="block text-sm font-medium mb-1">Título</label>
           <input type="text" formControlName="titulo" class="input input-bordered w-full" appUppercase />
         </div>
 
-        <!-- DESCRIPCIÓN (2/3) -->
-        <div class="col-span-2">
-          <label class="block text-sm font-medium mb-1">Descripción</label>
-          <textarea formControlName="descripcion" class="textarea textarea-bordered w-full" rows="3"
-            appUppercase></textarea>
-        </div>
-      </div>
 
-
-      <!-- SECCION 2 -->
-      <div class="grid grid-cols-3 gap-4 mb-4">
-
-        <!-- VERSIÓN (1/3) -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium mb-1">Versión</label>
-          <input type="number" formControlName="version" class="input input-bordered w-full" />
-        </div>
 
         <!-- TIPO DE DOCUMENTO (2/3) -->
-        <div class="col-span-2">
+        <div>
           <label class="block text-sm font-medium mb-1">Tipo de Documento</label>
           <select formControlName="tipo_documento" class="select select-bordered w-full">
             <option value="">Seleccionar tipo</option>
@@ -55,6 +39,24 @@
             <option value="Resolución">Resolución</option>
             <option value="Otros">Otros</option>
           </select>
+        </div>
+      </div>
+
+
+      <!-- SECCION 2 -->
+      <div class="grid grid-cols-1 gap-4 mb-4">
+
+        <!-- VERSIÓN (1/3) -->
+        <!-- <div class="col-span-1">
+          <label class="block text-sm font-medium mb-1">Versión</label>
+          <input type="number" formControlName="version" class="input input-bordered w-full" />
+        </div> -->
+
+        <!-- DESCRIPCIÓN (2/3) -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label>
+          <textarea formControlName="descripcion" class="textarea textarea-bordered w-full" rows="3"
+            appUppercase></textarea>
         </div>
 
       </div>

@@ -12,7 +12,7 @@
     </div>
 
     <!-- Mensajes -->
-    @if (mensajeError) {
+    <!-- @if (mensajeError) {
     <div class="alert alert-error text-sm mb-3 shadow-sm">
       <span>{{ mensajeError }}</span>
     </div>
@@ -22,7 +22,7 @@
     <div class="alert alert-success text-sm mb-3 shadow-sm">
       <span>{{ mensajeExito }}</span>
     </div>
-    }
+    } -->
 
 
     <!-- Formulario -->
@@ -31,16 +31,16 @@
       <!-- Selects -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <!-- Tipo de Demandado -->
+        <!-- Tipo de persona -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-semibold">Tipo de Demandado</span>
+            <span class="label-text font-semibold">Tipo de persona</span>
           </label>
-          <select formControlName="tipo_demandado" (change)="onTipoDemandadoChange()"
+          <select formControlName="tipo_usuario" (change)="onTipoDemandadoChange()"
             class="select select-bordered w-full">
-            <option value="" disabled >Seleccione</option>
-            <option value="persona">Persona Natural</option>
-            <option value="entidad">Entidad / Institución</option>
+            <option [ngValue]="null" disabled>Seleccione tipo de persona</option>
+            <option value="personal_natural">Persona Natural</option>
+            <option value="entidad_publica">Entidad / Institución</option>
           </select>
         </div>
 
@@ -51,7 +51,7 @@
           </label>
           <select formControlName="rol_participe" class="select select-bordered w-full"
             [class.select-error]="f['rol_participe'].invalid && f['rol_participe'].touched">
-            <option value="" disabled>Seleccione un rol</option>
+            <option [ngValue]="null" disabled>Seleccione un rol</option>
             <option value="Demandante">Demandante</option>
             <option value="Demandado">Demandado</option>
             <option value="Tercero">Tercero</option>
@@ -75,7 +75,7 @@
         </label>
 
         <input type="text" formControlName="nombre" placeholder="Nombre de la entidad"
-          class="input input-bordered w-full" appUppercase/>
+          class="input input-bordered w-full" appUppercase />
 
         @if (f['nombre'].invalid && f['nombre'].touched) {
         <small class="text-error text-xs">
@@ -97,7 +97,8 @@
             <span class="label-text">Nombre</span>
           </label>
 
-          <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full" appUppercase/>
+          <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full"
+            appUppercase />
           @if (f['nombre'].invalid && f['nombre'].touched) {
           <small class="text-error text-xs">
             Nombre requerido (mínimo 3 caracteres)
@@ -110,7 +111,8 @@
           <label class="label">
             <span class="label-text font-semibold">Apellidos</span>
           </label>
-          <input type="text" formControlName="apellidos" placeholder="Apellidos" class="input input-bordered w-full " appUppercase/>
+          <input type="text" formControlName="apellidos" placeholder="Apellidos" class="input input-bordered w-full "
+            appUppercase />
           @if (f['apellidos'].invalid && f['apellidos'].touched) {
           <small class="text-error text-xs">
             Apellidos requeridos (mínimo 3 caracteres)
@@ -123,15 +125,16 @@
 
       <div class="form-control">
         <label class="label">
-          <span class="label-text font-semibold">Correo</span>
+          <span class="label-text font-semibold">Email</span>
         </label>
-        <input type="email" formControlName="correo" placeholder="ejemplo@correo.com"
-          class="input input-bordered w-full" [class.input-error]="f['correo'].invalid && f['correo'].touched" appUppercase/>
-        @if (f['correo'].invalid && f['correo'].touched) {
-        <small class="text-error text-xs">
-          Ingrese un correo válido.
-        </small>
-        }
+        <input type="email" formControlName="correo" placeholder="ejemplo@gmail.com" class="input input-bordered w-full"
+          [class.input-error]="f['correo'].invalid && f['correo'].touched" />
+
+
+        <div *ngIf="!modoEdicion && formParticipe.get('correo')?.hasError('correoExistente')"
+          class="text-error text-sm">
+          Este correo ya está registrado.
+        </div>
 
       </div>
 
@@ -142,7 +145,7 @@
             <span class="label-text font-semibold">Tipo Documento</span>
           </label>
           <select formControlName="tipo_documento" class="select select-bordered w-full">
-            <option value="" disabled>Tipo Documento</option>
+            <option [ngValue]="null" disabled>Tipo Documento</option>
             <option value="DNI">DNI</option>
             <option value="RUC">RUC</option>
 
@@ -150,11 +153,26 @@
         </div>
 
         <div class="form-control">
-          <label class="label">
-            <span class="label-text font-semibold">Documento de Identidad</span>
+
+
+          <label for="" class="block text-sm font-semibold mb-1">Numero de Documento</label>
+          <input type="text" formControlName="documento_identidad" [placeholder]="placeholderDocumento"
+            class="input input-bordered w-full" [maxlength]="maxDocumentoDemandante" />
+
+          <!-- DNI existente -->
+          <label *ngIf="formParticipe.get('documento_identidad')?.hasError('dniExistente')" class="label">
+            <span class="label-text-alt text-error">
+              Este DNI ya se encuentra registrado.
+            </span>
           </label>
-          <input type="text" formControlName="documento_identidad" placeholder="DNI / RUC"
-            class="input input-bordered w-full" />
+
+          <!-- RUC existente -->
+          <label *ngIf="formParticipe.get('documento_identidad')?.hasError('rucExistente')" class="label">
+            <span class="label-text-alt text-error">
+              Este RUC ya se encuentra registrado.
+            </span>
+          </label>
+
         </div>
       </div>
 
@@ -178,7 +196,8 @@
             <span class="label-text font-semibold">Cargo</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Representante Legal"
-            class="input input-bordered w-full" [class.input-error]="f['cargo'].invalid && f['cargo'].touched" appUppercase/>
+            class="input input-bordered w-full" [class.input-error]="f['cargo'].invalid && f['cargo'].touched"
+            appUppercase />
           @if (f['cargo'].invalid && f['cargo'].touched) {
           <small class="text-error text-xs">
             Este campo es obligatorio.

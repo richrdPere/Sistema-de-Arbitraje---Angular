@@ -14,12 +14,12 @@ export const RoleGuard: CanActivateFn = (route, state) => {
   // Convertir ambos a MAYÚSCULAS para comparar sin errores
   const rolUsuario = usuario.rol.toUpperCase();
 
-  console.log("ROL: ", rolUsuario);
+
 
 
   const allowedRoles = (route.data?.['roles'] as string[]).map(r => r.toUpperCase());
 
-  console.log("ROLES: ", allowedRoles);
+
 
   if (allowedRoles.includes(rolUsuario)) {
     return true;

@@ -86,7 +86,7 @@
         </thead>
         <tbody class="">
 
-          @for (p of participes; track p.id_expediente; let i = $index) {
+          @for (p of participes; track p.id_participe; let i = $index) {
           <tr class="hover">
             <td>{{i + 1}}</td>
             <td>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : ''
@@ -112,63 +112,17 @@
                 </button>
 
                 <!-- Editar partícipe -->
-                <button class="btn btn-ghost btn-circle btn-md" title="Editar participe"
-                  (click)="editarParticipe(p)">
+                <button class="btn btn-ghost btn-circle btn-md" title="Editar participe" (click)="editarParticipe(p)">
                   <i class="fa-solid fa-pencil"></i>
                 </button>
 
                 <!-- Eliminar participe -->
                 <button class="btn btn-ghost btn-circle btn-md" title="Eliminar participe"
-                  (click)="eliminarParticipe(p.id!)">
+                  (click)="eliminarParticipe(p.id_participe)" [disabled]="p.id_expediente !== null">
                   <i class="fa-solid fa-trash"></i>
                 </button>
 
               </div>
-
-              <!-- <div class="dropdown dropdown-end inline-block">
-                <button tabindex="0" class="btn btn-ghost btn-circle btn-sm" (click)="toggleDropdown(i, $event)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M6 12h.01M12 12h.01M18 12h.01" />
-                  </svg>
-                </button>
-
-                <ul tabindex="0"
-                  class="menu menu-sm dropdown-content bg-white shadow-lg rounded-xl w-52 border border-gray-100 mt-2 z-[100]"
-                  [class.hidden]="menuAbierto == i">
-                  <li class="menu-title px-4 py-1 text-xs text-gray-400">
-                    Acciones
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="verParticipe(p)">
-                      <i class="fa-solid fa-eye text-gray-600 w-5 text-center"></i>
-                      Ver Expediente
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 w-full text-sm text-gray-700"
-                      (click)="editarParticipe(p)">
-                      <i class="fa-solid fa-pen text-gray-600 w-5 text-center"></i>
-                      Editar Expediente
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button class="flex items-center gap-2 hover:bg-red-50 px-4 py-2 w-full text-sm text-red-600"
-                      (click)="eliminarParticipe(p.id!)">
-                      <i class="fa-solid fa-trash text-red-600 w-5 text-center"></i>
-                      Eliminar Expediente
-                    </button>
-                  </li>
-                </ul>
-              </div> -->
             </td>
           </tr>
           }

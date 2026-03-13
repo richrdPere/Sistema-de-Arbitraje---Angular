@@ -71,10 +71,6 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
         this.formExpediente.reset();
       }
     }
-    // if (changes['expedienteSeleccionado'] && this.expedienteSeleccionado) {
-    //   this.modoEdicion = true;
-    //   this.patchFormExpediente();
-    // }
   }
 
   private getFechaHoy(): string {

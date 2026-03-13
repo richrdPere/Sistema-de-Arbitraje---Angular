@@ -88,7 +88,7 @@
       @if (!loading && documentos.length > 0) {
       <div class="overflow-x-auto bg-white shadow rounded-lg ">
         <table class="table w-full">
-          <thead class="bg-gray-100 text-gray-700">
+          <thead class="bg-gray-100 text-gray-700 ">
             <tr>
               <th>N°</th>
               <th>Titulo</th>
@@ -96,7 +96,7 @@
               <th>Fecha de Subida</th>
 
               <th>Tipo Documento</th>
-              <th>Usuario</th>
+              <th class="text-center">Usuario</th>
               <th>Acción</th>
             </tr>
           </thead>
@@ -109,7 +109,30 @@
               <td>{{ doc.descripcion }}</td>
               <td>{{ doc.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</td>
               <td>{{ doc.tipo_documento }}</td>
-              <td>{{ doc.usuario_id }}</td>
+              <td class="text-sm text-center">
+                <div *ngIf="doc.usuario; else sinUsuario" class="space-y-1">
+
+                  <!-- Nombre -->
+                  <div class="font-semibold text-base-content">
+                    {{ doc.usuario.nombre }} {{ doc.usuario.apellidos }}
+                  </div>
+
+                  <!-- Rol -->
+                  <div class="text-xs badge badge-outline">
+                    {{ doc.usuario.rol | titlecase }}
+                  </div>
+
+                  <!-- Fecha -->
+                  <div class="text-xs text-gray-500">
+                    Modificado: {{ doc.updatedAt | date:'dd/MM/yyyy, h:mm a' }}
+                  </div>
+
+                </div>
+
+                <ng-template #sinUsuario>
+                  <span class="text-gray-400 italic">Sin registro de usuario</span>
+                </ng-template>
+              </td>
 
               <!-- Acciones -->
               <td class="text-right relative">

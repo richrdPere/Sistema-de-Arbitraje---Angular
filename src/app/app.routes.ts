@@ -27,26 +27,3 @@ export const routes: Routes = [
       ),
   },
 ];
-
-
-
-  // {
-  //   path: 'admin',
-  //   loadChildren: () => import('./pages/admin/admin.routes'),
-  // },
-  // {
-  //   path: 'secretaria',
-  //   loadChildren: () => import('./pages/secretaria/secretaria.routes'),
-  // },
-  // {
-  //   path: 'participe',
-  //   loadChildren: () => import('./pages/participe/participe.routes'),
-  // },
-  // {
-  //   path: 'arbitro',
-  //   loadChildren: () => import('./pages/arbitro/arbitro.routes'),
-  // },
-  // {
-  //   path: 'adjudicador',
-  //   loadChildren: () => import('./pages/adjudicador/adjudicador.routes'),
-  // },

@@ -8,6 +8,8 @@ import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.di
 
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
+import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
+
 
 // Interface
 import { Participe } from 'src/app/interfaces/users/participeUser';
@@ -41,61 +43,168 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
     this.modalWidthClass = map[size];
   }
 
+  placeholderDocumento = 'Seleccione tipo de documento';
+  maxDocumentoDemandante = 8; // valor por defecto
+
   formParticipe!: FormGroup;
   isEntidad: boolean = false;
+
 
   cargando = false;
   mensajeError = '';
   mensajeExito = '';
 
-  constructor(private fb: FormBuilder, private participeService: ParticipeService) {
-
-  }
+  constructor(
+    private fb: FormBuilder,
+    private participeService: ParticipeService,
+    private validacionesService: ValidacionesService
+  ) { }
 
   ngOnInit(): void {
     this.inicializarFormulario();
     this.setModalWidth('lg');
+
+    this.dniRucDemandante();
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Si estamos en modo edición, llenamos el formulario
-    if (this.modoEdicion && this.participeSeleccionado) {
-      this.llenarFormulario(this.participeSeleccionado);
+    if (!this.formParticipe) return; // Si el formulario no está inicializado, salir
+
+    // Detecta cuando cambian los inputs
+    if (changes['participeSeleccionado']) {
+      if (this.participeSeleccionado) {
+        // this.modoEdicion = true;
+
+        this.formParticipe.reset(); //  siempre limpia antes
+        this.patchFormParticipe();
+      } else {
+        this.modoEdicion = false;
+        this.formParticipe.reset();
+      }
     }
   }
+
 
   inicializarFormulario(): void {
     this.formParticipe = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellidos: ['', [Validators.required, Validators.minLength(3)]],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: ['', [Validators.required, Validators.email], [this.validacionesService.validarCorreo()]],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      tipo_documento: ['', [Validators.required]],
-      tipo_demandado: ['', Validators.required],
+      tipo_documento: [null, [Validators.required]],
+      tipo_usuario: [null, Validators.required],
       documento_identidad: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       cargo: ['', Validators.required],
-      rol_participe: ['', Validators.required],
-
-      // rol fijo según tu backend
-      // rol: ['participe'],
+      rol_participe: [null, Validators.required],
     });
   }
 
-  llenarFormulario(participe: any): void {
+  private patchFormParticipe(): void {
+
+    const usuarioId = this.participeSeleccionado.usuario?.id;
+
     this.formParticipe.patchValue({
-      nombre: participe.usuario?.nombre,
-      apellidos: participe.usuario?.apellidos,
-      correo: participe.usuario?.correo,
-      telefono: participe.usuario?.telefono,
-      documento_identidad: participe.usuario?.documento_identidad,
-      tipo_documento: participe.usuario?.tipo_documento,
-      tipo_demandado: participe.tipo_demandado,
-      cargo: participe.cargo,
-      rol_participe: participe.rol_participe,
+      nombre: this.participeSeleccionado.usuario?.nombre || '',
+      apellidos: this.participeSeleccionado.usuario?.apellidos || '',
+      correo: this.participeSeleccionado.usuario?.correo || '',
+      telefono: this.participeSeleccionado.usuario?.telefono || '',
+      tipo_documento: this.participeSeleccionado.usuario?.tipo_documento || '',
+      documento_identidad: this.participeSeleccionado.usuario?.documento_identidad || '',
+      tipo_usuario: this.participeSeleccionado.tipo_usuario || '',
+      cargo: this.participeSeleccionado.cargo || '',
+      rol_participe: this.participeSeleccionado.rol_participe || '',
     });
 
-    // Ajustar estado entidad/persona
-    this.isEntidad = participe.tipo_demandado === 'entidad';
+    const correoCtrl = this.formParticipe.get('correo');
+
+    // //  Deshabilitar en edición
+    // correoCtrl?.disable({ emitEvent: false });
+
+    // // Reasignar async validator con exclusión
+    // correoCtrl?.setAsyncValidators(
+    //   this.validacionesService.validarCorreo(usuarioId)
+    // );
+
+    // //  Limpiar errores cuando es edición
+    // correoCtrl?.setErrors(null);
+    if (this.modoEdicion) {
+      correoCtrl?.disable({ emitEvent: false });
+      correoCtrl?.clearAsyncValidators();
+      correoCtrl?.setErrors(null);
+    } else {
+      correoCtrl?.enable({ emitEvent: false });
+      correoCtrl?.setAsyncValidators(
+        this.validacionesService.validarCorreo(usuarioId)
+      );
+    }
+
+    this.formParticipe.updateValueAndValidity({ emitEvent: false });
+
+    //  DESHABILITAR CORREO EN EDICIÓN
+
+
+    // this.formParticipe.get('correo')
+    //   ?.setAsyncValidators(this.validacionesService.validarCorreo(usuarioId));
+
+    // Reasignar validadores de documento con exclusión
+    this.formParticipe.get('documento_identidad')
+      ?.setAsyncValidators(
+        this.formParticipe.get('tipo_documento')?.value === 'DNI'
+          ? this.validacionesService.validarDni(usuarioId)
+          : this.validacionesService.validarRuc(usuarioId)
+      );
+
+    this.formParticipe.updateValueAndValidity({ emitEvent: false });
+  }
+
+  dniRucDemandante(): void {
+
+    const tipoCtrl = this.formParticipe.get("tipo_documento");
+    const documentoCtrl = this.formParticipe.get("documento_identidad");
+
+    if (!tipoCtrl || !documentoCtrl) return;
+
+    tipoCtrl.valueChanges.subscribe(tipo => {
+
+      let maxLength = 0;
+      let asyncValidator = null;
+
+      if (tipo === "DNI") {
+        this.placeholderDocumento = 'Ingrese el numero de su DNI';
+        maxLength = 8;
+        asyncValidator = this.validacionesService.validarDni();
+      }
+
+      if (tipo === "RUC") {
+        this.placeholderDocumento = 'Ingrese el numero de su RUC';
+        maxLength = 11;
+        asyncValidator = this.validacionesService.validarRuc();
+      }
+
+      this.maxDocumentoDemandante = maxLength;
+
+      // 🔥 Limpiar validadores anteriores
+      documentoCtrl.clearValidators();
+      documentoCtrl.clearAsyncValidators();
+
+      // 🔥 Asignar nuevos validadores
+      documentoCtrl.setValidators([
+        Validators.required,
+        Validators.minLength(maxLength),
+        Validators.maxLength(maxLength),
+        Validators.pattern(/^[0-9]+$/)
+      ]);
+
+      if (asyncValidator) {
+        documentoCtrl.setAsyncValidators(asyncValidator);
+      }
+
+      documentoCtrl.reset();
+      documentoCtrl.updateValueAndValidity();
+    });
   }
 
   //  Enviar formulario
@@ -145,6 +254,9 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
     // ============================
     // MODO CREACIÓN
     // ============================
+
+    console.log('Creando partícipe con datos:', participe);
+
     this.participeService.crearParticipe(participe).subscribe({
       next: () => {
         this.cargando = false;
@@ -160,9 +272,9 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
   }
 
   onTipoDemandadoChange() {
-    const tipo = this.formParticipe.get('tipo_demandado')?.value;
+    const tipo = this.formParticipe.get('tipo_usuario')?.value;
 
-    this.isEntidad = tipo === 'entidad';
+    this.isEntidad = tipo === 'entidad_publica';
 
     // const nombre = this.formParticipe.get('nombre');
     const apellidos = this.formParticipe.get('apellidos');
@@ -186,10 +298,11 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
   //  Cerrar el modal
   cerrarModal(): void {
     this.mostrarModal = false;
-    this.formParticipe.reset({
-      tipo_persona: 'Natural',
-      rol: 'participe',
-    });
+    this.modoEdicion = false;
+
+    this.formParticipe.enable(); //  MUY IMPORTANTE
+    this.formParticipe.reset();
+
     this.modalCerrado.emit();
   }
 

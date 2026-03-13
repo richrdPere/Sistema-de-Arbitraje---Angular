@@ -1,0 +1,79 @@
+@if (mostrarParticipe) {
+
+<div class="modal modal-open">
+
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8">
+
+
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+      <h3 class="text-2xl font-semibold">Lista de participes</h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+    <!-- SIN PARTICIPES -->
+    <div *ngIf="!participantes || participantes.length === 0" class="alert alert-info">
+      <i class="fa-solid fa-circle-info"></i>
+      No hay participes registrados para esta designación.
+    </div>
+
+    <!-- LISTADO -->
+    <div *ngIf="participantes.length > 0" class="overflow-x-auto">
+
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre completo</th>
+            <th>Email</th>
+            <th class="text-center">Rol</th>
+            <th>Fecha</th>
+            <!-- <th class="text-center">Acciones</th> -->
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let doc of participantes; index as i">
+            <td class="w-12 text-center">
+              {{ i + 1 }}
+            </td>
+
+            <!-- Nombres -->
+            <td class="w-3/5">
+              <span [title]="
+                participantes[i].usuario.nombre +
+                (participantes[i].usuario.apellidos !== 'DATO NO PROPORCIONADO'
+                  ? ' ' + participantes[i].usuario.apellidos
+                  : '')
+              ">
+                {{ participantes[i].usuario.nombre }}
+                <ng-container *ngIf="participantes[i].usuario.apellidos !== 'DATO NO PROPORCIONADO'">
+                  {{ participantes[i].usuario.apellidos }}
+                </ng-container>
+              </span>
+            </td>
+
+            <!-- Email -->
+            <td class="w-2/5">
+              {{ participantes[i].usuario.correo }}
+            </td>
+
+            <!-- Rol -->
+            <td class="w-28 text-center">
+              <span class="badge badge-outline">
+                {{ participantes[i].rol_participe }}
+              </span>
+
+            </td>
+
+            <!-- Fecha -->
+            <td class="text-xs mt-1">
+
+              {{ participantes[i].updatedAt | date: 'dd/MM/yyyy' }}
+            </td>
+
+      </table>
+    </div>
+  </div>
+</div>
+}

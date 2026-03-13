@@ -207,7 +207,7 @@ export class LicenciaComponent {
   // NUEVO: Método para documentos varios
   getOtrosDocumentos() {
     return {
-      vigenciaPoder: `${this.baseUrl}/otros%20documentos/Vigencia%20de%20poder.pdf`,
+      vigenciaPoder: `${this.baseUrl}/otros%20documentos/vigencia%20de%20poder%20.pdf`,
       licenciaFuncionamiento: `${this.baseUrl}/otros%20documentos/licencia%20de%20funcionamiento.jpg`,
       inscripcionRRPP: `${this.baseUrl}/otros%20documentos/INSCRIPCION_A_RRPP[1].pdf`,
       fichaRUC: `${this.baseUrl}/otros%20documentos/FICHA_RUC.pdf`,
@@ -339,7 +339,7 @@ export class LicenciaComponent {
   getDocumentDate(nombreArchivo: string): string {
     // Extraer fecha del nombre del archivo o usar fecha por defecto
     const yearMatch = nombreArchivo.match(/(20\d{2})/);
-    const year = yearMatch ? yearMatch[1] : '2025';
+    const year = yearMatch ? yearMatch[1] : '2026';
     return `Vigente ${year}`;
   }
 

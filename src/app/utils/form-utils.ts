@@ -131,9 +131,6 @@ export class FormUtils {
   }
 
   static async checkingServerResponse(control: AbstractControl): Promise<ValidationErrors | null> {
-
-    console.log('Validando contra servidor');
-
     await sleep(); // 2 segundfos y medio
 
     const formValue = control.value;

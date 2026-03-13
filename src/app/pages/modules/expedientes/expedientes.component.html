@@ -58,6 +58,11 @@
     (modalCerrado)="cerrarModalParticipes()">
   </gestionar-participes>
 
+  <!-- Modal de historial -->
+  <ver-historial [mostrarModal]="mostrarModalHistorial" [expedienteId]="expedienteId"
+    (modalCerrado)="cerrarModalHistorial()">
+  </ver-historial>
+
 
   <!-- Tabla -->
   <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
@@ -150,6 +155,7 @@
                 <!-- Gestionar partícipes -->
                 <button class="btn btn-ghost btn-circle btn-md" title="Gestionar partícipes"
                   (click)="gestionarParticipesModal(exp)">
+
                   <i class="fa-solid fa-users"></i>
                 </button>
 

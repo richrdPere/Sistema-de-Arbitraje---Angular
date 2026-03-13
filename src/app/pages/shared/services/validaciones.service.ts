@@ -23,7 +23,22 @@ export class ValidacionesService {
   // ================================
   //  VALIDAR CORREO
   // ================================
-  validarCorreo(): AsyncValidatorFn {
+  // validarCorreo(): AsyncValidatorFn {
+  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+  //     if (!control.value) return of(null);
+
+  //     return of(control.value).pipe(
+  //       debounceTime(400),
+  //       switchMap(correo =>
+  //         this.http.get<boolean>(`${this.apiUrl}/existe-correo/${correo}`)
+  //       ),
+  //       map(existe => (existe ? { correoExistente: true } : null)),
+  //       catchError(() => of(null))
+  //     );
+  //   };
+  // }
+  validarCorreo(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
       if (!control.value) return of(null);
@@ -31,7 +46,9 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(correo =>
-          this.http.get<boolean>(`${this.apiUrl}/existe-correo/${correo}`)
+          this.http.get<boolean>(
+            `${this.apiUrl}/existe-correo/${correo}?usuarioId=${usuarioId ?? ''}`
+          )
         ),
         map(existe => (existe ? { correoExistente: true } : null)),
         catchError(() => of(null))
@@ -42,7 +59,23 @@ export class ValidacionesService {
   // ================================
   //  VALIDAR DNI
   // ================================
-  validarDni(): AsyncValidatorFn {
+  // validarDni(): AsyncValidatorFn {
+  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+  //     if (!control.value) return of(null);
+
+  //     return of(control.value).pipe(
+  //       debounceTime(400),
+  //       switchMap(dni =>
+  //         this.http.get<boolean>(`${this.apiUrl}/existe-dni/${dni}`)
+  //       ),
+  //       map(existe => (existe ? { dniExistente: true } : null)),
+  //       catchError(() => of(null))
+  //     );
+  //   };
+  // }
+
+  validarDni(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
       if (!control.value) return of(null);
@@ -50,7 +83,9 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(dni =>
-          this.http.get<boolean>(`${this.apiUrl}/existe-dni/${dni}`)
+          this.http.get<boolean>(
+            `${this.apiUrl}/existe-dni/${dni}?usuarioId=${usuarioId ?? ''}`
+          )
         ),
         map(existe => (existe ? { dniExistente: true } : null)),
         catchError(() => of(null))
@@ -61,7 +96,23 @@ export class ValidacionesService {
   // ================================
   //  VALIDAR RUC
   // ================================
-  validarRuc(): AsyncValidatorFn {
+  // validarRuc(): AsyncValidatorFn {
+  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+  //     if (!control.value) return of(null);
+
+  //     return of(control.value).pipe(
+  //       debounceTime(400),
+  //       switchMap(ruc =>
+  //         this.http.get<boolean>(`${this.apiUrl}/existe-ruc/${ruc}`)
+  //       ),
+  //       map(existe => (existe ? { rucExistente: true } : null)),
+  //       catchError(() => of(null))
+  //     );
+  //   };
+  // }
+
+  validarRuc(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
       if (!control.value) return of(null);
@@ -69,7 +120,9 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(ruc =>
-          this.http.get<boolean>(`${this.apiUrl}/existe-ruc/${ruc}`)
+          this.http.get<boolean>(
+            `${this.apiUrl}/existe-ruc/${ruc}?usuarioId=${usuarioId ?? ''}`
+          )
         ),
         map(existe => (existe ? { rucExistente: true } : null)),
         catchError(() => of(null))

@@ -12,7 +12,6 @@ import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
-
 import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
 
 @Component({
@@ -67,7 +66,10 @@ export class MesaPartesComponent implements OnInit {
   };
 
 
-  constructor(private fb: FormBuilder, private tramiteService: TramiteMPVService, private validacionesService: ValidacionesService) {
+  constructor(
+    private fb: FormBuilder,
+    private tramiteService: TramiteMPVService,
+    private validacionesService: ValidacionesService) {
     this.formTramiteMPV = this.fb.group({
 
       // =========================
@@ -199,72 +201,6 @@ export class MesaPartesComponent implements OnInit {
       documentoCtrl.updateValueAndValidity();
     });
   }
-
-  // dniRucDemandante(): void {
-  //   this.formTramiteMPV.get("tipo_documento")?.valueChanges.subscribe(tipo => {
-
-  //     const documentoCtrl = this.formTramiteMPV.get("documento_identidad");
-
-  //     if (!documentoCtrl) return;
-
-  //     let maxLength = 0;
-  //     let asyncValidator;
-
-  //     if (tipo === "DNI") {
-
-  //       this.placeholderDocumento = 'Ingrese el numero de su DNI';
-  //       maxLength = 8;
-
-  //       asyncValidator = this.validacionesService.validarDni();
-
-  //     } else if (tipo === "RUC") {
-
-  //       this.placeholderDocumento = 'Ingrese el numero de su RUC';
-  //       maxLength = 11;
-
-  //       asyncValidator = this.validacionesService.validarRuc();
-
-  //     }
-
-  //     this.maxDocumentoDemandante = maxLength;
-
-  //     documentoCtrl.setValidators([
-  //       Validators.required,
-  //       Validators.maxLength(maxLength),
-  //       Validators.minLength(maxLength),
-  //       Validators.pattern(/^[0-9]*$/)
-  //     ]);
-
-  //     documentoCtrl.setAsyncValidators([asyncValidator]);
-
-  //     documentoCtrl.reset();
-  //     documentoCtrl.updateValueAndValidity();
-
-
-  //     // if (tipo === "DNI") {
-  //     //   this.placeholderDocumento = 'Ingrese el numero de su DNI';
-  //     //   this.maxDocumentoDemandante = 8;
-  //     //   this.formTramiteMPV.get("documento_identidad")?.setValidators([
-  //     //     Validators.required,
-  //     //     Validators.maxLength(8),
-  //     //     Validators.minLength(8),
-  //     //     Validators.pattern(/^[0-9]*$/)
-  //     //   ]);
-  //     // } else if (tipo === "RUC") {
-  //     //   this.placeholderDocumento = 'Ingrese el numero de su RUC';
-  //     //   this.maxDocumentoDemandante = 11;
-  //     //   this.formTramiteMPV.get("documento_identidad")?.setValidators([
-  //     //     Validators.required,
-  //     //     Validators.maxLength(11),
-  //     //     Validators.minLength(11),
-  //     //     Validators.pattern(/^[0-9]*$/)
-  //     //   ]);
-  //     // }
-
-  //     // // Actualizar validaciones
-  //     // this.formTramiteMPV.get('documento_identidad')?.reset();
-  //   });
-  // }
 
   autoAsignarCodigo(): void {
     this.formTramiteMPV.get("tipo_solicitud")?.valueChanges.subscribe(tipo => {

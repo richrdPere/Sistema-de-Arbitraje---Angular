@@ -39,9 +39,6 @@ export class AuthService {
   login(correo: string, password: string): Observable<LoginResponse> {
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    console.log("Correo: ", correo);
-    console.log("Contraseña: ", password);
-
     return this._http.post<LoginResponse>(`${this.url}auth/login`, { correo, password }, { headers: headers })
       .pipe(
         tap((res) => {

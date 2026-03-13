@@ -91,6 +91,7 @@ export class ParticipesComponent implements OnInit {
 
   cerrarModal() {
     this.mostrarModal = false;
+    this.modoEdicion = false;
     this.formParticipe.reset();
   }
 
@@ -112,6 +113,9 @@ export class ParticipesComponent implements OnInit {
       next: (res) => {
 
         this.participes = res.data;
+
+        console.log("Participes cargados:", this.participes);
+
         this.totalItems = res.total;
         this.totalPages = res.totalPages;
         this.loading = false;
@@ -189,18 +193,10 @@ export class ParticipesComponent implements OnInit {
   }
   editarParticipe(participe: Participe): void {
     this.modoEdicion = true;
-    this.participeSeleccionado = participe;
-    this.mostrarModal = true;
 
-    // Llenar el formulario con los datos del participante
-    this.formParticipe.patchValue({
-      nombre: participe.usuario?.nombre,
-      apellidos: participe.usuario?.apellidos,
-      correo: participe.usuario?.correo,
-      telefono: participe.usuario?.telefono,
-      cargo: participe.cargo,
-      rol_participe: participe.rol_participe,
-    });
+    console.log("Partícipe seleccionado para edición:", participe);
+    this.participeSeleccionado = { ...participe };
+    this.mostrarModal = true;
   }
 
   //  Nuevo método para guardar cambios
@@ -225,6 +221,9 @@ export class ParticipesComponent implements OnInit {
 
   //  Eliminar participante
   eliminarParticipe(id: number): void {
+
+    console.log("ID del partícipe a eliminar:", id);
+
     Swal.fire({
       title: '¿Eliminar participante?',
       text: 'Esta acción no se puede deshacer',

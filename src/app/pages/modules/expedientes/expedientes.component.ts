@@ -20,14 +20,16 @@ import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
+import { VerHistorialComponent } from "./ver-historial/ver-historial.component";
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
 export class ExpedientesComponent {
+
 
   // Expedientes
   expedientes: any = [];
@@ -40,6 +42,7 @@ export class ExpedientesComponent {
   formUtils = FormUtils;
 
   formExpediente!: FormGroup;
+  expedienteId: number | null = null;
 
   loading = true;
   mensajeError = '';
@@ -48,6 +51,7 @@ export class ExpedientesComponent {
   modoEdicion = false;
   mostrarModal = false;
   mostrarModalParticipes = false;
+  mostrarModalHistorial = false;
   selectedExpedienteId?: number;
   expedienteSeleccionado: any | null = null;
 
@@ -197,6 +201,9 @@ export class ExpedientesComponent {
 
   gestionarParticipesModal(exp: any) {
     this.expedienteSeleccionado = exp;
+
+    console.log("Expediente seleccionado: ", exp);
+
     this.mostrarModalParticipes = true;
   }
 
@@ -205,8 +212,19 @@ export class ExpedientesComponent {
     this.expedienteSeleccionado = null;
   }
 
+  cerrarModalHistorial() {
+    this.mostrarModalHistorial = false;
+    this.expedienteId = null;
+  }
 
-  verHistorial(exp: any) { this.router.navigate([`app/expedientes/${exp.id_expediente}/historial`]); }
+
+  verHistorial(exp: any) {
+
+    //  this.router.navigate([`app/expedientes/${exp.id_expediente}/historial`]);
+    this.expedienteId = exp.id_expediente;
+    this.mostrarModalHistorial = true;
+
+  }
 
   editarExpediente(exp: Expediente): void {
 

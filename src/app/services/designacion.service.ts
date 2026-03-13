@@ -62,9 +62,6 @@ export class DesignacionService {
   // ✨ 1. Crear designación
   // -------------------------------------------------------
   crearDesignacion(body: ICrearDesignacionRequest): Observable<any> {
-
-    console.log('CREANDO DESIGNACION: ', body);
-
     return this.http.post(`${this.baseUrl}/designar`, body);
   }
 
@@ -123,5 +120,12 @@ export class DesignacionService {
   // -------------------------------------------------------
   eliminarDesignacion(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  // -------------------------------------------------------
+  // ✨ 7. Desginacion por expediente
+  // -------------------------------------------------------
+  getDesignacionPorExpediente(expedienteId: number) {
+    return this.http.get(`${this.baseUrl}/expediente/${expedienteId}`);
   }
 }

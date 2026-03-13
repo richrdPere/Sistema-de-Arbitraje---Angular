@@ -17,7 +17,7 @@ export class AdminService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url;
+  private url: string = this.envs.main_url_prueba;
 
   constructor(private _http: HttpClient) { }
 

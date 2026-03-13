@@ -41,8 +41,6 @@ export class NavbarMenuProfileComponent implements OnInit {
         this.avatar = `${this.perfilService.envs.url_image}${usuario.foto_perfil}?t=${Date.now()}`;
         //        ↑ evita cache del navegador
       }
-
-      console.log('Perfil:', this.avatar);
     });
   }
 

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
+// Environment
+import { environment } from '@environments/environment';
+
 @Component({
   selector: 'app-confirmar-cuenta',
   imports: [],
@@ -9,9 +12,17 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ConfirmarCuentaComponent implements OnInit {
 
+
+  // 1.- Enviroment
+  envs = environment;
+
+  private url: string = this.envs.main_url_prueba;
+
+
   token: string | null = null;
   mensaje: string = '';
   error: boolean = false;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -28,7 +39,7 @@ export class ConfirmarCuentaComponent implements OnInit {
 
   confirmarCuenta(token: string) {
     this.http
-      .get(`http://localhost:4000/api/usuarios/confirmar/${token}`)
+      .post(`${this.url}auth/confirmar-cuenta`, { token })
       .subscribe({
         next: (res: any) => {
           this.mensaje = res.message || 'Cuenta confirmada con éxito ';
@@ -42,5 +53,20 @@ export class ConfirmarCuentaComponent implements OnInit {
             err.error?.message || 'Token inválido o cuenta ya confirmada ';
         },
       });
+    // this.http
+    //   .get(`${this.url}auth/confirmar/${token}`)
+    //   .subscribe({
+    //     next: (res: any) => {
+    //       this.mensaje = res.message || 'Cuenta confirmada con éxito ';
+    //       setTimeout(() => {
+    //         this.router.navigate(['/trazabilidad']);
+    //       }, 3000);
+    //     },
+    //     error: (err) => {
+    //       this.error = true;
+    //       this.mensaje =
+    //         err.error?.message || 'Token inválido o cuenta ya confirmada ';
+    //     },
+    //   });
   }
 }

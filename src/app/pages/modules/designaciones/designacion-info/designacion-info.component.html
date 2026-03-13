@@ -1,0 +1,145 @@
+@if (mostrarDetalle && designacion) {
+
+<div class="modal modal-open">
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+      <h3 class="text-2xl font-semibold">Detalle de Designación #{{ designacion.id_designacion }}</h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+    <!-- Información General -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+
+      <div>
+        <p class="text-sm text-gray-500">Tipo</p>
+        <p class="font-semibold capitalize">{{ designacion.tipo_designacion }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Estado</p>
+        <span class="badge" [ngClass]="{
+            'badge-warning': designacion.estado === 'pendiente',
+            'badge-success': designacion.estado === 'aceptado',
+            'badge-error': designacion.estado === 'rechazado'
+          }">
+          {{ designacion.estado }}
+        </span>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Fecha de creación</p>
+        <p class="font-semibold">
+          {{ designacion.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Última actualización</p>
+        <p class="font-semibold">
+          {{ designacion.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Expediente -->
+    <div class="mb-6 border rounded-xl p-4 bg-gray-50">
+
+      <h3 class="font-bold mb-3">Información del Expediente</h3>
+
+      <div class="grid grid-cols-2 gap-4">
+
+        <div>
+          <p class="text-sm text-gray-500">Número</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.numero_expediente }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-500">Código</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.codigo }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-500">Tipo</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.tipo }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-500">Estado</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.estado }}
+          </p>
+        </div>
+
+        <div class="col-span-2">
+          <p class="text-sm text-gray-500">Título</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.titulo }}
+          </p>
+        </div>
+
+        <div class="col-span-2">
+          <p class="text-sm text-gray-500">Descripción</p>
+          <p class="font-semibold">
+            {{ designacion.expediente.descripcion }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Árbitros Designados -->
+    <div class="border rounded-xl p-4">
+
+      <h3 class="font-bold mb-3">Árbitros Designados</h3>
+
+      @if (designacion.arbitros_designados?.length > 0) {
+
+      <div class="overflow-x-auto">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Fecha Respuesta</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (arb of designacion.arbitros_designados; track arb.id_designacion_arbitro) {
+            <tr>
+              <td>{{ arb.arbitro_id }}</td>
+              <td class="capitalize">{{ arb.rol }}</td>
+              <td>
+                <span class="badge badge-warning">
+                  {{ arb.estado }}
+                </span>
+              </td>
+              <td>
+                {{ arb.fecha_respuesta ? (arb.fecha_respuesta | date:'dd/MM/yyyy') : '—' }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      } @else {
+
+      <p class="text-sm text-gray-500">
+        No hay árbitros asignados.
+      </p>
+
+      }
+    </div>
+  </div>
+</div>
+}

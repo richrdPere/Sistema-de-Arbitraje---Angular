@@ -64,10 +64,6 @@ export class VerDocumentosComponent implements OnInit {
     this.expedienteService.obtenerExpedientePorId(this.idExpediente)
       .subscribe({
         next: (exp) => {
-
-          console.log("exp:", exp);
-          console.log("numero:", exp.numero_expediente);
-
           this.numeroExpediente = exp.numero_expediente;
         },
         error: () => {
