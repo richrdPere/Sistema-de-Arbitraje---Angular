@@ -35,12 +35,19 @@ export class SolicitudDocsComponent {
     window.open(url, '_blank');
   }
 
-  descargarDocumento(doc: Documento) {
+  async descargarDocumento(doc: Documento) {
     const url = doc.url_s3 || doc.url_drive;
     if (!url) return;
-    window.open(url, '_blank');
-  }
 
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = doc.titulo || 'documento';
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   //  Cerrar el modal
   cerrarModal(): void {

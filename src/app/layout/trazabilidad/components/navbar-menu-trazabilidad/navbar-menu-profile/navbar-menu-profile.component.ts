@@ -35,12 +35,16 @@ export class NavbarMenuProfileComponent implements OnInit {
   }
   ngOnInit(): void {
     this._authService.currentUser$.subscribe(usuario => {
-      if (usuario) {
-        this.name = usuario.nombre;
-        this.email = usuario.correo;
-        this.avatar = `${this.perfilService.envs.url_image}${usuario.foto_perfil}?t=${Date.now()}`;
-        //        ↑ evita cache del navegador
-      }
+
+      if (!usuario) return;
+
+      this.name = usuario.nombre;
+      this.email = usuario.correo;
+
+      this.avatar = usuario.foto_perfil
+        ? `${this.perfilService.envs.url_image}${usuario.foto_perfil}?t=${Date.now()}`
+        : 'assets/img/default-avatar.png';
+
     });
   }
 

@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { SolicitudDetailComponent } from "../solicitud-detail/solicitud-detail.component";
 import { SolicitudDocsComponent } from "../solicitud-docs/solicitud-docs.component";
+import { SolicitudesRefreshService } from 'src/app/pages/shared/services/solicitudesRefresh.service';
 
 @Component({
   selector: 'list-rechazados',
@@ -51,11 +52,19 @@ export class ListRechazadosComponent implements OnInit {
 
   constructor(
     private tramiteService: TramiteMPVService,
+    private refreshService: SolicitudesRefreshService,
   ) { }
 
 
   ngOnInit(): void {
     this.cargarTramitesRechazados();
+    this.listenTramites();
+  }
+
+  listenTramites() {
+    this.refreshService.refresh$.subscribe(() => {
+      this.cargarTramitesRechazados();
+    });
   }
   cargarTramitesRechazados() {
     this.isLoading = true;

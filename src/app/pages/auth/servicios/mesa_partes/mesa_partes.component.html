@@ -384,16 +384,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <p><b>Tipo de arbitraje:</b> {{ f['tipo_solicitud'].value }}</p>
                   <p><b>Código:</b> {{ f['codigo'].value }}</p>
+                  <p><b>Decripción:</b> {{ f['descripcion'].value }}</p>
                 </div>
 
-                @if (descripcionTipoArbitraje) {
+                <!-- @if (descripcionTipoArbitraje) {
                 <div class="alert mt-3 text-sm" [ngStyle]="{
                                                   'background-color': colorAlerta,
                                                   'color': '#ffffff'
                                                 }">
-                  {{ descripcionTipoArbitraje }}
+                  {{ f['descripcion'].value }}
                 </div>
-                }
+                } -->
               </div>
             </div>
 
@@ -451,7 +452,7 @@
           </div>
         </form>
 
-        @if (enviado) {
+        <!-- @if (enviado) {
         <div class="mt-6">
           <div class="card bg-base-200 shadow-xl border border-gray-300">
             <div class="card-body">
@@ -482,7 +483,7 @@
             </div>
           </div>
         </div>
-        }
+        } -->
 
 
 

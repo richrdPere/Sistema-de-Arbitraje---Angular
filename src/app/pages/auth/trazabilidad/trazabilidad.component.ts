@@ -42,7 +42,7 @@ export class TrazabilidadComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.token) {
-      this._router.navigate(['/admin']);
+      this._router.navigate(['/app']);
     }
     else {
       // Mantener en el componente login

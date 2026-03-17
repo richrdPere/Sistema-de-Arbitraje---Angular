@@ -19,12 +19,12 @@ export class LayoutTrazabilidadComponent {
   rol: string = '';
   nombre: string = '';
 
-  constructor(private _authService: AuthService,) {
+  constructor(public _authService: AuthService,) {
 
-    const usuario = _authService.getUser()
+    const usuario = _authService.getUser();
 
     if (usuario) {
-      this.rol = usuario.rol;
+      this.rol = usuario.detalles?.cargo || '';
       this.nombre = usuario.nombre;
     }
   }

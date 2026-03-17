@@ -130,6 +130,7 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.expedienteSeleccionado) {
       this.expediente = this.expedienteSeleccionado;
+      this.expedienteId = this.expedienteSeleccionado.id_expediente;
       this.cargarDatosIniciales();
     }
   }
@@ -231,14 +232,13 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
       // designacion: this.designacionService.getDesignacionPorExpediente(this.expedienteSeleccionado.id_expediente)
     }).subscribe({
       next: resp => {
-        // Obtener array real desde "data" si tu backend lo envía así
-        // this.participes = resp.participes;
+
+        // Obtener participes existentes
         const listaParticipes = resp.participes.data || resp.participes;
-        // const designacion: any = resp.designacion;
 
-       //  console.log("DESIGNACION: ", designacion);
-
-        // limpiar arrays
+        // ================================
+        // LIMPIAR ARRAYS
+        // ================================
         this.demandantesSeleccionados = [];
         this.demandadosSeleccionados = [];
         this.arbitrosTribunal = [];
@@ -249,83 +249,60 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
 
         let idsDemandantes: number[] = [];
         let idsDemandados: number[] = [];
-        let idsArbitros: number[] = [];
 
-        // ----------------------------------
-        // SI YA EXISTE DESIGNACIÓN
-        // ----------------------------------
+        // ================================
+        // SEPARAR PARTICIPANTES
+        // ================================
+        const participantesDelExpediente = listaParticipes.filter((p: any) =>
+          p.id_expediente === this.expedienteId
+        );
+
+        const participantesDisponibles = listaParticipes.filter((p: any) =>
+          !p.id_expediente // null o undefined
+        );
+
+        // ================================
+        // SI EXISTE EXPEDIENTE → SELECCIONADOS
+        // ================================
+        if (this.expedienteId) {
+
+          // DEMANDANTES SELECCIONADOS
+          this.demandantesSeleccionados = participantesDelExpediente
+            .filter((p: any) => p.rol_participe === 'Demandante');
+
+          // DEMANDADOS SELECCIONADOS
+          this.demandadosSeleccionados = participantesDelExpediente
+            .filter((p: any) => p.rol_participe === 'Demandado');
+
+          idsDemandantes = this.demandantesSeleccionados.map(p => p.id_participe);
+          idsDemandados = this.demandadosSeleccionados.map(p => p.id_participe);
+
+        }
+
+        console.log("demandantesSeleccionados: ", this.demandantesSeleccionados);
+        console.log("demandadosSeleccionados: ", this.demandadosSeleccionados);
 
 
-        // if (designacion) {
-
-        //   // DEMANDANTES
-        //   designacion.demandantes.forEach((d: any) => {
-
-        //     this.demandantesSeleccionados.push(d);
-
-        //     this.demandantesFA.push(
-        //       this.fb.control(d.id_participe)
-        //     );
-
-        //     idsDemandantes.push(d.id_participe);
-
-        //   });
-
-        //   // DEMANDADOS
-        //   designacion.demandados.forEach((d: any) => {
-
-        //     this.demandadosSeleccionados.push(d);
-
-        //     this.demandadosFA.push(
-        //       this.fb.control(d.id_participe)
-        //     );
-
-        //     idsDemandados.push(d.id_participe);
-
-        //   });
-
-        //   // ARBITROS
-        //   designacion.arbitros.forEach((a: any) => {
-
-        //     this.arbitrosTribunal.push({
-        //       rol: a.cargo,
-        //       nombreCompleto: a.usuario
-        //         ? `${a.usuario.nombre} ${a.usuario.apellidos}`
-        //         : '',
-        //       arbitro_id: a.id_arbitro
-        //     });
-
-        //     this.arbitrosFA.push(
-        //       this.fb.control(a.id_arbitro)
-        //     );
-
-        //     idsArbitros.push(a.id_arbitro);
-
-        //   });
-
-       //  }
-
-        // ------------------------------
-        //  PARTICIPES DISPONIBLES
-        // ------------------------------
-
-        this.demandantesDisponibles = listaParticipes.filter((p: any) =>
+        // ================================
+        // DISPONIBLES (SOLO LOS QUE NO TIENEN EXPEDIENTE)
+        // ================================
+        this.demandantesDisponibles = participantesDisponibles.filter((p: any) =>
           p.rol_participe === 'Demandante' &&
           !idsDemandantes.includes(p.id_participe)
         );
 
-        this.demandadosDisponibles = listaParticipes.filter((p: any) =>
+        this.demandadosDisponibles = participantesDisponibles.filter((p: any) =>
           p.rol_participe === 'Demandado' &&
           !idsDemandados.includes(p.id_participe)
         );
+        console.log("demandantesDisponibles: ", this.demandantesDisponibles);
+        console.log("demandadosDisponibles: ", this.demandadosDisponibles);
 
-        // ----------------------------------
-        // ARBITROS DISPONIBLES
-        // ----------------------------------
 
-        this.arbitrosDisponibles = resp.arbitros.filter((a: any) =>
-          !idsArbitros.includes(a.id_arbitro)
-        );
+        // ================================
+        // ARBITROS
+        // ================================
+        this.arbitrosDisponibles = resp.arbitros;
 
         this.loading = false;
       },
@@ -561,6 +538,7 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
     this.mostrarModal = false;
     this.modalCerrado.emit();
     this.formDesginacion.reset();
+    this.currentStep = 1;
   }
 
 

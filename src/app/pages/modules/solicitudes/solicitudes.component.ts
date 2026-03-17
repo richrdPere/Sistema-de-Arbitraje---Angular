@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { SolicitudesRefreshService } from '../../shared/services/solicitudesRefresh.service';
 
 // Pipes
 import { DatePipe } from '@angular/common';
@@ -19,6 +20,7 @@ import { SolicitudDocsComponent } from "./solicitud-docs/solicitud-docs.componen
 import { Router } from '@angular/router';
 import { ListAprobadosComponent } from "./list-aprobados/list-aprobados.component";
 import { ListRechazadosComponent } from "./list-rechazados/list-rechazados.component";
+
 
 @Component({
   selector: 'app-solicitudes',
@@ -86,16 +88,10 @@ export class SolicitudesComponent implements OnInit {
     this.cargarTramitesPorEstado();
   }
 
-  // ya las tienes, pero añade:
-
-  // solicitudesPendientesFiltradas: any[] = [];   // PARA TAB PENDIENTES
-  // solicitudesAprobadasFiltradas: any[] = [];    // PARA TAB APROBADAS
-  // solicitudesRechazadasFiltradas: any[] = [];   // PARA TAB RECHAZADAS
-
   tabActivo: 'pendiente' | 'aprobado' | 'rechazado' = 'pendiente';
 
   // lista de tipos (si no la tienes)
-  tiposTramite: string[] = ['Arbitraje Ad Hoc', 'Arbitraje Institucional', 'Arbitraje de Emergencia', 'Recusación', 'Designación residual', 'Instalación'];
+  tiposTramite: string[] = ['Arbitraje Ad Hoc', 'Arbitraje Institucional', 'Arbitraje de Emergencia'];
 
   // Dropdown
   menuAbierto: number | null = null;
@@ -123,6 +119,7 @@ export class SolicitudesComponent implements OnInit {
     private router: Router,
     private tramiteService: TramiteMPVService,
     private expedientesService: ExpedientesService,
+    private refreshService: SolicitudesRefreshService,
     private authService: AuthService
   ) {
 
@@ -217,42 +214,6 @@ export class SolicitudesComponent implements OnInit {
 
       return matchTexto && matchTipo;
     });
-
-
-    // const matchTexto = (item: any) => {
-    //   if (!buscar) return true;
-    //   const ne = (item.numero_expediente || '').toString().toLowerCase();
-    //   const solicitante = (item.solicitante || '').toLowerCase();
-    //   const correo = (item.correo || '').toLowerCase();
-    //   const tipoIt = (item.tipo || '').toLowerCase();
-    //   const estadoIt = (item.estado || '').toLowerCase();
-
-    //   return ne.includes(buscar) ||
-    //     solicitante.includes(buscar) ||
-    //     correo.includes(buscar) ||
-    //     tipoIt.includes(buscar) ||
-    //     estadoIt.includes(buscar);
-    // };
-
-    // const aplicarAFiltrar = (lista: any[]) =>
-    //   (lista || []).filter(item =>
-    //     (!tipo || item.tipo === tipo) &&
-    //     // (!estado || item.estado === estado) &&
-    //     matchTexto(item)
-    //   );
-
-    // // Filtrar cada lista (originales vienen de cargarTramites)
-    // this.solicitudesPendientesFiltradas = aplicarAFiltrar(this.solicitudes);
-    // // this.solicitudesAprobadasFiltradas = aplicarAFiltrar(this.solicitudesAprobadas);
-    // // this.solicitudesRechazadasFiltradas = aplicarAFiltrar(this.solicitudesRechazadas);
-
-    // // opcional: actualizar la lista global si la usas en algún lugar
-    // this.solicitudesFiltradas = [
-    //   ...this.solicitudesPendientesFiltradas,
-    //   // ...this.solicitudesAprobadasFiltradas,
-    //   // ...this.solicitudesRechazadasFiltradas
-    // ];
-
   }
 
   abrirModalEstado(tramite: any) {
@@ -350,7 +311,6 @@ export class SolicitudesComponent implements OnInit {
 
           const expedienteId = tramite.id_expediente;
 
-
           if (!expedienteId) {
             Swal.fire({
               icon: 'warning',
@@ -359,6 +319,10 @@ export class SolicitudesComponent implements OnInit {
             });
             this.cerrarModal();
             this.cargarTramitesPorEstado();
+
+            // 🔥 Notificar a los otros componentes
+            this.refreshService.emitirActualizacion();
+
             return;
           }
 
@@ -380,15 +344,9 @@ export class SolicitudesComponent implements OnInit {
                 // ================================
                 //  REAJUSTE DE PAGINACIÓN
                 // ================================
-                // const totalDespues = totalAntes - 1;
-                // const nuevasTotalPages = Math.ceil(totalDespues / this.limit);
 
-                // if (this.page > nuevasTotalPages) {
-                //   this.page = nuevasTotalPages > 0 ? nuevasTotalPages : 1;
-                // }
-                // ================================
                 Swal.fire({
-                  icon: nuevoEstadoTramite === 'aprobada' ? 'success' : 'error',
+                  icon: 'success',
                   title:
                     nuevoEstadoTramite === 'aprobada'
                       ? 'Solicitud aprobada'
@@ -402,9 +360,10 @@ export class SolicitudesComponent implements OnInit {
                 this.cerrarModal();
                 this.razonRechazo = '';
 
-
-
                 this.cargarTramitesPorEstado();
+
+                // 🔥 Notificar a todos los componentes
+                this.refreshService.emitirActualizacion();
               },
 
               error: (err) => {
@@ -416,6 +375,9 @@ export class SolicitudesComponent implements OnInit {
 
                 this.cerrarModal();
                 this.cargarTramitesPorEstado();
+
+                // 🔥 Notificar a todos los componentes
+                this.refreshService.emitirActualizacion();
               }
             });
         },

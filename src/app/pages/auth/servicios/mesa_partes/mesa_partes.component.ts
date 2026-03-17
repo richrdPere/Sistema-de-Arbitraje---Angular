@@ -30,7 +30,6 @@ export class MesaPartesComponent implements OnInit {
 
   // STEP CONTROL
   currentStep: number = 1;
-  isEntidad: boolean = false;
 
   formTramiteMPV: FormGroup;
   file: File | null = null;
@@ -428,7 +427,8 @@ export class MesaPartesComponent implements OnInit {
           html: `
         <div class="text-left">
           <p><strong>Número de trámite:</strong> ${response.tramite.numero_tramite}</p>
-          <p><strong>Estado:</strong> ${response.tramite.estado}</p>
+          <p><strong>Estado:</strong> ${response.tramite.estado} </p>
+          <p><strong>Mensaje:</strong> Sirvase revisar su correo electrónico para más instrucciones</p>
         </div>
       `,
           icon: 'success',
@@ -437,12 +437,7 @@ export class MesaPartesComponent implements OnInit {
         });
         this.enviado = true;
 
-        // this.mensajeExito = ` ${response.message}`;
-
-        this.formTramiteMPV.reset();
-        this.archivos = [];
-        this.enviado = false;
-        // this.file = null;
+        this.resetFormulario();
       },
       error: (err) => {
         this.enviado = false;
@@ -456,6 +451,38 @@ export class MesaPartesComponent implements OnInit {
 
       }
     });
+  }
+
+  resetFormulario() {
+
+    // Reiniciar formulario con valores iniciales
+    this.formTramiteMPV.reset({
+      tipo_documento: '',
+      documento_identidad: '',
+      nombre: '',
+      apellidos: '',
+      tipo_usuario: '',
+      correo: '',
+      telefono: '',
+      direccion: '',
+      cargo: '',
+
+      tipo_solicitud: '',
+      codigo: '',
+
+      fecha_registro: this.fechaActual,
+      descripcion: ''
+    });
+
+    this.archivos = [];
+    this.enviado = false;
+    // this.file = null;
+
+    // Volver al primer paso
+    this.currentStep = 1;
+
+
+
   }
 
 }
