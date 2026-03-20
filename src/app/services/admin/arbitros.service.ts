@@ -79,4 +79,13 @@ export class ArbitrosService {
       headers: this.getHeaders()
     });
   }
+
+  // ======================================
+  // 6. Obtener arbitros por expediente
+  // ======================================
+  getArbitrosPorExpediente(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/expediente/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
 }

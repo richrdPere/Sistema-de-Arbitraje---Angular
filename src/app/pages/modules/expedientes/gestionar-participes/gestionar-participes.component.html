@@ -59,7 +59,7 @@
               <tbody>
                 <tr *ngFor="let p of demandantesDisponibles">
                   <td>
-                    <button class="btn btn-sm btn-warning" (click)="agregarDemandante(p)">
+                    <button class="btn btn-sm btn-warning" (click)="agregarParticipante(p, 'demandante')">
                       <i class="fa-solid fa-arrow-right"></i>
                     </button>
                   </td>
@@ -96,6 +96,30 @@
                 </tr>
               </thead>
               <tbody>
+                <tr *ngFor="let ctrl of demandantesFA.controls">
+                  <td>
+                    <button class="btn btn-sm btn-success"
+                      (click)="quitarParticipante(ctrl.value.participe_id, 'demandante')">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </td>
+
+                  <td>
+                    {{ ctrl.value.nombre }}
+                  </td>
+
+                  <td>{{ ctrl.value.rol }}</td>
+
+                  <td>{{ ctrl.value.documento }}</td>
+                </tr>
+
+                <tr *ngIf="demandantesFA.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No se han agregado demandantes
+                  </td>
+                </tr>
+              </tbody>
+              <!-- <tbody>
                 <tr *ngFor="let p of demandantesSeleccionados">
                   <td>
                     <button class="btn btn-sm btn-success" (click)="quitarDemandante(p)">
@@ -115,7 +139,7 @@
                     No se han agregado demandantes
                   </td>
                 </tr>
-              </tbody>
+              </tbody> -->
             </table>
           </div>
         </div>
@@ -144,7 +168,7 @@
               <tbody>
                 <tr *ngFor="let p of demandadosDisponibles">
                   <td>
-                    <button class="btn btn-sm btn-warning" (click)="agregarDemandando(p)">
+                    <button class="btn btn-sm btn-warning" (click)="agregarParticipante(p, 'demandado')">
                       <i class="fa-solid fa-arrow-right"></i>
                     </button>
                   </td>
@@ -182,6 +206,31 @@
               </thead>
 
               <tbody>
+                <tr *ngFor="let ctrl of demandadosFA.controls">
+                  <td>
+                    <button class="btn btn-sm btn-success"
+                      (click)="quitarParticipante(ctrl.value.participe_id, 'demandado')">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </td>
+
+                  <td>
+                    {{ ctrl.value.nombre }}
+                  </td>
+
+                  <td>{{ ctrl.value.rol }}</td>
+
+                  <td>{{ ctrl.value.documento }}</td>
+                </tr>
+
+                <tr *ngIf="demandadosFA.length === 0">
+                  <td colspan="4" class="text-center text-gray-400">
+                    No se han agregado demandados
+                  </td>
+                </tr>
+              </tbody>
+
+              <!-- <tbody>
                 <tr *ngFor="let p of demandadosSeleccionados">
                   <td>
                     <button class="btn btn-sm btn-success" (click)="quitarDemandando(p)">
@@ -201,7 +250,7 @@
                     No se han agregado demandados
                   </td>
                 </tr>
-              </tbody>
+              </tbody> -->
             </table>
 
             <!-- VALIDACIÓN -->
@@ -214,11 +263,10 @@
       </div>
       }
 
-
       <!-- STEP 3: ARBITROS ASIGNADOS -->
       @if (currentStep === 3) {
 
-      <div class="card bg-base-100 shadow" formGroupName="arbitros">
+      <div class="card bg-base-100 shadow">
         <div class="card-body text-base-content">
 
           <!-- ARBITRAJE DE EMERGENCIA -->
@@ -265,10 +313,10 @@
 
                       <td>
                         <span class="badge" [ngClass]="{
-              'badge-warning': arbitroEmergenciaSeleccionado.estado === 'PENDIENTE',
-              'badge-success': arbitroEmergenciaSeleccionado.estado === 'ACEPTADO',
-              'badge-error': arbitroEmergenciaSeleccionado.estado === 'RECHAZADO'
-            }">
+                          'badge-warning': arbitroEmergenciaSeleccionado.estado === 'PENDIENTE',
+                          'badge-success': arbitroEmergenciaSeleccionado.estado === 'ACEPTADO',
+                          'badge-error': arbitroEmergenciaSeleccionado.estado === 'RECHAZADO'
+                        }">
                           {{ arbitroEmergenciaSeleccionado.estado }}
                         </span>
                       </td>
@@ -309,7 +357,7 @@
               <div class="form-control">
                 <label class="label font-semibold">Árbitro de la Parte A</label>
                 <select class="select select-bordered w-full"
-                  (change)="seleccionarArbitroInstitucional('PARTE_A', $any($event.target).value)">
+                  (change)="seleccionarArbitroInstitucional('parteA', $any($event.target).value)">
                   <option value="" disabled selected>Seleccione</option>
                   <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
                     {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
@@ -321,7 +369,7 @@
               <div class="form-control">
                 <label class="label font-semibold">Árbitro de la Parte B</label>
                 <select class="select select-bordered w-full"
-                  (change)="seleccionarArbitroInstitucional('PARTE_B', $any($event.target).value)">
+                  (change)="seleccionarArbitroInstitucional('parteB',$any($event.target).value)">
                   <option value="" disabled selected>Seleccione</option>
                   <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
                     {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
@@ -333,9 +381,11 @@
               <div class="form-control">
                 <label class="label font-semibold">Árbitro Institucional</label>
                 <select class="select select-bordered w-full"
-                  (change)="seleccionarArbitroInstitucional('INSTITUCIONAL', $any($event.target).value)">
+                  (change)="seleccionarArbitroInstitucional('institucion',$any($event.target).value)"
+
+                  >
                   <option value="" disabled selected>Seleccione</option>
-                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro" >
                     {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
                   </option>
                 </select>
@@ -358,9 +408,7 @@
                   @if (arbitrosFA.length > 0) {
                   <tr *ngFor="let ctrl of arbitrosFA.controls">
                     <td>
-                      {{
-                      getNombreArbitro(ctrl.value.arbitro_id)
-                      }}
+                      {{ ctrl.value.nombre }}
                     </td>
 
                     <td class="font-semibold">
@@ -368,7 +416,11 @@
                     </td>
 
                     <td>
-                      <span class="badge badge-warning">
+                      <span class="badge" [ngClass]="{
+                        'badge-warning': ctrl.value.estado === 'PENDIENTE',
+                        'badge-success': ctrl.value.estado === 'ACEPTADO',
+                        'badge-error': ctrl.value.estado === 'RECHAZADO'
+                      }">
                         {{ ctrl.value.estado }}
                       </span>
                     </td>

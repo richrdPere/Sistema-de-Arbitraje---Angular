@@ -117,6 +117,7 @@ export class ExpedientesService {
     return this.http.get(`${this.url}/${idExpediente}/participes`, this.getAuthHeaders());
   }
 
+
   // *****************************************************
   // 9.- DOCUMENTOS
   // *****************************************************
@@ -164,4 +165,14 @@ export class ExpedientesService {
       this.getAuthHeaders()
     );
   }
+
+
+  anularExpediente(id: number): Observable<any> {
+    return this.http.patch(
+      `${this.url}/${id}/anular`,
+      this.getAuthHeaders()
+    );
+  }
+
+
 }

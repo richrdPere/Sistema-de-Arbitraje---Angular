@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } fro
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import iziToast from 'izitoast';
 
 // // Directives
@@ -77,10 +77,10 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
   participes: any[] = [];
   isEntidad: boolean = false;
 
-  demandantesDisponibles: any[] = [];
+  // demandantesDisponibles: any[] = [];
   demandantesSeleccionados: any[] = [];
 
-  demandadosDisponibles: any[] = [];
+  // demandadosDisponibles: any[] = [];
   demandadosSeleccionados: any[] = [];
 
   arbitrosDisponibles: any[] = [];
@@ -119,19 +119,18 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
   //  INIT
   // ============================================================
   ngOnInit() {
-
-    // this.expediente = this.expedienteSeleccionado;
-    // this.cargarDatosIniciales();
     this.setModalWidth('xl');
-
     this.initForm();
+    this.expedienteId = this.expedienteSeleccionado?.id_expediente;
   }
 
   ngOnChanges() {
     if (this.expedienteSeleccionado) {
+
       this.expediente = this.expedienteSeleccionado;
-      this.expedienteId = this.expedienteSeleccionado.id_expediente;
+      this.expedienteId = this.expedienteSeleccionado?.id_expediente;
       this.cargarDatosIniciales();
+      // this.getArbitrosDesignados();
     }
   }
 
@@ -158,6 +157,73 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
   get arbitrosFA(): FormArray {
     return this.formDesginacion.get('arbitros.arbitrosTribunal') as FormArray;
   }
+
+  agregarParticipante(p: any, tipo: 'demandante' | 'demandado') {
+
+    const FA = tipo === 'demandante'
+      ? this.demandantesFA
+      : this.demandadosFA;
+
+    const existe = FA.controls.some(ctrl =>
+      ctrl.value.participe_id === p.id_participe
+    );
+
+    if (existe) return;
+
+    FA.push(
+      this.fb.group({
+        participe_id: [p.id_participe, Validators.required],
+        rol: [p.rol_participe, Validators.required],
+        documento: [p.usuario?.documento_identidad]
+      })
+    );
+
+    FA.markAsTouched();
+    FA.updateValueAndValidity();
+  }
+
+  quitarParticipante(id: number, tipo: 'demandante' | 'demandado') {
+
+    const FA = tipo === 'demandante'
+      ? this.demandantesFA
+      : this.demandadosFA;
+
+    const index = FA.controls.findIndex(ctrl =>
+      ctrl.value.participe_id === id
+    );
+
+    if (index !== -1) {
+      FA.removeAt(index);
+    }
+
+    FA.updateValueAndValidity();
+  }
+
+  get demandantesDisponibles() {
+
+    if (!this.participes) return [];
+
+    const seleccionadosIds = this.demandantesFA.value.map((d: any) => d.participe_id);
+
+    return this.participes.filter((p: any) =>
+      p.rol_participe === 'Demandante' &&
+      !seleccionadosIds.includes(p.id_participe) && p.id_expediente === null
+    );
+  }
+
+
+  get demandadosDisponibles() {
+
+    if (!this.participes) return [];
+
+    const seleccionadosIds = this.demandadosFA.value.map((d: any) => d.participe_id);
+
+    return this.participes.filter((p: any) =>
+      p.rol_participe === 'Demandado' &&
+      !seleccionadosIds.includes(p.id_participe) && p.id_expediente === null
+    );
+  }
+
 
   limpiarArbitros() {
     this.arbitrosFA.clear();
@@ -219,6 +285,41 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
     this.currentStep = step;
   }
 
+  // getArbitrosDesignados() {
+
+  //   this.arbitroService.getArbitrosPorExpediente(this.expedienteId).subscribe({
+
+
+  //     next: resp => {
+  //       console.log("RESP ARBITROS EXP:", resp.arbitrosExpediente);
+
+  //       // Obtener arbitros existentes
+  //       const arbitrosExp = Array.isArray(resp.arbitrosExpediente)
+  //         ? resp.arbitrosExpediente
+  //         : resp.arbitrosExpediente?.data || [];
+
+  //       console.log("ARBITROS PROCESADOS:", arbitrosExp);
+
+  //       if (Array.isArray(arbitrosExp) && arbitrosExp.length > 0) {
+  //         arbitrosExp.forEach((a: any) => {
+  //           this.arbitrosFA.push(
+  //             this.fb.group({
+  //               arbitro_id: a.arbitro_id,
+  //               rol: a.rol,
+  //               estado: a.estado,
+  //               nombre: a.arbitro?.usuario
+  //                 ? `${a.arbitro.usuario.nombre} ${a.arbitro.usuario.apellidos}`
+  //                 : 'Sin datos'
+  //             })
+  //           );
+  //         });
+  //       }
+  //     }
+
+
+  //   });
+  // }
+
   // ============================================================
   //  CARGAR EXPEDIENTE + PARTICIPES + ARBITROS
   // ============================================================
@@ -226,23 +327,23 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
     this.loading = true;
 
     forkJoin({
-      // participes: this.expedientesService.listarParticipantes(this.expedienteId),
-      participes: this.participesService.listaParticipes(),
-      arbitros: this.arbitroService.getArbitros(),
-      // designacion: this.designacionService.getDesignacionPorExpediente(this.expedienteSeleccionado.id_expediente)
+      participes: this.participesService.listaParticipes().pipe(catchError(() => of([]))),
+      arbitros: this.arbitroService.getArbitros().pipe(catchError(() => of([]))),
+      arbitrosExpediente: this.arbitroService.getArbitrosPorExpediente(this.expedienteId)
+        .pipe(catchError(() => of([])))
     }).subscribe({
       next: resp => {
 
+        console.log("RESP COMPLETO:", resp);
+
+
         // Obtener participes existentes
         const listaParticipes = resp.participes.data || resp.participes;
+        this.participes = listaParticipes;
 
-        // ================================
-        // LIMPIAR ARRAYS
-        // ================================
-        this.demandantesSeleccionados = [];
-        this.demandadosSeleccionados = [];
-        this.arbitrosTribunal = [];
+        console.log("Participes: ", this.participes);
 
+        // Limpiar formularios
         this.demandantesFA.clear();
         this.demandadosFA.clear();
         this.arbitrosFA.clear();
@@ -250,15 +351,36 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
         let idsDemandantes: number[] = [];
         let idsDemandados: number[] = [];
 
+
+        // Obtener arbitros existentes
+        const arbitrosExp = Array.isArray(resp.arbitrosExpediente)
+          ? resp.arbitrosExpediente
+          : resp.arbitrosExpediente?.data || [];
+
+        console.log("ARBITROS PROCESADOS:", arbitrosExp);
+
+        if (Array.isArray(arbitrosExp) && arbitrosExp.length > 0) {
+          arbitrosExp.forEach((a: any) => {
+            this.arbitrosFA.push(
+              this.fb.group({
+                arbitro_id: a.arbitro_id,
+                rol: a.rol,
+                estado: a.estado,
+                nombre: a.arbitro?.usuario
+                  ? `${a.arbitro.usuario.nombre} ${a.arbitro.usuario.apellidos}`
+                  : 'Sin datos'
+              })
+            );
+          });
+        }
+
+        console.log("FORM ARRAY ARBITROS:", this.arbitrosFA.value);
+
         // ================================
         // SEPARAR PARTICIPANTES
         // ================================
         const participantesDelExpediente = listaParticipes.filter((p: any) =>
           p.id_expediente === this.expedienteId
-        );
-
-        const participantesDisponibles = listaParticipes.filter((p: any) =>
-          !p.id_expediente // null o undefined
         );
 
         // ================================
@@ -277,33 +399,16 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
           idsDemandantes = this.demandantesSeleccionados.map(p => p.id_participe);
           idsDemandados = this.demandadosSeleccionados.map(p => p.id_participe);
 
+          // IMPORTANTE: poblar FormArray
+          this.cargarDemandantesEnFormArray();
+          this.cargarDemandadosEnFormArray();
         }
 
         console.log("demandantesSeleccionados: ", this.demandantesSeleccionados);
         console.log("demandadosSeleccionados: ", this.demandadosSeleccionados);
 
-
-        // ================================
-        // DISPONIBLES (SOLO LOS QUE NO TIENEN EXPEDIENTE)
-        // ================================
-        this.demandantesDisponibles = participantesDisponibles.filter((p: any) =>
-          p.rol_participe === 'Demandante' &&
-          !idsDemandantes.includes(p.id_participe)
-        );
-
-        this.demandadosDisponibles = participantesDisponibles.filter((p: any) =>
-          p.rol_participe === 'Demandado' &&
-          !idsDemandados.includes(p.id_participe)
-        );
-        console.log("demandantesDisponibles: ", this.demandantesDisponibles);
-        console.log("demandadosDisponibles: ", this.demandadosDisponibles);
-
-
-        // ================================
-        // ARBITROS
-        // ================================
-        this.arbitrosDisponibles = resp.arbitros;
-
+        // ARBITROS DISPONIBLES
+        this.arbitrosDisponibles = resp.arbitros?.data || resp.arbitros || [];
         this.loading = false;
       },
       error: err => {
@@ -314,30 +419,34 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
   }
 
   // seleccionar/deseleccionar árbitro
-  toggleArbitro(id: number) {
-    const idx = this.arbitrosSeleccionados.indexOf(id);
-    if (idx >= 0) this.arbitrosSeleccionados.splice(idx, 1);
-    else this.arbitrosSeleccionados.push(id);
+  toggleArbitro(arbitro: any) {
+
+    console.log("Arbitro: ", arbitro);
+
+    const index = this.arbitrosFA.controls.findIndex(ctrl =>
+      ctrl.value.arbitro_id === arbitro.id_arbitro
+    );
+
+    if (index !== -1) {
+      this.arbitrosFA.removeAt(index);
+    } else {
+      this.arbitrosFA.push(
+        this.fb.group({
+          arbitro_id: arbitro.id_arbitro,
+          rol: 'principal',
+          estado: 'PENDIENTE',
+          nombre: `${arbitro.usuario.nombre} ${arbitro.usuario.apellidos}`
+        })
+      );
+    }
+
+    this.arbitrosFA.updateValueAndValidity();
   }
 
-  agregarDemandante(p: any) {
-    // 1. Quitar de disponibles
-    this.demandantesDisponibles = this.demandantesDisponibles.filter(
-      d => d.id_participe !== p.id_participe
-    );
+  private cargarDemandantesEnFormArray() {
+    this.demandantesFA.clear();
 
-    // 2. Evitar duplicados visuales
-    const existeUI = this.demandantesSeleccionados.some(
-      d => d.id_participe === p.id_participe
-    );
-
-    if (!existeUI) {
-      this.demandantesSeleccionados = [
-        ...this.demandantesSeleccionados,
-        { ...p }
-      ];
-
-      // 3. Agregar al FormArray
+    this.demandantesSeleccionados.forEach((p: any) => {
       this.demandantesFA.push(
         this.fb.group({
           participe_id: [p.id_participe, Validators.required],
@@ -345,60 +454,16 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
           documento: [p.usuario?.documento_identidad]
         })
       );
-    }
+    });
 
-    // 4. Marcar como tocado para validación
     this.demandantesFA.markAsTouched();
+    this.demandantesFA.updateValueAndValidity();
   }
 
-  quitarDemandante(p: any) {
-    // 1. Índice en seleccionados
-    const index = this.demandantesSeleccionados.findIndex(
-      d => d.id_participe === p.id_participe
-    );
+  private cargarDemandadosEnFormArray() {
+    this.demandadosFA.clear();
 
-    if (index === -1) return;
-
-    // 2. Quitar del FormArray (MISMO índice)
-    this.demandantesFA.removeAt(index);
-
-    // 3. Quitar del array visual
-    this.demandantesSeleccionados = this.demandantesSeleccionados.filter(
-      d => d.id_participe !== p.id_participe
-    );
-
-    // 4. Evitar duplicados en disponibles
-    const existeDisponible = this.demandantesDisponibles.some(
-      d => d.id_participe === p.id_participe
-    );
-
-    if (!existeDisponible) {
-      this.demandantesDisponibles = [
-        ...this.demandantesDisponibles,
-        { ...p }
-      ];
-    }
-
-    // 5. Validación reactiva
-    this.demandantesFA.markAsTouched();
-  }
-
-
-  agregarDemandando(p: any) {
-    this.demandadosDisponibles = this.demandadosDisponibles.filter(
-      d => d.id_participe !== p.id_participe
-    );
-
-    const existeUI = this.demandadosSeleccionados.some(
-      d => d.id_participe === p.id_participe
-    );
-
-    if (!existeUI) {
-      this.demandadosSeleccionados = [
-        ...this.demandadosSeleccionados,
-        { ...p }
-      ];
-
+    this.demandadosSeleccionados.forEach((p: any) => {
       this.demandadosFA.push(
         this.fb.group({
           participe_id: [p.id_participe, Validators.required],
@@ -406,42 +471,16 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
           documento: [p.usuario?.documento_identidad]
         })
       );
-    }
+    });
 
     this.demandadosFA.markAsTouched();
-  }
-
-  quitarDemandando(p: any) {
-    const index = this.demandadosSeleccionados.findIndex(
-      d => d.id_participe === p.id_participe
-    );
-
-    if (index === -1) return;
-
-    this.demandadosFA.removeAt(index);
-
-    this.demandadosSeleccionados = this.demandadosSeleccionados.filter(
-      d => d.id_participe !== p.id_participe
-    );
-
-    const existeDisponible = this.demandadosDisponibles.some(
-      d => d.id_participe === p.id_participe
-    );
-
-    if (!existeDisponible) {
-      this.demandadosDisponibles = [
-        ...this.demandadosDisponibles,
-        { ...p }
-      ];
-    }
-
-    this.demandadosFA.markAsTouched();
+    this.demandadosFA.updateValueAndValidity();
   }
 
   // ============================================================
   //  SELECTORES DE ARBITROS PARA LOS ROLES
   // ============================================================
-  seleccionarArbitroInstitucional(rol: 'PARTE_A' | 'PARTE_B' | 'INSTITUCIONAL', idArbitro: number) {
+  seleccionarArbitroInstitucional(rol: 'parteA' | 'parteB' | 'institucion', idArbitro: number) {
     const arbitroId = Number(idArbitro);
 
     const arbitro = this.arbitrosDisponibles.find(
@@ -477,26 +516,29 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
       this.fb.group({
         arbitro_id: arbitroId,
         rol,
+        nombre: `${arbitro.usuario.nombre} ${arbitro.usuario.apellidos}`,
         estado: 'PENDIENTE'
       })
     );
+
+    console.log("ARBITROS SELECT: ", this.arbitrosFA);
 
     // Actualizar tabla visual
     // this.actualizarTablaVisual();
   }
 
-  actualizarTablaVisual() {
-    this.arbitrosTribunal = this.arbitrosFA.value.map((a: any) => {
-      const info = this.arbitrosDisponibles.find(x => x.id_arbitro === a.arbitro_id);
+  // actualizarTablaVisual() {
+  //   this.arbitrosTribunal = this.arbitrosFA.value.map((a: any) => {
+  //     const info = this.arbitrosDisponibles.find(x => x.id_arbitro === a.arbitro_id);
 
-      return {
-        arbitro_id: a.arbitro_id,
-        rol: a.rol,
-        nombreCompleto: `${info?.usuario.nombre} ${info?.usuario.apellidos}`,
-        estado: a.estado
-      };
-    });
-  }
+  //     return {
+  //       arbitro_id: a.arbitro_id,
+  //       rol: a.rol,
+  //       nombreCompleto: `${info?.usuario.nombre} ${info?.usuario.apellidos}`,
+  //       estado: a.estado
+  //     };
+  //   });
+  // }
 
   getNombreArbitro(id: number): string {
     const a = this.arbitrosDisponibles.find(x => x.id_arbitro === id);
@@ -554,98 +596,70 @@ export class GestionarParticipesComponent implements OnInit, OnChanges {
 
     if (!this.expedienteSeleccionado) return;
 
-    const participes: any[] = [];
+    // const participes: any[] = [];
 
     // ===============================
     // DEMANDANTES
     // ===============================
-    this.demandantesFA.value.forEach((d: any) => {
-      participes.push({
-        participe_id: d.participe_id,
-        rol: "demandante"
-      });
-    });
-
-    // ===============================
-    // DEMANDADOS
-    // ===============================
-    this.demandadosFA.value.forEach((d: any) => {
-      participes.push({
-        participe_id: d.participe_id,
-        rol: "demandado"
-      });
-    });
-
-    const payload: any = {
-
+    const payload = {
       expediente_id: this.expedienteSeleccionado.id_expediente,
-      tipo_designacion: "",
-      participes: participes,
+      tipo_designacion: '',
+      participes: [
+        ...this.demandantesFA.value.map((d: any) => ({
+          participe_id: d.participe_id,
+          rol: 'demandante'
+        })),
+        ...this.demandadosFA.value.map((d: any) => ({
+          participe_id: d.participe_id,
+          rol: 'demandado'
+        }))
+      ],
       arbitros: []
-
     };
 
-    // ==================================================
-    // ARBITRAJE DE EMERGENCIA
-    // ==================================================
-    if (this.expedienteSeleccionado.tipo === 'Arbitraje de Emergencia') {
+    const totalArbitros = this.arbitrosFA.length;
 
-      payload.tipo_designacion = "individual";
+    // ===============================
+    // TIPOS
+    // ===============================
 
-      if (!this.arbitroEmergenciaSeleccionado) {
-        Swal.fire('Falta árbitro', 'Seleccione un árbitro de emergencia', 'warning');
-        return;
-      }
+    switch (this.expedienteSeleccionado.tipo) {
 
-      payload.arbitros.push({
-        arbitro_id: this.arbitroEmergenciaSeleccionado.id_arbitro,
-        rol: "principal"
-      });
+      case 'Arbitraje de Emergencia':
+        if (totalArbitros !== 1) {
+          Swal.fire('Error', 'Debe seleccionar 1 árbitro', 'warning');
+          return;
+        }
+        payload.tipo_designacion = 'individual';
+        break;
+
+      case 'Arbitraje Institucional':
+        if (totalArbitros !== 3) {
+          Swal.fire('Error', 'Debe asignar 3 árbitros', 'warning');
+          return;
+        }
+        payload.tipo_designacion = 'tribunal';
+        break;
+
+      case 'Arbitraje Ad Hoc':
+        if (![1, 3].includes(totalArbitros)) {
+          Swal.fire('Error', 'Ad Hoc permite 1 o 3 árbitros', 'warning');
+          return;
+        }
+        payload.tipo_designacion = totalArbitros === 1 ? 'individual' : 'tribunal';
+        break;
     }
 
-    // ==================================================
-    // ARBITRAJE INSTITUCIONAL
-    // ==================================================
-    if (this.expedienteSeleccionado.tipo === 'Arbitraje Institucional') {
-
-      payload.tipo_designacion = "tribunal";
-
-      if (this.arbitrosFA.length !== 3) {
-        Swal.fire('Error', 'Debe asignar 3 árbitros', 'warning');
-        return;
-      }
-
-      payload.arbitros = this.arbitrosFA.value.map((a: any) => ({
-        arbitro_id: a.arbitro_id,
-        rol: a.rol
-      }));
-    }
-
-    // ==================================================
-    // ARBITRAJE AD HOC
-    // ==================================================
-    if (this.expedienteSeleccionado.tipo === 'Arbitraje Ad Hoc') {
-
-      payload.tipo_designacion = this.arbitrosFA.length === 1 ? "individual" : "tribunal";
-
-      if (![1, 3].includes(this.arbitrosFA.length)) {
-        Swal.fire('Error', 'Ad Hoc permite 1 o 3 árbitros', 'warning');
-        return;
-      }
-
-      payload.arbitros = this.arbitrosFA.value.map((a: any) => ({
-        arbitro_id: a.arbitro_id,
-        rol: a.rol
-      }));
-    }
-
+    payload.arbitros = this.arbitrosFA.value.map((a: any) => ({
+      arbitro_id: a.arbitro_id,
+      rol: a.rol
+    }));
 
     // ===============================
     // LLAMADA AL BACKEND
     // ===============================
 
     // Asignar expediente
-
     this.expedientesService.asignarParticipesYDesignacion(payload.expediente_id, payload).subscribe({
       next: (res) => {
         Swal.fire('Éxito', 'Participes y árbitros asignados correctamente', 'success');

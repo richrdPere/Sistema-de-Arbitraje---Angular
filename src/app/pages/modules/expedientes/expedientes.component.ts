@@ -21,6 +21,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
 import { VerHistorialComponent } from "./ver-historial/ver-historial.component";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-expedientes',
@@ -290,8 +291,61 @@ export class ExpedientesComponent {
     }
   }
 
-  anularExpediente(arg0: any) {
-    throw new Error('Method not implemented.');
+  anularExpediente(id_exp: number) {
+
+    console.log("id expediente: ", id_exp);
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción anulará el expediente y no podrá revertirse fácilmente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, anular',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+
+        // 🔄 Loader mientras procesa
+        Swal.fire({
+          title: 'Anulando expediente...',
+          text: 'Por favor espera',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.expedienteService.anularExpediente(id_exp).subscribe({
+          next: (resp) => {
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Expediente anulado',
+              text: 'El expediente fue anulado correctamente',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            // 🔥 Opcional: refrescar lista
+            this.cargarExpedientes?.();
+
+          },
+          error: (err) => {
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: err?.error?.message || 'Ocurrió un error al anular el expediente'
+            });
+
+            console.error(err);
+          }
+        });
+      }
+    });
   }
 
 
