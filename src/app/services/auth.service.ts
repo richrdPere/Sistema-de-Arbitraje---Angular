@@ -87,10 +87,6 @@ export class AuthService {
   // 5.- Confirmar cuenta
   // ===========================================================
 
-  confirmar_cuenta() {
-
-
-  }
 
   // ✅ VERIFICAR SI HAY SESIÓN
   public isAuthenticated(allowRoles: string[]): boolean {
@@ -108,10 +104,10 @@ export class AuthService {
 
       // Decodificar el token
       const decodedToken = helper.decodeToken(token);
-      if (!decodedToken || !decodedToken.role) return false;
+      if (!decodedToken || !decodedToken.rol) return false;
 
       // Verificar si el rol está permitido
-      return allowRoles.includes(decodedToken.role);
+      return allowRoles.includes(decodedToken.rol);
 
     } catch (error) {
       console.error('Error al validar token JWT:', error);
@@ -120,9 +116,11 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    const token = localStorage.getItem('token');
-    // Valida si el token existe y no ha expirado
-    return !!token;
+    const token = this.getToken();
+    if (!token) return false;
+
+    const helper = new JwtHelperService();
+    return !helper.isTokenExpired(token);
   }
 
   updateUser(data: Partial<LoginResponse['usuario']>) {

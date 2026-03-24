@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 // Izitoast
 import iziToast from 'izitoast';
@@ -24,6 +25,7 @@ export class TrazabilidadComponent implements OnInit {
   public token: any = '';
 
   loading = false;
+  showPassword: boolean = false;
   errorMessage = '';
 
   constructor(
@@ -32,16 +34,16 @@ export class TrazabilidadComponent implements OnInit {
     private _router: Router) {
     this.formTrazabilidad = this.fb.group({
       tipo: ['administracion'],   // ejemplo: radio/selector
-      correo: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]     //  ahora sí existe
-      // nro: [null],       //  ahora sí existe
-      // anio: [null],       //  ahora sí existe
-      // codigo: [null],       //  ahora sí existe
+      correo: [null, [Validators.required, Validators.email]],
+      password: [null, Validators.required]     //  ahora sí existe
     });
   }
 
   ngOnInit(): void {
-    if (this.token) {
+
+    const token = this.authService.getToken();
+
+    if (token) {
       this._router.navigate(['/app']);
     }
     else {
@@ -60,7 +62,7 @@ export class TrazabilidadComponent implements OnInit {
     this.mostrarConfirmacion('Credenciales de usuario cargadas');
   }
 
-  mostrarConfirmacion(mensaje: string) {
+  mostrarConfirmacion(mensaje: string, event?: Event) {
     // Podrías implementar un toast o notificación aquí
 
     // Efecto visual simple
@@ -103,8 +105,6 @@ export class TrazabilidadComponent implements OnInit {
     this.authService.login(correo!, password!).subscribe({
 
       next: (res) => {
-
-
         // Save token & user
         iziToast.success({
           title: 'Exito',
@@ -112,34 +112,58 @@ export class TrazabilidadComponent implements OnInit {
           position: 'bottomRight',
         });
 
-
-        // Guardar token en localStorage
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('rol', res.usuario.rol);
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
-
         // Redirección según rol
         this._router.navigate(['/app']);
-        // switch (res.usuario.rol) {
-        //   case 'admin':
-        //     this._router.navigate(['/admin']); // Lazy load admin -> redirige a expedientes
-        //     break;
-        //   case 'secretaria':
-        //     this._router.navigate(['/secretaria']); // Lazy load admin -> redirige a expedientes
-        //     break;
-        //   case 'participe':
-        //     this._router.navigate(['/participe']);
-        //     break;
-        //   case 'arbitro':
-        //     this._router.navigate(['/arbitro']);
-        //     break;
-        //   default:
-        //     this._router.navigate(['/']);
-        // }
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Error en el inicio de sesión';
+        // this.errorMessage = err.error?.message || 'Error en el inicio de sesión';
         this.loading = false;
+
+        const error = err.error;
+
+
+        // 🔥 Manejo inteligente de errores del backend
+        let title = 'Error';
+        let message = 'Ocurrió un error inesperado';
+        let icon: any = 'error';
+
+        switch (error?.code) {
+
+          case 'EMAIL_NOT_VERIFIED':
+            title = 'Correo no verificado';
+            message = 'Debes verificar tu correo antes de iniciar sesión.';
+            icon = 'warning';
+            break;
+
+          case 'ACCOUNT_DISABLED':
+            title = 'Cuenta deshabilitada';
+            message = 'Tu cuenta ha sido desactivada. Contacta al administrador.';
+            icon = 'error';
+            break;
+
+          default:
+            // Manejo por status HTTP
+            if (err.status === 404) {
+              message = 'Usuario no encontrado';
+            } else if (err.status === 401) {
+              message = 'Contraseña incorrecta';
+            } else if (err.status === 400) {
+              message = error?.message || 'Datos inválidos';
+            } else {
+              message = error?.message || message;
+            }
+        }
+
+        Swal.fire({
+          icon: icon,
+          title: title,
+          text: message,
+          confirmButtonText: 'Entendido'
+        });
+
+        console.error(err);
+
+
       },
       complete: () => this.loading = false
     });
@@ -160,21 +184,18 @@ export class TrazabilidadComponent implements OnInit {
     // Reiniciamos los valores del formulario sin destruir su estructura
     this.formTrazabilidad.reset({
       tipo: tipo,
-      email: '',
-      nro: null,
-      anio: null,
-      codigo: null,
-      contraseña: null
+      correo: null,
+      password: null,
     });
 
     // Si quieres mantener el enfoque en el campo "monto"
     setTimeout(() => {
-      const montoInput = document.querySelector<HTMLInputElement>('input[formControlName="email"]');
+      const montoInput = document.querySelector<HTMLInputElement>('input[formControlName="correo"]');
       montoInput?.focus();
     }, 100);
 
     setTimeout(() => {
-      const montoInput = document.querySelector<HTMLInputElement>('input[formControlName="nro"]');
+      const montoInput = document.querySelector<HTMLInputElement>('input[formControlName="correo"]');
       montoInput?.focus();
     }, 100);
   }

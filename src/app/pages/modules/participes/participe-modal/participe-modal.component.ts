@@ -120,16 +120,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
     const correoCtrl = this.formParticipe.get('correo');
 
-    // //  Deshabilitar en edición
-    // correoCtrl?.disable({ emitEvent: false });
-
-    // // Reasignar async validator con exclusión
-    // correoCtrl?.setAsyncValidators(
-    //   this.validacionesService.validarCorreo(usuarioId)
-    // );
-
-    // //  Limpiar errores cuando es edición
-    // correoCtrl?.setErrors(null);
     if (this.modoEdicion) {
       correoCtrl?.disable({ emitEvent: false });
       correoCtrl?.clearAsyncValidators();
@@ -142,12 +132,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
     }
 
     this.formParticipe.updateValueAndValidity({ emitEvent: false });
-
-    //  DESHABILITAR CORREO EN EDICIÓN
-
-
-    // this.formParticipe.get('correo')
-    //   ?.setAsyncValidators(this.validacionesService.validarCorreo(usuarioId));
 
     // Reasignar validadores de documento con exclusión
     this.formParticipe.get('documento_identidad')
