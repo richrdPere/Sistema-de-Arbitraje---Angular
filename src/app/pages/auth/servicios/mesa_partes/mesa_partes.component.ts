@@ -13,18 +13,37 @@ import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
+import { TramiteMPVFormService } from 'src/app/services/tramiteMPV-form.service';
+
+// Components
+import { StepDemandanteComponent } from "./steps/step-demandante/step-demandante.component";
+import { StepDemandadoComponent } from "./steps/step-demandado/step-demandado.component";
+import { StepSolicitudComponent } from "./steps/step-solicitud/step-solicitud.component";
+import { StepArchivosComponent } from "./steps/step-archivos/step-archivos.component";
+import { StepResumenComponent } from "./steps/step-resumen/step-resumen.component";
+
+// Interface
+export interface TramiteForm {
+  demandante: any;
+  demandado: any;
+  solicitud: any;
+  archivos?: File[];
+}
 
 @Component({
   selector: 'app-mesa-partes',
-  imports: [ReactiveFormsModule, FileSizePipe, TruncatePipe, UppercaseDirective, CommonModule],
+
+  // FileSizePipe, TruncatePipe, UppercaseDirective,
+  imports: [ReactiveFormsModule, CommonModule, StepDemandanteComponent, StepDemandadoComponent, StepSolicitudComponent, StepArchivosComponent, StepResumenComponent],
   templateUrl: './mesa_partes.component.html',
 })
 export class MesaPartesComponent implements OnInit {
 
-  // fechaActual = new Date().toLocaleDateString('en-CA');
-  fechaActual: string = '';
 
+  fechaActual: string = '';
   numeroSolicitud: string = '';
+  tipoUsuarioSeleccionado: string = 'natural';
+  tipoUsuarioDemandado: string = 'natural';
 
   colorAlerta: string = 'rgb(0, 32, 91)';
 
@@ -35,13 +54,9 @@ export class MesaPartesComponent implements OnInit {
   file: File | null = null;
   enviado = false;
   respuesta: any;
-  mensajeExito: string = '';
-  mensajeError: string = '';
 
   archivos: File[] = [];
-
   placeholderDocumento = 'Seleccione tipo de documento';
-
   maxDocumentoDemandante = 8; // valor por defecto
 
 
@@ -64,51 +79,77 @@ export class MesaPartesComponent implements OnInit {
       'Arbitraje administrado por una institución arbitral, que brinda reglas, soporte administrativo y supervisión del procedimiento.'
   };
 
+  // Selectores
+  tipoUsuarios = [
+    { id: 'natural', nombre: 'PERSONA NATURAL' },
+    { id: 'juridica', nombre: 'JURIDICA' },
+    { id: 'entidad_publica', nombre: 'ENTIDAD PÚBLICA' }
+  ];
+
+
 
   constructor(
     private fb: FormBuilder,
     private tramiteService: TramiteMPVService,
+    private tramiteFormService: TramiteMPVFormService,
     private validacionesService: ValidacionesService) {
     this.formTramiteMPV = this.fb.group({
 
       // =========================
       // STEP 1 — DATOS DEL INTERESADO
       // =========================
-      tipo_documento: ['', Validators.required],
-      documento_identidad: ['', Validators.required],
+      tipo: [null, Validators.required],
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
-      tipo_usuario: ['', Validators.required],
+      dni: ['', Validators.required],
       correo: ['',
         [Validators.required, Validators.email],
         [this.validacionesService.validarCorreo()]
       ],
-      telefono: ['', Validators.required],
       direccion: ['', Validators.required],
       cargo: [''],
+      telefono: [''],
+      ruc: [''],
+      razon_social: [''],
+      nombre_entidad: [''],
 
       // =========================
-      // STEP 2 — DATOS DEL ARBITRAJE
+      // STEP 2 — DATOS DEL DEMANDANDO
+      // =========================
+      tipoDemandado: [null, Validators.required],
+      nombreDemandado: ['', Validators.required],
+      apellidosDemandado: ['', Validators.required],
+      dniDemandado: ['', Validators.required],
+      correoDemandado: ['',
+        [Validators.required, Validators.email],
+        [this.validacionesService.validarCorreo()]
+      ],
+      direccionDemandado: ['', Validators.required],
+      cargoDemandado: [''],
+      telefonoDemandado: [''],
+      rucDemandado: [''],
+      razon_socialDemandado: [''],
+      nombre_entidadDemandado: [''],
+
+      // =========================
+      // STEP 3 — DATOS DEL ARBITRAJE
       // =========================
       tipo_solicitud: ['', Validators.required],
       codigo: ['', Validators.required], // viene desde el sistema
 
 
       // =========================
-      // STEP 3 — CONTROL INTERNO
+      // STEP 4 — CONTROL INTERNO
       // =========================
       fecha_registro: [this.fechaActual],
       descripcion: ['', Validators.required],
 
-      /* ARCHIVO */
-      // fileInput: [null, Validators.required]
+
     });
   }
 
   ngOnInit() {
-
     this.actualizarFechaHora();
-
     this.obtenerPreview();
 
     // Actualiza cada segundo
@@ -122,14 +163,21 @@ export class MesaPartesComponent implements OnInit {
 
       this.formTramiteMPV.patchValue({
         codigo: this.tipoSolicitudToCodigo[tipo],
-        // descripcion: this.descripciones[tipo]
       });
 
       this.descripcionTipoArbitraje = this.descripciones[tipo];
+
     });
 
-    this.dniRucDemandante();
+    // this.dniRucDemandante();
     this.autoAsignarCodigo();
+    this.formTramiteMPV.get('tipo')?.valueChanges.subscribe(tipo => {
+      this.onTipoUsuarioChange(null);
+    });
+
+    this.formTramiteMPV.get('tipoDemandado')?.valueChanges.subscribe(tipo => {
+      this.onTipoUsuarioDemandadoChange(null);
+    });
 
   }
 
@@ -155,50 +203,41 @@ export class MesaPartesComponent implements OnInit {
   }
 
   dniRucDemandante(): void {
+    const dniCtrl = this.formTramiteMPV.get("dni");
+    const rucCtrl = this.formTramiteMPV.get("ruc");
 
-    const tipoCtrl = this.formTramiteMPV.get("tipo_documento");
-    const documentoCtrl = this.formTramiteMPV.get("documento_identidad");
+    // if (!tipoCtrl || !documentoCtrl) return;
+    if (!rucCtrl || !dniCtrl) return;
 
-    if (!tipoCtrl || !documentoCtrl) return;
+    // =========================
+    // 🔹 DNI
+    // =========================
+    dniCtrl.setValidators([
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(8),
+      Validators.pattern(/^[0-9]+$/)
+    ]);
 
-    tipoCtrl.valueChanges.subscribe(tipo => {
+    dniCtrl.setAsyncValidators(this.validacionesService.validarDni());
 
-      let maxLength = 0;
-      let asyncValidator = null;
+    // =========================
+    // 🔹 RUC
+    // =========================
+    rucCtrl.setValidators([
+      Validators.required,
+      Validators.minLength(11),
+      Validators.maxLength(11),
+      Validators.pattern(/^[0-9]+$/)
+    ]);
 
-      if (tipo === "DNI") {
-        this.placeholderDocumento = 'Ingrese el numero de su DNI';
-        maxLength = 8;
-        asyncValidator = this.validacionesService.validarDni();
-      }
+    rucCtrl.setAsyncValidators(this.validacionesService.validarRuc());
 
-      if (tipo === "RUC") {
-        this.placeholderDocumento = 'Ingrese el numero de su RUC';
-        maxLength = 11;
-        asyncValidator = this.validacionesService.validarRuc();
-      }
-
-      this.maxDocumentoDemandante = maxLength;
-
-      // 🔥 Limpiar validadores anteriores
-      documentoCtrl.clearValidators();
-      documentoCtrl.clearAsyncValidators();
-
-      // 🔥 Asignar nuevos validadores
-      documentoCtrl.setValidators([
-        Validators.required,
-        Validators.minLength(maxLength),
-        Validators.maxLength(maxLength),
-        Validators.pattern(/^[0-9]+$/)
-      ]);
-
-      if (asyncValidator) {
-        documentoCtrl.setAsyncValidators(asyncValidator);
-      }
-
-      documentoCtrl.reset();
-      documentoCtrl.updateValueAndValidity();
-    });
+    // =========================
+    // ACTUALIZAR
+    // =========================
+    dniCtrl.updateValueAndValidity();
+    rucCtrl.updateValueAndValidity();
   }
 
   autoAsignarCodigo(): void {
@@ -240,13 +279,17 @@ export class MesaPartesComponent implements OnInit {
   // Pasar al siguiente paso si es válido
   nextStep() {
 
-    if (!this.isStepValido()) {
-      this.getControlesPorStep().forEach(c => {
-        this.formTramiteMPV.get(c)?.markAsTouched();
-      });
-      return;
-    }
-    this.currentStep++;
+    // const controles = this.getControlesPorStep();
+
+    // if (!this.isStepValido()) {
+    //   controles.forEach(c => {
+    //     this.formTramiteMPV.get(c)?.markAsTouched();
+    //   });
+    //   return;
+    // }
+    // this.currentStep++;
+
+    if (this.currentStep < 5) this.currentStep++;
   }
 
   // Retroceder al paso anterior
@@ -258,6 +301,19 @@ export class MesaPartesComponent implements OnInit {
   irAlPaso(paso: number) {
     this.currentStep = paso;
   }
+
+  goToStep(step: number) {
+    this.currentStep = step;
+  }
+
+  // =========================
+  // RESET COMPLETO
+  // =========================
+  resetProceso() {
+    this.tramiteFormService.reset();
+    this.currentStep = 1;
+  }
+
 
 
   /* ------------------ VALIDACIÓN ------------------ */
@@ -325,11 +381,11 @@ export class MesaPartesComponent implements OnInit {
 
     const formValido = controles.every(c => {
       const control = this.formTramiteMPV.get(c);
-      return control && control.valid && control.value !== null && control.value !== '';
+      return control?.valid;
     });
 
-    //  Validación adicional para STEP 3
-    if (this.currentStep === 3) {
+    //  Validación adicional para STEP 4
+    if (this.currentStep === 4) {
       return formValido && this.archivos.length > 0;
     }
 
@@ -339,20 +395,86 @@ export class MesaPartesComponent implements OnInit {
   private getControlesPorStep(): string[] {
 
     if (this.currentStep === 1) {
-      return [
-        'nombre',
-        'apellidos',
-        'correo',
+      const tipo = this.formTramiteMPV.get('tipo')?.value;
+
+      const base = [
+        'tipo',
         'direccion',
-        'telefono',
-        'tipo_documento',
-        'documento_identidad',
-        'tipo_usuario',
-        'cargo'
+        'correo'
       ];
+
+      if (tipo === 'natural') {
+        return [
+          ...base,
+          'nombre',
+          'apellidos',
+          'dni'
+        ];
+      }
+
+      if (tipo === 'juridica') {
+        return [
+          ...base,
+          'nombre',
+          'apellidos',
+          'dni',
+          'ruc',
+          'razon_social'
+        ];
+      }
+
+      if (tipo === 'entidad_publica') {
+        return [
+          ...base,
+          'ruc',
+          'nombre_entidad'
+        ];
+      }
+
+      return base;
     }
 
     if (this.currentStep === 2) {
+      const tipo = this.formTramiteMPV.get('tipoDemandado')?.value;
+
+      const base = [
+        'tipoDemandado',
+        'direccionDemandado',
+        'correoDemandado'
+      ];
+
+      if (tipo === 'natural') {
+        return [
+          ...base,
+          'nombreDemandado',
+          'apellidosDemandado',
+          'dniDemandado'
+        ];
+      }
+
+      if (tipo === 'juridica') {
+        return [
+          ...base,
+          'nombreDemandado',
+          'apellidosDemandado',
+          'dniDemandado',
+          'rucDemandado',
+          'razon_socialDemandado'
+        ];
+      }
+
+      if (tipo === 'entidad_publica') {
+        return [
+          ...base,
+          'rucDemandado',
+          'nombre_entidadDemandado'
+        ];
+      }
+
+      return base;
+    }
+
+    if (this.currentStep === 3) {
       const base = [
         'tipo_solicitud',
         'codigo',
@@ -360,7 +482,7 @@ export class MesaPartesComponent implements OnInit {
       return base;
     }
 
-    if (this.currentStep === 3) {
+    if (this.currentStep === 4) {
       return ['descripcion'];
     }
 
@@ -378,7 +500,11 @@ export class MesaPartesComponent implements OnInit {
 
   /* ----------------------------- REGISTRAR ----------------------------- */
   enviar() {
-    if (this.formTramiteMPV.invalid) return this.formTramiteMPV.markAllAsTouched();
+    if (this.formTramiteMPV.invalid) {
+
+      console.log("enviando...")
+      return this.formTramiteMPV.markAllAsTouched();
+    }
 
     const fd = new FormData();
 
@@ -396,17 +522,17 @@ export class MesaPartesComponent implements OnInit {
       }
     });
 
-    //  2. Enviar JSON como string
+    this.enviado = true;
+
+    // CON ARCHIVOS
     fd.append('data', JSON.stringify(tramiteData));
 
-    //  3. Enviar archivos
     this.archivos.forEach((file) => {
       fd.append('archivos', file, file.name);
     });
 
-    //  4. DEBUG REAL (esto SÍ muestra el contenido)
+    console.log("ARCHIVOS", this.archivos);
 
-    this.enviado = true;
 
     // Mostramos un loader mientras se envía
     Swal.fire({
@@ -416,7 +542,7 @@ export class MesaPartesComponent implements OnInit {
       didOpen: () => Swal.showLoading()
     });
 
-    this.tramiteService.registrarTramite(fd).subscribe({
+    this.tramiteService.newTramite(fd).subscribe({
       next: (response) => {
         this.respuesta = response; //  guarda respuesta
 
@@ -441,7 +567,7 @@ export class MesaPartesComponent implements OnInit {
       },
       error: (err) => {
         this.enviado = false;
-        this.mensajeError = ' Error al registrar la solicitud.';
+
         Swal.fire({
           icon: 'error',
           title: 'Error al registrar la solicitud',
@@ -455,34 +581,213 @@ export class MesaPartesComponent implements OnInit {
 
   resetFormulario() {
 
-    // Reiniciar formulario con valores iniciales
     this.formTramiteMPV.reset({
-      tipo_documento: '',
-      documento_identidad: '',
+      // =========================
+      // STEP 1 — INTERESADO
+      // =========================
+      tipo: 'natural',
       nombre: '',
       apellidos: '',
-      tipo_usuario: '',
+      dni: '',
       correo: '',
-      telefono: '',
       direccion: '',
       cargo: '',
+      telefono: '',
+      ruc: '',
+      razon_social: '',
+      nombre_entidad: '',
 
+      // =========================
+      // STEP 2 — DEMANDADO
+      // =========================
+      tipoDemandado: 'natural',
+      nombreDemandado: '',
+      apellidosDemandado: '',
+      dniDemandado: '',
+      correoDemandado: '',
+      direccionDemandado: '',
+      cargoDemandado: '',
+      telefonoDemandado: '',
+      rucDemandado: '',
+      razon_socialDemandado: '',
+      nombre_entidadDemandado: '',
+
+      // =========================
+      // STEP 3 — ARBITRAJE
+      // =========================
       tipo_solicitud: '',
       codigo: '',
 
+      // =========================
+      // STEP 4 — CONTROL
+      // =========================
       fecha_registro: this.fechaActual,
       descripcion: ''
     });
 
+    // Reset estado UI
+    this.formTramiteMPV.markAsPristine();
+    this.formTramiteMPV.markAsUntouched();
+
+    // Limpiar archivos
     this.archivos = [];
+
+    // Reset flags
     this.enviado = false;
-    // this.file = null;
 
-    // Volver al primer paso
-    this.currentStep = 1;
+  }
+
+  onTipoUsuarioChange(event: any) {
+    const tipo = this.formTramiteMPV.get('tipo')?.value;
+    this.tipoUsuarioSeleccionado = tipo;
+
+    const nombreCtrl = this.formTramiteMPV.get('nombre');
+    const apellidosCtrl = this.formTramiteMPV.get('apellidos');
+    const dniCtrl = this.formTramiteMPV.get('dni');
+
+    const razonSocialCtrl = this.formTramiteMPV.get('razon_social');
+    const rucCtrl = this.formTramiteMPV.get('ruc');
+    const nombreEntidadCtrl = this.formTramiteMPV.get('nombre_entidad');
+
+    // Limpiar todo primero
+    const controles = [
+      nombreCtrl,
+      apellidosCtrl,
+      dniCtrl,
+      razonSocialCtrl,
+      rucCtrl,
+      nombreEntidadCtrl
+    ];
+
+    // Limpiar validaciones y valores
+    controles.forEach(ctrl => {
+      ctrl?.setValue(null);
+      ctrl?.clearValidators();
+      ctrl?.markAsTouched();
+    });
 
 
+    // Reglas
+    if (tipo === 'natural') {
 
+      nombreCtrl?.setValidators([Validators.required]);
+      apellidosCtrl?.setValidators([Validators.required]);
+      dniCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(8)
+      ]);
+
+    } else if (tipo === 'juridica') {
+
+      nombreCtrl?.setValidators([Validators.required]);
+      apellidosCtrl?.setValidators([Validators.required]);
+      dniCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(8)
+      ]);
+      razonSocialCtrl?.setValidators([Validators.required]);
+      rucCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(11),
+        Validators.maxLength(11)
+      ]);
+    } else if (tipo === 'entidad_publica') {
+
+      nombreEntidadCtrl?.setValidators([Validators.required]);
+      rucCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(11),
+        Validators.maxLength(11)
+      ]);
+    }
+
+    // Actualizar cada control
+    controles.forEach(ctrl => {
+      ctrl?.updateValueAndValidity({ emitEvent: false });
+    });
+
+    // Actualizar TODO el form
+    this.formTramiteMPV.updateValueAndValidity();
+  }
+
+  onTipoUsuarioDemandadoChange($event: any) {
+    const tipoDemandado = this.formTramiteMPV.get('tipoDemandado')?.value;
+    this.tipoUsuarioDemandado = tipoDemandado;
+
+    const nombreDemandadoCtrl = this.formTramiteMPV.get('nombreDemandado');
+    const apellidosDemandadoCtrl = this.formTramiteMPV.get('apellidosDemandado');
+    const dniDemandadoCtrl = this.formTramiteMPV.get('dniDemandado');
+
+    const razonSocialDemandadoCtrl = this.formTramiteMPV.get('razon_socialDemandado');
+    const rucDemandadoCtrl = this.formTramiteMPV.get('rucDemandado');
+    const nombreEntidadDemandadoCtrl = this.formTramiteMPV.get('nombre_entidadDemandado');
+
+    // Limpiar todo primero
+    const controles = [
+      nombreDemandadoCtrl,
+      apellidosDemandadoCtrl,
+      dniDemandadoCtrl,
+      razonSocialDemandadoCtrl,
+      rucDemandadoCtrl,
+      nombreEntidadDemandadoCtrl
+    ];
+
+    controles.forEach(ctrl => {
+      ctrl?.reset();
+      ctrl?.clearValidators();
+    });
+
+    // ============================
+    // REGLAS
+    // ============================
+
+    if (tipoDemandado === 'natural') {
+
+      nombreDemandadoCtrl?.setValidators([Validators.required]);
+      apellidosDemandadoCtrl?.setValidators([Validators.required]);
+      dniDemandadoCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(8)
+      ]);
+
+    } else if (tipoDemandado === 'juridica') {
+
+      nombreDemandadoCtrl?.setValidators([Validators.required]);
+      apellidosDemandadoCtrl?.setValidators([Validators.required]);
+      dniDemandadoCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(8)
+      ]);
+      razonSocialDemandadoCtrl?.setValidators([Validators.required]);
+      rucDemandadoCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(11),
+        Validators.maxLength(11)
+      ]);
+    } else if (tipoDemandado === 'entidad_publica') {
+
+      nombreEntidadDemandadoCtrl?.setValidators([Validators.required]);
+      rucDemandadoCtrl?.setValidators([
+        Validators.required,
+        Validators.minLength(11),
+        Validators.maxLength(11)
+      ]);
+    }
+
+    // Actualizar validaciones
+    controles.forEach(ctrl => {
+      ctrl?.updateValueAndValidity();
+    });
+  }
+
+  // Helpers method
+  esRequerido(campo: string): boolean {
+    const control = this.formTramiteMPV.get(campo);
+    return control?.hasValidator(Validators.required) ?? false;
   }
 
 }

@@ -1,0 +1,150 @@
+<form [formGroup]="form">
+
+  <section class="border border-primary p-6 rounded-md bg-base-100">
+
+    <!-- TÍTULO -->
+    <div class="mb-4">
+      <label class="label">
+        <span class="label-text font-semibold text-xl text-info">
+          Datos del Demandado
+        </span>
+      </label>
+    </div>
+
+    <!-- TIPO -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+      <div class="md:col-span-4">
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Tipo de persona</span>
+          <span *ngIf="esRequerido('tipo')" class="text-red-500 font-bold">*</span>
+        </label>
+
+        <select formControlName="tipo" class="select select-bordered w-full">
+          <option [ngValue]="null">Seleccionar tipo</option>
+          <option *ngFor="let d of tipoUsuarios" [ngValue]="d.id">
+            {{ d.nombre }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- NATURAL / JURIDICA -->
+    <div *ngIf="esNatural() || esJuridica()">
+
+      <div *ngIf="esJuridica()" class="mb-2">
+        <span class="text-info font-semibold">Representante legal</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
+
+        <div class="md:col-span-4">
+          <label class="block text-sm font-semibold mb-1">
+            <span class="label-text font-medium">Nombres</span>
+            <span *ngIf="esRequerido('nombres')" class="text-red-500 font-bold">*</span>
+          </label>
+          <input formControlName="nombres" class="input input-bordered w-full" appUppercase />
+        </div>
+
+        <div class="md:col-span-4">
+          <label class="block text-sm font-semibold mb-1">
+            <span class="label-text font-medium">Apellidos</span>
+            <span *ngIf="esRequerido('apellidos')" class="text-red-500 font-bold">*</span>
+          </label>
+          <input formControlName="apellidos" class="input input-bordered w-full" appUppercase />
+        </div>
+
+        <div class="md:col-span-4">
+          <label class="block text-sm font-semibold mb-1">
+            <span class="label-text font-medium">DNI</span>
+            <span *ngIf="esRequerido('dni')" class="text-red-500 font-bold">*</span>
+          </label>
+          <input formControlName="dni" class="input input-bordered w-full" />
+
+          <span *ngIf="form.get('dni')?.invalid && form.get('dni')?.touched" class="text-error text-sm">
+            DNI inválido
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RUC -->
+    <div *ngIf="esJuridica() || esEntidad()" class="grid grid-cols-12 gap-4">
+
+      <div class="md:col-span-4">
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">RUC</span>
+          <span *ngIf="esRequerido('ruc')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="ruc" class="input input-bordered w-full" />
+      </div>
+
+      <div class="md:col-span-8" *ngIf="esJuridica()">
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Razón Social</span>
+          <span *ngIf="esRequerido('razon_social')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="razon_social" class="input input-bordered w-full" appUppercase />
+      </div>
+
+      <div class="md:col-span-8" *ngIf="esEntidad()">
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Nombre de Entidad</span>
+          <span *ngIf="esRequerido('nombre_entidad')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="nombre_entidad" class="input input-bordered w-full" appUppercase />
+      </div>
+
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Dirección</span>
+          <span *ngIf="esRequerido('direccion')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="direccion" class="input input-bordered w-full" appUppercase />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Email</span>
+          <span *ngIf="esRequerido('email')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="email" class="input input-bordered w-full" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Teléfono</span>
+          <span *ngIf="esRequerido('telefono')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="telefono" class="input input-bordered w-full" />
+      </div>
+
+      <div *ngIf="esNatural()">
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">Cargo / Profesión</span>
+          <span *ngIf="esRequerido('cargo')" class="text-red-500 font-bold">*</span>
+        </label>
+        <input formControlName="cargo" class="input input-bordered w-full" appUppercase />
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-between">
+      <button type="button" class="btn btn-secondary" (click)="volver()">
+        Anterior
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="continuar()">
+        Siguiente
+      </button>
+    </div>
+
+  </section>
+
+</form>

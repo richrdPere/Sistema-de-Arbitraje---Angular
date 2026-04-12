@@ -78,7 +78,7 @@ export class ListRechazadosComponent implements OnInit {
 
     };
 
-    this.tramiteService.listarTramites(filtros).subscribe({
+    this.tramiteService.listarTramitesPaginated(filtros).subscribe({
       next: (resp) => {
 
 

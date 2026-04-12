@@ -1,0 +1,137 @@
+<section class="border border-primary p-6 rounded-md bg-base-100">
+
+  <!-- TÍTULO -->
+  <div class="mb-4">
+    <span class="label-text font-semibold text-xl text-info">
+      Resumen del Trámite
+    </span>
+  </div>
+
+  <!-- DEMANDANTE -->
+  <div class="mb-6">
+    <h3 class="font-semibold text-lg text-primary mb-2">Demandante</h3>
+
+    <div class="grid grid-cols-2 gap-2 text-sm">
+
+      <div><b>Tipo:</b> {{ data.demandante.tipo }}</div>
+
+      <div *ngIf="data.demandante.nombres">
+        <b>Nombres:</b> {{ data.demandante.nombres }}
+      </div>
+
+      <div *ngIf="data.demandante.apellidos">
+        <b>Apellidos:</b> {{ data.demandante.apellidos }}
+      </div>
+
+      <div *ngIf="data.demandante.dni">
+        <b>DNI:</b> {{ data.demandante.dni }}
+      </div>
+
+      <div *ngIf="data.demandante.ruc">
+        <b>RUC:</b> {{ data.demandante.ruc }}
+      </div>
+
+      <div *ngIf="data.demandante.razon_social">
+        <b>Razón Social:</b> {{ data.demandante.razon_social }}
+      </div>
+
+      <div *ngIf="data.demandante.nombre_entidad">
+        <b>Entidad:</b> {{ data.demandante.nombre_entidad }}
+      </div>
+
+      <div><b>Email:</b> {{ data.demandante.email }}</div>
+      <div><b>Teléfono:</b> {{ data.demandante.telefono }}</div>
+
+    </div>
+  </div>
+
+  <!-- DEMANDADO -->
+  <div class="mb-6">
+    <h3 class="font-semibold text-lg text-secondary mb-2">Demandado</h3>
+
+    <div class="grid grid-cols-2 gap-2 text-sm">
+
+      <div><b>Tipo:</b> {{ data.demandado.tipo }}</div>
+
+      <div *ngIf="data.demandado.nombres">
+        <b>Nombres:</b> {{ data.demandado.nombres }}
+      </div>
+
+      <div *ngIf="data.demandado.apellidos">
+        <b>Apellidos:</b> {{ data.demandado.apellidos }}
+      </div>
+
+      <div *ngIf="data.demandado.dni">
+        <b>DNI:</b> {{ data.demandado.dni }}
+      </div>
+
+      <div *ngIf="data.demandado.ruc">
+        <b>RUC:</b> {{ data.demandado.ruc }}
+      </div>
+
+      <div *ngIf="data.demandado.razon_social">
+        <b>Razón Social:</b> {{ data.demandado.razon_social }}
+      </div>
+
+      <div *ngIf="data.demandado.nombre_entidad">
+        <b>Entidad:</b> {{ data.demandado.nombre_entidad }}
+      </div>
+
+      <div><b>Email:</b> {{ data.demandado.email }}</div>
+      <div><b>Teléfono:</b> {{ data.demandado.telefono }}</div>
+
+    </div>
+  </div>
+
+  <!-- SOLICITUD -->
+  <div class="mb-6">
+    <h3 class="font-semibold text-lg text-accent mb-2">Solicitud</h3>
+
+    <div class="grid grid-cols-2 gap-2 text-sm">
+      <div><b>Tipo:</b> {{ data.solicitud.tipo_solicitud }}</div>
+      <div><b>Código:</b> {{ data.solicitud.codigo }}</div>
+    </div>
+
+    <div class="mt-2">
+      <b>Descripción:</b>
+      <p class="text-sm text-gray-600">
+        {{ data.solicitud.descripcion }}
+      </p>
+    </div>
+  </div>
+
+  <!-- ARCHIVOS -->
+  <div class="mb-6">
+    <h3 class="font-semibold text-lg text-info mb-2">Archivos</h3>
+
+    <ul class="list-disc ml-6 text-sm">
+      <li *ngFor="let file of data.archivos">
+        {{ file.name }}
+      </li>
+    </ul>
+
+    <div *ngIf="!data.archivos.length" class="text-gray-400 text-sm">
+      No se adjuntaron archivos
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="flex justify-between">
+
+    <button class="btn btn-secondary" (click)="volver()">
+      Anterior
+    </button>
+
+    <button class="btn btn-success"
+            (click)="enviar()"
+            [disabled]="loading">
+
+      <span *ngIf="loading" class="loading loading-spinner"></span>
+
+      {{ loading ? 'Enviando...' : 'Registrar Trámite' }}
+
+    </button>
+
+  </div>
+
+</section>

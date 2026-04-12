@@ -90,15 +90,26 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
   inicializarFormulario(): void {
     this.formParticipe = this.fb.group({
+
+      tipo: ['', Validators.required],
+
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellidos: ['', [Validators.required, Validators.minLength(3)]],
+      dni: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email], [this.validacionesService.validarCorreo()]],
+      direccion: ['', Validators.required],
+      cargo: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      ruc: [''],
+      razon_social: [''],
+      nombre_entidad: [''],
+
       tipo_documento: [null, [Validators.required]],
       tipo_usuario: [null, Validators.required],
       documento_identidad: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      cargo: ['', Validators.required],
+
       rol_participe: [null, Validators.required],
+
     });
   }
 
@@ -293,4 +304,10 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
   get f() {
     return this.formParticipe.controls;
   }
+
+  esRequerido(campo: string): boolean {
+    const control = this.formParticipe.get(campo);
+    return control?.hasValidator(Validators.required) ?? false;
+  }
+
 }

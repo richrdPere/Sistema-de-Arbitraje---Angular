@@ -1,0 +1,74 @@
+<form [formGroup]="form">
+
+  <section class="border border-primary p-6 rounded-md bg-base-100">
+
+    <!-- TÍTULO -->
+    <div class="mb-4">
+      <label class="label">
+        <span class="label-text font-semibold text-xl text-info">
+          Datos del Arbitraje
+        </span>
+      </label>
+    </div>
+
+    <h2 class="text-sm font-semibold mb-4">
+      Tipo de arbitraje y código
+    </h2>
+
+    <!-- SELECT + CODIGO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+
+      <select formControlName="tipo_solicitud" class="select select-bordered w-full">
+        <option [ngValue]="null">Seleccione un tipo...</option>
+        <option *ngFor="let d of tipoSolicitud" [ngValue]="d.id">
+          {{ d.nombre }}
+        </option>
+      </select>
+
+      <input type="text" formControlName="codigo" class="input input-bordered w-full bg-gray-100" readonly />
+
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="form.get('tipo_solicitud')?.invalid && form.get('tipo_solicitud')?.touched"
+      class="text-error text-sm mb-3">
+      Debe seleccionar un tipo de arbitraje
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div *ngIf="descripcionTipoArbitraje" class="alert shadow-sm text-white" [ngStyle]="{
+         'background-color': colorAlerta,
+         'color': '#ffffff'
+       }">
+
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+      </svg>
+
+      <div>
+        <h3 class="font-semibold">
+          ¿Qué es este tipo de arbitraje?
+        </h3>
+        <p class="text-sm">
+          {{ descripcionTipoArbitraje }}
+        </p>
+      </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-between">
+
+      <button type="button" class="btn btn-secondary" (click)="volver()">
+        Anterior
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="continuar()">
+        Siguiente
+      </button>
+
+    </div>
+
+  </section>
+
+</form>

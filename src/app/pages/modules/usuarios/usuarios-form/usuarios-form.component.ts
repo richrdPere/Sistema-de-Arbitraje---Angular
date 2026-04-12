@@ -209,6 +209,15 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
         delete usuario.password;
       }
 
+      Swal.fire({
+        title: 'Actualizando usuario...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.usuarioService.actualizarUsuario(usuario.id, usuario).subscribe({
         next: () => {
           Swal.fire({ icon: 'success', title: 'Usuario actualizado correctamente' });
@@ -219,7 +228,7 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
           Swal.fire({
             icon: 'error',
             title: 'Error al actualizar usuario',
-            text: err.error?.message || 'Error desconocido.',
+            text: err.message || 'Error desconocido.',
           });
         },
       });
@@ -230,6 +239,16 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
     // ============================
     // MODO CREACIÓN
     // ============================
+    Swal.fire({
+      title: 'Creando usuario...',
+      text: 'Enviando información, por favor espera',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.usuarioService.crearUsuario(usuario).subscribe({
       next: () => {
         Swal.fire({
@@ -245,7 +264,7 @@ export class UsuariosFormComponent implements OnInit, OnChanges {
         Swal.fire({
           icon: 'error',
           title: 'Error al crear usuario',
-          text: err.error?.message || 'Error desconocido',
+          text: err.message || 'Error desconocido',
         });
       }
     });

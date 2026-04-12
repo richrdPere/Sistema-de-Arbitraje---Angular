@@ -154,7 +154,7 @@ export class SolicitudesComponent implements OnInit {
       filtros.id_usuario = this.usuario.id_usuario;
     }
 
-    this.tramiteService.listarTramites(filtros).subscribe({
+    this.tramiteService.listarTramitesPaginated(filtros).subscribe({
       next: (resp) => {
         this.solicitudes = resp.data ?? [];
 

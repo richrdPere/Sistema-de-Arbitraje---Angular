@@ -6,7 +6,6 @@
     <div class="absolute inset-0 bg-black/40 "></div>
     <div class="relative flex flex-col items-center justify-center  px-6 py-8 ">
 
-
       <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
         MESA DE PARTES VIRTUAL
       </h1>
@@ -20,13 +19,11 @@
             <div class="flex flex-row sm:flex-row justify-center gap-6 text-sm font-semibold">
               <div>
                 <span class="mr-2">Fecha :</span>
-                <!-- <input type="date" class="input input-bordered input-sm w-28" [value]="fechaActual" disabled /> -->
                 <p class="input input-bordered input-sm w-32">{{ fechaActual }}</p>
               </div>
 
               <div>
                 <span class="mr-2">Nro de Solicitud :</span>
-                <!-- <input type="text" class="input input-bordered input-sm w-28" [value]="numeroSolicitud" disabled /> -->
                 <p class="input input-bordered input-sm w-18">{{ numeroSolicitud }}</p>
               </div>
             </div>
@@ -38,7 +35,6 @@
       <!-- FORMULARIO -->
       <div class="card w-full max-w-6xl bg-base-200  shadow-xl p-6 ">
 
-
         <!-- STEPPER -->
         <div class="w-full max-w-7xl mb-6">
           <ul class="steps steps-horizontal w-full">
@@ -46,27 +42,34 @@
             <!-- STEP 1 - (click)="irAlPaso(1)" -->
             <li class="step" [class.step-primary]="currentStep >= 1">
               <button type="button" class="btn btn-disabled pointer-events-none">
-                <span class="text-primary font-semibold">DATOS DEL INTERESADO</span>
+                <span class="text-primary font-semibold">DATOS DEL DEMANDANTE</span>
               </button>
             </li>
 
             <!-- STEP 2 - (click)="irAlPaso(2)" -->
             <li class="step" [class.step-primary]="currentStep >= 2">
-              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 2">
-                <span class="text-primary font-semibold">DATOS DEL ARBITRAJE</span>
+              <button type="button" class="btn btn-disabled pointer-events-none">
+                <span class="text-primary font-semibold">DATOS DEL DEMANDADO</span>
               </button>
             </li>
 
             <!-- STEP 3 - (click)="irAlPaso(3)" -->
             <li class="step" [class.step-primary]="currentStep >= 3">
+              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 2">
+                <span class="text-primary font-semibold">DATOS DEL ARBITRAJE</span>
+              </button>
+            </li>
+
+            <!-- STEP 4 - (click)="irAlPaso(4)" -->
+            <li class="step" [class.step-primary]="currentStep >= 4">
               <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 3">
 
                 <span class="text-primary font-semibold">ARCHIVO DIGITAL</span>
               </button>
             </li>
 
-            <!-- STEP 4 - (click)="irAlPaso(4)" -->
-            <li class="step" [class.step-primary]="currentStep >= 4">
+            <!-- STEP 5 - (click)="irAlPaso(5)" -->
+            <li class="step" [class.step-primary]="currentStep >= 5">
               <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 4">
                 <span class="text-primary font-semibold">CONFIRMAR DATOS</span>
               </button>
@@ -75,125 +78,407 @@
         </div>
 
 
-        <form [formGroup]="formTramiteMPV" (ngSubmit)="enviar()" class="space-y-6">
-          <!-- STEP 1 ---------------------------------------------------------->
+        <div>
+          <!-- STEP 1 -->
+          <step-demandante *ngIf="currentStep === 1" (nextStep)="nextStep()"></step-demandante>
+
+          <!-- STEP 2 -->
+          <step-demandado *ngIf="currentStep === 2" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-demandado>
+
+          <!-- STEP 3 -->
+          <step-solicitud *ngIf="currentStep === 3" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-solicitud>
+
+          <!-- STEP 4 -->
+          <step-archivos *ngIf="currentStep === 4" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-archivos>
+
+          <!-- STEP 5 -->
+          <step-resumen *ngIf="currentStep === 5" (prevStep)="prevStep()"></step-resumen>
+
+        </div>
+
+
+        <!-- <form [formGroup]="formTramiteMPV" (ngSubmit)="enviar()" class="space-y-6">
           @if (currentStep === 1) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
-            <!-- Título -->
+
             <div class="mb-4">
               <label class="label">
                 <span class="label-text font-semibold text-xl text-info">Datos del Interesado</span>
               </label>
             </div>
 
-            <!-- <h2 class="text-sm font-semibold mb-4">Documento de Identidad</h2> -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
 
-              <!-- SELECT (1/3) -->
-              <div>
-                <label for="" class="block text-sm font-semibold mb-1">Tipo de Documento</label>
-                <select formControlName="tipo_documento" class="select select-bordered w-full">
-                  <option value="" disabled selected>Seleccione documento</option>
-                  <option value="DNI">DNI</option>
-                  <option value="RUC">RUC</option>
 
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Tipo de usuario</label>
+
+                <select formControlName="tipo" class="select select-bordered w-full "
+                  (change)="onTipoUsuarioChange($event)">
+                  <option [ngValue]="null">Seleccionar tipo</option>
+                  <option *ngFor="let d of tipoUsuarios" [ngValue]="d.id">
+                    {{ d.nombre }}
+                  </option>
                 </select>
+
+
+              </div>
+            </div>
+
+
+            @if (tipoUsuarioSeleccionado === 'natural' || tipoUsuarioSeleccionado === 'juridica') {
+
+
+            @if ( tipoUsuarioSeleccionado === 'juridica') {
+            <div>
+              <span class="label-text font-semibold text-md text-info ">Representante legal</span>
+            </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Nombres
+                  <span *ngIf="esRequerido('nombre')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="nombre" placeholder="Ingrese sus nombres"
+                  class="input input-bordered w-full" appUppercase />
               </div>
 
-              <!-- INPUT (2/3) -->
-              <div class="md:col-span-2">
-                <label for="" class="block text-sm font-semibold mb-1">Numero de Documento</label>
-                <input type="text" formControlName="documento_identidad" [placeholder]="placeholderDocumento"
-                  class="input input-bordered w-full" [maxlength]="maxDocumentoDemandante" />
 
-                <!-- DNI existente -->
-                <label *ngIf="formTramiteMPV.get('documento_identidad')?.hasError('dniExistente')" class="label">
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Apellidos
+                  <span *ngIf="esRequerido('apellidos')" class="text-red-500">*</span>
+
+                </label>
+                <input type="text" formControlName="apellidos" placeholder="Ingrese sus apellidos"
+                  class="input input-bordered w-full" appUppercase />
+              </div>
+
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">DNI
+                  <span *ngIf="esRequerido('dni')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="dni" placeholder="Digite su DNI"
+                  class="input input-bordered w-full" />
+
+                <label *ngIf="formTramiteMPV.get('dni')?.hasError('required') && formTramiteMPV.get('dni')?.touched"
+                  class="label">
                   <span class="label-text-alt text-error">
-                    Este DNI ya se encuentra registrado.
+                    El DNI es obligatorio
                   </span>
                 </label>
 
-                <!-- RUC existente -->
+
+                <label
+                  *ngIf="formTramiteMPV.get('dni')?.hasError('minlength') || formTramiteMPV.get('dni')?.hasError('maxlength')"
+                  class="label">
+                  <span class="label-text-alt text-error">
+                    El DNI debe tener 8 dígitos
+                  </span>
+                </label>
+
+
+                <label *ngIf="formTramiteMPV.get('dni')?.hasError('pattern')" class="label">
+                  <span class="label-text-alt text-error">
+                    Solo se permiten números
+                  </span>
+                </label>
+
+
+                <label *ngIf="formTramiteMPV.get('dni')?.hasError('dniExistente')" class="label">
+                  <span class="label-text-alt text-error">
+                    Este DNI ya se encuentra registrado
+                  </span>
+                </label>
+              </div>
+            </div>
+            }
+
+
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+
+              @if ( tipoUsuarioSeleccionado === 'juridica' ||
+              tipoUsuarioSeleccionado === 'entidad_publica') {
+              <div class="md:col-span-4 mb-4">
+
+                <label class="block text-sm font-semibold mb-1">RUC
+
+                  <span *ngIf="esRequerido('ruc')" class="text-red-500">*</span>
+                </label>
+                <input formControlName="ruc" class="input input-bordered w-full" placeholder="Ingrese RUC" />
                 <label *ngIf="formTramiteMPV.get('documento_identidad')?.hasError('rucExistente')" class="label">
                   <span class="label-text-alt text-error">
                     Este RUC ya se encuentra registrado.
                   </span>
                 </label>
+              </div>
+              }
 
+
+              @if (
+              tipoUsuarioSeleccionado === 'juridica'
+              ) {
+              <div class="md:col-span-8">
+                <label class="block text-sm font-semibold mb-1">Razón Social <span *ngIf="esRequerido('razon_social')"
+                    class="text-red-500">*</span></label>
+                <input formControlName="razon_social" class="input input-bordered w-full"
+                  placeholder="Ingrese razón social" appUppercase />
               </div>
 
-            </div>
+              }
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
 
-              <!-- Nombres -->
-              <div class="md:col-span-4">
-                <label class="block text-sm font-semibold mb-1">Nombres</label>
-                <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full"
-                  appUppercase />
+              @if (tipoUsuarioSeleccionado === 'entidad_publica') {
+
+              <div class="md:col-span-8">
+                <label class="block text-sm font-semibold mb-1">Nombre de la Entidad
+                  <span *ngIf="esRequerido('nombre_entidad')" class="text-red-500">*</span>
+                </label>
+                <input formControlName="nombre_entidad" class="input input-bordered w-full"
+                  placeholder="Ingrese nombre de la entidad" appUppercase />
               </div>
 
-              <!-- Apellidos -->
-              <div class="md:col-span-4">
-                <label class="block text-sm font-semibold mb-1">Apellidos</label>
-                <input type="text" formControlName="apellidos" placeholder="Apellidos"
-                  class="input input-bordered w-full" appUppercase />
-              </div>
-
-
-              <!-- Tipo de usuario -->
-              <div class="md:col-span-4">
-                <label class="block text-sm font-semibold mb-1">Tipo de usuario</label>
-                <select formControlName="tipo_usuario" class="select select-bordered w-full">
-                  <option value="" disabled selected>Seleccione tipo</option>
-                  <option value="entidad_publica">ENTIDAD PÚBLICA</option>
-                  <option value="proveedor">PROVEEDOR</option>
-                </select>
-              </div>
+              }
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 
-              <!-- Email -->
               <div class="md:col-span-1">
-                <label for="" class="block text-sm font-semibold mb-1">Email</label>
-                <input type="email" formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
+                <label for="" class="block text-sm font-semibold mb-1">Dirección
+
+                  <span *ngIf="esRequerido('direccion')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="direccion" placeholder="Ingrese dirección"
+                  class="input input-bordered w-full " appUppercase />
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="" class="block text-sm font-semibold mb-1">Email <span *ngIf="esRequerido('correo')"
+                    class="text-red-500">*</span></label>
+                <input type="email" formControlName="correo" placeholder="Ingrese email"
+                  class="input input-bordered w-full" />
 
                 <div *ngIf="formTramiteMPV.get('correo')?.hasError('correoExistente')" class="text-error text-sm">
                   Este correo ya está registrado.
                 </div>
               </div>
 
-              <!-- Direccion -->
-              <div class="md:col-span-2">
-                <label for="" class="block text-sm font-semibold mb-1">Dirección</label>
-                <input type="text" formControlName="direccion" placeholder="Dirección"
-                  class="input input-bordered w-full " appUppercase />
-              </div>
-
-              <!-- Telefono -->
               <div class="md:col-span-1">
-                <label for="" class="block text-sm font-semibold mb-1">Teléfono</label>
-                <input type="text" formControlName="telefono" placeholder="Teléfono"
+                <label for="" class="block text-sm font-semibold mb-1">Teléfono <span *ngIf="esRequerido('telefono')"
+                    class="text-red-500">*</span></label>
+                <input type="text" formControlName="telefono" placeholder="Ingrese teléfono"
+                  class="input input-bordered w-full " />
+              </div>
+
+
+              @if (
+              tipoUsuarioSeleccionado === 'natural'
+              ) {
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Cargo/Profesión <span
+                    *ngIf="esRequerido('cargo')" class="text-red-500">*</span></label>
+                <input type="text" formControlName="cargo" placeholder="Ingrese cargo o profesión"
                   class="input input-bordered w-full " appUppercase />
               </div>
 
-              <!-- Cargo -->
-              <div class="md:col-span-2 ">
-                <label for="" class="block text-sm font-semibold mb-1">Cargo/Profesión</label>
-                <input type="text" formControlName="cargo" placeholder="Cargo" class="input input-bordered w-full "
-                  appUppercase />
-              </div>
+              }
 
             </div>
 
           </section>
           }
 
-          <!-- STEP 2 ---------------------------------------------------------->
+
           @if (currentStep === 2) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
-            <!-- Título -->
+
+            <div class="mb-4">
+              <label class="label">
+                <span class="label-text font-semibold text-xl text-info">Datos del Demandado</span>
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Tipo de usuario</label>
+
+                <select formControlName="tipoDemandado" class="select select-bordered w-full "
+                  (change)="onTipoUsuarioDemandadoChange($event)">
+                  <option [ngValue]="null">Seleccionar tipo</option>
+                  <option *ngFor="let d of tipoUsuarios" [ngValue]="d.id">
+                    {{ d.nombre }}
+                  </option>
+                </select>
+
+              </div>
+            </div>
+
+
+            @if (tipoUsuarioDemandado === 'natural' || tipoUsuarioDemandado === 'juridica') {
+
+            @if ( tipoUsuarioDemandado === 'juridica') {
+            <div>
+              <span class="label-text font-semibold text-md text-info ">Representante legal</span>
+            </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Nombres
+                  <span *ngIf="esRequerido('nombreDemandado')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="nombreDemandado" placeholder="Ingrese sus nombres"
+                  class="input input-bordered w-full" appUppercase />
+              </div>
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">Apellidos
+                  <span *ngIf="esRequerido('apellidosDemandado')" class="text-red-500">*</span>
+
+                </label>
+                <input type="text" formControlName="apellidosDemandado" placeholder="Ingrese sus apellidos"
+                  class="input input-bordered w-full" appUppercase />
+              </div>
+
+              <div class="md:col-span-4">
+                <label class="block text-sm font-semibold mb-1">DNI
+                  <span *ngIf="esRequerido('dniDemandado')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="dniDemandado" placeholder="Digite su DNI"
+                  class="input input-bordered w-full" />
+
+                <label
+                  *ngIf="formTramiteMPV.get('dniDemandado')?.hasError('required') && formTramiteMPV.get('dniDemandado')?.touched"
+                  class="label">
+                  <span class="label-text-alt text-error">
+                    El DNI es obligatorio
+                  </span>
+                </label>
+
+                <label
+                  *ngIf="formTramiteMPV.get('dniDemandado')?.hasError('minlength') || formTramiteMPV.get('dniDemandado')?.hasError('maxlength')"
+                  class="label">
+                  <span class="label-text-alt text-error">
+                    El DNI debe tener 8 dígitos
+                  </span>
+                </label>
+
+                <label *ngIf="formTramiteMPV.get('dniDemandado')?.hasError('pattern')" class="label">
+                  <span class="label-text-alt text-error">
+                    Solo se permiten números
+                  </span>
+                </label>
+
+                <label *ngIf="formTramiteMPV.get('dniDemandado')?.hasError('dniExistente')" class="label">
+                  <span class="label-text-alt text-error">
+                    Este DNI ya se encuentra registrado
+                  </span>
+                </label>
+              </div>
+            </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+
+              @if ( tipoUsuarioDemandado === 'juridica' ||
+              tipoUsuarioDemandado === 'entidad_publica') {
+              <div class="md:col-span-4 mb-4">
+
+                <label class="block text-sm font-semibold mb-1">RUC
+
+                  <span *ngIf="esRequerido('rucDemandado')" class="text-red-500">*</span>
+                </label>
+                <input formControlName="rucDemandado" class="input input-bordered w-full" placeholder="Ingrese RUC" />
+                <label *ngIf="formTramiteMPV.get('rucDemandado')?.hasError('rucExistente')" class="label">
+                  <span class="label-text-alt text-error">
+                    Este RUC ya se encuentra registrado.
+                  </span>
+                </label>
+              </div>
+              }
+
+              @if (
+              tipoUsuarioDemandado === 'juridica'
+              ) {
+              <div class="md:col-span-8">
+                <label class="block text-sm font-semibold mb-1">Razón Social <span
+                    *ngIf="esRequerido('razon_socialDemandado')" class="text-red-500">*</span></label>
+                <input formControlName="razon_socialDemandado" class="input input-bordered w-full"
+                  placeholder="Ingrese razón social" appUppercase />
+              </div>
+
+              }
+
+
+              @if (tipoUsuarioDemandado === 'entidad_publica') {
+              <div class="md:col-span-8">
+                <label class="block text-sm font-semibold mb-1">Nombre de la Entidad
+                  <span *ngIf="esRequerido('nombre_entidadDemandado')" class="text-red-500">*</span>
+                </label>
+                <input formControlName="nombre_entidadDemandado" class="input input-bordered w-full"
+                  placeholder="Ingrese nombre de la entidad" appUppercase />
+              </div>
+
+              }
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Dirección
+
+                  <span *ngIf="esRequerido('direccionDemandado')" class="text-red-500">*</span>
+                </label>
+                <input type="text" formControlName="direccionDemandado" placeholder="Ingrese dirección"
+                  class="input input-bordered w-full " appUppercase />
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="" class="block text-sm font-semibold mb-1">Email <span *ngIf="esRequerido('correo')"
+                    class="text-red-500">*</span></label>
+                <input type="email" formControlName="correoDemandado" placeholder="Ingrese email"
+                  class="input input-bordered w-full" />
+
+                <div *ngIf="formTramiteMPV.get('correoDemandado')?.hasError('correoExistente')"
+                  class="text-error text-sm">
+                  Este correo ya está registrado.
+                </div>
+              </div>
+
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Teléfono <span
+                    *ngIf="esRequerido('telefonoDemandado')" class="text-red-500">*</span></label>
+                <input type="text" formControlName="telefonoDemandado" placeholder="Ingrese teléfono"
+                  class="input input-bordered w-full " />
+              </div>
+
+              @if (
+              tipoUsuarioDemandado === 'natural'
+              ) {
+              <div class="md:col-span-1">
+                <label for="" class="block text-sm font-semibold mb-1">Cargo/Profesión <span
+                    *ngIf="esRequerido('cargoDemandado')" class="text-red-500">*</span></label>
+                <input type="text" formControlName="cargoDemandado" placeholder="Ingrese cargo o profesión"
+                  class="input input-bordered w-full " appUppercase />
+              </div>
+
+              }
+
+            </div>
+
+          </section>
+          }
+
+          @if (currentStep === 3) {
+          <section class="border border-primary p-6 rounded-md bg-base-100">
+
             <div class="mb-4">
               <label class="label">
                 <span class="label-text font-semibold text-xl text-info">Datos del Arbitraje</span>
@@ -213,7 +498,6 @@
               <input type="text" formControlName="codigo" class="input input-bordered w-full bg-gray-100" readonly />
             </div>
 
-            <!-- DESCRIPCIÓN DINÁMICA -->
             @if (
             descripcionTipoArbitraje
             ) {
@@ -241,23 +525,19 @@
           </section>
           }
 
-          <!-- STEP 3 ---------------------------------------------------------->
-          @if (currentStep === 3) {
+          @if (currentStep === 4) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
 
-            <!-- Título -->
+
             <div class="mb-4">
-              <!-- <label class="font-semibold text-sm">Archivo Virtual :</label> -->
 
               <label class="label">
                 <span class="label-text font-semibold text-xl text-info">Archivo digital</span>
               </label>
             </div>
 
-            <!-- CONTENEDOR ARCHIVOS -->
             <div class="border border-gray-400 rounded-md p-6 min-h-[160px]">
 
-              <!-- VISTA PREVIA -->
               <div class="flex gap-6 flex-wrap">
 
                 @for (file of archivos; track file; let i = $index) {
@@ -273,7 +553,6 @@
                 </div>
                 }
 
-                <!-- BOTÓN SUBIR -->
                 <label
                   class="w-28 h-28 border-2 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-base-200">
                   <span class="text-3xl">+</span>
@@ -284,7 +563,6 @@
               </div>
             </div>
 
-            <!-- TABLA -->
             <div class="mt-6 overflow-x-auto">
               <table class="table table-zebra w-full text-sm">
                 <thead>
@@ -303,7 +581,6 @@
                     <td class="flex justify-center gap-2">
 
                       <button type="button" class="btn btn-info btn-sm" (click)="verArchivo(file)">
-                        <!-- <i class="fa-solid fa-cloud-arrow-down text-white"></i> -->
                         <i class="fa-solid fa-magnifying-glass text-white"></i>
                       </button>
 
@@ -327,9 +604,6 @@
                 </tbody>
               </table>
             </div>
-
-
-            <!-- Descripcion -->
             <div>
               <h2 class="text-sm font-semibold my-4">Aclare su petición</h2>
               <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
@@ -340,12 +614,8 @@
           </section>
 
           }
-
-          <!-- STEP 4 ---------------------------------------------------------->
-          @if (currentStep === 4) {
+          @if (currentStep === 5) {
           <section class="border border-primary p-6 rounded-md bg-base-100">
-
-            <!-- Título -->
             <div class="mb-4">
               <label class="label">
                 <span class="label-text font-semibold text-xl text-info">Confirmar Datos del trámite</span>
@@ -353,52 +623,96 @@
             </div>
 
 
-            <!-- ================= DATOS DEL INTERESADO ================= -->
+
             <div class="card bg-base-200 shadow-sm mb-4">
               <div class="card-body">
-                <h3 class="font-semibold text-info mb-3">Datos del interesado</h3>
+                <h3 class="font-semibold text-info mb-3">Datos del Demandante</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                  <p><b>Tipo documento:</b> {{ f['tipo_documento'].value }}</p>
-                  <p><b>N° Documento:</b> {{ f['documento_identidad'].value }}</p>
-
+                  @if (tipoUsuarioSeleccionado === 'natural') {
                   <p><b>Nombres:</b> {{ f['nombre'].value }}</p>
                   <p><b>Apellidos:</b> {{ f['apellidos'].value }}</p>
+                  <p><b>N° DNI:</b> {{ f['dni'].value }}</p>
+                  }
 
-                  <p><b>Tipo usuario:</b> {{ f['tipo_usuario'].value }}</p>
+                  @if (tipoUsuarioSeleccionado === 'juridica' || tipoUsuarioSeleccionado==='entidad_publica') {
+                  <p><b>N° RUC:</b> {{ f['ruc'].value }}</p>
+                  }
+
+                  @if (tipoUsuarioSeleccionado === 'juridica') {
+                  <p><b>Razón Social:</b> {{ f['razon_social'].value }}</p>
+                  }
+
+                  @if (tipoUsuarioSeleccionado==='entidad_publica') {
+                  <p><b>Nombre dela entidad:</b> {{ f['nombre_entidad'].value }}</p>
+                  }
+
+                  <p><b>Tipo:</b> {{ f['tipo'].value }}</p>
                   <p><b>Email:</b> {{ f['correo'].value }}</p>
 
                   <p><b>Teléfono:</b> {{ f['telefono'].value }}</p>
                   <p><b>Dirección:</b> {{ f['direccion'].value }}</p>
 
+                  @if (tipoUsuarioSeleccionado==='natural') {
                   <p class="md:col-span-2"><b>Cargo:</b> {{ f['cargo'].value }}</p>
+                  }
+
+
                 </div>
               </div>
             </div>
 
-            <!-- ================= DATOS DEL ARBITRAJE ================= -->
             <div class="card bg-base-200 shadow-sm mb-4">
               <div class="card-body">
-                <h3 class="font-semibold text-info mb-3">Datos del arbitraje</h3>
+                <h3 class="font-semibold text-info mb-3">Datos del Demandado</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+
+                  @if (tipoUsuarioDemandado === 'natural') {
+                  <p><b>Nombres:</b> {{ f['nombreDemandado'].value }}</p>
+                  <p><b>Apellidos:</b> {{ f['apellidosDemandado'].value }}</p>
+                  <p><b>N° DNI:</b> {{ f['dniDemandado'].value }}</p>
+                  }
+
+                  @if (tipoUsuarioDemandado === 'juridica' || tipoUsuarioDemandado==='entidad_publica') {
+                  <p><b>N° RUC:</b> {{ f['rucDemandado'].value }}</p>
+                  }
+
+                  @if (tipoUsuarioDemandado === 'juridica') {
+                  <p><b>Razón Social:</b> {{ f['razon_socialDemandado'].value }}</p>
+                  }
+
+                  @if (tipoUsuarioDemandado==='entidad_publica') {
+                  <p><b>Nombre dela entidad:</b> {{ f['nombre_entidadDemandado'].value }}</p>
+                  }
+
+                  <p><b>Tipo:</b> {{ f['tipoDemandado'].value }}</p>
+                  <p><b>Email:</b> {{ f['correoDemandado'].value }}</p>
+
+                  <p><b>Teléfono:</b> {{ f['telefonoDemandado'].value }}</p>
+                  <p><b>Dirección:</b> {{ f['direccionDemandado'].value }}</p>
+
+                  @if (tipoUsuarioDemandado==='natural') {
+                  <p class="md:col-span-2"><b>Cargo:</b> {{ f['cargoDemandado'].value }}</p>
+                  }
+
+
+                </div>
+              </div>
+            </div>
+
+            <div class="card bg-base-200 shadow-sm mb-4">
+              <div class="card-body">
+                <h3 class="font-semibold text-info mb-3">Datos del Arbitraje</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <p><b>Tipo de arbitraje:</b> {{ f['tipo_solicitud'].value }}</p>
                   <p><b>Código:</b> {{ f['codigo'].value }}</p>
                   <p><b>Decripción:</b> {{ f['descripcion'].value }}</p>
                 </div>
-
-                <!-- @if (descripcionTipoArbitraje) {
-                <div class="alert mt-3 text-sm" [ngStyle]="{
-                                                  'background-color': colorAlerta,
-                                                  'color': '#ffffff'
-                                                }">
-                  {{ f['descripcion'].value }}
-                </div>
-                } -->
               </div>
             </div>
 
-            <!-- ================= ARCHIVOS ================= -->
             <div class="card bg-base-200 shadow-sm mb-4">
               <div class="card-body">
                 <h3 class="font-semibold text-info mb-3">Archivos adjuntos</h3>
@@ -426,9 +740,6 @@
           </section>
           }
 
-          <!-- BOTONES DE NAVEGACIÓN -->
-
-          <!-- MENSAJE DE ÉXITO -->
           <div class="flex justify-between pt-2">
             @if (currentStep > 1) {
             <button type="button" class="btn btn-outline" (click)="prevStep()">
@@ -436,13 +747,13 @@
             </button>
             }
 
-            @if (currentStep < 4) { <button type="button" class="btn btn-primary ml-auto" [disabled]="!isStepValido()"
+            @if (currentStep < 5) { <button type="button" class="btn btn-primary ml-auto" [disabled]="!isStepValido()"
               (click)="nextStep()">
               Siguiente
               </button>
               }
 
-              @if (currentStep === 4) {
+              @if (currentStep === 5) {
               <button type="submit" class="btn btn-success ml-auto">
                 <i class="fa-solid fa-paper-plane mr-2"></i> Registrar Solicitud
               </button>
@@ -450,43 +761,7 @@
 
 
           </div>
-        </form>
-
-        <!-- @if (enviado) {
-        <div class="mt-6">
-          <div class="card bg-base-200 shadow-xl border border-gray-300">
-            <div class="card-body">
-              <h3 class="card-title text-success text-xl">
-                <i class="fa-solid fa-circle-check mr-2"></i>
-                Trámite registrado con éxito
-              </h3>
-
-              <p class="mt-3">
-                <strong>Número de Trámite:</strong>
-                <span class="badge badge-info text-white ml-2">
-                  {{ respuesta.tramite.numero_tramite }}
-                </span>
-              </p>
-
-              <p>
-                <strong>Estado:</strong>
-                <span class="badge badge-success text-white ml-2">
-                  {{ respuesta.tramite.estado }}
-                </span>
-              </p>
-
-              <p>
-
-                <span class="badge badge-info text-white ml-2">Revise su correo por favor</span>
-              </p>
-
-            </div>
-          </div>
-        </div>
-        } -->
-
-
-
+        </form> -->
       </div>
 
     </div>

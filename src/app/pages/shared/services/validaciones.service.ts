@@ -16,28 +16,17 @@ export class ValidacionesService {
   envs = environment;
 
   // 2.- variables publicas
-  private apiUrl: string = this.envs.main_url_prueba + 'usuarios';
+  API_BASE: string = this.envs.main_url_prueba + 'usuarios';
+
+  API_VALIDAR_EMAIL: string = this.API_BASE + '/existe-email/';
+  API_VALIDAR_DNI: string = this.API_BASE + '/existe-dni/';
+  API_VALIDAR_RUC: string = this.API_BASE + '/existe-ruc/';
 
   constructor(private http: HttpClient) { }
 
   // ================================
-  //  VALIDAR CORREO
+  //  VALIDAR EMAIL
   // ================================
-  // validarCorreo(): AsyncValidatorFn {
-  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-
-  //     if (!control.value) return of(null);
-
-  //     return of(control.value).pipe(
-  //       debounceTime(400),
-  //       switchMap(correo =>
-  //         this.http.get<boolean>(`${this.apiUrl}/existe-correo/${correo}`)
-  //       ),
-  //       map(existe => (existe ? { correoExistente: true } : null)),
-  //       catchError(() => of(null))
-  //     );
-  //   };
-  // }
   validarCorreo(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
@@ -46,9 +35,7 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(correo =>
-          this.http.get<boolean>(
-            `${this.apiUrl}/existe-correo/${correo}?usuarioId=${usuarioId ?? ''}`
-          )
+          this.http.get<boolean>(this.API_VALIDAR_EMAIL + `${correo}?usuarioId=${usuarioId ?? ''}`)
         ),
         map(existe => (existe ? { correoExistente: true } : null)),
         catchError(() => of(null))
@@ -59,22 +46,6 @@ export class ValidacionesService {
   // ================================
   //  VALIDAR DNI
   // ================================
-  // validarDni(): AsyncValidatorFn {
-  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-
-  //     if (!control.value) return of(null);
-
-  //     return of(control.value).pipe(
-  //       debounceTime(400),
-  //       switchMap(dni =>
-  //         this.http.get<boolean>(`${this.apiUrl}/existe-dni/${dni}`)
-  //       ),
-  //       map(existe => (existe ? { dniExistente: true } : null)),
-  //       catchError(() => of(null))
-  //     );
-  //   };
-  // }
-
   validarDni(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
@@ -83,8 +54,7 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(dni =>
-          this.http.get<boolean>(
-            `${this.apiUrl}/existe-dni/${dni}?usuarioId=${usuarioId ?? ''}`
+          this.http.get<boolean>(this.API_VALIDAR_DNI + `${dni}?usuarioId=${usuarioId ?? ''}`
           )
         ),
         map(existe => (existe ? { dniExistente: true } : null)),
@@ -96,22 +66,6 @@ export class ValidacionesService {
   // ================================
   //  VALIDAR RUC
   // ================================
-  // validarRuc(): AsyncValidatorFn {
-  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-
-  //     if (!control.value) return of(null);
-
-  //     return of(control.value).pipe(
-  //       debounceTime(400),
-  //       switchMap(ruc =>
-  //         this.http.get<boolean>(`${this.apiUrl}/existe-ruc/${ruc}`)
-  //       ),
-  //       map(existe => (existe ? { rucExistente: true } : null)),
-  //       catchError(() => of(null))
-  //     );
-  //   };
-  // }
-
   validarRuc(usuarioId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
@@ -120,9 +74,7 @@ export class ValidacionesService {
       return of(control.value).pipe(
         debounceTime(400),
         switchMap(ruc =>
-          this.http.get<boolean>(
-            `${this.apiUrl}/existe-ruc/${ruc}?usuarioId=${usuarioId ?? ''}`
-          )
+          this.http.get<boolean>(this.API_VALIDAR_RUC + `${ruc}?usuarioId=${usuarioId ?? ''}`)
         ),
         map(existe => (existe ? { rucExistente: true } : null)),
         catchError(() => of(null))

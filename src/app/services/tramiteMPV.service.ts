@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { JwtHelperService } from "@auth0/angular-jwt";
 
 // Interface
 import { TramiteMPV, TramiteMPVResponse } from '../interfaces/tramiteMPV';
 
 // Environment
 import { environment } from '@environments/environment';
-import { AdminUser } from '../interfaces/adminUser';
 import { UpdateTramitePayload } from '../interfaces/tramite-update.interface';
 
 
@@ -18,7 +16,13 @@ export class TramiteMPVService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'tramitesMPV';
+  API_BASE: string = this.envs.main_url_prueba + 'tramitesMPV';
+
+  API_NEW_TRAMITE: string = this.API_BASE + '/crear';
+  API_GET_TRAMITE_BY_NUMERO: string = this.API_BASE + '/numero-tramite';
+  API_GET_NUMERO_TRAMITE: string = this.API_BASE + '/preview-numero';
+  API_GET_ALL_TRAMITES: string = this.API_BASE + '/paginado';
+  API_UPDATE_TRAMITE: string = this.API_BASE + '/editar/';
 
   constructor(private http: HttpClient) { }
 
@@ -32,7 +36,6 @@ export class TramiteMPVService {
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-
     return { headers };
   }
 
@@ -40,8 +43,8 @@ export class TramiteMPVService {
   // ===========================================================
   // 1.- Registrar tramite
   // ===========================================================
-  registrarTramite(formData: FormData): Observable<any> {
-    return this.http.post(`${this.url}/registrar`, formData);
+  newTramite(formData: FormData): Observable<any> {
+    return this.http.post<any>(this.API_NEW_TRAMITE, formData);
   }
 
 
@@ -49,17 +52,13 @@ export class TramiteMPVService {
   // 2.- Obtener por numero
   // ===========================================================
   obtenerPorNumero(numero: string) {
-    // return this.http.get<TramiteMPV>(`${this.url}/estado/${numero}`);
-    // return this.http.get<any>(`${this.url}/estado`, {
-    //   params: { numero }
-    // });
-    return this.http.get<any>(`${this.url}/estado?numero=${encodeURIComponent(numero)}`);
+    return this.http.get<any>(this.API_GET_TRAMITE_BY_NUMERO + `?numero=${encodeURIComponent(numero)}`);
   }
 
   // ===========================================================
-  // 3.- Listar tramites con paginación
+  // 3.- Listar tramites
   // ===========================================================
-  listarTramites(filtros: {
+  listarTramitesPaginated(filtros: {
     page?: number;
     limit?: number;
     search?: string;
@@ -82,7 +81,7 @@ export class TramiteMPVService {
     const headers = this.getAuthHeaders().headers;
 
     return this.http.get<TramiteMPVResponse>(
-      `${this.url}/listar`,
+      this.API_GET_ALL_TRAMITES,
       { params, headers }
     );
   }
@@ -92,7 +91,7 @@ export class TramiteMPVService {
   // ===========================================================
   getTramitesAprobados() {
     const headers = this.getAuthHeaders().headers; // extrae solo los headers
-    return this.http.get(`${this.url}/listar?estado=aprobada`, { headers });
+    return this.http.get(this.API_GET_ALL_TRAMITES + `?estado=aprobada`, { headers });
   }
 
   // ===========================================================
@@ -100,7 +99,7 @@ export class TramiteMPVService {
   // ===========================================================
   actualizarEstado(id: number, payload: UpdateTramitePayload): Observable<any> {
     const headers = this.getAuthHeaders().headers;
-    return this.http.put(`${this.url}/actualizar/${id}`, payload, { headers });
+    return this.http.put(this.API_UPDATE_TRAMITE + `${id}`, payload, { headers });
   }
 
   // ===========================================================
@@ -110,7 +109,7 @@ export class TramiteMPVService {
   previewNumeroTramite() {
     const headers = this.getAuthHeaders().headers; // extrae solo los headers
     return this.http.get<any>(
-      `${this.url}/preview-numero`
+      this.API_GET_NUMERO_TRAMITE
     );
   }
 }

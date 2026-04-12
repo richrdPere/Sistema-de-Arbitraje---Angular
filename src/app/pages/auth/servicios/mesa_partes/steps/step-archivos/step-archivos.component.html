@@ -1,0 +1,117 @@
+<form [formGroup]="form">
+
+  <section class="border border-primary p-6 rounded-md bg-base-100">
+
+    <!-- TÍTULO -->
+    <div class="mb-4">
+      <label class="label">
+        <span class="label-text font-semibold text-xl text-info">
+          Archivo digital
+        </span>
+      </label>
+    </div>
+
+    <!-- CONTENEDOR ARCHIVOS -->
+    <div class="border border-gray-400 rounded-md p-6 min-h-[160px]">
+
+      <div class="flex gap-6 flex-wrap">
+
+        <!-- PREVIEW -->
+        <div *ngFor="let file of archivos; let i = index"
+          class="w-28 h-28 bg-base-200 rounded-xl flex flex-col items-center justify-center shadow">
+
+          <div class="text-xs text-success font-semibold mb-1">
+            {{ file.size | fileSize }}
+          </div>
+
+          <div class="text-center text-xs px-2 truncate">
+            {{ file.name | truncate:10}}
+          </div>
+
+        </div>
+
+        <!-- BOTÓN -->
+        <label
+          class="w-28 h-28 border-2 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-base-200">
+          <span class="text-3xl">+</span>
+          <span class="text-xs mt-1">Agregar</span>
+          <input type="file" multiple hidden (change)="onFileSelect($event)" />
+        </label>
+
+      </div>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="mt-6 overflow-x-auto">
+      <table class="table table-zebra w-full text-sm">
+
+        <thead>
+          <tr>
+            <th class="w-20 text-center">NRO</th>
+            <th>ARCHIVO</th>
+            <th class="w-32 text-center">ACCIONES</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let file of archivos; let i = index">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td>{{ file.name }}</td>
+
+            <td class="flex justify-center gap-2">
+
+              <button type="button" class="btn btn-info btn-sm" (click)="verArchivo(file)">
+                <i class="fa-solid fa-magnifying-glass text-white"></i>
+              </button>
+
+              <button type="button" class="btn btn-error btn-sm" (click)="eliminarArchivo(i)">
+                <i class="fa-solid fa-trash-can text-white"></i>
+              </button>
+
+            </td>
+          </tr>
+
+          <tr *ngIf="!archivos.length">
+            <td colspan="3" class="text-center text-gray-400 py-4">
+              No se han agregado archivos
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="mt-4">
+      <h2 class="text-sm font-semibold my-4">
+        Aclare su petición
+      </h2>
+
+      <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
+        placeholder="Describa brevemente su solicitud..." rows="3" appUppercase>
+    </textarea>
+
+      <div *ngIf="form.get('descripcion')?.invalid && form.get('descripcion')?.touched" class="text-error text-sm mt-1">
+        La descripción es obligatoria
+      </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-between">
+
+      <button type="button" class="btn btn-secondary" (click)="volver()">
+        Anterior
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="continuar()">
+        Siguiente
+      </button>
+
+    </div>
+
+  </section>
+
+</form>

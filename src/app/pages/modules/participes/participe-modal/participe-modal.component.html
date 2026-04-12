@@ -11,18 +11,6 @@
       <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
     </div>
 
-    <!-- Mensajes -->
-    <!-- @if (mensajeError) {
-    <div class="alert alert-error text-sm mb-3 shadow-sm">
-      <span>{{ mensajeError }}</span>
-    </div>
-    }
-
-    @if (mensajeExito) {
-    <div class="alert alert-success text-sm mb-3 shadow-sm">
-      <span>{{ mensajeExito }}</span>
-    </div>
-    } -->
 
 
     <!-- Formulario -->
@@ -39,8 +27,9 @@
           <select formControlName="tipo_usuario" (change)="onTipoDemandadoChange()"
             class="select select-bordered w-full">
             <option [ngValue]="null" disabled>Seleccione tipo de persona</option>
-            <option value="personal_natural">Persona Natural</option>
-            <option value="entidad_publica">Entidad / Institución</option>
+            <option value="natural">PERSONA NATURAL</option>
+            <option value="juridica">JURIDICA</option>
+            <option value="entidad_publica">ENTIDAD PÚBLICA</option>
           </select>
         </div>
 
@@ -48,6 +37,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Rol del Partícipe</span>
+            <span *ngIf="esRequerido('rol_participe')" class="text-red-500">*</span>
           </label>
           <select formControlName="rol_participe" class="select select-bordered w-full"
             [class.select-error]="f['rol_participe'].invalid && f['rol_participe'].touched">
@@ -57,11 +47,17 @@
             <option value="Tercero">Tercero</option>
           </select>
 
-          @if (f['rol_participe'].invalid && f['rol_participe'].touched) {
+          <label *ngIf="formParticipe.get('dni')?.hasError('pattern')" class="label">
+            <span class="label-text-alt text-error">
+              Solo se permiten números
+            </span>
+          </label>
+
+          <!-- @if (f['rol_participe'].invalid && f['rol_participe'].touched) {
           <small class="text-error text-xs mt-1">
             Seleccione un rol válido.
           </small>
-          }
+          } -->
         </div>
 
       </div>
@@ -72,6 +68,7 @@
       <div class="form-control mb-4">
         <label class="label">
           <span class="label-text font-semibold">Nombre de la Entidad</span>
+          <span *ngIf="esRequerido('nombre')" class="text-red-500">*</span>
         </label>
 
         <input type="text" formControlName="nombre" placeholder="Nombre de la entidad"
@@ -95,6 +92,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text">Nombre</span>
+            <span *ngIf="esRequerido('nombre')" class="text-red-500">*</span>
           </label>
 
           <input type="text" formControlName="nombre" placeholder="Nombres" class="input input-bordered w-full"
@@ -110,6 +108,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Apellidos</span>
+            <span *ngIf="esRequerido('apellidos')" class="text-red-500">*</span>
           </label>
           <input type="text" formControlName="apellidos" placeholder="Apellidos" class="input input-bordered w-full "
             appUppercase />
@@ -126,6 +125,7 @@
       <div class="form-control">
         <label class="label">
           <span class="label-text font-semibold">Email</span>
+          <span *ngIf="esRequerido('correo')" class="text-red-500">*</span>
         </label>
         <input type="email" formControlName="correo" placeholder="ejemplo@gmail.com" class="input input-bordered w-full"
           [class.input-error]="f['correo'].invalid && f['correo'].touched" />
@@ -143,6 +143,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Tipo Documento</span>
+            <span *ngIf="esRequerido('tipo_documento')" class="text-red-500">*</span>
           </label>
           <select formControlName="tipo_documento" class="select select-bordered w-full">
             <option [ngValue]="null" disabled>Tipo Documento</option>
@@ -155,7 +156,10 @@
         <div class="form-control">
 
 
-          <label for="" class="block text-sm font-semibold mb-1">Numero de Documento</label>
+          <label for="" class="block text-sm font-semibold mb-1">
+            Numero de Documento
+            <span *ngIf="esRequerido('documento_identidad')" class="text-red-500">*</span>
+          </label>
           <input type="text" formControlName="documento_identidad" [placeholder]="placeholderDocumento"
             class="input input-bordered w-full" [maxlength]="maxDocumentoDemandante" />
 
@@ -180,6 +184,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Teléfono</span>
+            <span *ngIf="esRequerido('telefono')" class="text-red-500">*</span>
           </label>
           <input type="text" formControlName="telefono" placeholder="987654321" class="input input-bordered w-full"
             [class.input-error]="f['telefono'].invalid && f['telefono'].touched" />
@@ -194,6 +199,7 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Cargo</span>
+            <span *ngIf="esRequerido('cargo')" class="text-red-500">*</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Representante Legal"
             class="input input-bordered w-full" [class.input-error]="f['cargo'].invalid && f['cargo'].touched"
