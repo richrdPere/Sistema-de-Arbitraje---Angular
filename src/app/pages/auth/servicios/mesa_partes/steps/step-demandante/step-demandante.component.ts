@@ -22,7 +22,6 @@ export class StepDemandanteComponent implements OnInit {
 
   form!: FormGroup;
   tipoUsuarioSeleccionado: string | null = null;
-  buscandoPersona: boolean = false;
 
   // Selector
   tipoUsuarios = [
@@ -106,8 +105,6 @@ export class StepDemandanteComponent implements OnInit {
 
             if (!resp) return;
 
-            console.log('Persona encontrada por DNI:', resp);
-
             this.form.patchValue({
               nombres: resp.nombres,
               apellidos: resp.apellidos,
@@ -150,7 +147,8 @@ export class StepDemandanteComponent implements OnInit {
               nombre_entidad: resp.nombre_entidad,
               email: resp.email,
               telefono: resp.telefono,
-              direccion: resp.direccion
+              direccion: resp.direccion,
+              ruc: resp.ruc
             });
 
           });

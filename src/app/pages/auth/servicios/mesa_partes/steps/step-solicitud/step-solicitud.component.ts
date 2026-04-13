@@ -2,21 +2,30 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
+// Directives
+import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
+
+// Pipes
+import { FileSizePipe } from 'src/app/pipes/size-file.pipe';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
+
 // Service
 import { TramiteMPVFormService } from 'src/app/services/tramiteMPV-form.service';
 
 @Component({
   selector: 'step-solicitud',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, UppercaseDirective, FileSizePipe, TruncatePipe],
   templateUrl: './step-solicitud.component.html',
   styles: ``
 })
-export class StepSolicitudComponent implements OnInit{
+export class StepSolicitudComponent implements OnInit {
 
   @Output() nextStep = new EventEmitter<void>();
   @Output() prevStep = new EventEmitter<void>();
 
   form!: FormGroup;
+  archivos: File[] = [];
+
   descripcionTipoArbitraje: string | null = null;
 
   // SELECTOR
@@ -28,9 +37,9 @@ export class StepSolicitudComponent implements OnInit{
 
   // MAPEOS
   tipoSolicitudToCodigo: Record<string, string> = {
-    'Arbitraje de Emergencia': 'AE',
-    'Arbitraje Ad Hoc': 'AH',
-    'Arbitraje Institucional': 'AI'
+    'Arbitraje de Emergencia': 'AE-FIRMA-LEGAL',
+    'Arbitraje Ad Hoc': 'AD HOC-FIRMA-LEGAL',
+    'Arbitraje Institucional': 'CA-FIRMA-LEGAL'
   };
 
   descripciones: Record<string, string> = {
@@ -55,6 +64,7 @@ export class StepSolicitudComponent implements OnInit{
   ngOnInit(): void {
     this.initFormSolicitud();
     this.listenTipoSolicitud();
+    this.loadData();
   }
 
   // =========================
@@ -63,7 +73,8 @@ export class StepSolicitudComponent implements OnInit{
   initFormSolicitud() {
     this.form = this.fb.group({
       tipo_solicitud: [null, Validators.required],
-      codigo: [{ value: '', disabled: true }]
+      codigo: [{ value: '', disabled: true }],
+      descripcion: ['', Validators.required]
     });
   }
 
@@ -75,9 +86,55 @@ export class StepSolicitudComponent implements OnInit{
       if (!tipo) return;
 
       const codigo = this.tipoSolicitudToCodigo[tipo] || '';
+
+      // Se guarda internamente (no visible)
       this.form.get('codigo')?.setValue(codigo);
+
+      // Se muestra al usuario
       this.descripcionTipoArbitraje = this.descripciones[tipo] || null;
     });
+  }
+
+  // =========================
+  // CARGAR DATOS
+  // =========================
+  loadData() {
+    const data = this.tramiteService.getFormData();
+
+    if (data?.solicitud) {
+      this.form.patchValue(data.solicitud);
+      this.archivos = data.archivos || [];
+
+      if (data.solicitud.tipo_solicitud) {
+        this.descripcionTipoArbitraje =
+          this.descripciones[data.solicitud.tipo_solicitud];
+      }
+    }
+  }
+
+  // =========================
+  // ARCHIVOS
+  // =========================
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+
+    Array.from(input.files).forEach(file => {
+      this.archivos.push(file);
+    });
+
+    input.value = '';
+  }
+
+  eliminarArchivo(index: number) {
+    this.archivos.splice(index, 1);
+  }
+
+  verArchivo(file: File) {
+    const url = URL.createObjectURL(file);
+    window.open(url, '_blank');
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   // =========================
@@ -89,8 +146,9 @@ export class StepSolicitudComponent implements OnInit{
       return;
     }
 
-    // IMPORTANTE: getRawValue para incluir campos disabled
+    console.log("enviando: ", this.form.getRawValue());
     this.tramiteService.setSolicitud(this.form.getRawValue());
+    this.tramiteService.setArchivos(this.archivos);
 
     this.nextStep.emit();
   }

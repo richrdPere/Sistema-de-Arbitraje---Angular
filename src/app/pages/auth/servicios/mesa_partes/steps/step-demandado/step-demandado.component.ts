@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // Directives
@@ -7,6 +8,7 @@ import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.di
 
 // Service
 import { TramiteMPVFormService } from 'src/app/services/tramiteMPV-form.service';
+import { PersonaService } from 'src/app/services/persona.service';
 
 @Component({
   selector: 'step-demandado',
@@ -31,13 +33,19 @@ export class StepDemandadoComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private tramiteService: TramiteMPVFormService
+    private tramiteService: TramiteMPVFormService,
+    private personaService: PersonaService
   ) { }
 
   ngOnInit(): void {
     this.initFormDemandado();
+    this.loadDataDemandado();
     this.listenTipoDemandado();
+    this.listenBusquedaPersona();
+    this.listenDuplicidad();
   }
+
+
 
   // =========================
   // FORMULARIO
@@ -61,56 +69,144 @@ export class StepDemandadoComponent implements OnInit {
     });
   }
 
+  loadDataDemandado() {
+    const data = this.tramiteService.getFormData();
+
+    if (data?.demandado && Object.keys(data.demandado).length > 0) {
+
+      this.form.patchValue(data.demandado);
+
+      // IMPORTANTE: restaurar tipo seleccionado
+      this.tipoUsuarioDemandado = data.demandado.tipo;
+
+      // Volver a aplicar validaciones dinámicas
+      this.onTipoUsuarioDemandadoChange(false);
+    }
+  }
+
   listenTipoDemandado() {
     this.form.get('tipo')?.valueChanges.subscribe(() => {
-      this.onTipoUsuarioDemandadoChange();
+      this.onTipoUsuarioDemandadoChange(true);
     });
   }
 
+  listenDuplicidad() {
+    this.form.get('dni')?.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => this.validarDuplicidadConDemandante());
+
+    this.form.get('ruc')?.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => this.validarDuplicidadConDemandante());
+  }
+
+  listenBusquedaPersona() {
+    // DNI (persona natural)
+    this.form.get('dni')?.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(dni => {
+
+        if (!dni || dni.length !== 8) return;
+
+
+        this.personaService.searchPersona({ dni })
+          .subscribe(resp => {
+
+            if (!resp) return;
+
+            this.form.patchValue({
+              nombres: resp.nombres,
+              apellidos: resp.apellidos,
+              email: resp.email,
+              telefono: resp.telefono,
+              direccion: resp.direccion,
+              cargo: resp.cargo
+            });
+
+          });
+
+      });
+
+    // RUC (jurídica / entidad)
+    this.form.get('ruc')?.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(ruc => {
+
+        if (!ruc || ruc.length !== 11) return;
+
+        this.personaService.searchPersona({ ruc })
+          .subscribe(resp => {
+
+            if (!resp) return;
+
+            // Forzar tipo correcto
+            this.form.patchValue({ tipo: resp.tipo });
+            this.tipoUsuarioDemandado = resp.tipo;
+
+            this.onTipoUsuarioDemandadoChange(false);
+
+            this.form.patchValue({
+              razon_social: resp.razon_social,
+              nombre_entidad: resp.nombre_entidad,
+              email: resp.email,
+              telefono: resp.telefono,
+              direccion: resp.direccion,
+              ruc: resp.ruc
+            });
+          });
+      });
+  }
 
 
   // =========================
   // CAMBIO DE TIPO
   // =========================
-  onTipoUsuarioDemandadoChange() {
+  onTipoUsuarioDemandadoChange(resetValues: boolean = true) {
     const tipo = this.form.get('tipo')?.value;
     this.tipoUsuarioDemandado = tipo;
 
-    const controls = [
+    // SOLO resetear si es cambio manual
+    if (resetValues) {
+      this.form.patchValue({
+        nombres: '',
+        apellidos: '',
+        dni: '',
+        ruc: '',
+        razon_social: '',
+        nombre_entidad: ''
+      });
+    }
+
+    // LIMPIAR VALIDADORES
+    this.clearValidators([
+      'dni',
       'nombres',
       'apellidos',
-      'dni',
       'ruc',
       'razon_social',
       'nombre_entidad'
-    ];
-
-    // Reset + limpiar validaciones
-    controls.forEach(field => {
-      this.form.get(field)?.reset();
-      this.form.get(field)?.clearValidators();
-    });
+    ]);
 
     // =========================
     // REGLAS
     // =========================
     if (tipo === 'NATURAL') {
-      this.setValidators(['nombres', 'apellidos'], [Validators.required]);
-
       this.form.get('dni')?.setValidators([
         Validators.required,
         Validators.pattern(/^\d{8}$/)
       ]);
+
+      this.form.get('nombres')?.setValidators([Validators.required]);
+      this.form.get('apellidos')?.setValidators([Validators.required]);
     }
 
     if (tipo === 'JURIDICA') {
-      this.setValidators(['nombres', 'apellidos'], [Validators.required]);
-
-      this.form.get('dni')?.setValidators([
-        Validators.required,
-        Validators.pattern(/^\d{8}$/)
-      ]);
-
       this.form.get('ruc')?.setValidators([
         Validators.required,
         Validators.pattern(/^\d{11}$/)
@@ -128,7 +224,12 @@ export class StepDemandadoComponent implements OnInit {
       this.form.get('nombre_entidad')?.setValidators([Validators.required]);
     }
 
-    controls.forEach(field => {
+    this.form.updateValueAndValidity();
+  }
+
+  clearValidators(fields: string[]) {
+    fields.forEach(field => {
+      this.form.get(field)?.clearValidators();
       this.form.get(field)?.updateValueAndValidity();
     });
   }
@@ -159,10 +260,63 @@ export class StepDemandadoComponent implements OnInit {
     return control?.hasValidator(Validators.required) ?? false;
   }
 
+  soloNumeros(event: KeyboardEvent) {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  }
+
+  validarDuplicidadConDemandante() {
+    const demandante = this.tramiteService.getFormData()?.demandante;
+
+    if (!demandante) return;
+
+    const dniControl = this.form.get('dni');
+    const rucControl = this.form.get('ruc');
+
+    const dniDemandado = dniControl?.value;
+    const rucDemandado = rucControl?.value;
+
+    // LIMPIAR SOLO ERROR "mismo"
+    const limpiarError = (control: any) => {
+      if (!control?.errors) return;
+
+      const errors = { ...control.errors };
+      delete errors['mismo'];
+
+      control.setErrors(Object.keys(errors).length ? errors : null);
+    };
+
+    limpiarError(dniControl);
+    limpiarError(rucControl);
+
+    // VALIDAR DNI
+    if (
+      demandante.dni &&
+      dniDemandado &&
+      demandante.dni === dniDemandado
+    ) {
+      dniControl?.setErrors({ ...(dniControl.errors || {}), mismo: true });
+    }
+
+    // VALIDAR RUC
+    if (
+      demandante.ruc &&
+      rucDemandado &&
+      demandante.ruc === rucDemandado
+    ) {
+      rucControl?.setErrors({ ...(rucControl.errors || {}), mismo: true });
+    }
+  }
+
   // =========================
   // NAVEGACIÓN
   // =========================
   continuar() {
+    // Ejecutar validación final
+    this.validarDuplicidadConDemandante();
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

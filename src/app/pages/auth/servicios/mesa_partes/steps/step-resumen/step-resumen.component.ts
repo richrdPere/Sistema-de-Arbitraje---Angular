@@ -15,6 +15,7 @@ import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 })
 export class StepResumenComponent implements OnInit {
   @Output() prevStep = new EventEmitter<void>();
+  @Output() resetStepper = new EventEmitter<void>();
 
   data: any;
   loading = false;
@@ -50,8 +51,6 @@ export class StepResumenComponent implements OnInit {
       formData.append('files', file);
     });
 
-
-
     return formData;
   }
 
@@ -84,6 +83,7 @@ export class StepResumenComponent implements OnInit {
           });
 
           this.tramiteFormService.reset();
+          this.resetStepper.emit(); // avisar al padre
         },
         error: (err) => {
           this.loading = false;

@@ -2,69 +2,225 @@
 
   <section class="border border-primary p-6 rounded-md bg-base-100">
 
+    <!-- ========================= -->
+    <!-- ARBITRAJE (LAYOUT 2 COLUMNAS) -->
+    <!-- ========================= -->
+
     <!-- TÍTULO -->
-    <div class="mb-4">
-      <label class="label">
-        <span class="label-text font-semibold text-xl text-info">
-          Datos del Arbitraje
+    <div class="mb-3">
+      <h2 class="text-lg font-semibold text-info">
+        Arbitrajes Disponibles
+      </h2>
+      <p class="text-sm text-gray-500">
+        Seleccione el tipo de arbitraje según su caso
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6 items-stretch">
+
+      <!-- IZQUIERDA -->
+      <div class="md:col-span-5 flex">
+
+        <div class="bg-base-200 p-5 rounded-xl shadow-sm w-full flex flex-col justify-center">
+
+          <label class="text-sm font-medium mb-2 block">
+            Tipo de arbitraje
+          </label>
+
+          <select formControlName="tipo_solicitud" class="select select-bordered w-full">
+            <option [ngValue]="null" disabled>Seleccione un tipo...</option>
+            <option *ngFor="let d of tipoSolicitud" [ngValue]="d.id">
+              {{ d.nombre }}
+            </option>
+          </select>
+
+          <!-- ERROR -->
+          <div *ngIf="form.get('tipo_solicitud')?.invalid && form.get('tipo_solicitud')?.touched"
+            class="text-error text-sm mt-2">
+            Debe seleccionar un tipo de arbitraje
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- DERECHA -->
+      <div class="md:col-span-7 flex">
+
+        <!-- INFO -->
+        <div *ngIf="descripcionTipoArbitraje"
+          class="w-full bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-5 flex gap-4 items-start shadow-sm transition-all duration-300">
+
+          <!-- ICONO -->
+          <div class="text-blue-600 text-2xl mt-1">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+
+          <!-- CONTENIDO -->
+          <div class="flex-1">
+
+            <!-- HEADER -->
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+
+              <h3 class="font-semibold text-blue-800">
+                Tipo seleccionado
+              </h3>
+
+              <!-- BADGE -->
+              <span class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full shadow">
+                {{ form.get('codigo')?.value }}
+              </span>
+
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+            <p class="text-sm text-gray-700 leading-relaxed">
+              {{ descripcionTipoArbitraje }}
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- ESTADO VACÍO -->
+        <div *ngIf="!descripcionTipoArbitraje"
+          class="w-full flex items-center justify-center border border-dashed border-gray-300 rounded-xl p-6 text-gray-400 text-sm">
+
+          Seleccione un tipo de arbitraje para ver la descripción
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TÍTULO - DOCUMENTOS -->
+    <div class="mb-3">
+      <h2 class="text-lg font-semibold text-info">
+        Documentos
+      </h2>
+      <p class="text-sm text-gray-500">
+        Suba uno o más documentos según su caso
+      </p>
+    </div>
+
+
+    <div class="bg-base-200 border border-base-300 rounded-xl p-6 shadow-sm">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-4">
+        <label class="text-sm font-semibold mb-2 block">
+          Documentos adjuntos
+        </label>
+
+        <span class="text-xs text-gray-500">
+          {{ archivos.length }} archivo(s)
         </span>
-      </label>
-    </div>
+      </div>
 
-    <h2 class="text-sm font-semibold mb-4">
-      Tipo de arbitraje y código
-    </h2>
+      <!-- ZONA DE CARGA -->
+      <div class="border border-gray-400 rounded-md p-6 min-h-[160px]">
 
-    <!-- SELECT + CODIGO -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <div class="flex gap-6 flex-wrap">
 
-      <select formControlName="tipo_solicitud" class="select select-bordered w-full">
-        <option [ngValue]="null">Seleccione un tipo...</option>
-        <option *ngFor="let d of tipoSolicitud" [ngValue]="d.id">
-          {{ d.nombre }}
-        </option>
-      </select>
+          <!-- PREVIEW -->
+          <div *ngFor="let file of archivos; let i = index"
+            class="w-28 h-28 bg-base-200 rounded-xl flex flex-col items-center justify-center shadow">
 
-      <input type="text" formControlName="codigo" class="input input-bordered w-full bg-gray-100" readonly />
+            <div class="text-xs text-success font-semibold mb-1">
+              {{ file.size | fileSize }}
+            </div>
 
-    </div>
+            <div class="text-center text-xs px-2 truncate">
+              {{ file.name | truncate:10 }}
+            </div>
 
-    <!-- ERROR -->
-    <div *ngIf="form.get('tipo_solicitud')?.invalid && form.get('tipo_solicitud')?.touched"
-      class="text-error text-sm mb-3">
-      Debe seleccionar un tipo de arbitraje
-    </div>
+          </div>
 
-    <!-- DESCRIPCIÓN -->
-    <div *ngIf="descripcionTipoArbitraje" class="alert shadow-sm text-white" [ngStyle]="{
-         'background-color': colorAlerta,
-         'color': '#ffffff'
-       }">
+          <!-- BOTÓN -->
+          <label
+            class="w-28 h-28 border-2 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-base-200">
+            <span class="text-3xl">+</span>
+            <span class="text-xs mt-1">Agregar</span>
+            <input type="file" multiple hidden (change)="onFileSelect($event)" />
+          </label>
+        </div>
+      </div>
 
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-      </svg>
+      <!-- PREVIEW -->
+      <div class="mt-6 overflow-x-auto">
+        <table class="table table-zebra w-full text-sm">
 
-      <div>
-        <h3 class="font-semibold">
-          ¿Qué es este tipo de arbitraje?
-        </h3>
-        <p class="text-sm">
-          {{ descripcionTipoArbitraje }}
-        </p>
+          <thead>
+            <tr>
+              <th class="w-20 text-center">N°</th>
+              <th>ARCHIVO</th>
+              <th class="w-32 text-center">ACCIONES</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let file of archivos; let i = index">
+              <td class="text-center">{{ i + 1 }}</td>
+              <td>{{ file.name }}</td>
+
+              <td class="flex justify-center gap-2">
+
+                <button type="button" class="btn btn-primary btn-sm" (click)="verArchivo(file)">
+                  <i class="fa-solid fa-magnifying-glass text-white"></i>
+                </button>
+
+                <button type="button" class="btn btn-error btn-sm" (click)="eliminarArchivo(i)">
+                  <i class="fa-solid fa-trash-can text-white"></i>
+                </button>
+
+              </td>
+            </tr>
+
+            <tr *ngIf="!archivos.length">
+              <td colspan="3" class="text-center text-gray-400 py-4">
+                No se han agregado archivos
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- BOTONES -->
-    <div class="mt-6 flex justify-between">
+    <div class="bg-base-200 border border-base-300 rounded-xl p-6 mt-6 shadow-sm">
+      <!-- DESCRIPCIÓN -->
+      <div>
 
-      <button type="button" class="btn btn-secondary" (click)="volver()">
+        <label class="text-sm font-semibold mb-2 block">
+          Descripción de la solicitud
+        </label>
+
+        <textarea formControlName="descripcion"
+          class="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Describa brevemente su solicitud..." rows="3" appUppercase>
+        </textarea>
+
+        <div *ngIf="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"
+          class="text-error text-sm mt-1">
+          La descripción es obligatoria
+        </div>
+      </div>
+    </div>
+
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-center gap-5">
+
+      <button type="button" class="btn btn-outline" (click)="volver()">
+        <i class="fa-solid fa-arrow-left"></i>
         Anterior
       </button>
 
-      <button type="button" class="btn btn-primary" (click)="continuar()">
+      <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
         Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
       </button>
 
     </div>

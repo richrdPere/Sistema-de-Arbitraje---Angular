@@ -16,11 +16,11 @@
       <div class="md:col-span-4">
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Tipo de persona</span>
-          <span *ngIf="esRequerido('tipo')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('tipo')" class="text-red-500 font-bold pl-1">*</span>
         </label>
 
         <select formControlName="tipo" class="select select-bordered w-full">
-          <option [ngValue]="null">Seleccionar tipo</option>
+          <option [ngValue]="null" disabled>Seleccionar tipo</option>
           <option *ngFor="let d of tipoUsuarios" [ngValue]="d.id">
             {{ d.nombre }}
           </option>
@@ -29,41 +29,50 @@
     </div>
 
     <!-- NATURAL / JURIDICA -->
-    <div *ngIf="esNatural() || esJuridica()">
+    <div *ngIf="esNatural()">
 
-      <div *ngIf="esJuridica()" class="mb-2">
+      <!-- <div *ngIf="esJuridica()" class="mb-2">
         <span class="text-info font-semibold">Representante legal</span>
-      </div>
+      </div> -->
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
 
         <div class="md:col-span-4">
           <label class="block text-sm font-semibold mb-1">
-            <span class="label-text font-medium">Nombres</span>
-            <span *ngIf="esRequerido('nombres')" class="text-red-500 font-bold">*</span>
+            <span class="label-text font-medium">DNI</span>
+            <span *ngIf="esRequerido('dni')" class="text-red-500 font-bold  pl-1">*</span>
           </label>
-          <input formControlName="nombres" class="input input-bordered w-full" appUppercase />
+          <input formControlName="dni" class="input input-bordered w-full" placeholder="Ingrese N° DNI" maxlength="8"
+            (keypress)="soloNumeros($event)" />
+
+          <span *ngIf="form.get('dni')?.invalid && form.get('dni')?.touched" class="text-error text-sm">
+            DNI inválido
+          </span>
+
+          <span *ngIf="form.get('dni')?.errors?.['mismo']" class="text-error text-sm">
+            No puede ser el mismo DNI que el demandante
+          </span>
+        </div>
+
+        <div class="md:col-span-4">
+          <label class="block text-sm font-semibold mb-1">
+            <span class="label-text font-medium">Nombres</span>
+            <span *ngIf="esRequerido('nombres')" class="text-red-500 font-bold pl-1">*</span>
+          </label>
+          <input formControlName="nombres" class="input input-bordered w-full" placeholder="Ingrese nombres"
+            appUppercase />
         </div>
 
         <div class="md:col-span-4">
           <label class="block text-sm font-semibold mb-1">
             <span class="label-text font-medium">Apellidos</span>
-            <span *ngIf="esRequerido('apellidos')" class="text-red-500 font-bold">*</span>
+            <span *ngIf="esRequerido('apellidos')" class="text-red-500 font-bold pl-1">*</span>
           </label>
-          <input formControlName="apellidos" class="input input-bordered w-full" appUppercase />
+          <input formControlName="apellidos" class="input input-bordered w-full" placeholder="Ingrese apellidos"
+            appUppercase />
         </div>
 
-        <div class="md:col-span-4">
-          <label class="block text-sm font-semibold mb-1">
-            <span class="label-text font-medium">DNI</span>
-            <span *ngIf="esRequerido('dni')" class="text-red-500 font-bold">*</span>
-          </label>
-          <input formControlName="dni" class="input input-bordered w-full" />
 
-          <span *ngIf="form.get('dni')?.invalid && form.get('dni')?.touched" class="text-error text-sm">
-            DNI inválido
-          </span>
-        </div>
 
       </div>
     </div>
@@ -74,25 +83,33 @@
       <div class="md:col-span-4">
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">RUC</span>
-          <span *ngIf="esRequerido('ruc')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('ruc')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="ruc" class="input input-bordered w-full" />
+
+        <input formControlName="ruc" class="input input-bordered w-full" placeholder="Ingrese N° RUC" maxlength="11"
+          (keypress)="soloNumeros($event)" />
+
+        <span *ngIf="form.get('ruc')?.errors?.['mismo']" class="text-error text-sm">
+          No puede ser el mismo RUC que el demandante
+        </span>
       </div>
 
       <div class="md:col-span-8" *ngIf="esJuridica()">
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Razón Social</span>
-          <span *ngIf="esRequerido('razon_social')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('razon_social')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="razon_social" class="input input-bordered w-full" appUppercase />
+        <input formControlName="razon_social" class="input input-bordered w-full" placeholder="Ingrese Razón Social"
+          appUppercase />
       </div>
 
       <div class="md:col-span-8" *ngIf="esEntidad()">
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Nombre de Entidad</span>
-          <span *ngIf="esRequerido('nombre_entidad')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('nombre_entidad')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="nombre_entidad" class="input input-bordered w-full" appUppercase />
+        <input formControlName="nombre_entidad" class="input input-bordered w-full"
+          placeholder="Ingrese nombre de la entidad" appUppercase />
       </div>
 
     </div>
@@ -103,45 +120,50 @@
       <div>
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Dirección</span>
-          <span *ngIf="esRequerido('direccion')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('direccion')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="direccion" class="input input-bordered w-full" appUppercase />
+        <input formControlName="direccion" class="input input-bordered w-full" placeholder="Ingrese dirección"
+          appUppercase />
       </div>
 
       <div>
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Email</span>
-          <span *ngIf="esRequerido('email')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('email')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="email" class="input input-bordered w-full" />
+        <input formControlName="email" class="input input-bordered w-full" placeholder="Ingrese email" />
       </div>
 
       <div>
         <label class="block text-sm font-semibold mb-1">
-          <span class="label-text font-medium">Teléfono</span>
-          <span *ngIf="esRequerido('telefono')" class="text-red-500 font-bold">*</span>
+          <span class="label-text font-medium">Teléfono / Celular</span>
+          <span *ngIf="esRequerido('telefono')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="telefono" class="input input-bordered w-full" />
+        <input formControlName="telefono" class="input input-bordered w-full" placeholder="Ingrese teléfono o celular"
+          maxlength="9" (keypress)="soloNumeros($event)" />
       </div>
 
       <div *ngIf="esNatural()">
         <label class="block text-sm font-semibold mb-1">
           <span class="label-text font-medium">Cargo / Profesión</span>
-          <span *ngIf="esRequerido('cargo')" class="text-red-500 font-bold">*</span>
+          <span *ngIf="esRequerido('cargo')" class="text-red-500 font-bold pl-1">*</span>
         </label>
-        <input formControlName="cargo" class="input input-bordered w-full" appUppercase />
+        <input formControlName="cargo" class="input input-bordered w-full" placeholder="Ingrese cargo o profesión"
+          appUppercase />
       </div>
 
     </div>
 
     <!-- BOTONES -->
-    <div class="mt-6 flex justify-between">
-      <button type="button" class="btn btn-secondary" (click)="volver()">
+    <div class="mt-6 flex justify-center gap-5">
+      <button type="button" class="btn btn-outline" (click)="volver()">
+        <i class="fa-solid fa-arrow-left"></i>
         Anterior
       </button>
 
-      <button type="button" class="btn btn-primary" (click)="continuar()">
+      <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
         Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
 

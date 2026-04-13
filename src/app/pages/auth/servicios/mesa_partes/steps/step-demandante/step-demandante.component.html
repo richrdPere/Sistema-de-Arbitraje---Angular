@@ -4,7 +4,7 @@
     <!-- TÍTULO -->
     <div class="mb-4">
       <label class="label">
-        <span class="label-text font-semibold text-xl text-info">
+        <span class="label-text font-semibold text-lg text-info">
           Datos del Demandante
         </span>
       </label>
@@ -160,9 +160,10 @@
     </div>
 
     <!-- BOTÓN -->
-    <div class="mt-6 text-right">
+    <div class="mt-6 flex justify-around">
       <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
         Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
 
