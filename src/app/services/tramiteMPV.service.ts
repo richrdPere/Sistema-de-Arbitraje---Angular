@@ -47,7 +47,6 @@ export class TramiteMPVService {
     return this.http.post<any>(this.API_NEW_TRAMITE, formData);
   }
 
-
   // ===========================================================
   // 2.- Obtener por numero
   // ===========================================================
@@ -97,7 +96,7 @@ export class TramiteMPVService {
   // ===========================================================
   // 5.- Actualizar estado
   // ===========================================================
-  actualizarEstado(id: number, payload: UpdateTramitePayload): Observable<any> {
+  updateEstadoTramite(id: number, payload: UpdateTramitePayload): Observable<any> {
     const headers = this.getAuthHeaders().headers;
     return this.http.put(this.API_UPDATE_TRAMITE + `${id}`, payload, { headers });
   }

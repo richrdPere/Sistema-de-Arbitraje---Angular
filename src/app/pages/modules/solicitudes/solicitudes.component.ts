@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SolicitudesRefreshService } from '../../shared/services/solicitudesRefresh.service';
 
@@ -109,7 +108,6 @@ export class SolicitudesComponent implements OnInit {
     this.menuAbierto = null;
   }
 
-
   // MODAL
   modalVisible = false;
   nuevoEstado: string = '';
@@ -118,7 +116,6 @@ export class SolicitudesComponent implements OnInit {
   constructor(
     private router: Router,
     private tramiteService: TramiteMPVService,
-    private expedientesService: ExpedientesService,
     private refreshService: SolicitudesRefreshService,
     private authService: AuthService
   ) {
@@ -135,10 +132,13 @@ export class SolicitudesComponent implements OnInit {
     this.cargarTramitesPorEstado();
   }
 
+
   // ======================================================
-  //  Cargar trámites usando el nuevo service con filtros
+  // METHODS
   // ======================================================
-  cargarTramitesPorEstado(estado?: 'pendiente' | 'aprobada' | 'rechazada'): void {
+
+  // - Cargar trámites
+  cargarTramitesPorEstado(estado?: 'PENDIENTE' | 'APROBADA' | 'RECHAZADA'): void {
     this.loading = true;
 
     const filtros: any = {
@@ -146,12 +146,12 @@ export class SolicitudesComponent implements OnInit {
       limit: this.limit,
       search: this.filtroSearch,
       tipo: this.filtroTipo,
-      estado: "pendiente",
+      estado: "PENDIENTE",
     };
 
-    // Si es usuario, debe enviarse el id_usuario
+    // Si es usuario, debe enviarse el ID
     if (this.rol === 'usuario') {
-      filtros.id_usuario = this.usuario.id_usuario;
+      filtros.id_usuario = this.usuario.id;
     }
 
     this.tramiteService.listarTramitesPaginated(filtros).subscribe({
@@ -163,9 +163,8 @@ export class SolicitudesComponent implements OnInit {
         this.totalItems = resp.total;
         this.totalPages = resp.totalPages;
 
-        // ================================
-        // 2. AJUSTE AUTOMÁTICO DE PÁGINA
-        // ================================
+
+        // AJUSTE AUTOMÁTICO DE PÁGINA
         if (this.page > this.totalPages && this.totalPages > 0) {
           this.page = this.totalPages;
           this.cargarTramitesPorEstado(estado); //  recargar con página válida
@@ -180,21 +179,7 @@ export class SolicitudesComponent implements OnInit {
     });
   }
 
-  cargarTramitesAprobadas(): void {
-    this.loading = true;
-
-    const filtros: any = {
-      page: this.page,
-      limit: this.limit,
-      rol: this.rol,
-      search: this.search,
-      estado: "aprobado",
-      tipo: this.tipo,
-      fecha_inicio: this.fecha_inicio,
-      fecha_fin: this.fecha_fin
-    };
-  }
-
+  // - Aplicar filtros
   aplicarFiltros() {
     const buscar = (this.filtroSearch || '').toLowerCase().trim();
     const tipo = this.filtroTipo;
@@ -216,6 +201,82 @@ export class SolicitudesComponent implements OnInit {
     });
   }
 
+  // - Aprobar solicitud
+  aprobarSolicitud() {
+    this.nuevoEstado = 'APROBADA';
+    this.confirmarCambioEstado();
+  }
+
+  // - Rechazar solicitud
+  rechazarSolicitud(motivo: string) {
+    this.nuevoEstado = 'RECHAZADA';
+    this.razonRechazo = motivo;
+    this.confirmarCambioEstado();
+  }
+
+  // - Cambiar estado del trámite
+  confirmarCambioEstado() {
+    if (!this.tramiteSeleccionado || !this.nuevoEstado) return;
+
+    const tramite = this.tramiteSeleccionado;
+
+    // 1. Preparamos payload
+    const payload: any = {
+      estado: this.nuevoEstado,
+      usuario_id: this.usuario.id,
+      observaciones: this.nuevoEstado === 'RECHAZADA' ? this.razonRechazo : null,
+      correo_solicitante: tramite.correo,
+      nombre_solicitante: tramite.solicitante,
+    };
+
+    // 2. Loading inicial
+    Swal.fire({
+      title: 'Procesando...',
+      text: 'Actualizando estado del trámite',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    // 3. Actualizamos TRÁMITE
+    this.tramiteService.updateEstadoTramite(tramite.id, payload)
+      .subscribe({
+        next: () => {
+
+          Swal.fire({
+            icon: 'success',
+            title:
+              this.nuevoEstado === 'APROBADA'
+                ? 'Solicitud aprobada'
+                : 'Solicitud rechazada',
+            html:
+              this.nuevoEstado === 'RECHAZADA'
+                ? `<b>Motivo:</b><br>${this.razonRechazo}`
+                : 'Se ha procesado correctamente.',
+          });
+
+          this.cerrarModal();
+          this.razonRechazo = '';
+
+          this.cargarTramitesPorEstado();
+          this.refreshService.emitirActualizacion();
+        },
+
+        error: (err) => {
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al actualizar trámite',
+            text: 'No se pudo actualizar el trámite. Intente nuevamente.',
+          });
+        }
+      });
+  }
+
+  // ======================================================
+  // HELPERS METHODS
+  // ======================================================
+
+  // - Modal estado
   abrirModalEstado(tramite: any) {
     this.tramiteSeleccionado = tramite;
     this.tipoModal = 'estado';
@@ -235,6 +296,7 @@ export class SolicitudesComponent implements OnInit {
 
   }
 
+  // - Modal detalle
   verDetalle(tramite: any) {
     this.tramiteDetalle = tramite;
     this.mostrarDetalle = true;
@@ -245,156 +307,9 @@ export class SolicitudesComponent implements OnInit {
     this.tramiteSeleccionado = null;
   }
 
+  // - Modal ver archivo
   verArchivos(item: any) {
     this.mostrarModal = true;
     this.documentosSeleccionados = item.documentos;
-    // { this.router.navigate([`app/expedientes/${item.id_expediente}/documentos`]); }
-
   }
-
-  aprobarSolicitud() {
-    this.nuevoEstado = 'aprobada';
-    this.confirmarCambioEstado();
-  }
-
-  rechazarSolicitud(motivo: string) {
-    this.nuevoEstado = 'rechazada';
-    this.razonRechazo = motivo;
-    this.confirmarCambioEstado();
-  }
-
-
-  // ======================================================
-  //  Cambiar estado del trámite + expediente
-  // ======================================================
-  confirmarCambioEstado() {
-    if (!this.tramiteSeleccionado || !this.nuevoEstado) return;
-
-    const tramite = this.tramiteSeleccionado;
-    const nuevoEstadoTramite = this.nuevoEstado;
-
-    // ================================
-    // 1. Preparamos payload
-    // ================================
-    const payload: any = {
-      estado: nuevoEstadoTramite,
-      id_expediente: tramite.id_expediente,
-      usuario_responsable: this.usuario?.nombre || 'Administrador del sistema',
-      //razon: this.razonRechazo || null,
-      observaciones: nuevoEstadoTramite === 'rechazada' ? this.razonRechazo : undefined,
-      correo_solicitante: tramite.correo,
-      nombre_solicitante: tramite.solicitante,
-      // correo_asociado: { ... }   <-- si luego usas webhooks, aquí entra
-    };
-
-    if (nuevoEstadoTramite === 'rechazada') {
-      payload.observaciones = this.razonRechazo;
-    }
-
-    // ================================
-    // 2. Loading inicial
-    // ================================
-    Swal.fire({
-      title: 'Procesando...',
-      text: 'Actualizando estado del trámite',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    // ================================
-    // 3. Actualizamos TRÁMITE
-    // ================================
-    this.tramiteService.actualizarEstado(tramite.id, payload)
-      .subscribe({
-        next: () => {
-          // const totalAntes = this.totalItems;
-
-          const expedienteId = tramite.id_expediente;
-
-          if (!expedienteId) {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Actualizado con advertencia',
-              text: 'El trámite fue actualizado, pero no se encontró expediente asociado.',
-            });
-            this.cerrarModal();
-            this.cargarTramitesPorEstado();
-
-            // 🔥 Notificar a los otros componentes
-            this.refreshService.emitirActualizacion();
-
-            return;
-          }
-
-          // ================================
-          // 4. Actualizamos EXPEDIENTE
-          // ================================
-          const nuevoEstadoExpediente =
-            nuevoEstadoTramite === 'aprobada' ? 'En trámite' : 'Suspendido';
-
-          // ================================
-          // 5. ACTUALIZAR EXPEDIENTE
-          // ================================
-
-          this.expedientesService.actualizarExpediente(expedienteId, {
-            estado: nuevoEstadoExpediente
-          })
-            .subscribe({
-              next: () => {
-                // ================================
-                //  REAJUSTE DE PAGINACIÓN
-                // ================================
-
-                Swal.fire({
-                  icon: 'success',
-                  title:
-                    nuevoEstadoTramite === 'aprobada'
-                      ? 'Solicitud aprobada'
-                      : 'Solicitud rechazada',
-                  html:
-                    nuevoEstadoTramite === 'rechazada'
-                      ? `<b>Motivo:</b><br>${this.razonRechazo}`
-                      : 'Se ha procedido correctamente.',
-                });
-
-                this.cerrarModal();
-                this.razonRechazo = '';
-
-                this.cargarTramitesPorEstado();
-
-                // 🔥 Notificar a todos los componentes
-                this.refreshService.emitirActualizacion();
-              },
-
-              error: (err) => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error al actualizar expediente',
-                  text: 'El trámite fue actualizado, pero ocurrió un error con el expediente.',
-                });
-
-                this.cerrarModal();
-                this.cargarTramitesPorEstado();
-
-                // 🔥 Notificar a todos los componentes
-                this.refreshService.emitirActualizacion();
-              }
-            });
-        },
-
-        error: (err) => {
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Error al actualizar trámite',
-            text: 'No se pudo actualizar el trámite. Intente nuevamente.',
-          });
-        }
-      });
-  }
-
-  mostrarCampoRechazo() {
-    this.nuevoEstado = 'rechazada';
-  }
-
 }

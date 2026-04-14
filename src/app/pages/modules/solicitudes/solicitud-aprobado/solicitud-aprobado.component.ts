@@ -17,7 +17,7 @@ export class SolicitudAprobadoComponent {
   @Output() aprobar = new EventEmitter<void>();
   @Output() rechazar = new EventEmitter<string>();
 
-  nuevoEstado: '' | 'rechazada' = '';
+  nuevoEstado: '' | 'RECHAZADA' = '';
   razonRechazo = '';
 
   cerrarModal() {
