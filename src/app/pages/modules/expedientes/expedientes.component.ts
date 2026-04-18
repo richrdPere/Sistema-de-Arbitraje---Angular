@@ -250,13 +250,13 @@ export class ExpedientesComponent {
   cargarExpedientes() {
     this.loading = true;
 
-    this.expedienteService.listarExpedientes({
+    this.expedienteService.getExpedientesPaginated({
       page: this.page,
       limit: this.limit,
-      search: this.filtroSearch?.trim() || undefined,
+      nro_expediente: this.filtroSearch?.trim(),
       mes: this.filtroMes || undefined,
       anio: this.filtroAnio || undefined,
-      rol: this.rol || 'secretaria',
+
     }).subscribe({
       next: (resp) => {
         this.expedientes = resp.data;

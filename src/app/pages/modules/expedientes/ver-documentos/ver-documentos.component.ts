@@ -61,7 +61,7 @@ export class VerDocumentosComponent implements OnInit {
   }
 
   cargarDatosExpediente() {
-    this.expedienteService.obtenerExpedientePorId(this.idExpediente)
+    this.expedienteService.getExpedienteById(this.idExpediente)
       .subscribe({
         next: (exp) => {
           this.numeroExpediente = exp.numero_expediente;

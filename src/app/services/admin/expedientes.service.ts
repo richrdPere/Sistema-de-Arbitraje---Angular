@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+
 
 // Environment
 import { environment } from '@environments/environment';
@@ -14,7 +15,13 @@ export class ExpedientesService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'expedientes';
+  API_BASE: string = this.envs.main_url_prueba + 'expedientes';
+
+  API_NEW_EXPEDIENTE: string = this.API_BASE + '/crear';
+  API_GET_EXPEDIENTE_PAGINATED: string = this.API_BASE + '/paginado';
+  API_GET_EXPEDIENTE_BY_ID: string = this.API_BASE + '/detalle/';
+  API_UPDATE_EXPEDIENTE: string = this.API_BASE + '/editar/';
+  API_DELETE_EXPEDIENTE: string = this.API_BASE + '/eliminar/';
 
   constructor(private http: HttpClient) { }
 
@@ -31,25 +38,23 @@ export class ExpedientesService {
 
     return { headers };
   }
-  // ===========================
-  // 1.- CREAR EXPEDIENTE
-  // ===========================
-  crearExpediente(data: any): Observable<any> {
-    return this.http.post(`${this.url}/`, data, this.getAuthHeaders());
+
+  // ===========================================================
+  // 1.- Registrar expediente
+  // ===========================================================
+  newExpediente(data: any): Observable<any> {
+    return this.http.post(this.API_NEW_EXPEDIENTE, data, this.getAuthHeaders());
   }
 
   // ===========================
-  // 2.- LISTAR TODOS LOS EXPEDIENTES
+  // 2.- Listar expedientes + paginado
   // ===========================
-  listarExpedientes(filters: {
+  getExpedientesPaginated(filters: {
     page?: number;
     limit?: number;
-    search?: string;
-    estado?: string;
-    tipo?: string;
+    nro_expediente?: string;
     mes?: number;
     anio?: number;
-    rol?: string;
   }): Observable<any> {
     let params = new HttpParams();
 
@@ -61,60 +66,61 @@ export class ExpedientesService {
 
     const headers = this.getAuthHeaders().headers;
 
-    return this.http.get(`${this.url}`, {
-      params,
-      headers,
-    });
+    return this.http.get<any>(this.API_GET_EXPEDIENTE_PAGINATED, { params, headers, });
   }
 
   // ===========================
-  // 3.- BUSCAR EXPEDIENTE
+  // 3.- Obtener expediente por ID
+  // ===========================
+  getExpedienteById(id: number): Observable<any> {
+    return this.http.get(`${this.API_GET_EXPEDIENTE_BY_ID}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================
+  // 4.- Actualizar expediente
+  // ===========================
+  updateExpediente(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.API_UPDATE_EXPEDIENTE}${id}`, data, this.getAuthHeaders());
+  }
+
+  // ===========================
+  // 5.- Eliminar expediente
+  // ===========================
+  deleteExpediente(id: number): Observable<any> {
+    return this.http.delete(`${this.API_DELETE_EXPEDIENTE}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================
+  // 6.- BUSCAR EXPEDIENTE
   // ===========================
   buscarExpedientes(query: string): Observable<any> {
-    return this.http.get(`${this.url}/buscar?query=${query}`, this.getAuthHeaders());
+    return this.http.get(`${this.API_BASE}/buscar?query=${query}`, this.getAuthHeaders());
   }
 
   // ===========================
-  // 4.- OBTENER EXPEDIENTE POR ID
-  // ===========================
-  obtenerExpedientePorId(id: number): Observable<any> {
-    return this.http.get(`${this.url}/${id}`, this.getAuthHeaders());
-  }
-
-  // ===========================
-  // 5.- OBTENER EXPEDIENTE POR NÚMERO
+  // 7.- OBTENER EXPEDIENTE POR NÚMERO
   // ===========================
   obtenerExpedientePorNumero(numero: string): Observable<any> {
-    return this.http.get(`${this.url}/numero/${numero}`, this.getAuthHeaders());
+    return this.http.get(`${this.API_BASE}/numero/${numero}`, this.getAuthHeaders());
   }
 
-  // ===========================
-  // 6.- ACTUALIZAR EXPEDIENTE
-  // ===========================
-  actualizarExpediente(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.url}/${id}`, data, this.getAuthHeaders());
-  }
 
-  // ===========================
-  // 7.- ELIMINAR EXPEDIENTE
-  // ===========================
-  eliminarExpediente(id: number): Observable<any> {
-    return this.http.delete(`${this.url}/${id}`, this.getAuthHeaders());
-  }
+
+
 
   // *****************************************************
   //  8.- PARTICIPES
   // *****************************************************
   asignarParticipesYDesignacion(expediente_id: number, payload: any) {
-    return this.http.post(`${this.url}/${expediente_id}/designacion`, payload, this.getAuthHeaders());
+    return this.http.post(`${this.API_BASE}/${expediente_id}/designacion`, payload, this.getAuthHeaders());
   }
 
   agregarParticipante(idExpediente: number, data: any): Observable<any> {
-    return this.http.post(`${this.url}/${idExpediente}/participes`, data, this.getAuthHeaders());
+    return this.http.post(`${this.API_BASE}/${idExpediente}/participes`, data, this.getAuthHeaders());
   }
 
   listarParticipantes(idExpediente: number): Observable<any> {
-    return this.http.get(`${this.url}/${idExpediente}/participes`, this.getAuthHeaders());
+    return this.http.get(`${this.API_BASE}/${idExpediente}/participes`, this.getAuthHeaders());
   }
 
 
@@ -125,7 +131,7 @@ export class ExpedientesService {
     const token = localStorage.getItem('token'); // o donde guardes tu JWT
 
     return this.http.post(
-      `${this.url}/${idExpediente}/documentos`,
+      `${this.API_BASE}/${idExpediente}/documentos`,
       data,
       {
         headers: new HttpHeaders({
@@ -138,14 +144,14 @@ export class ExpedientesService {
   }
 
   listarDocumentos(idExpediente: number): Observable<any> {
-    return this.http.get(`${this.url}/${idExpediente}/documentos`, this.getAuthHeaders());
+    return this.http.get(`${this.API_BASE}/${idExpediente}/documentos`, this.getAuthHeaders());
   }
 
   // *****************************************************
   // 10.- HISTORIAL
   // *****************************************************
   obtenerHistorial(idExpediente: number): Observable<any> {
-    return this.http.get(`${this.url}/${idExpediente}/historial`, this.getAuthHeaders());
+    return this.http.get(`${this.API_BASE}/${idExpediente}/historial`, this.getAuthHeaders());
   }
 
 
@@ -154,14 +160,14 @@ export class ExpedientesService {
   // ===========================
   obtenerTrazabilidad(id: number): Observable<any> {
     return this.http.get(
-      `${this.url}/${id}/trazabilidad`,
+      `${this.API_BASE}/${id}/trazabilidad`,
       this.getAuthHeaders()
     );
   }
 
   obtenerPartesYResumen(id: number): Observable<any> {
     return this.http.get(
-      `${this.url}/${id}/partes-resumen`,
+      `${this.API_BASE}/${id}/partes-resumen`,
       this.getAuthHeaders()
     );
   }
@@ -169,7 +175,7 @@ export class ExpedientesService {
 
   anularExpediente(id: number): Observable<any> {
     return this.http.patch(
-      `${this.url}/${id}/anular`,
+      `${this.API_BASE}/${id}/anular`,
       this.getAuthHeaders()
     );
   }

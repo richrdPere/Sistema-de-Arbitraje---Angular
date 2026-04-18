@@ -63,11 +63,11 @@ export class TrazabilidadComponent implements OnInit {
   listarExpedientes(): void {
     this.loading = true;
 
-    this.expedientesService.listarExpedientes({
+    this.expedientesService.getExpedientesPaginated({
       page: this.page,
       limit: this.limit,
-      search: this.filtroSearch?.trim() || undefined,
-      estado: this.filtroEstado || undefined,
+      // search: this.filtroSearch?.trim() || undefined,
+      // estado: this.filtroEstado || undefined,
     }).subscribe({
       next: (resp) => {
         this.expedientes = resp.data;

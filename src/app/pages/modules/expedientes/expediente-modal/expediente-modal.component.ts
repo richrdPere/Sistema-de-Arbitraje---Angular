@@ -6,14 +6,19 @@ import Swal from 'sweetalert2';
 import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
 
 // Services
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedienteFormService } from 'src/app/services/admin/expedientes-form.service';
+import { CommonModule } from '@angular/common';
+import { StepPersonaComponent } from "./step-persona/step-persona.component";
+import { StepExpedienteComponent } from "./step-expediente/step-expediente.component";
+import { StepResumenExpComponent } from "./step-resumen-exp/step-resumen-exp.component";
 
 
 
 @Component({
   selector: 'expediente-modal',
-  imports: [ReactiveFormsModule, UppercaseDirective],
+  imports: [ReactiveFormsModule, CommonModule, StepPersonaComponent, StepExpedienteComponent, StepResumenExpComponent], // UppercaseDirective,
   templateUrl: './expediente-modal.component.html',
   styles: ``
 })
@@ -27,6 +32,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
 
 
   formExpediente!: FormGroup;
+  formPersona!: FormGroup;
   cargando = false;
   mensajeError = '';
   mensajeExito = '';
@@ -39,21 +45,29 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   };
 
   // Step
-  currentStep = 1;
+  currentStep: number = 1;
   totalSteps = 3;
 
 
   constructor(
     private fb: FormBuilder,
     private expedienteService: ExpedientesService,
-    private authService: AuthService
+    private authService: AuthService,
+    public expedienteFormService: ExpedienteFormService
   ) { }
 
   ngOnInit() {
-    this.inicializarFormulario();
-    this.obtenerSecretariaId();
-    this.autoAsignarCodigo();
+    this.initFormExpediente();
+    this.initFormPersona();
+
+    const persona = this.expedienteFormService.getPersona();
+    const expediente = this.expedienteFormService.getExpediente();
+
+    if (persona) this.formPersona.patchValue(persona);
+    if (expediente) this.formExpediente.patchValue(expediente);
   }
+
+
 
   ngOnChanges(changes: SimpleChanges): void {
     //  Si el formulario aún no está creado, salir
@@ -133,7 +147,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
     // }
   }
 
-  inicializarFormulario(): void {
+  initFormExpediente(): void {
     this.formExpediente = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
@@ -147,106 +161,94 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
     });
   }
 
-  nextStep() {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
+  initFormPersona() {
+    this.formPersona = this.fb.group({
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      documento: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+    });
+  }
+
+  getExpedienteData() {
+    const data = this.expedienteFormService.getExpediente();
+    if (data) {
+      this.formExpediente.patchValue(data);
     }
+  }
+
+  nextStep() {
+    if (this.currentStep < 3) this.currentStep++;
+
   }
 
   prevStep() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
+
+    if (this.currentStep > 1) this.currentStep--;
   }
 
+
+  irAlPaso(step: number) {
+    this.currentStep = step;
+  }
   // Enviar Formulario
   crearOEditarExpediente(): void {
-    if (this.formExpediente.invalid) {
-      this.formExpediente.markAllAsTouched();
-      Swal.fire({
-        icon: 'warning',
-        title: 'Formulario incompleto',
-        text: 'Por favor completa todos los campos requeridos.',
-      });
-      return;
-    }
-
-    if (!this.secretariaId) {
-      this.mensajeError = 'No se encontró la sesión de la secretaria.';
-      return;
-    }
 
     this.cargando = true;
-    this.mensajeError = '';
-    this.mensajeExito = '';
+    const payload = this.expedienteFormService.buildPayload();
 
-    // const expediente = this.formExpediente.value;
-    // const expediente: any = { ...this.formExpediente.value };
-    const raw = this.formExpediente.value;
+    if (this.expedienteFormService.getModoEdicion()) {
 
-    const expediente = {
-      ...raw,
-      fecha_inicio: raw.fecha_inicio
-        ? new Date(raw.fecha_inicio).toISOString()
-        : new Date().toISOString(), //  fallback
-      fecha_laudo: raw.fecha_laudo
-        ? new Date(raw.fecha_laudo).toISOString()
-        : null,
-      fecha_resolucion: raw.fecha_resolucion
-        ? new Date(raw.fecha_resolucion).toISOString()
-        : null,
-    };
+      const id = this.expedienteFormService.getExpedienteId();
 
-    // ============================
-    // MODO EDICIÓN
-    // ============================
-    if (this.modoEdicion && this.expedienteSeleccionado?.id_expediente) {
-      this.expedienteService
-        .actualizarExpediente(this.expedienteSeleccionado.id_expediente, expediente)
+      // MODO EDICIÓN
+      this.expedienteService.updateExpediente(id!, payload.expediente)
+        .subscribe(
+          {
+            next: () => {
+              this.cargando = false;
+              // this.mensajeExito = 'Expediente actualizado correctamente.';
+              Swal.fire({ icon: 'success', title: 'Expediente actualizado correctamente' });
+              this.expedienteCreado.emit();
+              this.cerrarModal();
+            },
+            error: (err) => {
+              this.cargando = false;
+              // this.mensajeError = err.error?.message || 'Error al actualizar expediente.';
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar expediente.',
+                text: err.error?.message || 'Error desconocido.',
+              });
+            },
+          }
+        );
+
+    } else {
+      // MODO CREACION
+      this.expedienteService.newExpediente(payload)
         .subscribe({
           next: () => {
-            this.cargando = false;
-            // this.mensajeExito = 'Expediente actualizado correctamente.';
-            Swal.fire({ icon: 'success', title: 'Expediente actualizado correctamente' });
-            this.expedienteCreado.emit();
+            Swal.fire({
+              icon: 'success',
+              title: 'Expediente creado correctamente',
+              text: 'Sirvase a asignar los participes y los arbitros.'
+            });
+
+            this.expedienteCreado.emit(); // refrescar tabla
             this.cerrarModal();
           },
           error: (err) => {
-            this.cargando = false;
-            // this.mensajeError = err.error?.message || 'Error al actualizar expediente.';
             Swal.fire({
               icon: 'error',
-              title: 'Error al actualizar expediente.',
-              text: err.error?.message || 'Error desconocido.',
+              title: 'Error al crear usuario',
+              text: err.error?.message || 'Error desconocido',
             });
-          },
+          }
         });
 
-      return;
     }
 
-    // ============================
-    // MODO CREACIÓN
-    // ============================
-    this.expedienteService.crearExpediente(expediente).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Expediente creado correctamente',
-          text: 'Sirvase a asignar los participes y los arbitros.'
-        });
-
-        this.expedienteCreado.emit(); // refrescar tabla
-        this.cerrarModal();
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al crear usuario',
-          text: err.error?.message || 'Error desconocido',
-        });
-      }
-    });
   }
 
   // Asignar Codigo
@@ -261,7 +263,7 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
   cerrarModal(): void {
     this.mostrarModal = false;
     this.modalCerrado.emit();
-    //this.formExpediente.reset();
+
     this.expedienteSeleccionado = null; //  MUY IMPORTANTE
   }
 
@@ -271,3 +273,77 @@ export class ExpedienteModalComponent implements OnInit, OnChanges {
 
 
 }
+
+
+
+
+
+
+// this.mensajeError = '';
+// this.mensajeExito = '';
+
+// const raw = this.formExpediente.value;
+
+// const expediente = {
+//   ...raw,
+//   fecha_inicio: raw.fecha_inicio
+//     ? new Date(raw.fecha_inicio).toISOString()
+//     : new Date().toISOString(), //  fallback
+//   fecha_laudo: raw.fecha_laudo
+//     ? new Date(raw.fecha_laudo).toISOString()
+//     : null,
+//   fecha_resolucion: raw.fecha_resolucion
+//     ? new Date(raw.fecha_resolucion).toISOString()
+//     : null,
+// };
+
+// // ============================
+// // MODO EDICIÓN
+// // ============================
+// if (this.modoEdicion && this.expedienteSeleccionado?.id_expediente) {
+//   this.expedienteService
+//     .updateExpediente(this.expedienteSeleccionado.id_expediente, expediente)
+//     .subscribe({
+//       next: () => {
+//         this.cargando = false;
+//         // this.mensajeExito = 'Expediente actualizado correctamente.';
+//         Swal.fire({ icon: 'success', title: 'Expediente actualizado correctamente' });
+//         this.expedienteCreado.emit();
+//         this.cerrarModal();
+//       },
+//       error: (err) => {
+//         this.cargando = false;
+//         // this.mensajeError = err.error?.message || 'Error al actualizar expediente.';
+//         Swal.fire({
+//           icon: 'error',
+//           title: 'Error al actualizar expediente.',
+//           text: err.error?.message || 'Error desconocido.',
+//         });
+//       },
+//     });
+
+//   return;
+// }
+
+// // ============================
+// // MODO CREACIÓN
+// // ============================
+// this.expedienteService.newExpediente(expediente).subscribe({
+//   next: () => {
+//     Swal.fire({
+//       icon: 'success',
+//       title: 'Expediente creado correctamente',
+//       text: 'Sirvase a asignar los participes y los arbitros.'
+//     });
+
+//     this.expedienteCreado.emit(); // refrescar tabla
+//     this.cerrarModal();
+//   },
+//   error: (err) => {
+//     Swal.fire({
+//       icon: 'error',
+//       title: 'Error al crear usuario',
+//       text: err.error?.message || 'Error desconocido',
+//     });
+//   }
+// });

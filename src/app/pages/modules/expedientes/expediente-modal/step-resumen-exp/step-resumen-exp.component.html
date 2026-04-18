@@ -1,0 +1,129 @@
+<section class="border border-primary p-6 rounded-md bg-base-100">
+
+  <!-- TÍTULO -->
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-info">
+      Resumen del Expediente
+    </h2>
+    <p class="text-sm text-gray-500">
+      Verifica la información antes de {{ esEdicion? 'actualizar' : 'crear' }} el
+      expediente
+    </p>
+  </div>
+
+  <!-- ========================= -->
+  <!-- PERSONA -->
+  <!-- ========================= -->
+  <div class="mb-6 p-4 border rounded-md bg-base-200">
+
+    <h3 class="font-semibold text-primary mb-3">
+      Datos de la Persona
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+
+      <div>
+        <span class="font-semibold">Nombres:</span>
+        <span>{{ persona.nombres || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Apellidos:</span>
+        <span>{{ persona.apellidos || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Documento:</span>
+        <span>{{ persona.documento || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Correo:</span>
+        <span>{{ persona.correo || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Teléfono:</span>
+        <span>{{ persona.telefono || '-' }}</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================= -->
+  <!-- EXPEDIENTE -->
+  <!-- ========================= -->
+  <div class="mb-6 p-4 border rounded-md bg-base-200">
+
+    <h3 class="font-semibold text-primary mb-3">
+      Datos del Expediente
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+
+      <div>
+        <span class="font-semibold">Título:</span>
+        <span>{{ expediente.titulo || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Código:</span>
+        <span>{{ expediente.codigo || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Tipo:</span>
+        <span>{{ expediente.tipo || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Fecha inicio:</span>
+        <span>{{ expediente.fecha_inicio || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Fecha laudo:</span>
+        <span>{{ expediente.fecha_laudo || '-' }}</span>
+      </div>
+
+      <div>
+        <span class="font-semibold">Fecha resolución:</span>
+        <span>{{ expediente.fecha_resolucion || '-' }}</span>
+      </div>
+
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="mt-3">
+      <span class="font-semibold">Descripción:</span>
+      <p class="text-sm mt-1">
+        {{ expediente.descripcion || '-' }}
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- BOTONES -->
+  <!-- ========================= -->
+  <div class="flex justify-between mt-6">
+
+    <button class="btn btn-outline" (click)="volver()">
+      <i class="fa-solid fa-arrow-left"></i>
+      Anterior
+    </button>
+
+    <button class="btn btn-success" (click)="guardar()" [disabled]="loading">
+      <span *ngIf="!loading">
+        <i class="fa-solid fa-save"></i>
+        {{ esEdicion ? 'Actualizar' : 'Crear' }}
+      </span>
+
+      <span *ngIf="loading">
+        Procesando...
+      </span>
+    </button>
+
+  </div>
+
+</section>

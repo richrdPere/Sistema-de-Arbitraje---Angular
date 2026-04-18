@@ -1,0 +1,148 @@
+<form [formGroup]="form">
+
+  <section class="border border-primary p-6 rounded-md bg-base-100">
+
+    <!-- TÍTULO -->
+    <div class="mb-4">
+      <label class="label">
+        <span class="label-text font-semibold text-xl text-info">
+          Datos del Expediente
+        </span>
+      </label>
+    </div>
+
+    <!-- TIPO DE ARBITRAJE -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+
+      <div class="md:col-span-6">
+        <label class="block text-sm font-semibold mb-1">
+          Tipo de Arbitraje
+          <span *ngIf="esRequerido('tipo')" class="text-red-500 font-bold"> *</span>
+        </label>
+
+        <select formControlName="tipo" class="select select-bordered w-full">
+
+          <option [ngValue]="null" disabled>
+            Seleccionar tipo de arbitraje
+          </option>
+
+          <option *ngFor="let t of tipoArbitraje" [value]="t.value">
+            {{ t.label }}
+          </option>
+
+        </select>
+      </div>
+
+      <!-- CÓDIGO -->
+      <div class="md:col-span-6">
+        <label class="block text-sm font-semibold mb-1">
+          Código
+        </label>
+
+        <input
+          type="text"
+          formControlName="codigo"
+          class="input input-bordered w-full"
+          placeholder="Código automático"
+          readonly
+        />
+      </div>
+
+    </div>
+
+    <!-- TITULO -->
+    <div class="mb-4">
+      <label class="block text-sm font-semibold mb-1">
+        Título
+        <span *ngIf="esRequerido('titulo')" class="text-red-500 font-bold"> *</span>
+      </label>
+
+      <input
+        type="text"
+        formControlName="titulo"
+        class="input input-bordered w-full"
+        placeholder="Ingrese título del expediente"
+        appUppercase
+      />
+    </div>
+
+    <!-- DESCRIPCION -->
+    <div class="mb-4">
+      <label class="block text-sm font-semibold mb-1">
+        Descripción
+        <span *ngIf="esRequerido('descripcion')" class="text-red-500 font-bold"> *</span>
+      </label>
+
+      <textarea
+        formControlName="descripcion"
+        class="textarea textarea-bordered w-full"
+        rows="3"
+        placeholder="Descripción del expediente"
+      ></textarea>
+    </div>
+
+    <!-- FECHAS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          Fecha de inicio
+          <span *ngIf="esRequerido('fecha_inicio')" class="text-red-500 font-bold"> *</span>
+        </label>
+
+        <input
+          type="date"
+          formControlName="fecha_inicio"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          Fecha de laudo
+        </label>
+
+        <input
+          type="date"
+          formControlName="fecha_laudo"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">
+          Fecha de resolución
+        </label>
+
+        <input
+          type="date"
+          formControlName="fecha_resolucion"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="mt-6 flex justify-center gap-5">
+
+      <button type="button" class="btn btn-outline" (click)="volver()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Anterior
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="continuar()"
+        [disabled]="form.invalid"
+      >
+        Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+    </div>
+
+  </section>
+
+</form>

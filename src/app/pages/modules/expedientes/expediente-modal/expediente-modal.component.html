@@ -8,114 +8,38 @@
       <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
     </div>
 
-    <!-- Mensajes -->
-    @if (mensajeError) {
-    <div class="alert alert-error text-sm mb-4 shadow-sm">
-      <span>{{ mensajeError }}</span>
-    </div>
-    }
-
-    @if (mensajeExito) {
-    <div class="alert alert-success text-sm mb-4 shadow-sm">
-      <span>{{ mensajeExito }}</span>
-    </div>
-    }
-
-
-
     <!-- FORMULARIO -->
-    <form [formGroup]="formExpediente" (ngSubmit)="crearOEditarExpediente()" class="space-y-6">
+    <!-- STEPPER -->
+    <ul class="steps steps-horizontal  w-full mt-4">
+      <li class="step" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+        PERSONA
+      </li>
 
-      <div class="card-body p-0">
+      <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+        EXPEDIENTE
+      </li>
 
-        <!-- ========== Datos del expediente ========== -->
-        <section>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-5">
+      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+        RESUMEN
+      </li>
+    </ul>
 
-            <!-- Código / Tipo de Arbitraje (1/3) -->
-            <div class="md:col-span-1">
-              <label class="block text-sm font-semibold mb-1">Tipo de Arbitraje</label>
-              <select formControlName="tipo" class="select select-bordered w-full">
-                <option [ngValue]="null" disabled>Seleccione arbitraje...</option>
-                <option value="Arbitraje Institucional">ARB. INSTITUCIONAL</option>
-                <option value="Arbitraje de Emergencia">ARB. DE EMERGENCIA</option>
-                <option value="Arbitraje Ad Hoc">ARB. AD HOC</option>
-              </select>
+    <!-- BODY -->
+    <div class="modal-body">
 
-               @if (f['tipo'].invalid && f['tipo'].touched) {
-              <small class="text-error text-xs">Seleccione el tipo de arbitraje</small>
-              }
-            </div>
+      <!-- STEP 1: PERSONA -->
+      <step-persona *ngIf="currentStep === 1" (nextStep)="nextStep()"></step-persona>
 
-            <!-- Título (2/3) -->
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold mb-1">Título</label>
-              <input type="text" formControlName="titulo" placeholder="Ej. Arbitraje por incumplimiento de contrato"
-                appUppercase class="input input-bordered w-full focus:outline-none"
-                [class.input-error]="f['titulo'].invalid && f['titulo'].touched" />
-              @if (f['titulo'].invalid && f['titulo'].touched) {
-              <small class="text-error text-xs">Ingrese el título</small>
-              }
-            </div>
+      <!-- STEP 2: EXPEDIENTE -->
+      <step-expediente *ngIf="currentStep === 2" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-expediente>
 
-            <!-- Descripción (fila completa) -->
-            <div class="md:col-span-3">
-              <label class="block text-sm font-semibold mb-1">Descripción</label>
-              <textarea formControlName="descripcion" rows="3" placeholder="Descripción del expediente" appUppercase
-                class="textarea textarea-bordered w-full focus:outline-none resize-none"></textarea>
 
-              @if (f['descripcion'].invalid && f['descripcion'].touched) {
-              <small class="text-error text-xs">Ingrese la descripción</small>
-              }
-            </div>
+      <!-- STEP 3: RESUMEN -->
+      <step-resumen-exp *ngIf="currentStep === 3" (prevStep)="prevStep()"
+        (resetStepper)="cerrarModal()"></step-resumen-exp>
 
-          </div>
-        </section>
+    </div>
 
-        <!-- ========== Tipo, estado y etapa procesal ========== -->
-        <!-- <section>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-          </div>
-        </section> -->
-
-        <!-- ========== Fechas ========== -->
-        <section>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm font-semibold mb-1">Fecha de Presentación</label>
-              <input formControlName="fecha_inicio" type="date" class="input input-bordered w-full" />
-            </div>
-
-            <!-- <div>
-              <label class="block text-sm font-semibold mb-1">Fecha de Laudo</label>
-              <input formControlName="fecha_laudo" type="date" class="input input-bordered w-full" />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-1">Fecha de Resolución</label>
-              <input formControlName="fecha_resolucion" type="date" class="input input-bordered w-full" />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold mb-1">Fecha de Cierre</label>
-              <input formControlName="fecha_cierre" type="date" class="input input-bordered w-full" />
-            </div> -->
-          </div>
-        </section>
-      </div>
-
-      <!-- ========== ACCIONES ========== -->
-      <div class="flex justify-between mt-6">
-        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
-          Cancelar
-        </button>
-
-        <button class="btn btn-success text-white" type="submit" [disabled]="formExpediente.invalid">
-          {{ modoEdicion ? 'Actualizar Expediente' : 'Guardar Expediente' }}
-        </button>
-      </div>
-    </form>
   </div>
 
   <!-- Fondo oscuro del modal -->
