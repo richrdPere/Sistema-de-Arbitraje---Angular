@@ -67,7 +67,7 @@ export class StepPersonaComponent implements OnInit {
   }
 
   loadDataPersona() {
-    const data = this.expedienteFormService.getExpediente();
+    const data = this.expedienteFormService.getPersona();
 
     if (data && Object.keys(data).length > 0) {
 

@@ -11,15 +11,20 @@
     <!-- FORMULARIO -->
     <!-- STEPPER -->
     <ul class="steps steps-horizontal  w-full mt-4">
-      <li class="step" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+      <!-- STEP 1 -->
+      <li class="step cursor-pointer" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
         PERSONA
       </li>
 
-      <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+      <!-- STEP 2 -->
+      <li class="step" [class.step-primary]="currentStep >= 2" [class.cursor-pointer]="puedeIrAlPaso(2)"
+        [class.opacity-50]="!puedeIrAlPaso(2)" (click)="irAlPaso(2)">
         EXPEDIENTE
       </li>
 
-      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+      <!-- STEP 3 -->
+      <li class="step" [class.step-primary]="currentStep >= 3" [class.cursor-pointer]="puedeIrAlPaso(3)"
+        [class.opacity-50]="!puedeIrAlPaso(3)" (click)="irAlPaso(3)">
         RESUMEN
       </li>
     </ul>
@@ -35,8 +40,8 @@
 
 
       <!-- STEP 3: RESUMEN -->
-      <step-resumen-exp *ngIf="currentStep === 3" (prevStep)="prevStep()"
-        (resetStepper)="cerrarModal()"></step-resumen-exp>
+      <step-resumen-exp *ngIf="currentStep === 3" (prevStep)="prevStep()" (resetStepper)="cerrarModal()"
+        (expedienteGuardado)="onExpedienteGuardado()"></step-resumen-exp>
 
     </div>
 

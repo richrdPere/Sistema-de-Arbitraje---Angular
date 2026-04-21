@@ -6,17 +6,22 @@ export interface ExpedienteData {
   descripcion: string;
   tipo: string;
   codigo: string;
-  fecha_inicio: string;
+  fecha_inicio: string | null;
   fecha_laudo?: string | null;
   fecha_resolucion?: string | null;
 }
 
 export interface PersonaData {
+  tipo: string;
   nombres: string;
   apellidos: string;
-  documento: string;
-  correo: string;
-  telefono?: string;
+  ruc: string;
+  razon_social: string;
+  nombre_entidad: string;
+  email: string;
+  telefono: string;
+  direccion: string;
+  cargo: string
 }
 
 export interface FormDataExpediente {

@@ -39,13 +39,8 @@
           Código
         </label>
 
-        <input
-          type="text"
-          formControlName="codigo"
-          class="input input-bordered w-full"
-          placeholder="Código automático"
-          readonly
-        />
+        <input type="text" formControlName="codigo" class="input input-bordered w-full" placeholder="Código automático"
+          readonly />
       </div>
 
     </div>
@@ -57,13 +52,8 @@
         <span *ngIf="esRequerido('titulo')" class="text-red-500 font-bold"> *</span>
       </label>
 
-      <input
-        type="text"
-        formControlName="titulo"
-        class="input input-bordered w-full"
-        placeholder="Ingrese título del expediente"
-        appUppercase
-      />
+      <input type="text" formControlName="titulo" class="input input-bordered w-full"
+        placeholder="Ingrese título del expediente" appUppercase />
     </div>
 
     <!-- DESCRIPCION -->
@@ -73,12 +63,8 @@
         <span *ngIf="esRequerido('descripcion')" class="text-red-500 font-bold"> *</span>
       </label>
 
-      <textarea
-        formControlName="descripcion"
-        class="textarea textarea-bordered w-full"
-        rows="3"
-        placeholder="Descripción del expediente"
-      ></textarea>
+      <textarea formControlName="descripcion" class="textarea textarea-bordered w-full" rows="3"
+        placeholder="Descripción del expediente" appUppercase></textarea>
     </div>
 
     <!-- FECHAS -->
@@ -90,11 +76,7 @@
           <span *ngIf="esRequerido('fecha_inicio')" class="text-red-500 font-bold"> *</span>
         </label>
 
-        <input
-          type="date"
-          formControlName="fecha_inicio"
-          class="input input-bordered w-full"
-        />
+        <input type="date" formControlName="fecha_inicio" class="input input-bordered w-full" />
       </div>
 
       <div>
@@ -102,11 +84,7 @@
           Fecha de laudo
         </label>
 
-        <input
-          type="date"
-          formControlName="fecha_laudo"
-          class="input input-bordered w-full"
-        />
+        <input type="date" formControlName="fecha_laudo" class="input input-bordered w-full" />
       </div>
 
       <div>
@@ -114,11 +92,7 @@
           Fecha de resolución
         </label>
 
-        <input
-          type="date"
-          formControlName="fecha_resolucion"
-          class="input input-bordered w-full"
-        />
+        <input type="date" formControlName="fecha_resolucion" class="input input-bordered w-full" />
       </div>
 
     </div>
@@ -131,12 +105,7 @@
         Anterior
       </button>
 
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="continuar()"
-        [disabled]="form.invalid"
-      >
+      <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
         Siguiente
         <i class="fa-solid fa-arrow-right"></i>
       </button>

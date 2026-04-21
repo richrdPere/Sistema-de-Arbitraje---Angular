@@ -23,28 +23,67 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
       <div>
-        <span class="font-semibold">Nombres:</span>
+        <span class="font-semibold mr-1">Tipo:</span>
+        <span>{{ persona.tipo || '-' }}</span>
+      </div>
+
+      <!-- PERSONA NATURAL -->
+      <div *ngIf="persona.tipo === 'NATURAL'">
+        <span class="font-semibold mr-1">Nombres:</span>
         <span>{{ persona.nombres || '-' }}</span>
       </div>
 
-      <div>
-        <span class="font-semibold">Apellidos:</span>
+      <div *ngIf="persona.tipo === 'NATURAL'">
+        <span class="font-semibold mr-1">Apellidos:</span>
         <span>{{ persona.apellidos || '-' }}</span>
       </div>
 
+      <div *ngIf="persona.tipo === 'NATURAL'">
+        <span class="font-semibold mr-1">DNI:</span>
+        <span>{{ persona.dni || '-' }}</span>
+      </div>
+
+      <div *ngIf="persona.tipo === 'NATURAL'">
+        <span class="font-semibold mr-1">Cargo:</span>
+        <span>{{ persona.cargo || '-' }}</span>
+      </div>
+
+      <!-- JURÍDICA -->
+      <div *ngIf="persona.tipo === 'JURIDICA'">
+        <span class="font-semibold mr-1">RUC:</span>
+        <span>{{ persona.ruc || '-' }}</span>
+      </div>
+
+      <div *ngIf="persona.tipo === 'JURIDICA'">
+        <span class="font-semibold mr-1">Razón social:</span>
+        <span>{{ persona.razon_social || '-' }}</span>
+      </div>
+
+      <!-- ENTIDAD -->
+      <div *ngIf="persona.tipo === 'ENTIDAD_PUBLICA'">
+        <span class="font-semibold mr-1">RUC:</span>
+        <span>{{ persona.ruc || '-' }}</span>
+      </div>
+
+      <div *ngIf="persona.tipo === 'ENTIDAD_PUBLICA'">
+        <span class="font-semibold mr-1">Entidad:</span>
+        <span>{{ persona.nombre_entidad || '-' }}</span>
+      </div>
+
+      <!-- COMUNES -->
       <div>
-        <span class="font-semibold">Documento:</span>
-        <span>{{ persona.documento || '-' }}</span>
+        <span class="font-semibold mr-1">Email:</span>
+        <span>{{ persona.email || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Correo:</span>
-        <span>{{ persona.correo || '-' }}</span>
-      </div>
-
-      <div>
-        <span class="font-semibold">Teléfono:</span>
+        <span class="font-semibold mr-1">Teléfono:</span>
         <span>{{ persona.telefono || '-' }}</span>
+      </div>
+
+      <div class="md:col-span-2">
+        <span class="font-semibold mr-1">Dirección:</span>
+        <span>{{ persona.direccion || '-' }}</span>
       </div>
 
     </div>
@@ -62,32 +101,32 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
       <div>
-        <span class="font-semibold">Título:</span>
+        <span class="font-semibold mr-1">Título:</span>
         <span>{{ expediente.titulo || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Código:</span>
+        <span class="font-semibold mr-1">Código:</span>
         <span>{{ expediente.codigo || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Tipo:</span>
+        <span class="font-semibold mr-1">Tipo:</span>
         <span>{{ expediente.tipo || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Fecha inicio:</span>
+        <span class="font-semibold mr-1">Fecha inicio:</span>
         <span>{{ expediente.fecha_inicio || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Fecha laudo:</span>
+        <span class="font-semibold mr-1">Fecha laudo:</span>
         <span>{{ expediente.fecha_laudo || '-' }}</span>
       </div>
 
       <div>
-        <span class="font-semibold">Fecha resolución:</span>
+        <span class="font-semibold mr-1">Fecha resolución:</span>
         <span>{{ expediente.fecha_resolucion || '-' }}</span>
       </div>
 
@@ -106,7 +145,7 @@
   <!-- ========================= -->
   <!-- BOTONES -->
   <!-- ========================= -->
-  <div class="flex justify-between mt-6">
+  <div class="flex justify-center mt-6 gap-5">
 
     <button class="btn btn-outline" (click)="volver()">
       <i class="fa-solid fa-arrow-left"></i>

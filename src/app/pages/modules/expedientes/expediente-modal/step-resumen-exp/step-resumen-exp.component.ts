@@ -17,6 +17,7 @@ export class StepResumenExpComponent implements OnInit {
 
   @Output() prevStep = new EventEmitter<void>();
   @Output() resetStepper = new EventEmitter<void>();
+  @Output() expedienteGuardado = new EventEmitter<void>();
 
   data: any;
   loading = false;
@@ -48,9 +49,14 @@ export class StepResumenExpComponent implements OnInit {
     const isEdit = this.expedienteFormService.getModoEdicion();
     const id = this.expedienteFormService.getExpedienteId();
 
+
+    // =========================
+    // EDITAR EXPEDIENTE
+    // =========================
+
     if (isEdit && id) {
 
-      this.expedienteService.updateExpediente(id, payload.expediente)
+      this.expedienteService.updateExpediente(id, payload)
         .subscribe({
           next: () => {
             this.loading = false;
@@ -60,6 +66,7 @@ export class StepResumenExpComponent implements OnInit {
               title: 'Expediente actualizado correctamente'
             });
 
+            this.expedienteGuardado.emit();
             this.resetStepper.emit();
           },
           error: (err) => {
@@ -89,6 +96,7 @@ export class StepResumenExpComponent implements OnInit {
             title: 'Expediente creado correctamente'
           });
 
+          this.expedienteGuardado.emit();
           this.resetStepper.emit();
         },
         error: (err) => {
