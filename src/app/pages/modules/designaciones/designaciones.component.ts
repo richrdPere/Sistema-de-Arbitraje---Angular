@@ -9,24 +9,29 @@ import { DesignacionService } from 'src/app/services/designacion.service';
 import { DesignacionDocumentosComponent } from "./designacion-documentos/designacion-documentos.component";
 import { DesignacionInfoComponent } from "./designacion-info/designacion-info.component";
 import { DesignacionParticipesComponent } from "./designacion-participes/designacion-participes.component";
+import { DesignacionFormComponent } from "./designacion-form/designacion-form.component";
 
 @Component({
   selector: 'app-designaciones',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, DesignacionDocumentosComponent, DesignacionInfoComponent, DesignacionParticipesComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, DesignacionDocumentosComponent, DesignacionInfoComponent, DesignacionParticipesComponent, DesignacionFormComponent],
   templateUrl: './designaciones.component.html',
   styles: ``
 })
 export class DesignacionesComponent implements OnInit {
 
-
+  // Expedientes
   designaciones: any[] = [];
   total = 0;
+
+
   pagina_actual = 1;
   por_pagina = 20;
   total_paginas = 0;
 
   searchTimeout: any;
   mostrarModal = false;
+  mostrarModalForm = false;
+  modoEdicion = false;
   documentosSeleccionados: any[] = [];
   mostrarDetalle = false;
   designacionSeleccionada: any = null;
@@ -138,9 +143,22 @@ export class DesignacionesComponent implements OnInit {
 
   cerrarModal() {
 
-    this.mostrarModal = false;
-
-
+    this.mostrarModalForm = false;
 
   }
+
+
+  cambiarLimite() {
+    // this.limit = Number(this.limit);
+    this.page = 1;
+    this.cargarDesignaciones();
+  }
+
+
+  abrirModal() {
+    this.modoEdicion = false;
+    this.designacionSeleccionada = null;
+    this.mostrarModalForm = true;
+  }
+
 }

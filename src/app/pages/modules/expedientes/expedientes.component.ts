@@ -22,15 +22,15 @@ import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
 import { VerHistorialComponent } from "./ver-historial/ver-historial.component";
 import Swal from 'sweetalert2';
+import { VerExpedienteComponent } from "./ver-expediente/ver-expediente.component";
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent, VerExpedienteComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
 export class ExpedientesComponent {
-
 
   // Expedientes
   expedientes: any = [];
@@ -53,6 +53,7 @@ export class ExpedientesComponent {
   mostrarModal = false;
   mostrarModalParticipes = false;
   mostrarModalHistorial = false;
+  mostrarModalInfoExpediente = false;
   selectedExpedienteId?: number;
   expedienteSeleccionado: any | null = null;
 
@@ -138,7 +139,7 @@ export class ExpedientesComponent {
 
   // Constructor
   constructor(
-    private tramiteService: TramiteMPVService,
+
     private expedienteService: ExpedientesService,
     private _authService: AuthService,
     private router: Router,
@@ -218,20 +219,79 @@ export class ExpedientesComponent {
     this.expedienteId = null;
   }
 
-
   verHistorial(exp: any) {
-
-    //  this.router.navigate([`app/expedientes/${exp.id_expediente}/historial`]);
     this.expedienteId = exp.id_expediente;
     this.mostrarModalHistorial = true;
+  }
 
+  verExpedienteInfo(exp: any) {
+    this.expedienteId = exp.id_expediente;
+    this.mostrarModalInfoExpediente = true;
   }
 
   editarExpediente(exp: Expediente): void {
-
     this.modoEdicion = true;
     this.expedienteSeleccionado = { ...exp };
     this.mostrarModal = true;
+  }
+
+  eliminarExpediente(id_exp: number) {
+
+    Swal.fire({
+      title: '¿Eliminar expediente?',
+      text: 'Esta acción eliminará el expediente PERMANENTEMENTE y no podrá recuperarse.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+
+        // Loader
+        Swal.fire({
+          title: 'Eliminando expediente...',
+          text: 'Por favor espera',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.expedienteService.deleteExpediente(id_exp).subscribe({
+          next: (resp) => {
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Expediente eliminado',
+              text: 'El expediente fue eliminado correctamente',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+            // Recargar tabla
+            this.cargarExpedientes();
+          },
+          error: (err) => {
+
+            Swal.fire({
+              icon: 'error',
+              title: 'No se pudo eliminar',
+              text: err?.error?.message || 'Ocurrió un error al eliminar el expediente'
+            });
+
+            console.error(err);
+          }
+        });
+      }
+    });
+  }
+
+  cerrarModalInfo() {
+    this.mostrarModalInfoExpediente = false;
+    this.expedienteId = null;
   }
 
   onSearchChange() {
@@ -308,7 +368,7 @@ export class ExpedientesComponent {
 
       if (result.isConfirmed) {
 
-        // 🔄 Loader mientras procesa
+        // Loader mientras procesa
         Swal.fire({
           title: 'Anulando expediente...',
           text: 'Por favor espera',
@@ -329,8 +389,8 @@ export class ExpedientesComponent {
               showConfirmButton: false
             });
 
-            // 🔥 Opcional: refrescar lista
-            this.cargarExpedientes?.();
+
+            this.cargarExpedientes();
 
           },
           error: (err) => {
@@ -348,7 +408,30 @@ export class ExpedientesComponent {
     });
   }
 
+  getEstadoClass(estado: string): string {
+    switch (estado) {
+      case 'En trámite':
+        return 'badge-info';
 
+      case 'En espera':
+        return 'badge-warning';
+
+      case 'Suspendido':
+        return 'badge-accent';
+
+      case 'Concluido':
+        return 'badge-success';
+
+      case 'Archivado':
+        return 'badge-neutral';
+
+      case 'Anulado':
+        return 'badge-error';
+
+      default:
+        return 'badge-ghost';
+    }
+  }
 
   abrirParticipe() {
     throw new Error('Method not implemented.');

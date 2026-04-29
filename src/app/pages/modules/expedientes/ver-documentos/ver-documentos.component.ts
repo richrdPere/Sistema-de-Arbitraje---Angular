@@ -73,15 +73,30 @@ export class VerDocumentosComponent implements OnInit {
   }
 
   cargarDocumentos() {
-    this.expedienteService.listarDocumentos(this.idExpediente).subscribe({
-      next: (data) => {
-        this.documentos = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.loading = false;
-      },
-    });
+    this.loading = true;
+
+    const params: any = {
+      page: this.page,
+      limit: this.limit,
+      search: this.search || null,
+    };
+
+    this.expedienteService.listarDocumentos(this.idExpediente, params)
+      .subscribe({
+        next: (resp) => {
+
+          this.documentos = resp.data;   // ✅ ahora sí
+          this.totalItems = resp.total;
+          this.totalPages = resp.totalPages;
+          this.currentPage = resp.page;
+
+          this.loading = false;
+        },
+        error: (err) => {
+          this.loading = false;
+          this.mensajeError = err.error?.message || 'Error al cargar documentos';
+        }
+      });
   }
 
   cambiarPagina(nuevaPagina: number) {
@@ -98,8 +113,10 @@ export class VerDocumentosComponent implements OnInit {
 
 
   onFiltroChange() {
-    throw new Error('Method not implemented.');
+    this.page = 1;
+    this.cargarDocumentos();
   }
+
   abrirModal() {
     this.mostrarModal = true;
     // this.expedienteSeleccionadoId = id;

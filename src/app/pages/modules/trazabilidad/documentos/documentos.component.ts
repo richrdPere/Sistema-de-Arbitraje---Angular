@@ -50,7 +50,7 @@ export class DocumentosComponent {
   }
 
   cargarDocumentos() {
-    this.expedienteService.listarDocumentos(this.idExpediente).subscribe({
+    this.expedienteService.listarDocumentos(this.idExpediente, {}).subscribe({
       next: (data) => {
         this.documentos = data;
 

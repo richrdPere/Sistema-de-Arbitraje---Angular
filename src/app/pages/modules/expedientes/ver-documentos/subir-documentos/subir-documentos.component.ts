@@ -31,6 +31,20 @@ export class SubirDocumentosComponent implements OnInit {
   mensajeError = '';
   mensajeExito = '';
 
+  // Selector
+  tipoDocumento = [
+    { value: 'Apelación', label: 'Apelación' },
+    { value: 'Carta', label: 'Carta' },
+    { value: 'Contestación', label: 'Contestación' },
+    { value: 'Escrito', label: 'Escrito' },
+    { value: 'Informe', label: 'Informe' },
+    { value: 'Laudo', label: 'Laudo' },
+    { value: 'Oficio', label: 'Oficio' },
+    { value: 'Reposición', label: 'Reposición' },
+    { value: 'Resolución', label: 'Resolución' },
+    { value: 'Otros', label: 'Otros' },
+  ];
+
   modalWidthClass = 'max-w-4xl'; // default
 
   setModalWidth(size: 'sm' | 'md' | 'lg' | 'xl' | 'full') {
@@ -72,7 +86,7 @@ export class SubirDocumentosComponent implements OnInit {
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       version: [1, Validators.min(1)],
-      tipo_documento: ['', Validators.required],
+      tipo_documento: [null, Validators.required],
       file: [null, Validators.required],
     });
   }
@@ -114,10 +128,6 @@ export class SubirDocumentosComponent implements OnInit {
         Swal.showLoading();
       },
     });
-
-
-    // this.mensajeError = '';
-    // this.mensajeExito = '';
 
     const formData = new FormData();
     formData.append('titulo', this.formDocumento.value.titulo);

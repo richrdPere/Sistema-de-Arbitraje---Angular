@@ -22,15 +22,39 @@ export class ExpedientesService {
   API_GET_EXPEDIENTE_BY_ID: string = this.API_BASE + '/detalle/';
   API_UPDATE_EXPEDIENTE: string = this.API_BASE + '/editar/';
   API_DELETE_EXPEDIENTE: string = this.API_BASE + '/eliminar/';
+  API_ANULAR_EXPEDIENTE: string = this.API_BASE + '/anular/';
+  API_ARCHIVAR_EXPEDIENTE: string = this.API_BASE + '/archivar/';
+  API_ELIMINAR_EXPEDIENTE: string = this.API_BASE + '/eliminar/';
+
+  // Documentos
+  API_NUEVO_DOCUMENTO: string = this.API_BASE + '/nuevo_doc/';
+  API_LISTAR_DOCUMENTO: string = this.API_BASE + '/lista_doc/';
+
 
   constructor(private http: HttpClient) { }
 
   // ======= HEADER CON TOKEN =======
+
+  // - Auth Headers
   private getAuthHeaders(): { headers: HttpHeaders } {
     const token = localStorage.getItem('token'); // o sessionStorage según tu login
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return { headers };
+  }
+
+
+  // - Header file
+  private getAuthHeadersFile(): { headers: HttpHeaders } {
+    const token = localStorage.getItem('token');
+
+    let headers = new HttpHeaders();
 
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
@@ -104,6 +128,26 @@ export class ExpedientesService {
     return this.http.get(`${this.API_BASE}/numero/${numero}`, this.getAuthHeaders());
   }
 
+  // ===========================
+  // 8.- ANULAR EXPEDIENTE
+  // ===========================
+  anularExpediente(id: number): Observable<any> {
+    return this.http.patch(`${this.API_ANULAR_EXPEDIENTE}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================
+  // 9.- ARCHIVAR EXPEDIENTE
+  // ===========================
+  archivarExpediente(id: number): Observable<any> {
+    return this.http.patch(`${this.API_ARCHIVAR_EXPEDIENTE}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================
+  // 10.- ELIMINAR EXPEDIENTE
+  // ===========================
+  eliminarExpediente(id: number): Observable<any> {
+    return this.http.delete(`${this.API_ELIMINAR_EXPEDIENTE}${id}`, this.getAuthHeaders());
+  }
 
 
 
@@ -127,25 +171,42 @@ export class ExpedientesService {
   // *****************************************************
   // 9.- DOCUMENTOS
   // *****************************************************
-  subirDocumento(idExpediente: number, data: any): Observable<any> {
-    const token = localStorage.getItem('token'); // o donde guardes tu JWT
-
+  subirDocumento(id: number, data: FormData): Observable<any> {
     return this.http.post(
-      `${this.API_BASE}/${idExpediente}/documentos`,
+      `${this.API_NUEVO_DOCUMENTO}${id}`,
       data,
+      this.getAuthHeadersFile()
+    );
+  }
+
+  listarDocumentos(id: number, params: any): Observable<any> {
+
+    let httpParams = new HttpParams();
+
+    Object.keys(params).forEach(key => {
+      if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    });
+
+    return this.http.get(
+      `${this.API_LISTAR_DOCUMENTO}${id}`,
       {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`,
-        }),
+        params: httpParams,
+        headers: this.getAuthHeaders().headers
       }
     );
-
-    // return this.http.post(`${this.url}/${idExpediente}/documentos`, data, this.getAuthHeaders());
   }
-
-  listarDocumentos(idExpediente: number): Observable<any> {
-    return this.http.get(`${this.API_BASE}/${idExpediente}/documentos`, this.getAuthHeaders());
-  }
+  // listarDocumentos(id: number, params: any): Observable<any> {
+  //   const httpParams = new HttpParams({ fromObject: params });
+  //   return this.http.get(
+  //     `${this.API_LISTAR_DOCUMENTO}${id}`,
+  //     {
+  //       params: httpParams,
+  //       headers: this.getAuthHeaders().headers
+  //     }
+  //   );
+  // }
 
   // *****************************************************
   // 10.- HISTORIAL
@@ -173,12 +234,7 @@ export class ExpedientesService {
   }
 
 
-  anularExpediente(id: number): Observable<any> {
-    return this.http.patch(
-      `${this.API_BASE}/${id}/anular`,
-      this.getAuthHeaders()
-    );
-  }
+
 
 
 }

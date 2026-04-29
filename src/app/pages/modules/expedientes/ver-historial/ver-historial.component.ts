@@ -38,9 +38,7 @@ export class VerHistorialComponent implements OnChanges {
   }
 
   constructor(
-    private route: ActivatedRoute,
     private expedienteService: ExpedientesService,
-    private router: Router
   ) { }
 
 

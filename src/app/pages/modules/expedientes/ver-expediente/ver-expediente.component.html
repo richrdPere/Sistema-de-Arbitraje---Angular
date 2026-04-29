@@ -1,0 +1,265 @@
+@if (mostrarModal) {
+<div class="modal modal-open">
+
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-6" [ngClass]="modalWidthClass">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+
+      <!-- IZQUIERDA: título + estado -->
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-bold">
+          {{ expediente.numero_expediente }}
+        </h3>
+
+        <span class="badge badge-outline badge-info">
+          {{ expediente.estado }}
+        </span>
+      </div>
+
+      <!-- DERECHA: botón cerrar -->
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">
+        ✕
+      </button>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="mt-4 space-y-6">
+
+      <!-- INFORMACIÓN GENERAL -->
+      <div>
+        <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Información General
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <!-- Codigo -->
+          <div class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Código</label>
+            <p class="font-medium">{{expediente.codigo}}</p>
+          </div>
+
+          <!-- Tipo -->
+          <div class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Tipo</label>
+            <p class="font-medium">{{expediente.tipo}}</p>
+          </div>
+
+          <!-- Estado Procesal -->
+          <div class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Estado Procesal</label>
+            <p class="font-medium">{{expediente.estado_procesal}}</p>
+          </div>
+
+          <!-- Fecha Inicio -->
+          <div class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Fecha Inicio</label>
+            <p class="font-medium">{{expediente.fecha_inicio | date:'dd/MM/yyyy'}}</p>
+          </div>
+
+          <!-- Fecha Laudo -->
+          <div *ngIf="expediente?.fecha_laudo" class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Fecha Laudo</label>
+            <p class="font-medium">
+              {{ expediente.fecha_laudo | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <!-- Fecha Resolución -->
+          <div *ngIf="expediente?.fecha_resolucion" class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Fecha Resolución</label>
+            <p class="font-medium">
+              {{ expediente.fecha_resolucion | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <!-- Ultima Actualizacion -->
+          <!-- <div class="bg-base-200 m-0 px-3 rounded-lg">
+            <label class="text-xs text-base-content/60">Última Actualización</label>
+            <p class="font-medium">{{expediente.fecha_inicio | date:'dd/MM/yyyy'}}</p>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- TÍTULO -->
+        <div class="bg-base-200 px-3 rounded-xl">
+          <label class="text-xs text-base-content/60 tracking-wide">
+            Título
+          </label>
+          <p class="text-sm font-semibold mt-1">
+            {{ expediente?.titulo || 'Sin título' }}
+          </p>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="bg-base-200 px-3 rounded-xl">
+          <label class="text-xs text-base-content/60 tracking-wide">
+            Descripción
+          </label>
+          <p class="text-sm mt-1 leading-relaxed">
+            {{ expediente?.descripcion || 'Sin descripción' }}
+          </p>
+        </div>
+
+      </div>
+
+      <!-- PARTICIPANTES -->
+      <div>
+        <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-users"></i>
+          Participantes
+        </h4>
+
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let p of expediente.participes">
+
+                <!-- Nombre -->
+                <td>
+                  {{ p.persona.nombres }} {{ p.persona.apellidos }}
+                  <span *ngIf="p.persona.tipo === 'JURIDICA'" class="text-xs text-gray-500">
+                    ({{ p.persona.razon_social }})
+                  </span>
+                </td>
+
+                <!-- Rol -->
+                <td>
+                  <span class="badge badge-soft" [ngClass]="getBadgeClass(p.rol_participe)">
+                    {{ p.rol_participe }}
+                  </span>
+                </td>
+
+                <!-- Documento -->
+                <td>
+                  {{ p.persona.dni || p.persona.ruc || '-' }}
+                </td>
+
+                <!-- Email -->
+                <td>
+                  {{ p.persona.email || '-' }}
+                </td>
+
+                <!-- Teléfono -->
+                <td>
+                  {{ p.persona.telefono || '-' }}
+                </td>
+
+              </tr>
+
+              <!-- Si no hay datos -->
+              <tr *ngIf="expediente.participes?.length === 0">
+                <td colspan="5" class="text-center text-gray-500">
+                  No hay participantes registrados
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DOCUMENTOS -->
+      <div>
+        <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-file-pdf"></i>
+          Documentos
+        </h4>
+
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Archivo</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let doc of expediente?.documentos">
+
+                <!-- Título -->
+                <td>
+                  {{ doc.titulo }}
+                  <div class="text-xs text-gray-500" *ngIf="doc.descripcion">
+                    {{ doc.descripcion }}
+                  </div>
+                </td>
+
+                <!-- Tipo documento -->
+                <td>
+                  <span class="badge badge-outline">
+                    {{ doc.tipo_documento }}
+                  </span>
+                </td>
+
+                <!-- Tipo archivo -->
+                <td>
+                  <span class="badge badge-soft" [ngClass]="getFileBadgeClass(doc.tipo_archivo)">
+                    {{ doc.tipo_archivo | uppercase }}
+                  </span>
+                </td>
+
+                <!-- Fecha -->
+                <td>
+                  {{ doc.fecha_subida | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+
+                <!-- Acción -->
+                <td>
+                  <a *ngIf="doc.url_s3" [href]="doc.url_s3" target="_blank" class="btn btn-xs btn--soft btn-warning">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                  </a>
+
+                  <span *ngIf="!doc.url_s3" class="text-gray-400 text-xs">
+                    Sin archivo
+                  </span>
+                </td>
+
+              </tr>
+
+              <!-- Sin documentos -->
+              <tr *ngIf="expediente?.documentos?.length === 0">
+                <td colspan="5" class="text-center text-gray-500">
+                  No hay documentos registrados
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer con acciones -->
+    <div class="modal-action justify-center items-center gap-5">
+      <button class="btn btn-outline btn-primary" (click)="cerrarModal()">
+        Cerrar
+      </button>
+
+      <button class="btn btn-accent">
+        Imprimir
+      </button>
+    </div>
+  </div>
+</div>
+
+}

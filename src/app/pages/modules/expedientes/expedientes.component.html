@@ -52,7 +52,6 @@
     (expedienteCreado)="cargarExpedientes()">
   </expediente-modal>
 
-
   <!-- Modal Participes y Arbitros -->
   <gestionar-participes [mostrarModal]="mostrarModalParticipes" [expedienteSeleccionado]="expedienteSeleccionado"
     (modalCerrado)="cerrarModalParticipes()">
@@ -62,6 +61,10 @@
   <ver-historial [mostrarModal]="mostrarModalHistorial" [expedienteId]="expedienteId"
     (modalCerrado)="cerrarModalHistorial()">
   </ver-historial>
+
+  <!-- Modal ver expediente -->
+  <ver-expediente [mostrarModal]="mostrarModalInfoExpediente" [expedienteId]="expedienteId"
+    (modalCerrado)="cerrarModalInfo()"></ver-expediente>
 
 
   <!-- Tabla -->
@@ -132,7 +135,7 @@
             <td>{{ exp.total_participes }}</td>
             <td>{{ exp.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>
-              <span class="badge badge-soft badge-info font-semibold">
+              <span class="badge badge-soft font-semibold" [ngClass]="getEstadoClass(exp.estado)">
                 {{ exp.estado }}
               </span>
             </td>
@@ -174,25 +177,41 @@
                   <li class="menu-title text-xs text-base-content/60 text-start">Otras acciones</li>
 
                   <li>
+                    <button (click)="verExpedienteInfo(exp)">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+                      Ver Expediente
+                    </button>
+                  </li>
+
+
+                  <li>
                     <button (click)="verHistorial(exp)">
                       <i class="fa-solid fa-clock-rotate-left"></i>
                       Ver historial
                     </button>
                   </li>
 
-                  <!-- <hr /> -->
-
-                  <li>
+                  <li *ngIf="exp.estado !== 'Anulado'">
                     <button (click)="editarExpediente(exp)">
                       <i class="fa-solid fa-pen"></i>
                       Editar expediente
                     </button>
                   </li>
 
-                  <li>
-                    <button class="text-error" (click)="anularExpediente(exp.id_expediente)">
+                  <!-- Si NO está anulado → mostrar ANULAR -->
+                  <li *ngIf="exp.estado !== 'Anulado'">
+                    <button class="text-warning" (click)="anularExpediente(exp.id_expediente)">
                       <i class="fa-solid fa-ban"></i>
                       Anular expediente
+                    </button>
+                  </li>
+
+
+                  <!-- Si está anulado → mostrar ELIMINAR -->
+                  <li *ngIf="exp.estado === 'Anulado'">
+                    <button class="text-error" (click)="eliminarExpediente(exp.id_expediente)">
+                      <i class="fa-solid fa-trash"></i>
+                      Eliminar expediente
                     </button>
                   </li>
 

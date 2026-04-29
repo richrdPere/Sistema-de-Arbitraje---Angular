@@ -56,10 +56,8 @@ export class StepExpedienteComponent implements OnInit {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(5)]],
-
       tipo: [null, Validators.required],
       codigo: [{ value: '', disabled: true }, Validators.required],
-
       fecha_inicio: [this.getFechaHoy(), Validators.required],
       fecha_laudo: [null],
       fecha_resolucion: [null],
