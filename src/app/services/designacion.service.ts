@@ -38,13 +38,23 @@ export class DesignacionService {
   envs = environment;
 
   // 2.- variables publicas
-  private baseUrl = `${this.envs.main_url_prueba}designaciones`; // Resultado final: http://localhost:4000/api/
+  API_BASE: string = this.envs.main_url_prueba + 'designaciones';
+
+  API_NEW_DESIGNACION: string = this.API_BASE + '/crear';
+  API_ASIGNAR_ARBITROS: string = this.API_BASE + '/arbitros/';
+  API_GET_DESIGNACIONES_PAGINATED: string = this.API_BASE + '/paginado';
+  API_GET_DESIGNACION_BY_ID: string = this.API_BASE + '/detalle/';
+  API_UPDATE_DESIGNACION: string = this.API_BASE + '/editar/';
+  API_DELETE_DESIGNACION: string = this.API_BASE + '/eliminar/';
+  API_ACEPTAR_DESIGNACION: string = this.API_BASE + '/aceptar/';
+  API_RECHAZAR_DESIGNACION: string = this.API_BASE + '/rechazar/';
+  API_GET_DESIGNACION_BY_EXPEDIENTE: string = this.API_BASE + '/expediente/';
 
   constructor(private http: HttpClient) { }
 
-  /**
- * Devuelve las cabeceras HTTP con el token JWT si existe
- */
+  // ======= HEADER CON TOKEN =======
+
+  // - Auth Headers
   private getAuthHeaders(): { headers: HttpHeaders } {
     const token = localStorage.getItem('token'); // o sessionStorage según tu login
     let headers = new HttpHeaders({
@@ -58,24 +68,24 @@ export class DesignacionService {
     return { headers };
   }
 
-  // -------------------------------------------------------
-  // ✨ 1. Crear designación
-  // -------------------------------------------------------
-  crearDesignacion(body: ICrearDesignacionRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/designar`, body);
+  // ===========================================================
+  // 1.- Registrar designacion
+  // ===========================================================
+  newDesignacion(body: any): Observable<any> {
+    return this.http.post(this.API_NEW_DESIGNACION, body, this.getAuthHeaders());
   }
 
-  // -------------------------------------------------------
-  // ✨ 2. Asignar árbitros
-  // -------------------------------------------------------
+  // ===========================================================
+  // 2. Asignar árbitros
+  // ===========================================================
   asignarArbitros(id: number, body: IAsignarArbitrosRequest): Observable<any> {
-    return this.http.put(`${this.baseUrl}/designar/${id}/asignar-arbitros`, body);
+    return this.http.put(`${this.API_ASIGNAR_ARBITROS}${id}`, body, this.getAuthHeaders());
   }
 
-  // -------------------------------------------------------
-  // ✨ 3. Listar designaciones con filtros + paginado
-  // -------------------------------------------------------
-  listarDesignaciones(params?: {
+  // ===========================================================
+  // 3. Listar designaciones con filtros + paginado
+  // ===========================================================
+  getDesignacionesPaginated(filters: {
     page?: number;
     limit?: number;
     estado?: string;
@@ -83,49 +93,58 @@ export class DesignacionService {
     adjudicador_id?: number;
   }): Observable<IListarDesignacionesResponse> {
 
-    let httpParams = new HttpParams();
+    let params = new HttpParams();
 
-    if (params) {
-      Object.keys(params).forEach(key => {
-        const value = (params as any)[key];
-        if (value !== undefined && value !== null) {
-          httpParams = httpParams.set(key, value);
-        }
-      });
-    }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
 
-    return this.http.get<IListarDesignacionesResponse>(
-      this.baseUrl,
-      { params: httpParams }
-    );
+    const headers = this.getAuthHeaders().headers;
+
+    return this.http.get<any>(this.API_GET_DESIGNACIONES_PAGINATED, { params, headers, });
   }
 
-
-  // -------------------------------------------------------
-  // ✨ 4. Ver detalle
-  // -------------------------------------------------------
-  verDesignacion(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  // ===========================================================
+  // 4. Ver detalle de una designaicon
+  // ===========================================================
+  getDesignacionById(id: number): Observable<any> {
+    return this.http.get(`${this.API_GET_DESIGNACION_BY_ID}${id}`, this.getAuthHeaders());
   }
 
-  // -------------------------------------------------------
-  // ✨ 5. Actualizar metadatos (estado, tipo, etc)
-  // -------------------------------------------------------
-  actualizarDesignacion(id: number, payload: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, payload);
+  // ===========================================================
+  // 5. Actualizar metadatos (estado, tipo, etc)
+  // ===========================================================
+  updateDesignacion(id: number, payload: any): Observable<any> {
+    return this.http.put(`${this.API_UPDATE_DESIGNACION}${id}`, payload, this.getAuthHeaders());
   }
 
-  // -------------------------------------------------------
-  // ✨ 6. Eliminar designación
-  // -------------------------------------------------------
+  // ===========================================================
+  // 6. Eliminar designación
+  // ===========================================================
   eliminarDesignacion(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+    return this.http.delete(`${this.API_DELETE_DESIGNACION}${id}`, this.getAuthHeaders());
   }
 
-  // -------------------------------------------------------
-  // ✨ 7. Desginacion por expediente
-  // -------------------------------------------------------
+  // ===========================================================
+  // 7. Desginacion por expediente
+  // ===========================================================
   getDesignacionPorExpediente(expedienteId: number) {
-    return this.http.get(`${this.baseUrl}/expediente/${expedienteId}`);
+    return this.http.get(`${this.API_GET_DESIGNACION_BY_EXPEDIENTE}${expedienteId}`, this.getAuthHeaders());
+  }
+
+  // ===========================================================
+  // 8.- Aceptar designacion
+  // ===========================================================
+  aceptarDesignacion(id: number): Observable<any> {
+    return this.http.patch(`${this.API_ACEPTAR_DESIGNACION}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================================================
+  // 9.- Rechazar designacion
+  // ===========================================================
+  rechazarDesignacion(id: number): Observable<any> {
+    return this.http.patch(`${this.API_RECHAZAR_DESIGNACION}${id}`, this.getAuthHeaders());
   }
 }

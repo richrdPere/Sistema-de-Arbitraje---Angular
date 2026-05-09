@@ -1,0 +1,66 @@
+<div>
+
+  <h2 class="text-xl font-bold mb-4">
+
+    Árbitros
+
+  </h2>
+
+  <div class="grid grid-cols-3 gap-3">
+
+    <input
+      type="number"
+      [(ngModel)]="arbitro_id"
+      placeholder="Árbitro ID"
+      class="input input-bordered" />
+
+    <input
+      type="text"
+      [(ngModel)]="nombres"
+      placeholder="Nombres"
+      class="input input-bordered" />
+
+    <input
+      type="text"
+      [(ngModel)]="apellidos"
+      placeholder="Apellidos"
+      class="input input-bordered" />
+
+  </div>
+
+  <button
+    class="btn btn-primary mt-4"
+    (click)="agregar()">
+
+    Agregar árbitro
+
+  </button>
+
+  <div class="mt-6 space-y-2">
+
+    @for (
+      arbitro of designacionFormService.current.arbitros.lista;
+      track $index
+    ) {
+
+      <div class="border rounded-lg p-3">
+
+        <div class="font-semibold">
+
+          {{ arbitro.nombres }}
+          {{ arbitro.apellidos }}
+
+        </div>
+
+        <div class="text-sm opacity-70">
+
+          {{ arbitro.rol }}
+
+        </div>
+
+      </div>
+    }
+
+  </div>
+
+</div>

@@ -40,9 +40,11 @@
 
       <!-- STEP 1: DATOS DEL DEMANDANTE -->
       @if (currentStep === 1) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" formArrayName="demandantes">
 
-        <!-- TABLA SUPERIOR: DEMANDANTES DISPONIBLES -->
+      <step-demandantes></step-demandantes>
+      <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6" formArrayName="demandantes">
+
+
         <div class="card bg-base-100 shadow">
           <div class="card-body text-base-content">
             <h2 class="text-lg font-semibold mb-2">Demandantes disponibles</h2>
@@ -81,7 +83,6 @@
           </div>
         </div>
 
-        <!-- TABLA INFERIOR: DEMANDANTES SELECCIONADOS -->
         <div class="card bg-base-100 shadow">
           <div class="card-body">
             <h2 class="text-lg font-semibold mb-2">Demandantes seleccionados</h2>
@@ -119,31 +120,10 @@
                   </td>
                 </tr>
               </tbody>
-              <!-- <tbody>
-                <tr *ngFor="let p of demandantesSeleccionados">
-                  <td>
-                    <button class="btn btn-sm btn-success" (click)="quitarDemandante(p)">
-                      <i class="fa-solid fa-check"></i>
-                    </button>
-                  </td>
-                  <td>
-                    {{ p.usuario?.nombre }}
-                    {{ p.usuario?.apellidos !== 'DATO NO PROPORCIONADO' ? p.usuario?.apellidos : '' }}
-                  </td>
-                  <td>{{ p.rol_participe }}</td>
-                  <td>{{ p.usuario?.documento_identidad }}</td>
-                </tr>
-
-                <tr *ngIf="demandantesSeleccionados.length === 0">
-                  <td colspan="4" class="text-center text-gray-400">
-                    No se han agregado demandantes
-                  </td>
-                </tr>
-              </tbody> -->
             </table>
           </div>
         </div>
-      </div>
+      </div> -->
       }
 
       <!-- STEP 2: DATOS DEL DEMANDADO -->
@@ -381,11 +361,9 @@
               <div class="form-control">
                 <label class="label font-semibold">Árbitro Institucional</label>
                 <select class="select select-bordered w-full"
-                  (change)="seleccionarArbitroInstitucional('institucion',$any($event.target).value)"
-
-                  >
+                  (change)="seleccionarArbitroInstitucional('institucion',$any($event.target).value)">
                   <option value="" disabled selected>Seleccione</option>
-                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro" >
+                  <option *ngFor="let a of arbitrosDisponibles" [value]="a.id_arbitro">
                     {{ a.usuario.nombre }} {{ a.usuario.apellidos }}
                   </option>
                 </select>

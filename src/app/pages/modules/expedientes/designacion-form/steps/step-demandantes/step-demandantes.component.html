@@ -1,0 +1,248 @@
+<section class="border border-primary p-6 rounded-md bg-base-100 space-y-6">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold">
+        Demandantes
+      </h2>
+
+      <p class="text-sm text-base-content/70 mt-1">
+        Busca participantes existentes o registra nuevos demandantes para el expediente.
+      </p>
+    </div>
+
+    <div class="badge badge-primary badge-outline p-4">
+      {{
+      designacionFormService.current.demandantes.length
+      }}
+      seleccionados
+    </div>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+
+    <div class="card-body space-y-4">
+
+      <!-- INPUT SEARCH -->
+      <div class="form-control">
+
+        <label class="label">
+          <span class="label-text font-medium">
+            Buscar persona
+          </span>
+        </label>
+
+        <div class="flex gap-2 relative">
+
+          <!-- INPUT -->
+          <input type="text" [(ngModel)]="search" (input)="onSearchChange()"
+            placeholder="Buscar por DNI, RUC, nombres o razón social..." class="input input-bordered w-full" />
+
+          <!-- LOADING -->
+          @if (loadingBusqueda) {
+
+          <div class="absolute right-3 top-3">
+            <span class="loading loading-spinner loading-sm"></span>
+          </div>
+
+          }
+
+          <!-- SEARCH -->
+          <button class="btn btn-primary" (click)="buscarPersonas()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Buscar
+          </button>
+
+          <!-- NEW PERSON -->
+          <button class="btn btn-outline btn-secondary" (click)="abrirModalNuevoParticipante()">
+            <i class="fa-solid fa-plus"></i>
+            Participe
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RESULTADOS -->
+      @if (personasEncontradas.length > 0) {
+
+      <div class="space-y-3">
+
+        <div class="text-sm font-semibold text-base-content/70">
+          Resultados encontrados
+        </div>
+
+        @for (persona of personasEncontradas; track persona.id) {
+
+        <div class="border border-base-300 rounded-xl p-4 hover:bg-base-200 transition-all">
+
+          <div class="flex justify-between items-start gap-4">
+
+            <!-- INFO -->
+            <div class="space-y-1">
+
+              <!-- NATURAL -->
+              @if (persona.tipo === 'NATURAL') {
+
+              <div class="font-semibold text-base">
+                👤 {{ persona.nombres }} {{ persona.apellidos }}
+              </div>
+
+              <div class="text-sm text-base-content/70">
+                DNI: {{ persona.dni }}
+              </div>
+
+              }
+
+              <!-- JURIDICA -->
+              @if (persona.tipo === 'JURIDICA') {
+
+              <div class="font-semibold text-base">
+                🏢 {{ persona.razon_social }}
+              </div>
+
+              <div class="text-sm text-base-content/70">
+                RUC: {{ persona.ruc }}
+              </div>
+
+              }
+
+              <!-- ENTIDAD -->
+              @if (persona.tipo === 'ENTIDAD_PUBLICA') {
+
+              <div class="font-semibold text-base">
+                🏛️ {{ persona.nombre_entidad }}
+              </div>
+
+              <div class="text-sm text-base-content/70">
+                RUC: {{ persona.ruc }}
+              </div>
+
+              }
+
+              <!-- EXTRA -->
+              <div class="text-xs text-base-content/50">
+                {{ persona.email || 'Sin correo registrado' }}
+              </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <button class="btn btn-primary btn-sm" (click)="agregarDemandante(persona)">
+
+              Agregar
+
+            </button>
+
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+      }
+
+      <!-- EMPTY -->
+      @if (
+      personasEncontradas.length === 0
+      ) {
+
+      <div class="alert alert-warning">
+
+        <span>
+          No se encontraron personas registradas.
+        </span>
+
+      </div>
+
+      }
+
+
+
+    </div>
+
+  </div>
+
+  <!-- SELECCIONADOS -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+
+    <div class="card-body">
+
+      <div class="flex justify-between items-center mb-4">
+
+        <h3 class="font-bold text-lg">
+          Demandantes seleccionados
+        </h3>
+
+        <div class="badge badge-success">
+          {{
+          designacionFormService.current.demandantes.length
+          }}
+        </div>
+
+      </div>
+
+      <!-- EMPTY -->
+      @if (
+      designacionFormService.current.demandantes.length === 0
+      ) {
+
+      <div class="text-center py-10 text-base-content/60">
+
+        No hay demandantes agregados aún.
+
+      </div>
+
+      }
+
+      <!-- LISTA -->
+      <div class="space-y-3">
+
+        @for (
+        demandante of designacionFormService.current.demandantes;
+        track demandante.persona_id
+        ) {
+
+        <div
+          class="border border-base-300 rounded-xl p-4 flex justify-between items-center hover:bg-base-200 transition-all">
+
+          <!-- INFO -->
+          <div>
+
+            <div class="font-semibold">
+
+              {{ demandante.nombres }}
+              {{ demandante.apellidos }}
+
+            </div>
+
+            <div class="text-sm text-base-content/60">
+
+              Persona ID:
+              {{ demandante.persona_id }}
+
+            </div>
+
+          </div>
+
+          <!-- ACTIONS -->
+          <button class="btn btn-error btn-sm" (click)="eliminarDemandante(demandante.persona_id)">
+
+            Eliminar
+
+          </button>
+
+        </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

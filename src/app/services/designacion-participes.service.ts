@@ -8,17 +8,51 @@ export interface Participante {
   rol: 'DEMANDANTE' | 'DEMANDADO' | 'ARBITRO';
 }
 
+export interface ArbitroSeleccionado {
+  arbitro_id: number;
+
+  nombres?: string;
+  apellidos?: string;
+
+  rol:
+  | 'ARBITRO_UNICO'
+  | 'PRESIDENTE'
+  | 'COARBITRO'
+  | 'SUPLENTE';
+
+  designado_por:
+  | 'DEMANDANTE'
+  | 'DEMANDADO'
+  | 'INSTITUCION'
+  | 'ALEATORIO';
+}
+
 export interface ArbitrosConfig {
-  tipo: 'UNICO' | 'TRIBUNAL';
-  lista: Participante[];
+  tipo: 'ARBITRO_UNICO' | 'TRIBUNAL';
+  lista: ArbitroSeleccionado[];
 }
 
 export interface DesignacionState {
   expedienteId: number | null;
-  tipoArbitraje: 'EMERGENCIA' | 'AD_HOC' | 'TRIBUNAL';
+
+  tipoArbitraje:
+  | 'EMERGENCIA'
+  | 'AD_HOC'
+  | 'TRIBUNAL';
+
+  metodoDesignacion:
+  | 'DIRECTA'
+  | 'ALEATORIA'
+  | 'INSTITUCIONAL';
+
+  adjudicador_id?: number;
+
+  observaciones?: string;
 
   demandantes: Participante[];
+
   demandados: Participante[];
+
   arbitros: ArbitrosConfig;
 
   step: number;
@@ -27,19 +61,20 @@ export interface DesignacionState {
 @Injectable({
   providedIn: 'root'
 })
-export class DesignacionParticipesService {
+export class DesignacionFormService {
 
   private initialState: DesignacionState = {
     expedienteId: null,
     tipoArbitraje: 'AD_HOC',
-
+    metodoDesignacion: 'DIRECTA',
+    adjudicador_id: undefined,
+    observaciones: '',
     demandantes: [],
     demandados: [],
     arbitros: {
-      tipo: 'UNICO',
+      tipo: 'ARBITRO_UNICO',
       lista: []
     },
-
     step: 1
   };
 
@@ -133,7 +168,7 @@ export class DesignacionParticipesService {
   // =============================
   // ARBITROS
   // =============================
-  setTipoArbitros(tipo: 'UNICO' | 'TRIBUNAL') {
+  setTipoArbitros(tipo: 'ARBITRO_UNICO' | 'TRIBUNAL') {
     const state = this.current;
 
     this.state$.next({
@@ -145,14 +180,16 @@ export class DesignacionParticipesService {
     });
   }
 
-  addArbitro(p: Participante) {
+  addArbitro(a: ArbitroSeleccionado) {
     const state = this.current;
-
     this.state$.next({
       ...state,
       arbitros: {
         ...state.arbitros,
-        lista: [...state.arbitros.lista, { ...p, rol: 'ARBITRO' }]
+        lista: [
+          ...state.arbitros.lista,
+          a
+        ]
       }
     });
   }
@@ -202,11 +239,24 @@ export class DesignacionParticipesService {
   buildPayload() {
     const state = this.current;
 
-    return [
-      ...state.demandantes,
-      ...state.demandados,
-      ...state.arbitros.lista
-    ];
+    return {
+      expediente_id: state.expedienteId,
+      tipo_tribunal: state.arbitros.tipo,
+      metodo_designacion: state.metodoDesignacion,
+      adjudicador_id: state.adjudicador_id,
+      observaciones: state.observaciones,
+      demandantes: state.demandantes.map(d => ({
+        persona_id: d.persona_id
+      })),
+      demandados: state.demandados.map(d => ({
+        persona_id: d.persona_id
+      })),
+      arbitros: state.arbitros.lista.map(a => ({
+        arbitro_id: a.arbitro_id,
+        rol: a.rol,
+        designado_por: a.designado_por
+      }))
+    };
   }
 
   // =============================

@@ -22,6 +22,7 @@ export class PersonaService {
   API_GET_ALL_PERSONAS: string = this.API_BASE + '/personas';
   API_UPDATE_PERSONA: string = this.API_BASE + '/editar/';
   API_DELETE_PERSONA: string = this.API_BASE + '/eliminar/';
+  API_FILTER_PERSONAS: string = this.API_BASE + '/search';
 
   constructor(private http: HttpClient) { }
 
@@ -111,4 +112,35 @@ export class PersonaService {
     );
   }
 
+  // ===========================================================
+  // 6.- Filtrar personas
+  // ===========================================================
+  searchPersonaByFilters(params: {
+    dni?: string;
+    ruc?: string,
+    nombres?: string;
+    razon_social?: string;
+  }): Observable<any> {
+
+    let httpParams = new HttpParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        value !== ''
+      ) {
+        httpParams = httpParams.set(key, value.toString());
+      }
+
+    });
+
+    return this.http.get<any>(
+      this.API_FILTER_PERSONAS,
+      {
+        params: httpParams,
+      }
+    );
+  }
 }

@@ -1,0 +1,68 @@
+@if(mostrarModal){
+<div class="modal modal-open">
+  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg" [ngClass]="modalWidthClass">
+
+
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-base-300 pb-2">
+      <!-- <h3 class="text-2xl font-semibold">{{ modoEdicion ? 'Editar Expediente' : 'Crear Nuevo Expediente' }}</h3> -->
+      <h3 class="text-xl font-semibold">
+        Gestión de Partícipes y Árbitros -
+        <!-- <span class="text-xl badge" [ngClass]="{
+      'badge-info': expedienteSeleccionado?.tipo === 'Arbitraje de Emergencia',
+      'badge-primary': expedienteSeleccionado?.tipo === 'Arbitraje Institucional',
+      'badge-accent': expedienteSeleccionado?.tipo === 'Arbitraje Ad Hoc'
+    }">
+          {{ expedienteSeleccionado?.tipo }}
+        </span> -->
+      </h3>
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+    </div>
+
+
+    <!-- FORMULARIO -->
+    <!-- STEPPER -->
+    <ul class="steps steps-horizontal  w-full mt-4">
+      <li class="step cursor-pointer" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+        DEMANDANTES
+      </li>
+
+      <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+        DEMANDADOS
+      </li>
+
+      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+        ARBITROS
+      </li>
+
+      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(4)">
+        CONFIRMACION
+      </li>
+    </ul>
+
+    <!-- BODY -->
+    <div class="modal-body">
+
+      <!-- STEP 1: DEMANDANTES -->
+      <step-demandantes *ngIf="currentStep === 1"></step-demandantes>
+
+      <!-- STEP 2: DEMANDADOS -->
+      <step-demandados *ngIf="currentStep === 2"></step-demandados>
+
+      <!-- STEP 3: ARBITROS -->
+      <step-arbitros *ngIf="currentStep === 3"></step-arbitros>
+
+      <!-- STEP 4: CONFIRMACION -->
+      <step-confirmacion *ngIf="currentStep === 4"></step-confirmacion>
+
+
+    </div>
+
+
+  </div>
+
+  <!-- Fondo oscuro del modal -->
+  <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+
+</div>
+}

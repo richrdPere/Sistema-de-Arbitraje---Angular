@@ -1,108 +1,53 @@
-<div class="space-y-6">
+<section class="grid grid-cols-2 gap-6">
 
-  <!-- HEADER -->
+  <!-- ========================= -->
+  <!-- DISPONIBLES -->
+  <!-- ========================= -->
   <div>
-    <h3 class="text-lg font-semibold">Demandantes</h3>
-    <p class="text-sm text-base-content/60">
-      Agrega uno o más demandantes al expediente
-    </p>
+    <h3 class="font-semibold mb-2">Demandantes disponibles</h3>
+
+    <div *ngIf="loading">Cargando...</div>
+
+    <div *ngFor="let p of demandantesDisponibles"
+         class="border p-2 mb-2 flex justify-between items-center rounded">
+
+      <div>
+        {{ p.nombres }} {{ p.apellidos }}
+      </div>
+
+      <button
+        class="bg-blue-500 text-white px-2 py-1 rounded"
+        (click)="agregar(p)">
+        Agregar
+      </button>
+
+    </div>
   </div>
 
-  <!-- BUSCADOR -->
-  <div class="bg-base-200 p-4 rounded-xl">
-
-    <div class="flex gap-2">
-
-      <!-- INPUT DNI/RUC -->
-      <input
-        type="text"
-        [(ngModel)]="numeroDocumento"
-        placeholder="Ingrese DNI o RUC"
-        class="input input-bordered w-full"
-      />
-
-      <!-- BOTÓN BUSCAR -->
-      <button
-        class="btn btn-primary"
-        (click)="buscarPersona()"
-        [disabled]="loadingBusqueda">
-
-        <span *ngIf="!loadingBusqueda">Buscar</span>
-        <span *ngIf="loadingBusqueda" class="loading loading-spinner"></span>
-      </button>
-
-    </div>
-
-    <!-- RESULTADO -->
-    <div *ngIf="personaEncontrada" class="mt-4 p-3 bg-base-100 rounded-lg">
-
-      <p class="font-semibold">
-        {{ personaEncontrada.nombres }} {{ personaEncontrada.apellidos }}
-      </p>
-
-      <p class="text-sm text-base-content/60">
-        {{ personaEncontrada.dni || personaEncontrada.ruc }}
-      </p>
-
-      <button
-        class="btn btn-sm btn-success mt-2"
-        (click)="agregarDemandante(personaEncontrada)">
-        Agregar como demandante
-      </button>
-
-    </div>
-
-    <!-- NO ENCONTRADO -->
-    <div *ngIf="busquedaRealizada && !personaEncontrada" class="mt-4">
-
-      <p class="text-sm text-error">
-        No se encontró la persona
-      </p>
-
-      <button
-        class="btn btn-sm btn-outline"
-        (click)="abrirModalCrearPersona()">
-        Crear nueva persona
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- LISTA DE DEMANDANTES -->
+  <!-- ========================= -->
+  <!-- SELECCIONADOS -->
+  <!-- ========================= -->
   <div>
+    <h3 class="font-semibold mb-2">Seleccionados</h3>
 
-    <h4 class="font-medium mb-2">Lista de demandantes</h4>
-
-    <div *ngIf="demandantes.length === 0"
-         class="text-sm text-base-content/60">
+    <div *ngIf="seleccionados.length === 0" class="text-gray-500">
       No hay demandantes agregados
     </div>
 
-    <div class="space-y-2">
+    <div *ngFor="let d of seleccionados; let i = index"
+         class="border p-2 mb-2 flex justify-between items-center rounded">
 
-      <div *ngFor="let d of demandantes; let i = index"
-           class="flex justify-between items-center bg-base-200 p-3 rounded-lg">
-
-        <div>
-          <p class="font-medium">
-            {{ d.nombres }} {{ d.apellidos }}
-          </p>
-          <p class="text-xs text-base-content/60">
-            {{ d.persona_id }}
-          </p>
-        </div>
-
-        <button
-          class="btn btn-xs btn-error"
-          (click)="eliminarDemandante(i)">
-          Eliminar
-        </button>
-
+      <div>
+        {{ d.nombres }} {{ d.apellidos }}
       </div>
 
-    </div>
+      <button
+        class="bg-red-500 text-white px-2 py-1 rounded"
+        (click)="quitar(i)">
+        Quitar
+      </button>
 
+    </div>
   </div>
 
-</div>
+</section>

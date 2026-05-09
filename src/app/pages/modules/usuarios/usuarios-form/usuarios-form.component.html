@@ -6,8 +6,8 @@
   <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg" [ngClass]="modalWidthClass">
 
     <!-- Title -->
-    <div class="flex justify-between items-center border-b border-base-300 pb-3 mb-4">
-      <h3 class="text-xl font-semibold"> {{ modoEdicion ? "Editar Usuario" : "Crear Nuevo Usuario" }}</h3>
+    <div class="flex justify-between items-center border-b border-base-300 pb-4 mb-6">
+      <h3 class="text-2xl font-bold text-primary"> {{ modoEdicion ? "Editar Usuario" : "Crear Nuevo Usuario" }}</h3>
       <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
     </div>
 
@@ -25,21 +25,20 @@
               <span class="text-red-500 font-bold">*</span>
             </span>
           </label>
-          <input type="text" formControlName="nombre" placeholder="Ej. Juan" class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('nombre')?.invalid && formUsuario.get('nombre')?.touched"
-            appUppercase />
+          <input type="text" formControlName="nombres" placeholder="Ej. Juan" class="input input-bordered w-full"
+            [class.input-error]="isInvalid('nombres')" appUppercase />
 
           <!-- Error local -->
-          @if (formUsuario.get('nombre')?.hasError('required') && formUsuario.get('nombre')?.touched) {
+          @if (hasError('nombres', 'required')) {
           <p class="text-red-500 text-sm">
             El nombre es obligatorio.
           </p>
           }
 
           <!-- Error backend -->
-          @if (backendErrors?.nombre) {
+          @if (backendErrors?.nombres) {
           <p class="text-red-500 text-sm">
-            {{ backendErrors.nombre }}
+            {{ backendErrors.nombres }}
           </p>
           }
         </div>
@@ -53,7 +52,8 @@
           </label>
           <input type="text" formControlName="apellidos" placeholder="Ej. Pérez López"
             class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched" appUppercase/>
+            [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched"
+            appUppercase />
 
           @if (formUsuario.get('apellidos')?.hasError('required') && formUsuario.get('apellidos')?.touched) {
           <p class="text-red-500 text-sm">
@@ -230,7 +230,7 @@
             <span class="label-text">Especialidad</span>
           </label>
           <input type="text" formControlName="especialidad" placeholder="Ej. Arbitraje comercial"
-            class="input input-bordered w-full" appUppercase/>
+            class="input input-bordered w-full" appUppercase />
         </div>
 
         <div class="form-control">
@@ -263,7 +263,7 @@
             <span class="label-text">Razón Social</span>
           </label>
           <input type="text" formControlName="razon_social" placeholder="Ej. Empresa SAC"
-            class="input input-bordered w-full" appUppercase/>
+            class="input input-bordered w-full" appUppercase />
         </div>
 
 
@@ -286,7 +286,7 @@
             <span class="label-text">Cargo</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
-            class="input input-bordered w-full" appUppercase/>
+            class="input input-bordered w-full" appUppercase />
         </div>
 
         <div class="form-control">
@@ -294,14 +294,15 @@
             <span class="label-text">Especialidad</span>
           </label>
           <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
-            class="input input-bordered w-full" appUppercase/>
+            class="input input-bordered w-full" appUppercase />
         </div>
 
         <div class="form-control">
           <label class="label">
             <span class="label-text">Experiencia</span>
           </label>
-          <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full" appUppercase/>
+          <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full"
+            appUppercase />
         </div>
       </div>
       }
@@ -315,7 +316,7 @@
             <span class="label-text">Cargo</span>
           </label>
           <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
-            class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" appUppercase/>
+            class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" appUppercase />
 
           @if (backendErrors?.cargo) {
           <p class="text-red-500 text-sm">{{ backendErrors.cargo }}</p>

@@ -23,10 +23,11 @@ import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-p
 import { VerHistorialComponent } from "./ver-historial/ver-historial.component";
 import Swal from 'sweetalert2';
 import { VerExpedienteComponent } from "./ver-expediente/ver-expediente.component";
+import { DesignacionFormComponent } from "./designacion-form/designacion-form.component";
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent, VerExpedienteComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent, VerExpedienteComponent, DesignacionFormComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
@@ -52,6 +53,7 @@ export class ExpedientesComponent {
   modoEdicion = false;
   mostrarModal = false;
   mostrarModalParticipes = false;
+  mostrarModalFormDesignacion = false;
   mostrarModalHistorial = false;
   mostrarModalInfoExpediente = false;
   selectedExpedienteId?: number;
@@ -207,6 +209,19 @@ export class ExpedientesComponent {
     console.log("Expediente seleccionado: ", exp);
 
     this.mostrarModalParticipes = true;
+  }
+
+  designacionFormModal(exp: any) {
+    this.expedienteId = exp.id_expediente;
+
+    console.log("Designacion exp ID: ", this.expedienteId);
+
+    this.mostrarModalFormDesignacion = true;
+  }
+
+  cerrarModalFormDesignacion() {
+    this.mostrarModalFormDesignacion = false;
+    this.expedienteId = null;
   }
 
   cerrarModalParticipes() {

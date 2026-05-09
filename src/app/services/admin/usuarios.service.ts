@@ -1,30 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
-
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '@environments/environment';
+
+// Interfaces
+import { CreateUsuarioRequest, UsuarioDetalleResponse } from 'src/app/interfaces/usuario.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
 
-
   // 1.- Environment
   envs = environment;
 
-
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'usuarios';
+  private API_BASE: string = this.envs.main_url_prueba + 'usuarios';
+
+  API_NEW_USUARIO: string = this.API_BASE + '/crear';
+  API_GET_USUARIO_PAGINATED: string = this.API_BASE + '/paginado';
+  API_GET_USUARIO_BY_ID: string = this.API_BASE + '/detalle/';
+  API_UPDATE_USUARIO: string = this.API_BASE + '/editar/';
+  API_DELETE_USUARIO: string = this.API_BASE + '/eliminar/';
+  API_CHANGE_STATE_USUARIO: string = this.API_BASE + '/estado/';
 
   constructor(private http: HttpClient) { }
 
+  // ======= HEADER CON TOKEN =======
 
-  /**
-   * Devuelve las cabeceras HTTP con el token JWT si existe
-   */
+  // - Auth Headers
   private getAuthHeaders(): { headers: HttpHeaders } {
     const token = localStorage.getItem('token'); // o sessionStorage según tu login
     let headers = new HttpHeaders({
@@ -38,146 +44,65 @@ export class UsuarioService {
     return { headers };
   }
 
-  /**
-   * Manejo centralizado de errores HTTP
-   */
-  private handleError(error: any) {
-    if (error.status === 403) {
-      console.error(' Acceso prohibido: falta autorización o token inválido.');
-      alert('No tienes permisos o tu sesión expiró. Por favor inicia sesión nuevamente.');
-    } else if (error.status === 401) {
-      console.error(' No autorizado: token no válido o expirado.');
-      alert('Tu sesión ha expirado, vuelve a iniciar sesión.');
-    } else {
-      console.error(' Error en la solicitud:', error);
-    }
-    return throwError(() => error);
+  // ===========================================================
+  // 1.- Nuevo usuario
+  // ===========================================================
+  newUsuario(data: any): Observable<UsuarioDetalleResponse> {
+    return this.http.post<UsuarioDetalleResponse>(this.API_NEW_USUARIO, data, this.getAuthHeaders());
   }
 
-  /**
- * Obtener usuarios paginados (general)
- * @param params page, limit, rol, search, estado
- */
-  getUsuariosPaginados(params: {
+  // ===========================================================
+  // 2.- Listar usuarios + paginado
+  // ===========================================================
+  getUsuariosPaginated(filters: {
     page?: number;
     limit?: number;
     rol?: string;
     search?: string;
     estado?: number;
   }): Observable<any> {
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
+
+    const headers = this.getAuthHeaders().headers;
 
     return this.http.get<any>(
-      `${this.url}`,
-      {
-        ...this.getAuthHeaders(),
-        params: {
-          ...(params.page && { page: params.page }),
-          ...(params.limit && { limit: params.limit }),
-          ...(params.rol && { rol: params.rol }),
-          ...(params.search && { search: params.search }),
-          ...(params.estado !== undefined && { estado: params.estado }),
-        }
-      }
-    ).pipe(
-      catchError(this.handleError)
+      this.API_GET_USUARIO_PAGINATED,
+      { params, headers, }
     );
   }
 
-
-  /**
-   * Obtener árbitros
-   */
-  getArbitros(): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.url}/arbitros`, this.getAuthHeaders())
-      .pipe(catchError(this.handleError));
+  // ===========================================================
+  // 3.- Obtener usuario por ID
+  // ===========================================================
+  getUsuarioById(id: number) {
+    return this.http.get<UsuarioDetalleResponse>(`${this.API_GET_USUARIO_BY_ID}${id}`, this.getAuthHeaders());
   }
 
-  /**
-  * Obtener adjudicadores
-  */
-  getAdjudicadores(): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.url}/adjudicadores`, this.getAuthHeaders())
-      .pipe(catchError(this.handleError));
+
+  // ===========================================================
+  // 4.- Actualizar usuario
+  // ===========================================================
+  updateUsuario(id: number, data: Partial<CreateUsuarioRequest>): Observable<any> {
+    return this.http.put(`${this.API_UPDATE_USUARIO}${id}`, data, this.getAuthHeaders());
   }
 
-  /**
-   * Obtener secretarias
-   */
-  getSecretarias(): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.url}/secretarias`, this.getAuthHeaders())
-      .pipe(catchError(this.handleError));
-  }
-
-  /**
-   * Obtener participes
-   */
-  getParticipes(): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.url}/participes`, this.getAuthHeaders())
-      .pipe(catchError(this.handleError));
-  }
-
-  /**
-   * Obtener admins
-   */
-  getAdmins(): Observable<any[]> {
-    return this.http
-      .get<any[]>(`${this.url}/admins`, this.getAuthHeaders())
-      .pipe(catchError(this.handleError));
-  }
-
-  /**
-   * Crear usuario
-   */
-  crearUsuario(data: any): Observable<any> {
-    // const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this.http.post(`${this.url}/nuevo`, data, this.getAuthHeaders());
-  }
-
-  /**
-  * Actualizar usuario
-  */
-  actualizarUsuario(id: number, data: any) {
-    return this.http.put(`${this.url}/${id}`, data);
-  }
-
-  /**
-  * Eliminar usuario
-  */
+  // ===========================================================
+  // 5.- Eliminar usuario
+  // ===========================================================
   eliminarUsuario(id: number) {
-    return this.http.delete(`${this.url}/${id}`);
+    return this.http.delete(`${this.API_DELETE_USUARIO}${id}`, this.getAuthHeaders());
   }
 
-  /**
-  * Ver usuario
-  */
-  verUsuario(id: number) {
-    return this.http.get(`${this.url}/${id}`);
+  // ===========================================================
+  // 6.- Cambiar estado de usuario
+  // ===========================================================
+  changeStateUsuario(id: number, estado: boolean): Observable<any> {
+    return this.http.patch(`${this.API_CHANGE_STATE_USUARIO}${id}`, { estado }, this.getAuthHeaders());
   }
-
-  /**
- * Habilitar usuario
- */
-  habilitarUsuario(id: number): Observable<any> {
-    return this.http.patch(
-      `${this.url}/habilitar/${id}`,
-      {},
-      this.getAuthHeaders()
-    );
-  }
-  /**
-* Deshabilitar usuario
-*/
-  deshabilitarUsuario(id: number): Observable<any> {
-    return this.http.patch(
-      `${this.url}/deshabilitar/${id}`,
-      {},
-      this.getAuthHeaders()
-    );
-  }
-
-
 }

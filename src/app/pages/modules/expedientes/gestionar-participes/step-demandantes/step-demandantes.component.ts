@@ -1,97 +1,83 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 
 // Service
-import { DesignacionParticipesService } from 'src/app/services/designacion-participes.service';
+import { DesignacionFormService } from 'src/app/services/designacion-participes.service';
+import { ParticipeService } from 'src/app/services/admin/participes.service';
 
 @Component({
   selector: 'step-demandantes',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './step-demandantes.component.html',
   styles: ``
 })
 export class StepDemandantesComponent {
 
-  numeroDocumento: string = '';
-  personaEncontrada: any = null;
-  loadingBusqueda = false;
-  busquedaRealizada = false;
+  @Input() expedienteId!: number;
+  @Output() nextStep = new EventEmitter<void>();
 
-  demandantes: any[] = [];
+  demandantesDisponibles: any[] = [];
+  loading = false;
 
-  constructor(private designacionService: DesignacionParticipesService) {
-    this.designacionService.getState().subscribe(state => {
-      this.demandantes = state.demandantes;
+  constructor(
+    private designacionService: DesignacionFormService,
+    private participeService: ParticipeService
+  ) { }
+
+  ngOnInit(): void {
+    this.loadDisponibles();
+  }
+
+  // ======================================
+  // LOAD DATA
+  // ======================================
+  loadDisponibles() {
+    this.loading = true;
+
+    this.participeService.listaParticipes().subscribe({
+      next: (resp: any[]) => {
+        const seleccionadosIds = this.designacionService.current.demandantes.map(d => d.persona_id);
+
+        this.demandantesDisponibles = resp.filter(p =>
+          p.rol_participe === 'Demandante' &&
+          !seleccionadosIds.includes(p.persona_id)
+        );
+
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 
-
-  // =============================
-  // BUSCAR PERSONA (SIMULADO / API)
-  // =============================
-  async buscarPersona() {
-    if (!this.numeroDocumento) return;
-
-    this.loadingBusqueda = true;
-    this.busquedaRealizada = false;
-    this.personaEncontrada = null;
-
-    try {
-      // 🔥 AQUÍ CONECTAS TU API REAL
-      const response = await this.fakeApi(this.numeroDocumento);
-
-      this.personaEncontrada = response;
-      this.busquedaRealizada = true;
-
-    } catch (error) {
-      this.personaEncontrada = null;
-      this.busquedaRealizada = true;
-    }
-
-    this.loadingBusqueda = false;
-  }
-
-  // =============================
-  // AGREGAR
-  // =============================
-  agregarDemandante(persona: any) {
-    this.designacionService.addDemandante({
-      persona_id: persona.id,
-      nombres: persona.nombres,
-      apellidos: persona.apellidos,
+  // ======================================
+  // ACTIONS
+  // ======================================
+  agregar(p: any) {
+    const participante: any = {
+      persona_id: p.persona_id,
+      nombres: p.nombres,
+      apellidos: p.apellidos,
       rol: 'DEMANDANTE'
-    });
+    };
 
-    this.personaEncontrada = null;
-    this.numeroDocumento = '';
+    this.designacionService.addDemandante(participante);
+    this.loadDisponibles();
   }
 
-  eliminarDemandante(index: number) {
+  quitar(index: number) {
     this.designacionService.removeDemandante(index);
+    this.loadDisponibles();
   }
 
-  abrirModalCrearPersona() {
-    console.log('Abrir modal crear persona');
-  }
-
-  // =============================
-  // MOCK API (SIMULACIÓN)
-  // =============================
-  fakeApi(doc: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (doc === '73081247') {
-          resolve({
-            id: 1,
-            nombres: 'RICHARD',
-            apellidos: 'PEREIRA',
-            dni: doc
-          });
-        } else {
-          reject();
-        }
-      }, 1000);
-    });
+  // ======================================
+  // GETTERS
+  // ======================================
+  get seleccionados() {
+    return this.designacionService.current.demandantes;
   }
 }

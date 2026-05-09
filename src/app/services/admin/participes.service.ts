@@ -10,9 +10,6 @@ import { environment } from '@environments/environment';
 })
 
 
-
-
-
 export class ParticipeService {
 
   // 1.- Environment

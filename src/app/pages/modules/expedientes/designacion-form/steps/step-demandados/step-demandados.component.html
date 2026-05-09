@@ -1,0 +1,70 @@
+<div>
+
+  <h2 class="text-xl font-bold mb-4">
+
+    Demandandos
+
+  </h2>
+
+  <div class="grid grid-cols-3 gap-3">
+
+    <input
+      type="number"
+      [(ngModel)]="persona_id"
+      placeholder="Persona ID"
+      class="input input-bordered" />
+
+    <input
+      type="text"
+      [(ngModel)]="nombres"
+      placeholder="Nombres"
+      class="input input-bordered" />
+
+    <input
+      type="text"
+      [(ngModel)]="apellidos"
+      placeholder="Apellidos"
+      class="input input-bordered" />
+
+  </div>
+
+  <button
+    class="btn btn-primary mt-4"
+    (click)="agregar()">
+
+    Agregar
+
+  </button>
+
+  <!-- LISTA -->
+
+  <div class="mt-6 space-y-2">
+
+    @for (
+      demandante of designacionFormService.current.demandantes;
+      track $index
+    ) {
+
+      <div class="border rounded-lg p-3 flex justify-between">
+
+        <div>
+
+          {{ demandante.nombres }}
+          {{ demandante.apellidos }}
+
+        </div>
+
+        <button
+          class="btn btn-error btn-sm"
+          (click)="designacionFormService.removeDemandante($index)">
+
+          Eliminar
+
+        </button>
+
+      </div>
+    }
+
+  </div>
+
+</div>

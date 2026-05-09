@@ -9,18 +9,6 @@ import { UsuarioService } from 'src/app/services/admin/usuarios.service';
 import { UsuariosFormComponent } from "./usuarios-form/usuarios-form.component";
 
 
-export interface Usuario {
-  id: number;
-  nombre: string;
-  correo: string;
-  documento_identidad: string;
-  telefono: string;
-  rol: string;
-  estado: boolean;
-  foto_perfil?: string;
-}
-
-
 @Component({
   selector: 'app-usuarios',
   imports: [
@@ -51,6 +39,7 @@ export class UsuariosComponent implements OnInit {
   usuarioSeleccionado: any = null;
 
   backendErrors: any = {};
+  errorMessage: string = '';
 
   // Search
   search: string = '';
@@ -75,20 +64,37 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios();
   }
 
+  // =====================================================
+  // METHODS
+  // =====================================================
   cargarUsuarios() {
     this.loading = true;
 
-    this.usuarioService.getUsuariosPaginados({
+    this.usuarioService.getUsuariosPaginated({
       page: this.page,
       limit: this.limit,
       rol: this.rolFiltro || undefined,
       search: this.search?.trim() || undefined,
 
-    }).subscribe(res => {
-      this.usuarios = res.data;
-      this.totalItems = res.total;
-      this.totalPages = res.totalPages;
-      this.loading = false;
+    }).subscribe({
+      next: (resp) => {
+        this.usuarios = resp.data.map((u: any) => ({
+          ...u,
+          nombre: this.getNombreCompleto(u.persona),
+          documento: u.persona?.dni || u.persona?.ruc || '-',
+          telefono: u.persona?.telefono || '-',
+          documento_identidad: u.persona?.dni || u.persona?.ruc || '-',
+          email: u.persona?.email || u.correo
+        }));
+        this.totalItems = resp.total;
+        this.totalPages = resp.totalPages;
+        this.currentPage = resp.page;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.message || 'Error al cargar usuarios';
+      },
     });
   }
 
@@ -195,8 +201,8 @@ export class UsuariosComponent implements OnInit {
   toggleEstadoUsuario(user: any, event: Event): void {
     event.preventDefault();
 
-    const estadoActual = user.estado;
-    const accion = user.estado ? 'deshabilitar' : 'habilitar';
+    const nuevoEstado = !user.estado;
+    const accion = nuevoEstado ? 'habilitar' : 'deshabilitar';
 
     Swal.fire({
       title: '¿Estás seguro?',
@@ -207,29 +213,22 @@ export class UsuariosComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       reverseButtons: true
     }).then((result) => {
-      if (!result.isConfirmed) {
-        return;
-      }
+      if (!result.isConfirmed) return;
 
-      const request$ = user.estado
-        ? this.usuarioService.deshabilitarUsuario(user.id)
-        : this.usuarioService.habilitarUsuario(user.id);
-
-      request$.subscribe({
+      this.usuarioService.changeStateUsuario(user.id, nuevoEstado).subscribe({
         next: () => {
-          user.estado = !user.estado;
+
+          user.estado = nuevoEstado;
 
           Swal.fire({
             icon: 'success',
             title: 'Éxito',
-            text: `Usuario ${user.estado ? 'habilitado' : 'deshabilitado'} correctamente`,
+            text: `Usuario ${accion} correctamente`,
             timer: 1500,
             showConfirmButton: false
           });
         },
-        error: (err) => {
-
-
+        error: () => {
           Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -293,5 +292,18 @@ export class UsuariosComponent implements OnInit {
         });
       }
     });
+  }
+
+  // ===========================================================
+  // HELPERS METHODS
+  // ===========================================================
+  getNombreCompleto(persona: any): string {
+    if (!persona) return '-';
+
+    if (persona.tipo === 'NATURAL') {
+      return `${persona.nombres || ''} ${persona.apellidos || ''}`.trim();
+    }
+
+    return persona.razon_social || persona.nombre_entidad || '-';
   }
 }

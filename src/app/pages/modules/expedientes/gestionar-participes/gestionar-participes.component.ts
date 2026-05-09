@@ -1,14 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { catchError, forkJoin, of } from 'rxjs';
-import iziToast from 'izitoast';
-
-// // Directives
-// import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.directive';
-
 
 // Services
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
@@ -19,16 +13,18 @@ import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioSecretaria } from 'src/app/interfaces/users/secretariaUser';
 import Swal from 'sweetalert2';
 
+// Components
+import { StepDemandantesComponent } from "./step-demandantes/step-demandantes.component";
+
 @Component({
   selector: 'gestionar-participes',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, StepDemandantesComponent],
   templateUrl: './gestionar-participes.component.html',
   styles: ``
 })
 export class GestionarParticipesComponent implements OnInit, OnChanges {
 
   @Input() mostrarModal = false;
-  // @Input() modoEdicion = false;
   @Input() expedienteSeleccionado: any = null;
 
   @Output() modalCerrado = new EventEmitter<void>();

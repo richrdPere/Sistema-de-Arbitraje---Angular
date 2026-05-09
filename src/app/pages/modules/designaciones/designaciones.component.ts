@@ -9,11 +9,10 @@ import { DesignacionService } from 'src/app/services/designacion.service';
 import { DesignacionDocumentosComponent } from "./designacion-documentos/designacion-documentos.component";
 import { DesignacionInfoComponent } from "./designacion-info/designacion-info.component";
 import { DesignacionParticipesComponent } from "./designacion-participes/designacion-participes.component";
-import { DesignacionFormComponent } from "./designacion-form/designacion-form.component";
 
 @Component({
   selector: 'app-designaciones',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, DesignacionDocumentosComponent, DesignacionInfoComponent, DesignacionParticipesComponent, DesignacionFormComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, DesignacionDocumentosComponent, DesignacionInfoComponent, DesignacionParticipesComponent],
   templateUrl: './designaciones.component.html',
   styles: ``
 })
@@ -72,7 +71,7 @@ export class DesignacionesComponent implements OnInit {
     // if (this.filtroExpediente) params.expediente_id = this.filtroExpediente;
     // if (this.filtroAdjudicador) params.adjudicador_id = this.filtroAdjudicador;
 
-    this.designacionService.listarDesignaciones(params).subscribe({
+    this.designacionService.getDesignacionesPaginated(params).subscribe({
       next: (resp) => {
         this.designaciones = resp.designaciones;
 
