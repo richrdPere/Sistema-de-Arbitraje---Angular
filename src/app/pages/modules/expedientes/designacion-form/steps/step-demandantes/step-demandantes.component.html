@@ -246,3 +246,42 @@
   </div>
 
 </section>
+
+<!-- MODAL NUEVA PERSONA -->
+@if (mostrarModalPersona) {
+
+<div class="modal modal-open">
+
+  <div class="modal-box max-w-5xl">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-4">
+
+      <h3 class="font-bold text-lg">
+        Nueva Persona
+      </h3>
+
+      <button
+        class="btn btn-sm btn-circle btn-ghost"
+        (click)="cerrarModalPersona()">
+
+        ✕
+
+      </button>
+
+    </div>
+
+    <!-- FORM COMPONENT -->
+    <persona-form
+
+      (guardar)="guardarNuevaPersona($event)"
+
+      (cancelar)="cerrarModalPersona()">
+
+    </persona-form>
+
+  </div>
+
+</div>
+
+}

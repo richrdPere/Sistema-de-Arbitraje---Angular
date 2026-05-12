@@ -9,7 +9,7 @@ import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.di
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
 import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
-
+import { PersonaService } from 'src/app/services/persona.service';
 
 // Interface
 import { Participe } from 'src/app/interfaces/users/participeUser';
@@ -24,10 +24,10 @@ import { Participe } from 'src/app/interfaces/users/participeUser';
 export class ParticipeModalComponent implements OnInit, OnChanges {
   @Input() mostrarModal = false;
   @Input() modoEdicion = false; // ← Nuevo flag
-  @Input() participeSeleccionado: any = null; // ← Datos al editar
+  @Input() personaSeleccionado: any = null; // ← Datos al editar
 
   @Output() modalCerrado = new EventEmitter<void>();
-  @Output() participeCreado = new EventEmitter<void>();
+  @Output() personaCreado = new EventEmitter<void>();
 
   modalWidthClass = 'max-w-4xl'; // default
 
@@ -48,7 +48,6 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
   formParticipe!: FormGroup;
   isEntidad: boolean = false;
-
 
   cargando = false;
   mensajeError = '';
@@ -75,7 +74,7 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
     // Detecta cuando cambian los inputs
     if (changes['participeSeleccionado']) {
-      if (this.participeSeleccionado) {
+      if (this.personaSeleccionado) {
         // this.modoEdicion = true;
 
         this.formParticipe.reset(); //  siempre limpia antes
@@ -115,18 +114,18 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
   private patchFormParticipe(): void {
 
-    const usuarioId = this.participeSeleccionado.usuario?.id;
+    const usuarioId = this.personaSeleccionado.usuario?.id;
 
     this.formParticipe.patchValue({
-      nombre: this.participeSeleccionado.usuario?.nombre || '',
-      apellidos: this.participeSeleccionado.usuario?.apellidos || '',
-      correo: this.participeSeleccionado.usuario?.correo || '',
-      telefono: this.participeSeleccionado.usuario?.telefono || '',
-      tipo_documento: this.participeSeleccionado.usuario?.tipo_documento || '',
-      documento_identidad: this.participeSeleccionado.usuario?.documento_identidad || '',
-      tipo_usuario: this.participeSeleccionado.tipo_usuario || '',
-      cargo: this.participeSeleccionado.cargo || '',
-      rol_participe: this.participeSeleccionado.rol_participe || '',
+      nombre: this.personaSeleccionado.usuario?.nombre || '',
+      apellidos: this.personaSeleccionado.usuario?.apellidos || '',
+      correo: this.personaSeleccionado.usuario?.correo || '',
+      telefono: this.personaSeleccionado.usuario?.telefono || '',
+      tipo_documento: this.personaSeleccionado.usuario?.tipo_documento || '',
+      documento_identidad: this.personaSeleccionado.usuario?.documento_identidad || '',
+      tipo_usuario: this.personaSeleccionado.tipo_usuario || '',
+      cargo: this.personaSeleccionado.cargo || '',
+      rol_participe: this.personaSeleccionado.rol_participe || '',
     });
 
     const correoCtrl = this.formParticipe.get('correo');
@@ -215,12 +214,12 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
 
     const participe: any = { ...this.formParticipe.value }
 
-    if (this.modoEdicion && this.participeSeleccionado?.id_participe) {
+    if (this.modoEdicion && this.personaSeleccionado?.id_participe) {
 
       // ============================
       // MODO EDICIÓN
       // ============================
-      const id = this.participeSeleccionado?.id_participe;
+      const id = this.personaSeleccionado?.id_participe;
 
       this.participeService.actualizarParticipe(id, participe).subscribe({
         next: () => {
@@ -229,7 +228,7 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
           this.mensajeExito = ' Partícipe creado exitosamente.';
 
           // Notificar al componente padre que se creó un partícipe
-          this.participeCreado.emit();
+          this.personaCreado.emit();
 
           // Cerrar el modal tras un pequeño delay
           setTimeout(() => {
@@ -256,7 +255,7 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
       next: () => {
         this.cargando = false;
         Swal.fire('Creado', 'Partícipe creado exitosamente.', 'success');
-        this.participeCreado.emit();
+        this.personaCreado.emit();
         this.cerrarModal();
       },
       error: (err) => {

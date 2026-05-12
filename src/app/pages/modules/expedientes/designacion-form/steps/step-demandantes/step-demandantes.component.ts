@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DesignacionFormService, Participante } from 'src/app/services/designacion-participes.service';
-import { FormsModule } from '@angular/forms';
+
 
 // SweetAlert
 import Swal from 'sweetalert2';
 import { PersonaService } from 'src/app/services/persona.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { PersonaFormComponent } from "../../persona-form/persona-form.component";
 
 @Component({
   selector: 'step-demandantes',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PersonaFormComponent],
   templateUrl: './step-demandantes.component.html',
   styles: ``
 })
@@ -24,7 +26,12 @@ export class StepDemandantesComponent {
   loadingBusqueda = false;
   personasEncontradas: any[] = [];
 
+  mostrarModalPersona = false;
+  guardandoPersona = false;
+
+
   constructor(
+
     public designacionFormService:
       DesignacionFormService,
     private personaService: PersonaService
@@ -49,6 +56,8 @@ export class StepDemandantesComponent {
     this.searchSubject.next(this.search);
 
   }
+
+
 
   agregar() {
 
@@ -239,11 +248,70 @@ export class StepDemandantesComponent {
   // ============================================
   abrirModalNuevoParticipante() {
 
-    Swal.fire({
-      icon: 'info',
-      title: 'Pendiente',
-      text: 'Aquí abrirás el modal para registrar un nuevo participante.'
-    });
+    this.mostrarModalPersona = true;
+
+  }
+
+  cerrarModalPersona() {
+
+    this.mostrarModalPersona = false;
+
+  }
+
+  guardarNuevaPersona(data: any) {
+
+    this.guardandoPersona = true;
+
+    this.personaService
+      .newPersona(data)
+      .subscribe({
+
+        next: (resp: any) => {
+
+          const persona =
+            resp?.data || resp;
+
+          // =====================================
+          // AGREGAR AUTOMÁTICAMENTE
+          // =====================================
+
+          this.agregarDemandante(persona);
+
+          // =====================================
+          // CERRAR MODAL
+          // =====================================
+
+          this.mostrarModalPersona = false;
+
+          this.guardandoPersona = false;
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Persona registrada',
+            text: 'La persona fue agregada como demandante.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          this.guardandoPersona = false;
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              err?.error?.message ||
+              'No se pudo registrar la persona.'
+          });
+
+        }
+
+      });
 
   }
 

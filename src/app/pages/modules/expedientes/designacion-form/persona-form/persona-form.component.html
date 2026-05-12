@@ -1,0 +1,396 @@
+
+
+
+<form [formGroup]="form">
+
+  <section class="border border-primary p-6 rounded-2xl bg-base-100 shadow-sm">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+
+      <div>
+        <h2 class="text-xl font-bold text-primary">
+          Registro de Persona
+        </h2>
+
+        <p class="text-sm opacity-70">
+          Complete la información de la persona
+        </p>
+      </div>
+
+      <!-- LOADING -->
+      <div *ngIf="loadingBusqueda" class="flex items-center gap-2 text-info">
+        <span class="loading loading-spinner loading-sm"></span>
+        <span class="text-sm">Buscando...</span>
+      </div>
+
+    </div>
+
+    <!-- TIPO -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+
+      <div class="md:col-span-4">
+
+        <label class="block text-sm font-semibold mb-1">
+          <span class="label-text font-medium">
+            Tipo de persona
+          </span>
+
+          <span *ngIf="esRequerido('tipo')" class="text-error font-bold">
+            *
+          </span>
+        </label>
+
+        <select
+          formControlName="tipo"
+          class="select select-bordered w-full"
+          (change)="onTipoPersonaChange()">
+
+          <option [ngValue]="null" disabled>
+            Seleccionar tipo
+          </option>
+
+          <option
+            *ngFor="let d of tipoUsuarios"
+            [ngValue]="d.id">
+
+            {{ d.nombre }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- PERSONA NATURAL -->
+    <!-- ========================= -->
+
+    <div *ngIf="esNatural()">
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+
+        <!-- DNI -->
+        <div class="md:col-span-4">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              DNI
+            </span>
+
+            <span *ngIf="esRequerido('dni')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="dni"
+            class="input input-bordered w-full"
+            placeholder="Ingrese N° DNI"
+            maxlength="8"
+            (keypress)="soloNumeros($event)" />
+
+          <span
+            *ngIf="form.get('dni')?.invalid && form.get('dni')?.touched"
+            class="text-error text-sm">
+
+            DNI inválido
+
+          </span>
+
+        </div>
+
+        <!-- NOMBRES -->
+        <div class="md:col-span-4">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              Nombres
+            </span>
+
+            <span *ngIf="esRequerido('nombres')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="nombres"
+            class="input input-bordered w-full"
+            placeholder="Ingrese nombres"
+            appUppercase />
+
+        </div>
+
+        <!-- APELLIDOS -->
+        <div class="md:col-span-4">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              Apellidos
+            </span>
+
+            <span *ngIf="esRequerido('apellidos')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="apellidos"
+            class="input input-bordered w-full"
+            placeholder="Ingrese apellidos"
+            appUppercase />
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- PERSONA JURIDICA -->
+    <!-- ========================= -->
+
+    <div *ngIf="esJuridica()">
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+
+        <!-- RUC -->
+        <div class="md:col-span-4">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              RUC
+            </span>
+
+            <span *ngIf="esRequerido('ruc')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="ruc"
+            class="input input-bordered w-full"
+            placeholder="Ingrese N° RUC"
+            maxlength="11"
+            (keypress)="soloNumeros($event)" />
+
+        </div>
+
+        <!-- RAZON SOCIAL -->
+        <div class="md:col-span-8">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              Razón Social
+            </span>
+
+            <span *ngIf="esRequerido('razon_social')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="razon_social"
+            class="input input-bordered w-full"
+            placeholder="Ingrese razón social"
+            appUppercase />
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- ENTIDAD PUBLICA -->
+    <!-- ========================= -->
+
+    <div *ngIf="esEntidad()">
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+
+        <!-- RUC -->
+        <div class="md:col-span-4">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              RUC
+            </span>
+
+            <span *ngIf="esRequerido('ruc')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="ruc"
+            class="input input-bordered w-full"
+            placeholder="Ingrese N° RUC"
+            maxlength="11"
+            (keypress)="soloNumeros($event)" />
+
+        </div>
+
+        <!-- NOMBRE ENTIDAD -->
+        <div class="md:col-span-8">
+
+          <label class="block text-sm font-semibold mb-1">
+
+            <span class="label-text font-medium">
+              Nombre de Entidad
+            </span>
+
+            <span *ngIf="esRequerido('nombre_entidad')" class="text-error font-bold">
+              *
+            </span>
+
+          </label>
+
+          <input
+            formControlName="nombre_entidad"
+            class="input input-bordered w-full"
+            placeholder="Ingrese nombre de la entidad"
+            appUppercase />
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- CONTACTO -->
+    <!-- ========================= -->
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
+
+      <!-- DIRECCION -->
+      <div class="md:col-span-4">
+
+        <label class="block text-sm font-semibold mb-1">
+
+          <span class="label-text font-medium">
+            Dirección
+          </span>
+
+        </label>
+
+        <input
+          formControlName="direccion"
+          class="input input-bordered w-full"
+          placeholder="Ingrese dirección"
+          appUppercase />
+
+      </div>
+
+      <!-- EMAIL -->
+      <div class="md:col-span-4">
+
+        <label class="block text-sm font-semibold mb-1">
+
+          <span class="label-text font-medium">
+            Email
+          </span>
+
+        </label>
+
+        <input
+          formControlName="email"
+          type="email"
+          class="input input-bordered w-full"
+          placeholder="Ingrese email" />
+
+      </div>
+
+      <!-- TELEFONO -->
+      <div class="md:col-span-4">
+
+        <label class="block text-sm font-semibold mb-1">
+
+          <span class="label-text font-medium">
+            Teléfono / Celular
+          </span>
+
+        </label>
+
+        <input
+          formControlName="telefono"
+          class="input input-bordered w-full"
+          placeholder="Ingrese teléfono"
+          maxlength="9"
+          (keypress)="soloNumeros($event)" />
+
+      </div>
+
+      <!-- CARGO -->
+      <div class="md:col-span-4" *ngIf="esNatural()">
+
+        <label class="block text-sm font-semibold mb-1">
+
+          <span class="label-text font-medium">
+            Cargo / Profesión
+          </span>
+
+        </label>
+
+        <input
+          formControlName="cargo"
+          class="input input-bordered w-full"
+          placeholder="Ingrese cargo o profesión"
+          appUppercase />
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- BOTONES -->
+    <!-- ========================= -->
+
+    <div
+      *ngIf="mostrarBotones"
+      class="mt-8 flex justify-end gap-3">
+
+      <!-- CANCELAR -->
+      <button
+        type="button"
+        class="btn btn-outline"
+        (click)="close()">
+
+        Cancelar
+
+      </button>
+
+      <!-- GUARDAR -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="form.invalid"
+        (click)="submit()">
+
+        <i class="fa-solid fa-floppy-disk"></i>
+
+        Guardar Persona
+
+      </button>
+
+    </div>
+
+  </section>
+
+</form>
+
