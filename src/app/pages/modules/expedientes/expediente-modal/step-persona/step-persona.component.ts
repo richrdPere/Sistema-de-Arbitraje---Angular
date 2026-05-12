@@ -251,8 +251,6 @@ export class StepPersonaComponent implements OnInit {
 
     this.nextStep.emit();
   }
-
-
 }
 
 

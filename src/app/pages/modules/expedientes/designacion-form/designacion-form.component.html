@@ -23,19 +23,19 @@
     <!-- FORMULARIO -->
     <!-- STEPPER -->
     <ul class="steps steps-horizontal  w-full mt-4">
-      <li class="step cursor-pointer" [class.step-primary]="currentStep >= 1" (click)="irAlPaso(1)">
+      <li class="step cursor-pointer" [class.step-primary]="state.step >= 1" (click)="irAlPaso(1)">
         DEMANDANTES
       </li>
 
-      <li class="step" [class.step-primary]="currentStep >= 2" (click)="irAlPaso(2)">
+      <li class="step" [class.step-primary]="state.step >= 2" (click)="irAlPaso(2)">
         DEMANDADOS
       </li>
 
-      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(3)">
+      <li class="step" [class.step-primary]="state.step >= 3" (click)="irAlPaso(3)">
         ARBITROS
       </li>
 
-      <li class="step" [class.step-primary]="currentStep >= 3" (click)="irAlPaso(4)">
+      <li class="step" [class.step-primary]="state.step >= 3" (click)="irAlPaso(4)">
         CONFIRMACION
       </li>
     </ul>
@@ -44,21 +44,45 @@
     <div class="modal-body">
 
       <!-- STEP 1: DEMANDANTES -->
-      <step-demandantes *ngIf="currentStep === 1"></step-demandantes>
+      <step-demandantes *ngIf="state.step === 1"></step-demandantes>
 
       <!-- STEP 2: DEMANDADOS -->
-      <step-demandados *ngIf="currentStep === 2"></step-demandados>
+      <step-demandados *ngIf="state.step === 2"></step-demandados>
 
       <!-- STEP 3: ARBITROS -->
-      <step-arbitros *ngIf="currentStep === 3"></step-arbitros>
+      <step-arbitros *ngIf="state.step === 3"></step-arbitros>
 
       <!-- STEP 4: CONFIRMACION -->
-      <step-confirmacion *ngIf="currentStep === 4"></step-confirmacion>
-
-
+      <step-confirmacion *ngIf="state.step === 4"></step-confirmacion>
     </div>
 
+    <!-- FOOTER -->
+    <div class="flex justify-center items-center border-t border-base-300 pt-5 mt-6 gap-5">
 
+      <!-- BACK -->
+      <button class="btn btn-outline" (click)="prevStep()" [disabled]="state.step === 1">
+        <i class="fa-solid fa-arrow-left"></i>
+        Anterior
+      </button>
+
+      <!-- INFO -->
+      <!-- <div class="text-sm text-base-content/60">
+        Paso {{ state.step }} de 4
+      </div> -->
+
+      <!-- NEXT / SAVE -->
+      @if(state.step < 4) { <button class="btn btn-primary" (click)="nextStep()">
+        Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        }
+
+        @if(state.step === 4) {
+        <button class="btn btn-success" (click)="guardarDesignacion()">
+          Finalizar Designación
+        </button>
+        }
+    </div>
   </div>
 
   <!-- Fondo oscuro del modal -->

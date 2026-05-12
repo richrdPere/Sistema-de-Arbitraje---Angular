@@ -27,8 +27,8 @@ export class DesignacionFormComponent implements OnInit {
   state: any;
 
   // Step
-  currentStep: number = 1;
-  totalSteps = 4;
+  // currentStep: number = 1;
+  // totalSteps = 4;
 
   constructor(
     public designacionFormService: DesignacionFormService,
@@ -63,52 +63,27 @@ export class DesignacionFormComponent implements OnInit {
       });
   }
 
-  // ==========================
-  // NEXT
-  // ==========================
-  // nextStep() {
-
-  //   try {
-  //     this.designacionFormService.nextStep();
-  //   } catch (error: any) {
-
-  //     Swal.fire({
-  //       icon: 'warning',
-  //       title: 'Validación',
-  //       text: error.message
-  //     });
-  //   }
-  // }
-
-  // ==========================
-  // PREV
-  // ==========================
-  // prevStep() {
-  //   this.designacionFormService.prevStep();
-  // }
-
-
   // - Retrocede
-  nextStep() {
-    if (this.currentStep < 3) this.currentStep++;
-
+  prevStep() {
+    this.designacionFormService.prevStep();
   }
 
   // - Avanza
-  prevStep() {
-
-    if (this.currentStep > 1) this.currentStep--;
+  nextStep() {
+    try {
+      this.designacionFormService.nextStep();
+    } catch (error: any) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validación',
+        text: error.message
+      });
+    }
   }
 
   // - Ir al step
   irAlPaso(step: number) {
-
-    // if (!this.puedeIrAlPaso(step)) {
-    //   return; // BLOQUEA
-    // }
-
-
-    this.currentStep = step;
+    this.designacionFormService.goToStep(step);
   }
 
   // ==========================

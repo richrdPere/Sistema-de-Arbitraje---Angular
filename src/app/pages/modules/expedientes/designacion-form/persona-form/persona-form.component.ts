@@ -17,7 +17,7 @@ import { PersonaService } from 'src/app/services/persona.service';
   styles: ``
 })
 export class PersonaFormComponent implements OnInit {
-
+  @Input() mostrarModal = false;
   @Input() persona: any = null;
   @Input() mostrarBotones = true;
 
@@ -94,7 +94,6 @@ export class PersonaFormComponent implements OnInit {
   }
 
   listenBusquedaPersona() {
-
     // DNI
     this.form.get('dni')?.valueChanges
       .pipe(
@@ -116,7 +115,7 @@ export class PersonaFormComponent implements OnInit {
               this.form.patchValue({
 
                 tipo: resp.tipo,
-
+                dni: resp.dni,
                 nombres: resp.nombres,
                 apellidos: resp.apellidos,
                 email: resp.email,
@@ -189,11 +188,8 @@ export class PersonaFormComponent implements OnInit {
             error: () => {
               this.loadingBusqueda = false;
             }
-
           });
-
       });
-
   }
 
   // =========================
@@ -283,7 +279,6 @@ export class PersonaFormComponent implements OnInit {
 
   // CLEAR VALIDATORS
   clearValidators(fields: string[]) {
-
     fields.forEach(field => {
       this.form.get(field)?.clearValidators();
       this.form.get(field)?.updateValueAndValidity();
@@ -309,21 +304,16 @@ export class PersonaFormComponent implements OnInit {
   }
 
   esRequerido(campo: string): boolean {
-
     const control = this.form.get(campo);
-
     return control?.hasValidator(Validators.required) ?? false;
 
   }
 
   soloNumeros(event: KeyboardEvent) {
-
     const charCode = event.which ? event.which : event.keyCode;
-
     if (charCode < 48 || charCode > 57) {
       event.preventDefault();
     }
-
   }
 
   // =========================
@@ -337,13 +327,35 @@ export class PersonaFormComponent implements OnInit {
 
     }
     this.guardar.emit(this.form.getRawValue());
+    this.resetForm();
   }
 
   // =========================
   // CANCELAR
   // =========================
   close() {
+    this.resetForm();
+    this.mostrarModal = false;
     this.cancelar.emit();
   }
 
+  resetForm() {
+
+    this.form.reset();
+    this.tipoUsuarioSeleccionado = null;
+    this.persona = null;
+    this.loadingBusqueda = false;
+
+    // Limpiar validadores
+    this.clearValidators([
+      'dni',
+      'nombres',
+      'apellidos',
+      'ruc',
+      'razon_social',
+      'nombre_entidad'
+    ]);
+
+    this.form.updateValueAndValidity();
+  }
 }

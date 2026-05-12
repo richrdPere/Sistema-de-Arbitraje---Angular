@@ -20,15 +20,19 @@
     </div>
   </div>
 
+  <!-- MODAL NUEVA PERSONA -->
+  <persona-form [mostrarModal]="mostrarModalPersona" (guardar)="guardarNuevaPersona($event)"
+    (cancelar)="cerrarModalPersona()">
+  </persona-form>
+
   <!-- BUSCADOR -->
   <div class="card bg-base-100 border border-base-300 shadow-sm">
-
     <div class="card-body space-y-4">
 
       <!-- INPUT SEARCH -->
       <div class="form-control">
 
-        <label class="label">
+        <label class="label mb-1">
           <span class="label-text font-medium">
             Buscar persona
           </span>
@@ -38,7 +42,8 @@
 
           <!-- INPUT -->
           <input type="text" [(ngModel)]="search" (input)="onSearchChange()"
-            placeholder="Buscar por DNI, RUC, nombres o razón social..." class="input input-bordered w-full" />
+            placeholder="Buscar por DNI, RUC, nombres o razón social..." class="input input-bordered w-full"
+            appUppercase />
 
           <!-- LOADING -->
           @if (loadingBusqueda) {
@@ -50,10 +55,10 @@
           }
 
           <!-- SEARCH -->
-          <button class="btn btn-primary" (click)="buscarPersonas()">
+          <!-- <button class="btn btn-primary" (click)="buscarPersonas()">
             <i class="fa-solid fa-magnifying-glass"></i>
             Buscar
-          </button>
+          </button> -->
 
           <!-- NEW PERSON -->
           <button class="btn btn-outline btn-secondary" (click)="abrirModalNuevoParticipante()">
@@ -61,116 +66,127 @@
             Participe
           </button>
         </div>
-
       </div>
+
+      @if (loadingBusqueda) {
+      <div class="flex justify-center py-8">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      }
 
       <!-- RESULTADOS -->
       @if (personasEncontradas.length > 0) {
 
-      <div class="space-y-3">
+      <div class="space-y-4 mt-4">
+        <!-- HEADER -->
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-semibold text-base-content/70">
+            Resultados encontrados
+          </div>
 
-        <div class="text-sm font-semibold text-base-content/70">
-          Resultados encontrados
+          <div class="badge badge-neutral">
+            {{ personasEncontradas.length }}
+          </div>
         </div>
 
+        <!-- LISTA -->
         @for (persona of personasEncontradas; track persona.id) {
+        <div class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition-all">
+          <div class="card-body p-4">
+            <div class="flex justify-between items-center gap-4">
+              <!-- INFO -->
+              <div class="flex-1 min-w-0">
 
-        <div class="border border-base-300 rounded-xl p-4 hover:bg-base-200 transition-all">
+                <!-- NATURAL -->
+                @if (persona.tipo === 'NATURAL') {
 
-          <div class="flex justify-between items-start gap-4">
+                <div class="font-semibold text-base truncate">
+                  👤 {{ persona.nombres }} {{ persona.apellidos }}
+                </div>
 
-            <!-- INFO -->
-            <div class="space-y-1">
+                <div class="text-sm text-base-content/70">
+                  DNI: {{ persona.dni }}
+                </div>
+                }
 
-              <!-- NATURAL -->
-              @if (persona.tipo === 'NATURAL') {
+                <!-- JURIDICA -->
+                @if (persona.tipo === 'JURIDICA') {
+                <div class="font-semibold text-base truncate">
+                  🏢 {{ persona.razon_social }}
+                </div>
 
-              <div class="font-semibold text-base">
-                👤 {{ persona.nombres }} {{ persona.apellidos }}
+                <div class="text-sm text-base-content/70">
+                  RUC: {{ persona.ruc }}
+                </div>
+
+                }
+
+                <!-- ENTIDAD -->
+                @if (persona.tipo === 'ENTIDAD_PUBLICA') {
+
+                <div class="font-semibold text-base truncate">
+                  🏛️ {{ persona.nombre_entidad }}
+                </div>
+
+                <div class="text-sm text-base-content/70">
+                  RUC: {{ persona.ruc }}
+                </div>
+
+                }
+
+                <!-- EMAIL -->
+                <div class="text-xs text-base-content/50 mt-1 truncate">
+
+                  {{ persona.email || 'Sin correo registrado' }}
+
+                </div>
+
               </div>
 
-              <div class="text-sm text-base-content/70">
-                DNI: {{ persona.dni }}
-              </div>
+              <!-- ACTION -->
+              <div class="flex-shrink-0">
+                <button class="btn btn-primary btn-sm rounded-xl" (click)="agregarDemandante(persona)">
+                  Agregar
+                </button>
 
-              }
-
-              <!-- JURIDICA -->
-              @if (persona.tipo === 'JURIDICA') {
-
-              <div class="font-semibold text-base">
-                🏢 {{ persona.razon_social }}
-              </div>
-
-              <div class="text-sm text-base-content/70">
-                RUC: {{ persona.ruc }}
-              </div>
-
-              }
-
-              <!-- ENTIDAD -->
-              @if (persona.tipo === 'ENTIDAD_PUBLICA') {
-
-              <div class="font-semibold text-base">
-                🏛️ {{ persona.nombre_entidad }}
-              </div>
-
-              <div class="text-sm text-base-content/70">
-                RUC: {{ persona.ruc }}
-              </div>
-
-              }
-
-              <!-- EXTRA -->
-              <div class="text-xs text-base-content/50">
-                {{ persona.email || 'Sin correo registrado' }}
               </div>
 
             </div>
-
-            <!-- BUTTON -->
-            <button class="btn btn-primary btn-sm" (click)="agregarDemandante(persona)">
-
-              Agregar
-
-            </button>
 
           </div>
 
         </div>
 
         }
-
       </div>
-
       }
 
-      <!-- EMPTY -->
       @if (
+      !loadingBusqueda &&
+      search &&
+      search.trim() !== '' &&
       personasEncontradas.length === 0
       ) {
+      <div class="border border-dashed border-base-300 rounded-2xl p-8 text-center bg-base-100">
+        <div class="text-5xl mb-3">
+          🔍
+        </div>
 
-      <div class="alert alert-warning">
+        <div class="font-semibold text-base-content">
+          No se encontraron personas
+        </div>
 
-        <span>
-          No se encontraron personas registradas.
-        </span>
-
+        <div class="text-sm text-base-content/60 mt-1">
+          Intenta buscar por DNI, RUC, nombres o razón social.
+        </div>
       </div>
-
       }
-
-
-
     </div>
-
   </div>
 
   <!-- SELECCIONADOS -->
   <div class="card bg-base-100 border border-base-300 shadow-sm">
-
     <div class="card-body">
-
       <div class="flex justify-between items-center mb-4">
 
         <h3 class="font-bold text-lg">
@@ -200,7 +216,6 @@
 
       <!-- LISTA -->
       <div class="space-y-3">
-
         @for (
         demandante of designacionFormService.current.demandantes;
         track demandante.persona_id
@@ -208,33 +223,23 @@
 
         <div
           class="border border-base-300 rounded-xl p-4 flex justify-between items-center hover:bg-base-200 transition-all">
-
           <!-- INFO -->
           <div>
-
             <div class="font-semibold">
-
               {{ demandante.nombres }}
-              {{ demandante.apellidos }}
-
             </div>
 
             <div class="text-sm text-base-content/60">
-
               Persona ID:
               {{ demandante.persona_id }}
 
             </div>
-
           </div>
 
           <!-- ACTIONS -->
-          <button class="btn btn-error btn-sm" (click)="eliminarDemandante(demandante.persona_id)">
-
-            Eliminar
-
+          <button class="btn btn-error btn-sm " (click)="eliminarDemandante(demandante.persona_id)">
+            <i class="fa-solid fa-trash-can"></i>
           </button>
-
         </div>
 
         }
@@ -246,42 +251,3 @@
   </div>
 
 </section>
-
-<!-- MODAL NUEVA PERSONA -->
-@if (mostrarModalPersona) {
-
-<div class="modal modal-open">
-
-  <div class="modal-box max-w-5xl">
-
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-4">
-
-      <h3 class="font-bold text-lg">
-        Nueva Persona
-      </h3>
-
-      <button
-        class="btn btn-sm btn-circle btn-ghost"
-        (click)="cerrarModalPersona()">
-
-        ✕
-
-      </button>
-
-    </div>
-
-    <!-- FORM COMPONENT -->
-    <persona-form
-
-      (guardar)="guardarNuevaPersona($event)"
-
-      (cancelar)="cerrarModalPersona()">
-
-    </persona-form>
-
-  </div>
-
-</div>
-
-}
