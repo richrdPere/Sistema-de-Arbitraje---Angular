@@ -212,26 +212,9 @@ export class ExpedientesComponent {
   }
 
   designacionFormModal(exp: any) {
-    this.expedienteId = exp.id_expediente;
-
-    console.log("Designacion exp ID: ", this.expedienteId);
-
+    // this.expedienteId = exp.id_expediente;
+    this.expedienteSeleccionado = { ...exp };
     this.mostrarModalFormDesignacion = true;
-  }
-
-  cerrarModalFormDesignacion() {
-    this.mostrarModalFormDesignacion = false;
-    this.expedienteId = null;
-  }
-
-  cerrarModalParticipes() {
-    this.mostrarModalParticipes = false;
-    this.expedienteSeleccionado = null;
-  }
-
-  cerrarModalHistorial() {
-    this.mostrarModalHistorial = false;
-    this.expedienteId = null;
   }
 
   verHistorial(exp: any) {
@@ -249,6 +232,24 @@ export class ExpedientesComponent {
     this.expedienteSeleccionado = { ...exp };
     this.mostrarModal = true;
   }
+
+  cerrarModalFormDesignacion() {
+    this.mostrarModalFormDesignacion = false;
+    this.expedienteSeleccionado = null;
+    // this.expedienteId = null;
+  }
+
+  cerrarModalParticipes() {
+    this.mostrarModalParticipes = false;
+    this.expedienteSeleccionado = null;
+  }
+
+  cerrarModalHistorial() {
+    this.mostrarModalHistorial = false;
+    this.expedienteId = null;
+  }
+
+
 
   eliminarExpediente(id_exp: number) {
 

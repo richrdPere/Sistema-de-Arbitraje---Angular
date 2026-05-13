@@ -1,37 +1,39 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+
+// Service
 import { DesignacionFormService } from 'src/app/services/designacion-participes.service';
 import { DesignacionService } from '../../../../services/designacion.service';
+import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
 
+// Componentes
 import { StepDemandantesComponent } from "./steps/step-demandantes/step-demandantes.component";
 import { StepDemandadosComponent } from "./steps/step-demandados/step-demandados.component";
 import { StepArbitrosComponent } from "./steps/step-arbitros/step-arbitros.component";
 import { StepConfirmacionComponent } from "./steps/step-confirmacion/step-confirmacion.component";
 
-// Service
+
+
 @Component({
   selector: 'designacion-form',
   imports: [CommonModule, StepDemandantesComponent, StepDemandadosComponent, StepArbitrosComponent, StepConfirmacionComponent],
   templateUrl: './designacion-form.component.html',
   styles: ``
 })
-export class DesignacionFormComponent implements OnInit {
+export class DesignacionFormComponent implements OnInit, OnChanges {
 
   @Input() mostrarModal = false;
-  @Input() expedienteId!: number;
+  @Input() expedienteId: number | null = null;
 
   @Output() modalCerrado = new EventEmitter<void>();
   @Output() designacionCreado = new EventEmitter<void>();
 
   state: any;
 
-  // Step
-  // currentStep: number = 1;
-  // totalSteps = 4;
-
   constructor(
     public designacionFormService: DesignacionFormService,
+    private expedienteService: ExpedientesService,
     private designacionService: DesignacionService
   ) { }
 
@@ -51,16 +53,96 @@ export class DesignacionFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setModalWidth('xl');
-    this.designacionFormService.init(
-      this.expedienteId,
-      'AD_HOC'
-    );
 
     this.designacionFormService
       .getState()
       .subscribe(state => {
         this.state = state;
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // VALIDAR INPUT
+    console.log("EXPEDIENTE ID: ", this.expedienteId)
+    if (changes['expedienteId'] && this.expedienteId) {
+      console.log('EXPEDIENTE ID:',this.expedienteId);
+      this.cargarParticipantes();
+    }
+  }
+
+  // ==========================
+  // CARGAR PARTICIPES
+  // ==========================
+  cargarParticipantes() {
+    this.expedienteService
+      .listarParticipantes(this.expedienteId!)
+      .subscribe({
+        next: (resp: any) => {
+          console.log(
+            'PARTICIPANTES:',
+            resp
+          );
+
+          // - MAPEAR DEMANDANTES
+          const demandantes = (resp?.demandantes || [])
+            .map((d: any) => ({
+              persona_id: d.persona.id,
+              nombres: this.getNombrePersona(d.persona),
+              apellidos: d.persona.apellidos || '',
+              rol: 'DEMANDANTE'
+            }));
+
+          // - MAPEAR DEMANDADOS
+          const demandados = (resp?.demandados || [])
+            .map((d: any) => ({
+              persona_id: d.persona.id,
+              nombres: this.getNombrePersona(d.persona),
+              apellidos: d.persona.apellidos || '',
+              rol: 'DEMANDADO'
+            }));
+
+          // - INIT STATE
+          this.designacionFormService.init(
+            this.expedienteId!,
+            'AD_HOC',
+            demandantes,
+            demandados
+          );
+        },
+
+        error: (err) => {
+          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudieron cargar los participantes.'
+          });
+        }
+      });
+  }
+
+  // ==========================
+  // HELPERS METHODS
+  // ==========================
+  getNombrePersona(persona: any): string {
+    // NATURAL
+    if (persona.tipo === 'NATURAL') {
+      return `${persona.nombres || ''} ${persona.apellidos || ''} `.trim();
+    }
+
+    // JURIDICA
+    if (persona.tipo === 'JURIDICA') {
+      return persona.razon_social || '';
+    }
+
+    // ENTIDAD
+    if (
+      persona.tipo === 'ENTIDAD_PUBLICA'
+    ) {
+      return persona.nombre_entidad || '';
+    }
+
+    return '';
   }
 
   // - Retrocede
@@ -110,17 +192,14 @@ export class DesignacionFormComponent implements OnInit {
       .subscribe({
 
         next: () => {
-
           Swal.fire({
             icon: 'success',
             title: 'Designación creada'
           });
-
           this.designacionFormService.reset();
         },
 
         error: (err) => {
-
           Swal.fire({
             icon: 'error',
             title: 'Error',

@@ -1,70 +1,245 @@
-<div>
+<section class="border border-secondary p-6 rounded-md bg-base-100 space-y-6">
 
-  <h2 class="text-xl font-bold mb-4">
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold">
+        Demandados
+      </h2>
 
-    Demandandos
+      <p class="text-sm text-base-content/70 mt-1">
+        Busca participantes existentes o registra nuevos demandados para el expediente.
+      </p>
+    </div>
 
-  </h2>
+    <div class="badge badge-secondary badge-outline p-4">
+      {{
+      designacionFormService.current.demandados.length
+      }}
 
-  <div class="grid grid-cols-3 gap-3">
-
-    <input
-      type="number"
-      [(ngModel)]="persona_id"
-      placeholder="Persona ID"
-      class="input input-bordered" />
-
-    <input
-      type="text"
-      [(ngModel)]="nombres"
-      placeholder="Nombres"
-      class="input input-bordered" />
-
-    <input
-      type="text"
-      [(ngModel)]="apellidos"
-      placeholder="Apellidos"
-      class="input input-bordered" />
-
+      seleccionados
+    </div>
   </div>
 
-  <button
-    class="btn btn-primary mt-4"
-    (click)="agregar()">
+  <!-- MODAL NUEVA PERSONA -->
+  <persona-form [mostrarModal]="mostrarModalPersona" (guardar)="guardarNuevaPersona($event)"
+    (cancelar)="cerrarModalPersona()">
+  </persona-form>
 
-    Agregar
+  <!-- BUSCADOR -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
 
-  </button>
+    <div class="card-body space-y-4">
 
-  <!-- LISTA -->
+      <!-- INPUT SEARCH -->
+      <div class="form-control">
 
-  <div class="mt-6 space-y-2">
+        <label class="label mb-1">
+          <span class="label-text font-medium">
+            Buscar persona
+          </span>
+        </label>
 
-    @for (
-      demandante of designacionFormService.current.demandantes;
-      track $index
-    ) {
+        <div class="flex gap-2 relative">
 
-      <div class="border rounded-lg p-3 flex justify-between">
+          <!-- INPUT -->
+          <input type="text" [(ngModel)]="search" (input)="onSearchChange()"
+            placeholder="Buscar por DNI, RUC, nombres o razón social..." class="input input-bordered w-full"
+            appUppercase />
 
-        <div>
+          <!-- LOADING -->
+          @if (loadingBusqueda) {
+          <div class="absolute right-3 top-3">
+            <span class="loading loading-spinner loading-sm"></span>
+          </div>
+          }
 
-          {{ demandante.nombres }}
-          {{ demandante.apellidos }}
+          <!-- NUEVO PARTICIPANTE -->
+          <button class="btn btn-outline btn-secondary" (click)="abrirModalNuevoParticipante()">
+            <i class="fa-solid fa-plus"></i>
+            Partícipe
+          </button>
+        </div>
+      </div>
 
+      <!-- LOADING -->
+      @if (loadingBusqueda) {
+      <div class="flex justify-center py-8">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      }
+
+      <!-- RESULTADOS -->
+      @if (personasEncontradas.length > 0) {
+      <div class="space-y-4 mt-4">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-semibold text-base-content/70">
+            Resultados encontrados
+          </div>
+
+          <div class="badge badge-neutral">
+            {{ personasEncontradas.length }}
+          </div>
         </div>
 
-        <button
-          class="btn btn-error btn-sm"
-          (click)="designacionFormService.removeDemandante($index)">
+        <!-- LISTA -->
+        @for (persona of personasEncontradas; track persona.id) {
 
-          Eliminar
+        <div class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition-all">
 
-        </button>
+          <div class="card-body p-4">
 
+            <div class="flex justify-between items-center gap-4">
+
+              <!-- INFO -->
+              <div class="flex-1 min-w-0">
+
+                <!-- NATURAL -->
+                @if (persona.tipo === 'NATURAL') {
+
+                <div class="font-semibold text-base truncate">
+                  👤 {{ persona.nombres }} {{ persona.apellidos }}
+                </div>
+
+                <div class="text-sm text-base-content/70">
+                  DNI: {{ persona.dni }}
+                </div>
+
+                }
+
+                <!-- JURIDICA -->
+                @if (persona.tipo === 'JURIDICA') {
+
+                <div class="font-semibold text-base truncate">
+                  🏢 {{ persona.razon_social }}
+                </div>
+
+                <div class="text-sm text-base-content/70">
+                  RUC: {{ persona.ruc }}
+                </div>
+
+                }
+
+                <!-- ENTIDAD -->
+                @if (persona.tipo === 'ENTIDAD_PUBLICA') {
+                <div class="font-semibold text-base truncate">
+                  🏛️ {{ persona.nombre_entidad }}
+                </div>
+                <div class="text-sm text-base-content/70">
+                  RUC: {{ persona.ruc }}
+                </div>
+                }
+
+                <!-- EMAIL -->
+                <div class="text-xs text-base-content/50 mt-1 truncate">
+                  {{ persona.email || 'Sin correo registrado' }}
+                </div>
+              </div>
+
+              <!-- ACTION -->
+              <div class="flex-shrink-0">
+                <button class="btn btn-secondary btn-sm rounded-xl" (click)="agregarDemandado(persona)">
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
       </div>
-    }
+      }
 
+      <!-- EMPTY SEARCH -->
+      @if (
+      !loadingBusqueda &&
+      search &&
+      search.trim() !== '' &&
+      personasEncontradas.length === 0
+      ) {
+      <div class="border border-dashed border-base-300 rounded-2xl p-8 text-center bg-base-100">
+
+        <div class="text-5xl mb-3">
+          🔍
+        </div>
+
+        <div class="font-semibold text-base-content">
+          No se encontraron personas
+        </div>
+
+        <div class="text-sm text-base-content/60 mt-1">
+          Intenta buscar por DNI, RUC, nombres o razón social.
+        </div>
+      </div>
+      }
+    </div>
   </div>
 
-</div>
+  <!-- DEMANDADOS SELECCIONADOS -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-4">
+
+        <h3 class="font-bold text-lg">
+          Demandados seleccionados
+        </h3>
+        <div class="badge badge-secondary">
+
+          {{
+          designacionFormService.current.demandados.length
+          }}
+        </div>
+      </div>
+
+      <!-- EMPTY -->
+      @if (
+      designacionFormService.current.demandados.length === 0
+      ) {
+      <div class="border border-dashed border-base-300 rounded-2xl p-10 text-center bg-base-100">
+        <div class="text-5xl mb-4">
+          ⚖️
+        </div>
+        <div class="text-lg font-semibold">
+          No hay demandados agregados
+        </div>
+        <div class="text-sm text-base-content/60 mt-2">
+          Busca y agrega personas naturales, jurídicas o entidades públicas.
+        </div>
+      </div>
+      }
+
+      <!-- LISTA -->
+      <div class="space-y-3">
+        @for (
+        demandado of designacionFormService.current.demandados;
+        track demandado.persona_id
+        ) {
+
+        <div
+          class="border border-base-300 rounded-xl p-4 flex justify-between items-center hover:bg-base-200 transition-all">
+
+          <!-- INFO -->
+          <div>
+            <div class="font-semibold">
+              {{ demandado.nombres }}
+            </div>
+
+            <div class="text-sm text-base-content/60">
+              Persona ID:
+              {{ demandado.persona_id }}
+            </div>
+          </div>
+
+          <!-- ACTION -->
+          <button class="btn btn-error btn-sm" (click)="eliminarDemandado(demandado.persona_id)">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

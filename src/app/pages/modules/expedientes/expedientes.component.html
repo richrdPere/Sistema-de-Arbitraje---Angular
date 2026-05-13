@@ -58,8 +58,17 @@
   </gestionar-participes>
 
   <!-- Designacion Form -->
-  <designacion-form [mostrarModal]="mostrarModalFormDesignacion" [expedienteId]="expedienteSeleccionado"
-    (modalCerrado)="cerrarModalFormDesignacion()"></designacion-form>
+  @if(expedienteSeleccionado){
+
+  <designacion-form [mostrarModal]="true" [expedienteId]="
+    expedienteSeleccionado.id_expediente
+  " (modalCerrado)="
+    cerrarModalFormDesignacion()
+  ">
+
+  </designacion-form>
+
+  }
 
   <!-- Modal de historial -->
   <ver-historial [mostrarModal]="mostrarModalHistorial" [expedienteId]="expedienteId"
@@ -116,6 +125,7 @@
           <tr>
             <th>#</th>
             <th>N° Expediente</th>
+            <th>Tipo de Arbitraje</th>
             <th>N° de Participes</th>
             <th>Fecha de Inicio</th>
             <th>Estado</th>
@@ -136,6 +146,7 @@
           <tr class="hover ">
             <td>{{i + 1}}</td>
             <td>{{ exp.numero_expediente }}</td>
+            <td>{{ exp.tipo }}</td>
             <td>{{ exp.total_participes }}</td>
             <td>{{ exp.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>
@@ -231,11 +242,7 @@
             </td>
           </tr>
           }
-
-
         </tbody>
-
-
       </table>
 
       @if (!loading && expedientes.length === 0) {

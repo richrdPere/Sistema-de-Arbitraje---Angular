@@ -30,6 +30,9 @@ export class ExpedientesService {
   API_NUEVO_DOCUMENTO: string = this.API_BASE + '/nuevo_doc/';
   API_LISTAR_DOCUMENTO: string = this.API_BASE + '/lista_doc/';
 
+  // Participes
+  API_GET_PARTICIPES: string = this.API_BASE + '/participes/'
+
 
   constructor(private http: HttpClient) { }
 
@@ -183,7 +186,7 @@ export class ExpedientesService {
 
 
   // *****************************************************
-  //  8.- PARTICIPES
+  //  10.- PARTICIPES
   // *****************************************************
   asignarParticipesYDesignacion(expediente_id: number, payload: any) {
     return this.http.post(`${this.API_BASE}/${expediente_id}/designacion`, payload, this.getAuthHeaders());
@@ -193,8 +196,8 @@ export class ExpedientesService {
     return this.http.post(`${this.API_BASE}/${idExpediente}/participes`, data, this.getAuthHeaders());
   }
 
-  listarParticipantes(idExpediente: number): Observable<any> {
-    return this.http.get(`${this.API_BASE}/${idExpediente}/participes`, this.getAuthHeaders());
+  listarParticipantes(id: number): Observable<any> {
+    return this.http.get(`${this.API_GET_PARTICIPES}${id}`, this.getAuthHeaders());
   }
 
 

@@ -1,66 +1,378 @@
-<div>
+<section class="border border-accent p-6 rounded-md bg-base-100 space-y-6">
 
-  <h2 class="text-xl font-bold mb-4">
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
 
-    Árbitros
+    <div>
 
-  </h2>
+      <h2 class="text-2xl font-bold">
+        Árbitros
+      </h2>
 
-  <div class="grid grid-cols-3 gap-3">
+      <p class="text-sm text-base-content/70 mt-1">
+        Selecciona los árbitros que participarán en el proceso arbitral.
+      </p>
 
-    <input
-      type="number"
-      [(ngModel)]="arbitro_id"
-      placeholder="Árbitro ID"
-      class="input input-bordered" />
+    </div>
 
-    <input
-      type="text"
-      [(ngModel)]="nombres"
-      placeholder="Nombres"
-      class="input input-bordered" />
+    <div class="badge badge-accent badge-outline p-4">
 
-    <input
-      type="text"
-      [(ngModel)]="apellidos"
-      placeholder="Apellidos"
-      class="input input-bordered" />
+      {{
+      designacionFormService.current.arbitros.lista.length
+      }}
+
+      seleccionados
+
+    </div>
 
   </div>
 
-  <button
-    class="btn btn-primary mt-4"
-    (click)="agregar()">
+  <!-- CONFIGURACIÓN -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    Agregar árbitro
+    <!-- TIPO TRIBUNAL -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
 
-  </button>
+      <div class="card-body">
 
-  <div class="mt-6 space-y-2">
+        <h3 class="font-semibold mb-4">
+          Tipo de Tribunal
+        </h3>
 
-    @for (
-      arbitro of designacionFormService.current.arbitros.lista;
-      track $index
-    ) {
+        <div class="flex flex-wrap gap-3">
 
-      <div class="border rounded-lg p-3">
+          <!-- EMERGENCIA -->
+          @if (
+          designacionFormService.current.tipoArbitraje === 'EMERGENCIA'
+          ) {
 
-        <div class="font-semibold">
+          <button class="btn btn-accent" disabled>
+            Árbitro Único
+          </button>
 
-          {{ arbitro.nombres }}
-          {{ arbitro.apellidos }}
+          }
 
-        </div>
+          <!-- TRIBUNAL -->
+          @if (
+          designacionFormService.current.tipoArbitraje === 'TRIBUNAL'
+          ) {
 
-        <div class="text-sm opacity-70">
+          <button class="btn btn-accent" disabled>
+            Tribunal Arbitral
+          </button>
 
-          {{ arbitro.rol }}
+          }
+
+          <!-- AD HOC -->
+          @if (
+          designacionFormService.current.tipoArbitraje === 'AD_HOC'
+          ) {
+
+          <div>
+            <button class="btn" [class.btn-accent]="tipoTribunal === 'ARBITRO_UNICO'"
+              [class.btn-outline]="tipoTribunal !== 'ARBITRO_UNICO'" (click)="cambiarTipoTribunal('ARBITRO_UNICO')">
+              Árbitro Único
+            </button>
+
+            <button class="btn" [class.btn-accent]="tipoTribunal === 'TRIBUNAL'"
+              [class.btn-outline]="tipoTribunal !== 'TRIBUNAL'" (click)="cambiarTipoTribunal('TRIBUNAL')">
+              Tribunal
+            </button>
+          </div>
+
+          }
 
         </div>
 
       </div>
-    }
+
+    </div>
+
+    <!-- MÉTODO -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+
+      <div class="card-body">
+
+        <h3 class="font-semibold mb-4">
+          Método de Designación
+        </h3>
+
+        <div class="flex flex-wrap gap-3">
+
+          <button class="btn" [class.btn-primary]="metodoDesignacion === 'DIRECTA'"
+            [class.btn-outline]="metodoDesignacion !== 'DIRECTA'" (click)="cambiarMetodoDesignacion('DIRECTA')">
+            Directa
+          </button>
+
+          <button class="btn" [class.btn-primary]="metodoDesignacion === 'ALEATORIA'"
+            [class.btn-outline]="metodoDesignacion !== 'ALEATORIA'" (click)="cambiarMetodoDesignacion('ALEATORIA')">
+            Aleatoria
+          </button>
+
+          <button class="btn" [class.btn-primary]="metodoDesignacion === 'INSTITUCIONAL'"
+            [class.btn-outline]="metodoDesignacion !== 'INSTITUCIONAL'"
+            (click)="cambiarMetodoDesignacion('INSTITUCIONAL')">
+            Institucional
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
-</div>
+  <!-- BUSCADOR -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+
+    <div class="card-body space-y-4">
+
+      <!-- INPUT -->
+      <div class="form-control">
+
+        <label class="label mb-1">
+
+          <span class="label-text font-medium">
+            Buscar árbitro
+          </span>
+
+        </label>
+
+        <div class="relative">
+
+          <input type="text" [(ngModel)]="search" (input)="onSearchChange()" placeholder="Buscar por DNI o nombres..."
+            class="input input-bordered w-full" appUppercase />
+
+          <!-- LOADING -->
+          @if (loadingBusqueda) {
+
+          <div class="absolute right-3 top-3">
+
+            <span class="loading loading-spinner loading-sm"></span>
+
+          </div>
+
+          }
+
+        </div>
+
+      </div>
+
+      <!-- LOADING -->
+      @if (loadingBusqueda) {
+
+      <div class="flex justify-center py-8">
+
+        <span class="loading loading-spinner loading-md"></span>
+
+      </div>
+
+      }
+
+      <!-- RESULTADOS -->
+      @if (arbitrosEncontrados.length > 0) {
+
+      <div class="space-y-4 mt-4">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between">
+
+          <div class="text-sm font-semibold text-base-content/70">
+            Árbitros encontrados
+          </div>
+
+          <div class="badge badge-neutral">
+            {{ arbitrosEncontrados.length }}
+          </div>
+
+        </div>
+
+        <!-- LISTA -->
+        @for (
+        arbitro of arbitrosEncontrados;
+        track arbitro.id
+        ) {
+
+        <div class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition-all">
+
+          <div class="card-body p-4">
+
+            <div class="flex justify-between items-center gap-4">
+
+              <!-- INFO -->
+              <div class="flex-1 min-w-0">
+
+                <div class="font-semibold text-base truncate">
+                  ⚖️
+                  {{ arbitro.nombres }}
+                  {{ arbitro.apellidos }}
+                </div>
+
+                <div class="text-sm text-base-content/70">
+                  DNI:
+                  {{ arbitro.dni }}
+                </div>
+
+                <div class="text-xs text-base-content/50 mt-1 truncate">
+
+                  {{ arbitro.email || 'Sin correo registrado' }}
+
+                </div>
+
+              </div>
+
+              <!-- ACTION -->
+              <div class="flex-shrink-0">
+
+                <button class="btn btn-accent btn-sm rounded-xl" (click)="agregarArbitro(arbitro)">
+                  Agregar
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+      }
+
+      <!-- EMPTY SEARCH -->
+      @if (
+      !loadingBusqueda &&
+      search &&
+      search.trim() !== '' &&
+      arbitrosEncontrados.length === 0
+      ) {
+
+      <div class="border border-dashed border-base-300 rounded-2xl p-8 text-center bg-base-100">
+
+        <div class="text-5xl mb-3">
+          ⚖️
+        </div>
+
+        <div class="font-semibold text-base-content">
+          No se encontraron árbitros
+        </div>
+
+        <div class="text-sm text-base-content/60 mt-1">
+          Intenta buscar por DNI o nombres.
+        </div>
+
+      </div>
+
+      }
+
+    </div>
+
+  </div>
+
+  <!-- ÁRBITROS SELECCIONADOS -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+
+    <div class="card-body">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-4">
+
+        <h3 class="font-bold text-lg">
+          Árbitros seleccionados
+        </h3>
+
+        <div class="badge badge-accent">
+
+          {{
+          designacionFormService.current.arbitros.lista.length
+          }}
+
+        </div>
+
+      </div>
+
+      <!-- EMPTY -->
+      @if (
+      designacionFormService.current.arbitros.lista.length === 0
+      ) {
+
+      <div class="border border-dashed border-base-300 rounded-2xl p-10 text-center bg-base-100">
+
+        <div class="text-5xl mb-4">
+          ⚖️
+        </div>
+
+        <div class="text-lg font-semibold">
+          No hay árbitros seleccionados
+        </div>
+
+        <div class="text-sm text-base-content/60 mt-2">
+          Busca y agrega árbitros para continuar con la designación.
+        </div>
+
+      </div>
+
+      }
+
+      <!-- LISTA -->
+      <div class="space-y-3">
+
+        @for (
+        arbitro of designacionFormService.current.arbitros.lista;
+        track arbitro.arbitro_id
+        ) {
+
+        <div
+          class="border border-base-300 rounded-xl p-4 flex justify-between items-center hover:bg-base-200 transition-all">
+
+          <!-- INFO -->
+          <div>
+
+            <div class="font-semibold">
+
+              {{ arbitro.nombres }}
+
+            </div>
+
+            <div class="text-sm text-base-content/60 mt-1">
+
+              Rol:
+              <span class="badge badge-outline ml-1">
+
+                {{ arbitro.rol }}
+
+              </span>
+
+            </div>
+
+            <div class="text-xs text-base-content/50 mt-1">
+
+              Designado por:
+              {{ arbitro.designado_por }}
+
+            </div>
+
+          </div>
+
+          <!-- ACTION -->
+          <button class="btn btn-error btn-sm" (click)="eliminarArbitro(arbitro.arbitro_id)">
+
+            <i class="fa-solid fa-trash-can"></i>
+
+          </button>
+
+        </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

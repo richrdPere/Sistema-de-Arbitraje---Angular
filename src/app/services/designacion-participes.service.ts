@@ -46,17 +46,14 @@ export interface DesignacionState {
   | 'INSTITUCIONAL';
 
   adjudicador_id?: number;
-
   observaciones?: string;
-
   demandantes: Participante[];
-
   demandados: Participante[];
-
   arbitros: ArbitrosConfig;
-
   step: number;
 }
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -94,11 +91,25 @@ export class DesignacionFormService {
   // =============================
   // INIT
   // =============================
-  init(expedienteId: number, tipo: DesignacionState['tipoArbitraje']) {
+  // init(expedienteId: number, tipo: DesignacionState['tipoArbitraje']) {
+  //   this.state$.next({
+  //     ...this.initialState,
+  //     expedienteId,
+  //     tipoArbitraje: tipo
+  //   });
+  // }
+  init(
+    expedienteId: number,
+    tipo: DesignacionState['tipoArbitraje'],
+    demandantes: Participante[] = [],
+    demandados: Participante[] = []
+  ) {
     this.state$.next({
       ...this.initialState,
       expedienteId,
-      tipoArbitraje: tipo
+      tipoArbitraje: tipo,
+      demandantes,
+      demandados
     });
   }
 
