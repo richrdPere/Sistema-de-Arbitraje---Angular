@@ -1,15 +1,161 @@
-<div>
+<section class="space-y-6">
 
-  <h2 class="text-2xl font-bold mb-6">
+  <!-- HEADER -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-2xl font-bold">
+        Confirmación de Designación
+      </h2>
 
-    Confirmación
+      <p class="text-sm text-base-content/70 mt-1">
+        Verifica toda la información antes de registrar la designación arbitral.
+      </p>
+    </div>
 
-  </h2>
+    <!-- TIPO -->
+    <span class="badge badge-lg font-semibold" [ngClass]="getTipoBadge(tipoArbitraje)">
+      {{ tipoArbitraje }}
+    </span>
+  </div>
 
-  <pre class="bg-base-200 p-4 rounded-lg overflow-auto">
+  <!-- RESUMEN -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-{{ designacionState.buildPayload() | json }}
+    <!-- DEMANDANTES -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-lg">
+            Demandantes
+          </h3>
 
-  </pre>
+          <div class="badge badge-success">
+            {{ demandantes.length }}
+          </div>
+        </div>
 
-</div>
+        <!-- EMPTY -->
+        @if (demandantes.length === 0) {
+        <div class="text-center py-8 text-base-content/60">
+          No existen demandantes registrados.
+        </div>
+        }
+
+        <!-- LIST -->
+        <div class="space-y-3">
+          @for (demandante of demandantes; track demandante.persona_id) {
+          <div class="border border-base-300 rounded-xl p-4 bg-base-100">
+            <div class="font-semibold">
+              {{ demandante.nombres }}
+            </div>
+
+            <div class="text-sm text-base-content/60 mt-1">
+              Persona ID: {{ demandante.persona_id }}
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMANDADOS -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-lg">
+            Demandados
+          </h3>
+
+          <div class="badge badge-error">
+            {{ demandados.length }}
+          </div>
+        </div>
+
+        <!-- EMPTY -->
+        @if (demandados.length === 0) {
+        <div class="text-center py-8 text-base-content/60">
+          No existen demandados registrados.
+        </div>
+        }
+
+        <!-- LIST -->
+        <div class="space-y-3">
+          @for (demandado of demandados; track demandado.persona_id) {
+          <div class="border border-base-300 rounded-xl p-4 bg-base-100">
+            <div class="font-semibold">
+              {{ demandado.nombres }}
+            </div>
+
+            <div class="text-sm text-base-content/60 mt-1">
+              Persona ID: {{ demandado.persona_id }}
+            </div>
+          </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ARBITROS -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+
+          <h3 class="font-bold text-lg">
+            Árbitros
+          </h3>
+
+          <div class="badge badge-primary">
+            {{ arbitros.length }}
+          </div>
+        </div>
+
+        <!-- EMPTY -->
+        @if (arbitros.length === 0) {
+        <div class="text-center py-8 text-base-content/60">
+          No existen árbitros seleccionados.
+        </div>
+        }
+
+        <!-- LIST -->
+        <div class="space-y-3">
+          @for (arbitro of arbitros; track arbitro.arbitro_id) {
+          <div class="border border-base-300 rounded-xl p-4 bg-base-100 space-y-2">
+            <!-- NAME -->
+            <div class="font-semibold">
+              {{ arbitro.persona.nombres }}
+              {{ arbitro.persona.apellidos }}
+            </div>
+
+            <!-- BADGES -->
+            <div class="flex flex-wrap gap-2">
+
+              <!-- ROL -->
+              <span class="badge badge-sm" [ngClass]="
+                  getRolArbitroBadge(arbitro.rol)
+                ">
+                {{ arbitro.rol }}
+              </span>
+
+              <!-- DESIGNACION -->
+              <span class="badge badge-outline badge-sm">
+
+                {{ arbitro.designado_por }}
+
+              </span>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="alert alert-info shadow-sm">
+    <span>
+      Verifique cuidadosamente los participantes y árbitros antes de finalizar la designación.
+    </span>
+  </div>
+
+</section>

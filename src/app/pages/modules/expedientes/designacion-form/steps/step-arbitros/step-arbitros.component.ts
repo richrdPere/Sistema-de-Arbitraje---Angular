@@ -11,6 +11,7 @@ import { UppercaseDirective } from 'src/app/pages/shared/directives/uppercase.di
 // Service
 import { DesignacionFormService, ArbitroSeleccionado } from 'src/app/services/designacion-participes.service';
 import { PersonaService } from 'src/app/services/persona.service';
+import { ArbitrosService } from 'src/app/services/admin/arbitros.service';
 
 
 @Component({
@@ -19,7 +20,7 @@ import { PersonaService } from 'src/app/services/persona.service';
   templateUrl: './step-arbitros.component.html',
   styles: ``
 })
-export class StepArbitrosComponent implements OnInit{
+export class StepArbitrosComponent implements OnInit {
 
   // SEARCH
   search = '';
@@ -41,7 +42,8 @@ export class StepArbitrosComponent implements OnInit{
 
   constructor(
     public designacionFormService: DesignacionFormService,
-    private personaService: PersonaService
+    private personaService: PersonaService,
+    private arbitrosService: ArbitrosService
   ) { }
 
   ngOnInit(): void {
@@ -72,7 +74,8 @@ export class StepArbitrosComponent implements OnInit{
       this.tipoTribunal = 'ARBITRO_UNICO';
       this.designacionFormService
         .setTipoArbitros(
-          'ARBITRO_UNICO'
+          'ARBITRO_UNICO',
+          false
         );
     }
 
@@ -81,7 +84,8 @@ export class StepArbitrosComponent implements OnInit{
       this.tipoTribunal = 'TRIBUNAL';
       this.designacionFormService
         .setTipoArbitros(
-          'TRIBUNAL'
+          'TRIBUNAL',
+          false
         );
     }
 
@@ -90,7 +94,8 @@ export class StepArbitrosComponent implements OnInit{
       this.tipoTribunal = 'ARBITRO_UNICO';
       this.designacionFormService
         .setTipoArbitros(
-          'ARBITRO_UNICO'
+          'ARBITRO_UNICO',
+          false
         );
     }
   }
@@ -114,8 +119,8 @@ export class StepArbitrosComponent implements OnInit{
   ) {
     this.metodoDesignacion = metodo;
 
-    this.designacionFormService.current
-      .metodoDesignacion = metodo;
+    this.designacionFormService
+      .setMetodoDesignacion(metodo);
   }
 
   // SEARCH CHANGE
@@ -133,7 +138,9 @@ export class StepArbitrosComponent implements OnInit{
     this.loadingBusqueda = true;
     const valor = this.search.trim();
 
-    let filtros: any = {};
+    let filtros: any = {
+      limit: 20
+    };
 
     // DNI
     if (/^\d{8}$/.test(valor)) {
@@ -144,12 +151,11 @@ export class StepArbitrosComponent implements OnInit{
       filtros.nombres = valor;
     }
     // REQUEST
-    this.personaService
-      .searchPersonaByFilters(filtros)
+    this.arbitrosService
+      .findArbitrosDisponibles(filtros)
       .subscribe({
         next: (resp: any) => {
-          this.arbitrosEncontrados =
-            resp?.data || [];
+          this.arbitrosEncontrados = resp.data || [];
           this.loadingBusqueda = false;
         },
 
@@ -179,7 +185,7 @@ export class StepArbitrosComponent implements OnInit{
     // - VALIDAR DUPLICADO
     const existe = arbitrosActuales.some(
       (a: any) =>
-        a.arbitro_id === persona.id
+        a.arbitro_id === persona.id_arbitro
     );
 
     if (existe) {
@@ -243,9 +249,23 @@ export class StepArbitrosComponent implements OnInit{
     // - CREAR ÁRBITRO
     const arbitro:
       ArbitroSeleccionado = {
-      arbitro_id: persona.id,
-      nombres: `${persona.nombres || ''} ${persona.apellidos || ''}`,
-      apellidos: persona.apellidos || '',
+      arbitro_id: persona.id_arbitro,
+      // nombres: `${persona.nombres || ''} ${persona.apellidos || ''}`,
+      // apellidos: persona.apellidos || '',
+      cargo: persona.cargo,
+      especialidad: persona.especialidad,
+      numero_colegiatura: persona.numero_colegiatura,
+      disponible: persona.disponible,
+
+      persona: {
+        id: persona.persona.id,
+        nombres: persona.persona.nombres,
+        apellidos: persona.persona.apellidos,
+        dni: persona.persona.dni,
+        telefono: persona.persona.telefono,
+        email: persona.persona.email
+      },
+
       rol,
       designado_por:
         this.metodoDesignacion === 'DIRECTA'

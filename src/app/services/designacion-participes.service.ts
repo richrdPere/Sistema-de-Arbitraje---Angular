@@ -11,8 +11,20 @@ export interface Participante {
 export interface ArbitroSeleccionado {
   arbitro_id: number;
 
-  nombres?: string;
-  apellidos?: string;
+  cargo: string;
+  especialidad?: string;
+  numero_colegiatura?: string;
+
+  disponible: boolean;
+
+  persona: {
+    id: number;
+    nombres: string;
+    apellidos: string;
+    dni: string;
+    telefono?: string;
+    email?: string;
+  };
 
   rol:
   | 'ARBITRO_UNICO'
@@ -91,13 +103,6 @@ export class DesignacionFormService {
   // =============================
   // INIT
   // =============================
-  // init(expedienteId: number, tipo: DesignacionState['tipoArbitraje']) {
-  //   this.state$.next({
-  //     ...this.initialState,
-  //     expedienteId,
-  //     tipoArbitraje: tipo
-  //   });
-  // }
   init(
     expedienteId: number,
     tipo: DesignacionState['tipoArbitraje'],
@@ -105,11 +110,43 @@ export class DesignacionFormService {
     demandados: Participante[] = []
   ) {
     this.state$.next({
-      ...this.initialState,
       expedienteId,
       tipoArbitraje: tipo,
-      demandantes,
-      demandados
+      metodoDesignacion: 'DIRECTA',
+      adjudicador_id: undefined,
+      observaciones: '',
+      demandantes: [...demandantes],
+      demandados: [...demandados],
+      arbitros: {
+        tipo: 'ARBITRO_UNICO',
+        lista: []
+      },
+      step: 1
+    });
+  }
+
+  // =============================
+  // SET METODO DESIGNACION
+  // =============================
+  setMetodoDesignacion(
+    metodo:
+      | 'DIRECTA'
+      | 'ALEATORIA'
+      | 'INSTITUCIONAL'
+  ) {
+    this.state$.next({
+      ...this.current,
+      metodoDesignacion: metodo
+    });
+  }
+
+  // =============================
+  // SET OBSERVACIONES
+  // =============================
+  setObservaciones(observaciones: string) {
+    this.state$.next({
+      ...this.current,
+      observaciones
     });
   }
 
@@ -146,17 +183,27 @@ export class DesignacionFormService {
   // =============================
   addDemandante(p: Participante) {
     const state = this.current;
+    const existe = state.demandantes.some(x => x.persona_id === p.persona_id);
+
+    if (existe) return;
+
     this.state$.next({
       ...state,
-      demandantes: [...state.demandantes, { ...p, rol: 'DEMANDANTE' }]
+      demandantes: [
+        ...state.demandantes,
+        { ...p, rol: 'DEMANDANTE' }
+      ]
     });
   }
 
   removeDemandante(index: number) {
     const state = this.current;
-    state.demandantes.splice(index, 1);
-
-    this.state$.next({ ...state });
+    this.state$.next({
+      ...state,
+      demandantes: state.demandantes.filter(
+        (_, i) => i !== index
+      )
+    });
   }
 
   // =============================
@@ -164,6 +211,10 @@ export class DesignacionFormService {
   // =============================
   addDemandado(p: Participante) {
     const state = this.current;
+    const existe = state.demandados.some(x => x.persona_id === p.persona_id);
+
+    if (existe) return;
+
     this.state$.next({
       ...state,
       demandados: [...state.demandados, { ...p, rol: 'DEMANDADO' }]
@@ -172,27 +223,36 @@ export class DesignacionFormService {
 
   removeDemandado(index: number) {
     const state = this.current;
-    state.demandados.splice(index, 1);
-    this.state$.next({ ...state });
+    this.state$.next({
+      ...state,
+      demandados: state.demandados.filter(
+        (_, i) => i !== index
+      )
+    });
   }
 
   // =============================
   // ARBITROS
   // =============================
-  setTipoArbitros(tipo: 'ARBITRO_UNICO' | 'TRIBUNAL') {
+  setTipoArbitros(
+    tipo: 'ARBITRO_UNICO' | 'TRIBUNAL',
+    limpiarLista = true
+  ) {
     const state = this.current;
-
     this.state$.next({
       ...state,
       arbitros: {
         tipo,
-        lista: []
+        lista: limpiarLista
+          ? []
+          : state.arbitros.lista
       }
     });
   }
 
   addArbitro(a: ArbitroSeleccionado) {
     const state = this.current;
+
     this.state$.next({
       ...state,
       arbitros: {
@@ -207,9 +267,17 @@ export class DesignacionFormService {
 
   removeArbitro(index: number) {
     const state = this.current;
-    state.arbitros.lista.splice(index, 1);
+    this.state$.next({
+      ...state,
 
-    this.state$.next({ ...state });
+      arbitros: {
+        ...state.arbitros,
+
+        lista: state.arbitros.lista.filter(
+          (_, i) => i !== index
+        )
+      }
+    });
   }
 
   // =============================
@@ -274,6 +342,17 @@ export class DesignacionFormService {
   // RESET
   // =============================
   reset() {
-    this.state$.next(this.initialState);
+    this.state$.next({
+      ...this.initialState,
+
+      arbitros: {
+        ...this.initialState.arbitros,
+        lista: []
+      },
+
+      demandantes: [],
+
+      demandados: []
+    });
   }
 }

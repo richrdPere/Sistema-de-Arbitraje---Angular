@@ -22,7 +22,6 @@ export class DesignacionesComponent implements OnInit {
   designaciones: any[] = [];
   total = 0;
 
-
   pagina_actual = 1;
   por_pagina = 20;
   total_paginas = 0;
@@ -141,18 +140,14 @@ export class DesignacionesComponent implements OnInit {
   }
 
   cerrarModal() {
-
     this.mostrarModalForm = false;
-
   }
-
 
   cambiarLimite() {
     // this.limit = Number(this.limit);
     this.page = 1;
     this.cargarDesignaciones();
   }
-
 
   abrirModal() {
     this.modoEdicion = false;

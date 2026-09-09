@@ -1,187 +1,369 @@
-<div class="relative">
+<!-- ===================================================== -->
+<!-- HERO PRINCIPAL -->
+<!-- ===================================================== -->
 
+<section class="relative isolate flex min-h-[560px] w-full
+         items-center overflow-hidden
+         sm:min-h-[620px]
+         lg:min-h-[680px]">
   <!-- Imagen de fondo -->
-  <img src="assets/bg-justicia.jpg" alt="Fondo de justicia" class="absolute inset-0 w-full h-full object-cover z-10" />
+  <img src="assets/bg-justicia.jpg" alt="Fondo relacionado con servicios legales" class="absolute inset-0 -z-30
+           h-full w-full object-cover
+           object-center" />
 
-  <!-- Capa de color degradado encima -->
-  <div class="absolute inset-0 z-20 bg-gradient-to-r from-gray-800/90 via-gray-900/60 to-transparent"></div>
+  <!-- Capa oscura -->
+  <div class="absolute inset-0 -z-20 bg-black/50" aria-hidden="true"></div>
 
-  <!-- Contenido principal -->
-  <div class="relative py-32 max-w-7xl mx-auto px-8 z-30">
-    <div class="max-w-[400px] text-white">
-      <h1 class="text-6xl font-semibold leading-tight">
-        FIRMA LEGAL
-        <span class="text-info whitespace-nowrap">ORDOÑEZ-CHAMBI-TERRAZAS-HERRERA</span>
-      </h1>
-      <p class="my-6 text-lg italic leading-relaxed">“Toda controversia, derivada o relacionada con el presente acto
-        jurídico, será resuelto
-        mediante arbitraje de derecho"</p>
-      <div class="flex items-center gap-6">
-        <a href="/contacto" class="py-4 px-8 rounded-full bg-[#1d65c1] hover:bg-[#3d7cce] font-semibold text-sm">
-          Contactanos
-        </a>
-        <a href="/contacto" class="flex items-center gap-3 font-medium group">
-          <div class="bg-white p-1 rounded-full">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-              class="text-[#1d65c1] group-hover:text-[#3d7cce] w-8 h-8" role="img">
-              <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M14.207 11.293a1 1 0 0 1 0 1.414l-3 3a1 1 0 0 1-1.414-1.414L12.086 12 9.793 9.707a1 1 0 0 1 1.414-1.414l3 3z">
-              </path>
-            </svg>
-          </div>
-          <div class="group-hover:underline underline-offset-8">Más información</div>
-        </a>
-      </div>
-    </div>
+  <!-- Degradado -->
+  <!-- <div class="absolute inset-0 -z-10
+           bg-gradient-to-b
+           from-gray-950/85 via-gray-900/65 to-gray-950/75
+           sm:bg-gradient-to-r
+           sm:from-gray-950/95 sm:via-gray-900/70 sm:to-gray-900/20" aria-hidden="true"></div> -->
 
-    <div class="absolute bottom-4 text-white text-sm">Firma legal: Ordoñez Terrazas</div>
-  </div>
-
-  <div class="absolute top-0 z-20 opacity-[96%] bg-gradient-to-r from-gray-800 from-40% bg-transparent w-full h-full">
-
-  </div>
-
-
-</div>
-
-
-<!-- Sección de Noticias y Eventos -->
-<section class="relative bg-gray-100 bg-cover bg-center py-16 md:py-20"
-  style="background-image: url('assets/textura-fondo.png')">
-  <!-- Título -->
-  <h2 class="text-center text-3xl md:text-4xl font-light text-gray-800 mb-12">
-    Nuestros <span class="font-bold text-info">Servicios</span>
-  </h2>
-
-  <!-- Contenedor de tarjetas -->
-  <div class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-    @for (item of noticiasEventos; track $index) {
-    <div
-      class="bg-white rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition transform p-8 text-center">
-      <!-- Icono -->
-      <div class="bg-gray-300 w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-5">
-        <img [src]="item.icono" [alt]="item.titulo" class="w-10 h-10" />
-      </div>
-
-      <!-- Título -->
-      <h3 class="text-xl font-semibold text-gray-800 mb-2">
-        {{ item.titulo }}
-      </h3>
-
-      <!-- Descripción -->
-      <p class="text-gray-600 text-sm leading-relaxed mb-4">
-        {{ item.descripcion }}
+  <!-- Contenido -->
+  <div class="mx-auto flex w-full max-w-7xl
+           px-4 py-16
+           sm:px-6 sm:py-20
+           lg:px-8 lg:py-28">
+    <div class="w-full max-w-3xl
+             text-center text-white
+             sm:text-left">
+      <!-- Texto superior -->
+      <p class="mb-3 text-xs font-semibold uppercase
+               tracking-[0.25em] text-info
+               sm:text-sm">
+        Experiencia y compromiso
       </p>
 
-      <!-- Botón -->
-      <a [href]="item.enlace"
-        class="text-info font-medium text-sm border-b border-dotted border-info hover:text-info transition-colors">
-        Ver más
-      </a>
+      <!-- Título -->
+      <h1 class="text-3xl font-semibold leading-tight
+               sm:text-4xl
+               md:text-5xl
+               lg:text-6xl">
+        <span class="block">FIRMA LEGAL</span>
+
+        <span class="mt-2 block
+                 break-words text-info
+                 text-xl leading-snug
+                 sm:text-2xl
+                 md:text-3xl
+                 lg:text-4xl">
+          ORDOÑEZ-CHAMBI-<wbr />
+          TERRAZAS-HERRERA
+        </span>
+      </h1>
+
+      <!-- Descripción -->
+      <blockquote class="mx-auto my-6 max-w-2xl
+               border-l-0 border-info
+               text-sm italic leading-relaxed
+               text-white/85
+               sm:mx-0 sm:border-l-4 sm:pl-4 sm:text-base
+               md:text-lg">
+        “Toda controversia, derivada o relacionada con el presente acto
+        jurídico, será resuelta mediante arbitraje de derecho”.
+      </blockquote>
+
+      <!-- Acciones -->
+      <div class="flex flex-col items-stretch gap-3
+               sm:flex-row sm:items-center sm:gap-5">
+        <a href="/contacto" class="inline-flex min-h-12 items-center justify-center
+                 rounded-full bg-[#1d65c1]
+                 px-6 py-3 text-sm font-semibold text-white
+                 shadow-lg
+                 transition-all duration-200
+                 hover:-translate-y-0.5 hover:bg-[#3d7cce]
+                 focus-visible:outline-none
+                 focus-visible:ring-2
+                 focus-visible:ring-white
+                 sm:px-8">
+          Contáctanos
+        </a>
+
+        <a href="/contacto" class="group inline-flex min-h-12
+                 items-center justify-center gap-3
+                 rounded-full px-4 py-2
+                 font-medium text-white
+                 transition-colors duration-200
+                 hover:bg-white/10
+                 sm:justify-start">
+          <span class="flex h-10 w-10 shrink-0
+                   items-center justify-center
+                   rounded-full bg-white">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-7 w-7 text-[#1d65c1]
+                     transition-colors
+                     group-hover:text-[#3d7cce]">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M14.207 11.293a1 1 0 0 1 0 1.414l-3 3a1 1 0 0 1-1.414-1.414L12.086 12 9.793 9.707a1 1 0 0 1 1.414-1.414l3 3z" />
+            </svg>
+          </span>
+
+          <span class="text-sm underline-offset-8
+                   group-hover:underline">
+            Más información
+          </span>
+        </a>
+      </div>
     </div>
-    }
+  </div>
+
+  <!-- Texto inferior -->
+  <div class="absolute inset-x-0 bottom-0
+           bg-gradient-to-t from-black/70 to-transparent">
+    <div class="mx-auto w-full max-w-7xl
+             px-4 py-4
+             text-center text-[11px] text-white/70
+             sm:px-6 sm:text-left sm:text-xs
+             lg:px-8">
+      Firma Legal Ordoñez, Chambi, Terrazas y Herrera
+    </div>
   </div>
 </section>
 
-<!-- Seccion de constancias -->
-<!-- Sección Certificaciones e ISOS -->
-<section class="relative bg-gray-100 bg-cover bg-center py-12 md:py-16"
-  style="background-image: url('assets/textura-fondo.png')">
+<!-- ===================================================== -->
+<!-- SERVICIOS -->
+<!-- ===================================================== -->
 
-  <div class="max-w-7xl mx-auto px-6">
+<section class="relative bg-gray-100 bg-cover bg-center
+         py-12
+         sm:py-16
+         md:py-20" style="background-image: url('assets/textura-fondo.png')">
+  <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Encabezado -->
+    <header class="mx-auto mb-8 max-w-2xl text-center sm:mb-12">
+      <p class="mb-2 text-xs font-semibold uppercase
+               tracking-[0.2em] text-info">
+        Áreas de atención
+      </p>
 
-    <!-- Título General -->
-    <h2 class="text-center text-3xl md:text-4xl font-light text-gray-800 mb-16">
-      Nuestros <span class="font-bold text-info">Certificados</span>
-    </h2>
+      <h2 class="text-2xl font-light text-gray-800
+               sm:text-3xl
+               md:text-4xl">
+        Nuestros
+        <span class="font-bold text-info">Servicios</span>
+      </h2>
+    </header>
 
-    <!-- Grid principal: 1 columna móvil, 2 en desktop -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-
-      <!-- ================= CONSTANCIAS ================= -->
-      <div class="bg-base-100 p-8 rounded-3xl shadow-xl flex flex-col">
-
-        <h3 class="text-xl font-semibold text-center mb-8">
-          Constancias
-        </h3>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
-
-          <div *ngFor="let img of imagesCertificados"
-            class="card bg-base-200 shadow-lg hover:shadow-2xl transition duration-300 w-64">
-
-            <figure class="px-4 pt-6 flex justify-center">
-              <img [src]="img"
-                (click)="abrirModal(img)"
-                class="rounded-xl h-72 object-contain cursor-pointer hover:scale-105 transition duration-300" />
-            </figure>
-
-            <!-- <div class="card-body p-4">
-              <p class="text-sm text-center truncate">
-                {{ img.split('/').pop() }}
-              </p>
-            </div> -->
-
-          </div>
-
+    <!-- Tarjetas -->
+    <div class="grid grid-cols-1 gap-5
+             sm:grid-cols-2 sm:gap-6
+             lg:grid-cols-3
+             xl:gap-8">
+      @for (item of noticiasEventos; track item.titulo) {
+      <article class="group flex h-full min-w-0
+                 flex-col items-center
+                 rounded-2xl border border-gray-200
+                 bg-white p-5 text-center
+                 shadow-md
+                 transition-all duration-300
+                 hover:-translate-y-1 hover:shadow-2xl
+                 sm:p-6
+                 lg:p-8">
+        <!-- Icono -->
+        <div class="mb-5 flex h-16 w-16 shrink-0
+                   items-center justify-center
+                   rounded-full bg-info/10
+                   transition-colors duration-300
+                   group-hover:bg-info/20
+                   sm:h-20 sm:w-20">
+          <img [src]="item.icono" [alt]="'Icono de ' + item.titulo" class="h-8 w-8 object-contain
+                     sm:h-10 sm:w-10" />
         </div>
 
-      </div>
-
-      <!-- ================= ISOS ================= -->
-      <div class="bg-base-100 p-8 rounded-3xl shadow-xl flex flex-col">
-
-        <h3 class="text-xl font-semibold text-center mb-8">
-          ISOS
+        <!-- Título -->
+        <h3 class="mb-2 break-words
+                   text-lg font-semibold text-gray-800
+                   sm:text-xl">
+          {{ item.titulo }}
         </h3>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+        <!-- Descripción -->
+        <p class="mb-5 flex-1
+                   text-sm leading-relaxed text-gray-600">
+          {{ item.descripcion }}
+        </p>
 
-          <div *ngFor="let img of imagesIsos"
-            class="card bg-base-200 shadow-lg hover:shadow-2xl transition duration-300 w-64">
-
-            <figure class="px-4 pt-6 flex justify-center">
-              <img [src]="img"
-                (click)="abrirModal(img)"
-                class="rounded-xl h-72 object-contain cursor-pointer hover:scale-105 transition duration-300" />
-            </figure>
-
-            <!-- <div class="card-body p-4">
-              <p class="text-sm text-center truncate">
-                {{ img.split('/').pop() }}
-              </p>
-            </div> -->
-
-          </div>
-
-        </div>
-
-      </div>
-
+        <!-- Enlace -->
+        <a [href]="item.enlace" class="inline-flex min-h-10 items-center
+                   border-b border-dotted border-info
+                   px-2 text-sm font-semibold text-info
+                   transition-colors
+                   hover:text-primary">
+          Ver más
+        </a>
+      </article>
+      }
     </div>
-
   </div>
 </section>
 
+<!-- ===================================================== -->
+<!-- CERTIFICADOS -->
+<!-- ===================================================== -->
 
+<section class="relative bg-gray-100 bg-cover bg-center
+         py-12
+         sm:py-16
+         md:py-20" style="background-image: url('assets/textura-fondo.png')">
+  <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Título -->
+    <header class="mx-auto mb-8 max-w-2xl text-center sm:mb-12">
+      <p class="mb-2 text-xs font-semibold uppercase
+               tracking-[0.2em] text-info">
+        Respaldo institucional
+      </p>
 
+      <h2 class="text-2xl font-light text-gray-800
+               sm:text-3xl
+               md:text-4xl">
+        Nuestros
+        <span class="font-bold text-info">Certificados</span>
+      </h2>
+    </header>
 
+    <!-- Contenedor principal -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+      <!-- =============================================== -->
+      <!-- CONSTANCIAS -->
+      <!-- =============================================== -->
 
-<input type="checkbox" id="modal-preview" class="modal-toggle" [(ngModel)]="modalAbierto" />
+      <article class="flex min-w-0 flex-col
+               rounded-2xl border border-base-300
+               bg-base-100 p-4
+               shadow-xl
+               sm:rounded-3xl sm:p-6
+               md:p-8">
+        <header class="mb-6 text-center sm:mb-8">
+          <h3 class="text-lg font-semibold text-base-content
+                   sm:text-xl">
+            Constancias
+          </h3>
 
-<div class="modal">
-  <div class="modal-box max-w-4xl bg-base-100">
+          <p class="mt-1 text-xs text-base-content/60 sm:text-sm">
+            Seleccione una imagen para visualizarla.
+          </p>
+        </header>
 
-    <div class="flex justify-end">
-      <button class="btn btn-sm btn-circle btn-ghost" (click)="cerrarModal()">✕</button>
+        <div class="grid flex-1 grid-cols-1 gap-5
+                 sm:grid-cols-2 sm:gap-6">
+          <button *ngFor="let img of imagesCertificados; let i = index" type="button" class="group card
+                   w-full min-w-0
+                   cursor-pointer
+                   border border-base-300
+                   bg-base-200 p-3
+                   shadow-md
+                   transition-all duration-300
+                   hover:-translate-y-1 hover:shadow-xl
+                   focus-visible:outline-none
+                   focus-visible:ring-2
+                   focus-visible:ring-primary
+                   sm:p-4" (click)="abrirModal(img)" [attr.aria-label]="'Visualizar constancia ' + (i + 1)">
+            <figure class="flex min-h-[240px] w-full
+                     items-center justify-center
+                     overflow-hidden rounded-xl
+                     bg-base-100
+                     sm:min-h-[280px]">
+              <img [src]="img" [alt]="'Constancia ' + (i + 1)" loading="lazy" class="h-60 w-full object-contain
+                       transition-transform duration-300
+                       group-hover:scale-[1.03]
+                       sm:h-72" />
+            </figure>
+          </button>
+        </div>
+      </article>
+
+      <!-- =============================================== -->
+      <!-- CERTIFICACIONES ISO -->
+      <!-- =============================================== -->
+
+      <article class="flex min-w-0 flex-col
+               rounded-2xl border border-base-300
+               bg-base-100 p-4
+               shadow-xl
+               sm:rounded-3xl sm:p-6
+               md:p-8">
+        <header class="mb-6 text-center sm:mb-8">
+          <h3 class="text-lg font-semibold text-base-content
+                   sm:text-xl">
+            Certificaciones ISO
+          </h3>
+
+          <p class="mt-1 text-xs text-base-content/60 sm:text-sm">
+            Seleccione una imagen para visualizarla.
+          </p>
+        </header>
+
+        <div class="grid flex-1 grid-cols-1 gap-5
+                 sm:grid-cols-2 sm:gap-6">
+          <button *ngFor="let img of imagesIsos; let i = index" type="button" class="group card
+                   w-full min-w-0
+                   cursor-pointer
+                   border border-base-300
+                   bg-base-200 p-3
+                   shadow-md
+                   transition-all duration-300
+                   hover:-translate-y-1 hover:shadow-xl
+                   focus-visible:outline-none
+                   focus-visible:ring-2
+                   focus-visible:ring-primary
+                   sm:p-4" (click)="abrirModal(img)" [attr.aria-label]="'Visualizar certificación ISO ' + (i + 1)">
+            <figure class="flex min-h-[240px] w-full
+                     items-center justify-center
+                     overflow-hidden rounded-xl
+                     bg-base-100
+                     sm:min-h-[280px]">
+              <img [src]="img" [alt]="'Certificación ISO ' + (i + 1)" loading="lazy" class="h-60 w-full object-contain
+                       transition-transform duration-300
+                       group-hover:scale-[1.03]
+                       sm:h-72" />
+            </figure>
+          </button>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- MODAL DE PREVISUALIZACIÓN -->
+<!-- ===================================================== -->
+
+<input id="modal-preview" type="checkbox" class="modal-toggle" [(ngModel)]="modalAbierto" />
+
+<div class="modal p-2 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="modal-preview-title">
+  <div class="modal-box relative
+           flex max-h-[95dvh] w-full max-w-5xl
+           flex-col overflow-hidden
+           bg-base-100 p-3
+           sm:p-5">
+    <!-- Cabecera -->
+    <div class="mb-2 flex shrink-0
+             items-center justify-between gap-3
+             border-b border-base-300 pb-3">
+      <h2 id="modal-preview-title" class="truncate text-sm font-semibold
+               text-base-content
+               sm:text-base">
+        Vista previa del certificado
+      </h2>
+
+      <button type="button" class="btn btn-circle btn-ghost btn-sm shrink-0" aria-label="Cerrar vista previa"
+        (click)="cerrarModal()">
+        ✕
+      </button>
     </div>
 
-    <div class="flex justify-center">
-      <img *ngIf="imagenSeleccionada" [src]="imagenSeleccionada"
-        class="w-full max-h-[85vh] object-contain rounded-xl shadow-xl" />
+    <!-- Imagen -->
+    <div class="flex min-h-0 flex-1
+             items-center justify-center
+             overflow-auto rounded-xl
+             bg-base-200 p-2
+             sm:p-4">
+      <img *ngIf="imagenSeleccionada" [src]="imagenSeleccionada" alt="Vista ampliada del certificado seleccionado"
+        class="max-h-[78dvh] w-full
+               object-contain" />
     </div>
-
   </div>
 
-  <label class="modal-backdrop" (click)="cerrarModal()"></label>
+  <label class="modal-backdrop" for="modal-preview" aria-label="Cerrar modal" (click)="cerrarModal()"></label>
 </div>

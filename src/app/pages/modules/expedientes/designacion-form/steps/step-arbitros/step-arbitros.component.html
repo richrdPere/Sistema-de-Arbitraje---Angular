@@ -68,7 +68,7 @@
           designacionFormService.current.tipoArbitraje === 'AD_HOC'
           ) {
 
-          <div>
+          <div class="flex flex-wrap gap-3">
             <button class="btn" [class.btn-accent]="tipoTribunal === 'ARBITRO_UNICO'"
               [class.btn-outline]="tipoTribunal !== 'ARBITRO_UNICO'" (click)="cambiarTipoTribunal('ARBITRO_UNICO')">
               Árbitro Único
@@ -90,7 +90,6 @@
 
     <!-- MÉTODO -->
     <div class="card bg-base-100 border border-base-300 shadow-sm">
-
       <div class="card-body">
 
         <h3 class="font-semibold mb-4">
@@ -114,13 +113,9 @@
             (click)="cambiarMetodoDesignacion('INSTITUCIONAL')">
             Institucional
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
 
   <!-- BUSCADOR -->
@@ -205,18 +200,18 @@
 
                 <div class="font-semibold text-base truncate">
                   ⚖️
-                  {{ arbitro.nombres }}
-                  {{ arbitro.apellidos }}
+                  {{ arbitro.persona.nombres }}
+                  {{ arbitro.persona.apellidos }}
                 </div>
 
                 <div class="text-sm text-base-content/70">
                   DNI:
-                  {{ arbitro.dni }}
+                  {{ arbitro.persona.dni }}
                 </div>
 
                 <div class="text-xs text-base-content/50 mt-1 truncate">
 
-                  {{ arbitro.email || 'Sin correo registrado' }}
+                  {{ arbitro.persona.email || 'Sin correo registrado' }}
 
                 </div>
 
@@ -323,7 +318,7 @@
 
         @for (
         arbitro of designacionFormService.current.arbitros.lista;
-        track arbitro.arbitro_id
+        track $index
         ) {
 
         <div
@@ -334,7 +329,7 @@
 
             <div class="font-semibold">
 
-              {{ arbitro.nombres }}
+              {{ arbitro.persona.nombres }}
 
             </div>
 

@@ -1,91 +1,127 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Auth
-import { AuthService } from '../auth.service';
+// Interfaces
+import { ArbitroDetalleResponse, ArbitroPaginadoResponse, ArbitrosDisponiblesResponse, CreateArbitroRequest, UpdateArbitroRequest } from 'src/app/interfaces/users/arbitroUser';
 
 // Environment
 import { environment } from 'src/environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArbitrosService {
 
-  private http = inject(HttpClient);
-  private authService = inject(AuthService);
-
-
   // 1.- Environment
   envs = environment;
 
   // 2.- variables publicas
-  private baseUrl: string = this.envs.main_url_prueba + 'arbitros';
+  API_BASE: string = this.envs.main_url_prueba + 'arbitros';
+
+  API_NEW_ARBITRO: string = this.API_BASE + '/crear';
+  API_GET_ALL_ARBITROS: string = this.API_BASE + '/paginado';
+  API_DETALLE_ARBITRO: string = this.API_BASE + '/detalle/';
+  API_UPDATE_ARBITRO: string = this.API_BASE + '/editar/';
+  API_DELETE_ARBITRO: string = this.API_BASE + '/eliminar/';
+  API_GET_ARBITROS_DISPONIBLES: string = this.API_BASE + '/disponibles';
 
 
-  // ======================================
-  // Obtener headers con token
-  // ======================================
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken() || '';
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+  constructor(private http: HttpClient) { }
+
+  // ======= HEADER CON TOKEN =======
+  private getAuthHeaders(): { headers: HttpHeaders } {
+    const token = localStorage.getItem('token'); // o sessionStorage según tu login
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
     });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return { headers };
+  }
+
+  // ===========================================================
+  // 1.- Crear arbitro
+  // ===========================================================
+  newArbitro(data: any): Observable<any> {
+    return this.http.post<any>(this.API_NEW_ARBITRO, data, this.getAuthHeaders());
   }
 
   // ======================================
-  // 1. Listar árbitros
+  // 2. Obtener árbitros paginado
   // ======================================
-  getArbitros(): Observable<any> {
-    return this.http.get<any>(this.baseUrl, {
-      headers: this.getHeaders()
+  getArbitrosPaginated(filters: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    disponible?: string;
+    conAcceso?: boolean;
+  }): Observable<ArbitroPaginadoResponse> {
+
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
     });
+
+    const headers = this.getAuthHeaders().headers;
+
+    return this.http.get<ArbitroPaginadoResponse>(this.API_GET_ALL_ARBITROS, { params, headers });
   }
 
   // ======================================
-  // 2. Obtener arbitro por ID
+  // 3. Obtener arbitro por ID
   // ======================================
-  getArbitroById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  // ======================================
-  // 3. Crear árbitro
-  // ======================================
-  crearArbitro(data: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl, data, {
-      headers: this.getHeaders()
-    });
+  getArbitroById(id: number): Observable<ArbitroDetalleResponse> {
+    return this.http.get<ArbitroDetalleResponse>(`${this.API_DETALLE_ARBITRO}${id}`, this.getAuthHeaders());
   }
 
   // ======================================
   // 4. Actualizar árbitro
   // ======================================
-  actualizarArbitro(id: number, data: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${id}`, data, {
-      headers: this.getHeaders()
-    });
+  updateArbitro(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.API_UPDATE_ARBITRO}${id}`, data, this.getAuthHeaders());
   }
 
   // ======================================
   // 5. Eliminar árbitro
   // ======================================
-  eliminarArbitro(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
+  deleteArbitro(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API_DELETE_ARBITRO}${id}`, this.getAuthHeaders());
   }
 
-  // ======================================
-  // 6. Obtener arbitros por expediente
-  // ======================================
-  getArbitrosPorExpediente(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/expediente/${id}`, {
-      headers: this.getHeaders()
+  // ===========================================================
+  // 6.- Filtrar arbitros
+  // ===========================================================
+  findArbitrosDisponibles(filters: {
+    dni?: string;
+    nombres?: string;
+    limit?: number;
+  }): Observable<ArbitrosDisponiblesResponse> {
+
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== ''
+      ) {
+        params = params.set(
+          key,
+          value.toString()
+        );
+      }
     });
+
+    const headers = this.getAuthHeaders().headers;
+
+    return this.http.get<ArbitrosDisponiblesResponse>(this.API_GET_ARBITROS_DISPONIBLES, { params, headers }
+    );
   }
 }

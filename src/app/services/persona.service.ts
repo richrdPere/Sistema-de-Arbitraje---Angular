@@ -24,6 +24,7 @@ export class PersonaService {
   API_DELETE_PERSONA: string = this.API_BASE + '/eliminar/';
   API_FILTER_PERSONAS: string = this.API_BASE + '/search';
 
+
   constructor(private http: HttpClient) { }
 
   // ======= HEADER CON TOKEN =======

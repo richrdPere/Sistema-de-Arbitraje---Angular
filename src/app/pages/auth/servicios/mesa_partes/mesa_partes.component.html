@@ -1,92 +1,229 @@
-<!-- Formulario con Steps para Mesa de Partes -->
-<section class="relative w-full min-h-screen">
-  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');
-  ">
+<!-- ===================================================== -->
+<!-- MESA DE PARTES VIRTUAL -->
+<!-- ===================================================== -->
 
-    <div class="absolute inset-0 bg-black/40 "></div>
-    <div class="relative flex flex-col items-center justify-center  px-6 py-8 ">
+<section class="relative min-h-screen w-full">
+  <!-- Fondo -->
+  <div class="relative min-h-screen
+           bg-cover bg-center bg-no-repeat" style="background-image: url('assets/bg-justicia.jpg')">
+    <!-- Superposición -->
+    <div class="absolute inset-0
+             bg-black/50
+             backdrop-blur-[1px]" aria-hidden="true"></div>
 
-      <h1 class="text-center text-xs sm:text-xl md:text-3xl font-bold text-white mb-6">
-        MESA DE PARTES VIRTUAL
-      </h1>
+    <!-- Contenido -->
+    <div class="relative z-10
+             mx-auto flex min-h-screen w-full max-w-7xl
+             flex-col items-center
+             px-3 py-6
+             sm:px-5 sm:py-8
+             md:px-6 md:py-10
+             lg:px-8">
+      <!-- ================================================= -->
+      <!-- TÍTULO -->
+      <!-- ================================================= -->
 
-      <div class="w-full max-w-4xl">
+      <header class="mb-5 w-full text-center sm:mb-7">
+        <!-- <p class="mb-1 text-[10px] font-semibold uppercase
+                 tracking-[0.25em] text-white/70
+                 sm:text-xs">
+          Presentación digital de documentos
+        </p> -->
 
-        <!-- CABECERA -->
-        <div class=" mb-6">
-          <div class="card bg-base-200 shadow-xl p-6 space-y-6">
+        <h1 class="text-xl font-bold tracking-wide text-white
+                 sm:text-2xl
+                 md:text-3xl
+                 lg:text-4xl">
+          MESA DE PARTES VIRTUAL
+        </h1>
 
-            <div class="flex flex-row sm:flex-row justify-center gap-6 text-sm font-semibold">
-              <div>
-                <span class="mr-2">Fecha :</span>
-                <p class="input input-bordered input-sm w-32">{{ fechaActual }}</p>
-              </div>
+        <!-- <p class="mx-auto mt-2 max-w-2xl
+                 px-2 text-xs leading-relaxed text-white/80
+                 sm:text-sm">
+          Complete la información solicitada para registrar correctamente
+          su trámite.
+        </p> -->
+      </header>
 
-              <div>
-                <span class="mr-2">N° de Solicitud :</span>
-                <p class="input input-bordered input-sm w-18">{{ numeroSolicitud }}</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
+      <!-- ================================================= -->
       <!-- FORMULARIO -->
-      <div class="card w-full max-w-6xl bg-base-200  shadow-xl p-6 ">
+      <!-- ================================================= -->
 
-        <!-- STEPPER - HEADER -->
-        <div class="w-full max-w-7xl mb-6">
-          <ul class="steps steps-horizontal w-full">
+      <div class="card w-full max-w-6xl
+               overflow-hidden
+               border border-base-300
+               bg-base-100
+               shadow-2xl">
+        <div class="card-body
+                 p-3
+                 sm:p-5
+                 md:p-6
+                 lg:p-8">
+          <!-- ============================================= -->
+          <!-- ENCABEZADO DEL PROGRESO -->
+          <!-- ============================================= -->
 
-            <!-- STEP 1 - (click)="irAlPaso(1)" -->
-            <li class="step" [class.step-primary]="currentStep >= 1">
-              <button type="button" class="btn btn-disabled pointer-events-none">
-                <span class="text-primary font-semibold">DEMANDANTE</span>
-              </button>
-            </li>
+          <!-- <div class="mb-5 flex flex-col gap-2
+                   border-b border-base-300
+                   pb-4
+                   sm:mb-6 sm:flex-row
+                   sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-base font-bold text-base-content sm:text-lg">
+                Registro de solicitud
+              </h2>
 
-            <!-- STEP 2 - (click)="irAlPaso(2)" -->
-            <li class="step" [class.step-primary]="currentStep >= 2">
-              <button type="button" class="btn btn-disabled pointer-events-none">
-                <span class="text-primary font-semibold">DEMANDADO</span>
-              </button>
-            </li>
+              <p class="mt-1 text-xs text-base-content/60 sm:text-sm">
+                Paso {{ currentStep }} de 4
+              </p>
+            </div>
 
-            <!-- STEP 3 - (click)="irAlPaso(3)" -->
-            <li class="step" [class.step-primary]="currentStep >= 3">
-              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 2">
-                <span class="text-primary font-semibold">SOLICITUD</span>
-              </button>
-            </li>
+            <div class="badge badge-primary
+                     h-auto self-start
+                     px-3 py-2 text-xs font-semibold
+                     sm:self-auto sm:text-sm">
+              {{ currentStep * 25 }}% completado
+            </div>
+          </div> -->
 
-            <!-- STEP 4 - (click)="irAlPaso(4)" -->
-            <li class="step" [class.step-primary]="currentStep >= 4">
-              <button class="btn btn-disabled pointer-events-none" [class.btn-active]="currentStep === 3">
-                <span class="text-primary font-semibold">CONFIRMAR DATOS</span>
-              </button>
-            </li>
-          </ul>
-        </div>
+          <!-- ============================================= -->
+          <!-- STEPPER -->
+          <!-- Vertical en celular y horizontal en tablet -->
+          <!-- ============================================= -->
 
-        <!-- STEPS  CONTENT -->
-        <div>
-          <!-- STEP 1 -->
-          <step-demandante *ngIf="currentStep === 1" (nextStep)="nextStep()"></step-demandante>
+          <nav class="mb-6 w-full rounded-2xl border border-base-300 bg-base-200/60 p-3 sm:p-4 md:mb-8"
+            aria-label="Progreso del formulario">
+            <ul class="steps steps-vertical w-full md:steps-horizontal">
+              <!-- Paso 1 -->
+              <li class="step min-h-14 md:min-h-0" [class.step-primary]="currentStep >= 1"
+                [attr.data-content]="currentStep > 1 ? '✓' : '1'">
+                <div class="ml-2 flex min-w-0 flex-col
+                         items-start py-1 text-left
+                         md:ml-0 md:items-center md:text-center">
+                  <span class="text-[11px] font-bold uppercase tracking-wide sm:text-xs"
+                    [class.text-primary]="currentStep >= 1" [class.text-base-content]="currentStep < 1"
+                    [class.opacity-50]="currentStep < 1">
+                    Demandante
+                  </span>
 
-          <!-- STEP 2 -->
-          <step-demandado *ngIf="currentStep === 2" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-demandado>
+                  <span class="mt-0.5 text-[10px]
+                           text-base-content/50
+                           md:hidden">
+                    Datos de quien presenta la solicitud
+                  </span>
+                </div>
+              </li>
 
-          <!-- STEP 3 -->
-          <step-solicitud *ngIf="currentStep === 3" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-solicitud>
+              <!-- Paso 2 -->
+              <li class="step min-h-14
+                       md:min-h-0" [class.step-primary]="currentStep >= 2"
+                [attr.data-content]="currentStep > 2 ? '✓' : '2'">
+                <div class="ml-2 flex min-w-0 flex-col
+                         items-start py-1 text-left
+                         md:ml-0 md:items-center md:text-center">
 
-          <!-- STEP 4 -->
-          <step-resumen *ngIf="currentStep === 4" (prevStep)="prevStep()"
-            (resetStepper)="resetFormulario()"></step-resumen>
+                  <span class="text-[11px] font-bold uppercase tracking-wide sm:text-xs"
+                    [class.text-primary]="currentStep >= 1" [class.text-base-content]="currentStep < 1"
+                    [class.opacity-50]="currentStep < 2">
+                    Demandado
+                  </span>
 
+                  <span class="mt-0.5 text-[10px]
+                           text-base-content/50
+                           md:hidden">
+                    Datos de la parte demandada
+                  </span>
+                </div>
+              </li>
+
+              <!-- Paso 3 -->
+              <li class="step min-h-14
+                       md:min-h-0" [class.step-primary]="currentStep >= 3"
+                [attr.data-content]="currentStep > 3 ? '✓' : '3'">
+                <div class="ml-2 flex min-w-0 flex-col
+                         items-start py-1 text-left
+                         md:ml-0 md:items-center md:text-center">
+
+                  <span class="text-[11px] font-bold uppercase tracking-wide sm:text-xs"
+                    [class.text-primary]="currentStep >= 1" [class.text-base-content]="currentStep < 1"
+                    [class.opacity-50]="currentStep < 3">
+                    Solicitud
+                  </span>
+
+                  <span class="mt-0.5 text-[10px]
+                           text-base-content/50
+                           md:hidden">
+                    Información y documentos del trámite
+                  </span>
+                </div>
+              </li>
+
+              <!-- Paso 4 -->
+              <li class="step min-h-14
+                       md:min-h-0" [class.step-primary]="currentStep >= 4"
+                [attr.data-content]="currentStep === 4 ? '4' : '4'">
+                <div class="ml-2 flex min-w-0 flex-col
+                         items-start py-1 text-left
+                         md:ml-0 md:items-center md:text-center">
+
+
+                     <span class="text-[11px] font-bold uppercase tracking-wide sm:text-xs"
+                    [class.text-primary]="currentStep >= 1" [class.text-base-content]="currentStep < 1"
+                    [class.opacity-50]="currentStep < 4">
+                    Confirmación
+                  </span>
+
+                  <span class="mt-0.5 text-[10px]
+                           text-base-content/50
+                           md:hidden">
+                    Revisión y envío de la información
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- ============================================= -->
+          <!-- CONTENIDO DEL PASO -->
+          <!-- ============================================= -->
+
+          <main class="min-w-0 w-full
+                   rounded-2xl
+                   bg-base-100" aria-live="polite">
+            <!-- Paso 1 -->
+            @if (currentStep === 1) {
+            <step-demandante (nextStep)="nextStep()"></step-demandante>
+            }
+
+            <!-- Paso 2 -->
+            @if (currentStep === 2) {
+            <step-demandado (prevStep)="prevStep()" (nextStep)="nextStep()"></step-demandado>
+            }
+
+            <!-- Paso 3 -->
+            @if (currentStep === 3) {
+            <step-solicitud (prevStep)="prevStep()" (nextStep)="nextStep()"></step-solicitud>
+            }
+
+            <!-- Paso 4 -->
+            @if (currentStep === 4) {
+            <step-resumen (prevStep)="prevStep()" (resetStepper)="resetFormulario()"></step-resumen>
+            }
+          </main>
         </div>
       </div>
 
+      <!-- ================================================= -->
+      <!-- MENSAJE INFERIOR -->
+      <!-- ================================================= -->
+
+      <p class="mt-4 max-w-2xl px-4
+               text-center text-[11px]
+               leading-relaxed text-white/75
+               sm:mt-5 sm:text-xs">
+        Verifique que la información ingresada sea correcta antes de enviar
+        la solicitud.
+      </p>
     </div>
   </div>
 </section>

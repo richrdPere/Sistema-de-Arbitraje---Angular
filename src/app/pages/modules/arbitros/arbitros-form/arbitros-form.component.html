@@ -1,0 +1,406 @@
+@if (mostrarModal) {
+
+<div class="modal modal-open">
+
+  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h3 class="text-2xl font-semibold">
+        {{ modoEdicion ? 'Editar Árbitro' : 'Nuevo Árbitro' }}
+      </h3>
+
+      <button
+        type="button"
+        (click)="cerrarModal()"
+        class="btn btn-sm btn-circle btn-ghost text-xl"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="divider my-2"></div>
+
+    <!-- FORM -->
+    <form
+      [formGroup]="formArbitro"
+      (ngSubmit)="guardarArbitro()"
+      class="space-y-6"
+    >
+
+      <!-- ===================================== -->
+      <!-- DATOS PERSONALES -->
+      <!-- ===================================== -->
+      <div>
+
+        <h4 class="font-semibold text-lg mb-4">
+          Datos Personales
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- Nombres -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Nombres
+                @if(esRequerido('nombres')) {
+                  <span class="text-error">*</span>
+                }
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="nombres"
+              uppercase
+              class="input input-bordered w-full"
+              placeholder="Ingrese nombres"
+              appUppercase
+            />
+
+            @if(formArbitro.get('nombres')?.invalid &&
+                formArbitro.get('nombres')?.touched){
+
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  Los nombres son requeridos
+                </span>
+              </label>
+            }
+
+          </div>
+
+          <!-- Apellidos -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Apellidos
+                <span class="text-error">*</span>
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="apellidos"
+              uppercase
+              class="input input-bordered w-full"
+              placeholder="Ingrese apellidos"
+              appUppercase
+            />
+
+            @if(formArbitro.get('apellidos')?.invalid &&
+                formArbitro.get('apellidos')?.touched){
+
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  Los apellidos son requeridos
+                </span>
+              </label>
+            }
+
+          </div>
+
+          <!-- DNI -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                DNI
+                <span class="text-error">*</span>
+              </span>
+            </label>
+
+            <input
+              type="text"
+              maxlength="8"
+              formControlName="dni"
+              (keypress)="soloNumeros($event)"
+              class="input input-bordered w-full"
+              placeholder="Ingrese DNI"
+            />
+
+            @if(formArbitro.get('dni')?.invalid &&
+                formArbitro.get('dni')?.touched){
+
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  DNI inválido
+                </span>
+              </label>
+            }
+
+          </div>
+
+          <!-- Teléfono -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Teléfono
+              </span>
+            </label>
+
+            <input
+              type="text"
+              maxlength="9"
+              formControlName="telefono"
+              (keypress)="soloNumeros($event)"
+              class="input input-bordered w-full"
+              placeholder="Ingrese teléfono"
+            />
+
+          </div>
+
+          <!-- Dirección -->
+          <div class="form-control md:col-span-2">
+
+            <label class="label">
+              <span class="label-text">
+                Dirección
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="direccion"
+              uppercase
+              class="input input-bordered w-full"
+              placeholder="Ingrese dirección"
+              appUppercase
+            />
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- USUARIO -->
+      <!-- ===================================== -->
+      <div>
+
+        <h4 class="font-semibold text-lg mb-4">
+          Datos de Usuario
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- Correo -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Correo
+                <span class="text-error">*</span>
+              </span>
+            </label>
+
+            <input
+              type="email"
+              formControlName="correo"
+              class="input input-bordered w-full"
+              placeholder="correo@sistema.com"
+            />
+
+            @if(formArbitro.get('correo')?.invalid &&
+                formArbitro.get('correo')?.touched){
+
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  Correo inválido
+                </span>
+              </label>
+            }
+
+          </div>
+
+          <!-- Password -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                {{ modoEdicion ? 'Nueva Contraseña' : 'Contraseña' }}
+
+                @if(!modoEdicion){
+                  <span class="text-error">*</span>
+                }
+              </span>
+            </label>
+
+            <input
+              type="password"
+              formControlName="password"
+              class="input input-bordered w-full"
+              placeholder="Ingrese contraseña"
+            />
+
+            @if(formArbitro.get('password')?.invalid &&
+                formArbitro.get('password')?.touched){
+
+              <label class="label">
+                <span class="label-text-alt text-error">
+                  Mínimo 6 caracteres
+                </span>
+              </label>
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- DATOS ÁRBITRO -->
+      <!-- ===================================== -->
+      <div>
+
+        <h4 class="font-semibold text-lg mb-4">
+          Información del Árbitro
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- Cargo -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Cargo
+                <span class="text-error">*</span>
+              </span>
+            </label>
+
+            <select
+              formControlName="cargo"
+              class="select select-bordered w-full"
+            >
+              <option value="Árbitro Institucional">
+                Árbitro Institucional
+              </option>
+
+              <option value="Árbitro Ad Hoc">
+                Árbitro Ad Hoc
+              </option>
+
+              <option value="Presidente del Tribunal">
+                Presidente del Tribunal
+              </option>
+            </select>
+
+          </div>
+
+          <!-- Especialidad -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Especialidad
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="especialidad"
+              uppercase
+              class="input input-bordered w-full"
+              placeholder="Especialidad"
+              appUppercase
+            />
+
+          </div>
+
+          <!-- Experiencia -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Experiencia
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="experiencia"
+              class="input input-bordered w-full"
+              placeholder="Ejemplo: 5 años"
+              appUppercase
+            />
+
+          </div>
+
+          <!-- Colegiatura -->
+          <div class="form-control">
+
+            <label class="label">
+              <span class="label-text">
+                Número de colegiatura
+              </span>
+            </label>
+
+            <input
+              type="text"
+              formControlName="numero_colegiatura"
+              uppercase
+              class="input input-bordered w-full"
+              placeholder="Ingrese colegiatura"
+              appUppercase
+            />
+
+          </div>
+
+          <!-- Disponible -->
+          <!-- <div class="form-control">
+
+            <label class="label cursor-pointer justify-start gap-4">
+
+              <input
+                type="checkbox"
+                formControlName="disponible"
+                class="toggle toggle-success"
+              />
+
+              <span class="label-text">
+                Árbitro Disponible
+              </span>
+            </label>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="divider"></div>
+
+      <!-- Footer -->
+      <div class="flex justify-center gap-5">
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          (click)="cerrarModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="formArbitro.invalid || isLoading"
+        >
+
+          @if(isLoading){
+            <span class="loading loading-spinner loading-sm"></span>
+          }
+
+          {{ modoEdicion ? 'Actualizar Árbitro' : 'Guardar Árbitro' }}
+
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}

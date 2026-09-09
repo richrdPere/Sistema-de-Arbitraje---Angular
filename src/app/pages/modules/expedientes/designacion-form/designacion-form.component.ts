@@ -13,8 +13,6 @@ import { StepDemandadosComponent } from "./steps/step-demandados/step-demandados
 import { StepArbitrosComponent } from "./steps/step-arbitros/step-arbitros.component";
 import { StepConfirmacionComponent } from "./steps/step-confirmacion/step-confirmacion.component";
 
-
-
 @Component({
   selector: 'designacion-form',
   imports: [CommonModule, StepDemandantesComponent, StepDemandadosComponent, StepArbitrosComponent, StepConfirmacionComponent],
@@ -30,6 +28,9 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
   @Output() designacionCreado = new EventEmitter<void>();
 
   state: any;
+  tipo_arbitraje: string = '';
+  modoEdicion = false;
+  designacionExistente: any = null;
 
   constructor(
     public designacionFormService: DesignacionFormService,
@@ -47,7 +48,6 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
       xl: 'max-w-6xl',
       full: 'max-w-full w-[95vw]'
     };
-
     this.modalWidthClass = map[size];
   }
 
@@ -62,11 +62,9 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // VALIDAR INPUT
-    console.log("EXPEDIENTE ID: ", this.expedienteId)
-    if (changes['expedienteId'] && this.expedienteId) {
-      console.log('EXPEDIENTE ID:',this.expedienteId);
-      this.cargarParticipantes();
+    if (changes['expedienteId'] && this.expedienteId && changes['expedienteId'].currentValue !== changes['expedienteId'].previousValue
+    ) {
+      this.verificarDesignacion();
     }
   }
 
@@ -78,10 +76,6 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
       .listarParticipantes(this.expedienteId!)
       .subscribe({
         next: (resp: any) => {
-          console.log(
-            'PARTICIPANTES:',
-            resp
-          );
 
           // - MAPEAR DEMANDANTES
           const demandantes = (resp?.demandantes || [])
@@ -102,12 +96,16 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
             }));
 
           // - INIT STATE
+          const tipoArbitraje = this.mapearTipoArbitraje(resp.tipo);
           this.designacionFormService.init(
             this.expedienteId!,
-            'AD_HOC',
+            tipoArbitraje,
             demandantes,
             demandados
           );
+
+          // - ASIGNAR TIPO ARBITRAJE
+          this.tipo_arbitraje = tipoArbitraje;
         },
 
         error: (err) => {
@@ -119,6 +117,128 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
           });
         }
       });
+  }
+
+  // ==========================
+  // VERIFICAR DESIGNACIÓN
+  // ==========================
+  verificarDesignacion() {
+    this.designacionService
+      .getDesignacionByExpediente(this.expedienteId!)
+      .subscribe({
+        // EXISTE DESIGNACIÓN
+        next: (resp: any) => {
+
+          console.log('DESIGNACION EXISTENTE:', resp);
+          this.modoEdicion = true;
+          this.designacionExistente = resp;
+          this.cargarDesignacionExistente(resp);
+        },
+
+        // NO EXISTE DESIGNACIÓN
+        error: (err) => {
+          console.log('NO EXISTE DESIGNACION');
+
+          // 404 = NO EXISTE
+          if (err.status === 404) {
+            this.modoEdicion = false;
+            this.cargarParticipantes();
+            return;
+          }
+          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              'No se pudo verificar la designación.'
+          });
+        }
+      });
+  }
+
+  // ==========================
+  // CARGAR DESIGNACIÓN
+  // ==========================
+  cargarDesignacionExistente(resp: any) {
+
+    // - PARTICIPANTES
+    const demandantes = (resp?.participantes?.demandantes || [])
+      .map((d: any) => ({
+        persona_id: d.persona.id,
+        nombres: this.getNombrePersona(d.persona),
+        apellidos: d.persona.apellidos || '',
+        rol: 'DEMANDANTE'
+      }));
+
+    const demandados = (resp?.participantes?.demandados || [])
+      .map((d: any) => ({
+        persona_id: d.persona.id,
+        nombres: this.getNombrePersona(d.persona),
+        apellidos: d.persona.apellidos || '',
+        rol: 'DEMANDADO'
+      }));
+
+    // - TIPO ARBITRAJE
+    const tipoArbitraje = this.mapearTipoArbitraje(resp?.expediente?.tipo);
+    this.tipo_arbitraje = tipoArbitraje;
+
+    // - INIT STATE
+    this.designacionFormService.init(
+      this.expedienteId!,
+      tipoArbitraje,
+      demandantes,
+      demandados
+    );
+
+    // - CONFIGURAR TRIBUNAL
+    this.designacionFormService
+      .setTipoArbitros(
+        resp?.designacion?.tipo_tribunal,
+        false
+      );
+
+    // - MÉTODO DESIGNACIÓN
+    this.designacionFormService.setMetodoDesignacion(
+      resp?.designacion?.metodo_designacion
+    );
+
+    // - OBSERVACIONES
+    this.designacionFormService.setObservaciones(
+      resp?.designacion?.observaciones || ''
+    );
+
+    // ÁRBITROS
+    const arbitros = resp?.arbitros || [];
+
+    arbitros.forEach((a: any) => {
+
+      const persona = a?.arbitro?.persona;
+      this.designacionFormService.addArbitro({
+        arbitro_id: a.arbitro_id,
+        cargo: a.cargo,
+        especialidad: a.especialidad,
+        numero_colegiatura: a.numero_colegiatura,
+        disponible: a.disponible,
+        persona: {
+          id: persona?.id,
+          nombres: this.getNombrePersona(persona),
+          apellidos: persona?.apellidos || '',
+          dni: persona?.dni || '',
+          telefono: persona?.telefono || '',
+          email: persona?.email || ''
+        },
+        // nombres: this.getNombrePersona(persona),
+        // apellidos: persona?.apellidos || '',
+        rol: a.rol,
+        designado_por: a.designado_por
+      });
+
+    });
+
+    console.log(
+      'STATE RESTAURADO:',
+      this.designacionFormService.current
+    );
   }
 
   // ==========================
@@ -173,10 +293,9 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
   // ==========================
   guardarDesignacion() {
 
-    const payload =
-      this.designacionFormService.buildPayload();
+    const payload = this.designacionFormService.buildPayload();
 
-    console.log(payload);
+    console.log("DESIGN FORM: ", payload);
 
     Swal.fire({
       title: 'Creando designación...',
@@ -196,7 +315,12 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
             icon: 'success',
             title: 'Designación creada'
           });
+          // RESET FORM
           this.designacionFormService.reset();
+          // EMITIR EVENTO AL PADRE
+          this.designacionCreado.emit();
+          // CERRAR MODAL
+          this.cerrarModal();
         },
 
         error: (err) => {
@@ -245,9 +369,31 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
   // - Cerrar el modal
   cerrarModal(): void {
     this.mostrarModal = false;
-    this.modalCerrado.emit();
+    this.tipo_arbitraje = '';
+    this.modoEdicion = false;
+    this.designacionExistente = null;
     this.designacionFormService.reset();
+    this.modalCerrado.emit();
+  }
 
-    // this.designacionCreado = null; //  MUY IMPORTANTE
+  mapearTipoArbitraje(tipo: string):
+    'EMERGENCIA'
+    | 'AD_HOC'
+    | 'TRIBUNAL' {
+
+    switch (tipo) {
+
+      case 'Arbitraje de Emergencia':
+        return 'EMERGENCIA';
+
+      case 'Arbitraje Institucional':
+        return 'TRIBUNAL';
+
+      case 'Arbitraje Ad Hoc':
+      default:
+        return 'AD_HOC';
+
+    }
+
   }
 }

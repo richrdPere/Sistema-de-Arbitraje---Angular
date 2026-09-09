@@ -38,7 +38,6 @@
       <!-- STEP 2: EXPEDIENTE -->
       <step-expediente *ngIf="currentStep === 2" (prevStep)="prevStep()" (nextStep)="nextStep()"></step-expediente>
 
-
       <!-- STEP 3: RESUMEN -->
       <step-resumen-exp *ngIf="currentStep === 3" (prevStep)="prevStep()" (resetStepper)="cerrarModal()"
         (expedienteGuardado)="onExpedienteGuardado()"></step-resumen-exp>

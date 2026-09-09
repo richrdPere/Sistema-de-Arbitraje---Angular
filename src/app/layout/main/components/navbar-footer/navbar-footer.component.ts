@@ -13,6 +13,9 @@ interface FooterSection {
   templateUrl: './navbar-footer.component.html',
 })
 export class NavbarFooterComponent {
+
+  readonly currentYear = new Date().getFullYear();
+
   // Lista dinámica de rutas
   footerSections: FooterSection[] = [
     {

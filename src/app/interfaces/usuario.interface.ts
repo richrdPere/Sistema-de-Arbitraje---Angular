@@ -44,6 +44,8 @@ export interface Arbitro {
   numero_colegiatura?: string;
   certificado_pdf?: string;
   disponible: boolean;
+  persona: Persona;
+  usuario:Usuario;
 }
 
 

@@ -27,13 +27,13 @@ export const trazabilidadRoutes: Routes = [
             .then(m => m.VerDocumentosComponent),
         data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
-      {
-        path: 'expedientes/:id/participes',
-        loadComponent: () =>
-          import('../../pages/modules/expedientes/gestionar-participes/gestionar-participes.component')
-            .then(m => m.GestionarParticipesComponent),
-        data: { roles: ['ADMIN', 'SECRETARIA'] }
-      },
+      // {
+      //   path: 'expedientes/:id/participes',
+      //   loadComponent: () =>
+      //     import('../../pages/modules/expedientes/gestionar-participes/gestionar-participes.component')
+      //       .then(m => m.GestionarParticipesComponent),
+      //   data: { roles: ['ADMIN', 'SECRETARIA'] }
+      // },
       {
         path: 'expedientes/:id/historial',
         loadComponent: () =>
@@ -73,18 +73,32 @@ export const trazabilidadRoutes: Routes = [
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
+        path: 'arbitros',
+        loadComponent: () =>
+          import('../../pages/modules/arbitros/arbitros.component')
+            .then(m => m.ArbitrosComponent),
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
+      },
+      {
         path: 'designaciones',
         loadComponent: () =>
           import('../../pages/modules/designaciones/designaciones.component')
             .then(m => m.DesignacionesComponent),
-        data: { roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'] }
+        data: { roles: ['ADMIN', 'SECRETARIA'] }
+      },
+      {
+        path: 'designacion-arbitros',
+        loadComponent: () =>
+          import('../../pages/modules/designaciones-arbitro/designaciones-arbitro.component')
+            .then(m => m.DesignacionesArbitroComponent),
+        data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'acta-instalacion',
         loadComponent: () =>
           import('../../pages/modules/acta-instalacion/acta-instalacion.component')
             .then(m => m.ActaInstalacionComponent),
-        data: { roles: ['ADMIN', 'ARBITRO', ] }// 'SECRETARIA'
+        data: { roles: ['ADMIN', 'ARBITRO',] }// 'SECRETARIA'
       },
       {
         path: 'perfil',
@@ -147,7 +161,7 @@ export const trazabilidadRoutes: Routes = [
         loadComponent: () =>
           import('../../pages/modules/calendario/calendario.component')
             .then(m => m.CalendarioComponent),
-        data: { roles: ['ADMIN',  'ARBITRO'] } // 'SECRETARIA',
+        data: { roles: ['ADMIN', 'ARBITRO'] } // 'SECRETARIA',
       },
 
       // Redirect default

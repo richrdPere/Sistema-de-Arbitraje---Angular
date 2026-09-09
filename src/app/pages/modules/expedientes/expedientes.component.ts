@@ -19,7 +19,7 @@ import iziToast from 'izitoast';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
-import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
+// import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
 import { VerHistorialComponent } from "./ver-historial/ver-historial.component";
 import Swal from 'sweetalert2';
 import { VerExpedienteComponent } from "./ver-expediente/ver-expediente.component";
@@ -27,7 +27,7 @@ import { DesignacionFormComponent } from "./designacion-form/designacion-form.co
 
 @Component({
   selector: 'app-expedientes',
-  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, GestionarParticipesComponent, VerHistorialComponent, VerExpedienteComponent, DesignacionFormComponent],
+  imports: [DatePipe, ReactiveFormsModule, FormsModule, CommonModule, RouterOutlet, ExpedienteModalComponent, VerHistorialComponent, VerExpedienteComponent, DesignacionFormComponent],
   templateUrl: './expedientes.component.html',
   styles: ``
 })
@@ -449,8 +449,49 @@ export class ExpedientesComponent {
     }
   }
 
+
+  getEstadoProcesalClass(estado: string): string {
+    switch (estado) {
+      case 'Prearbitral':
+        return 'badge-primary';
+
+      case 'Instalación':
+        return 'badge-success';
+
+      case 'Audiencia':
+        return 'badge-accent';
+
+      case 'Concluido':
+        return 'badge-info';
+
+      case 'Plazo para laudar':
+        return 'badge-neutral';
+
+      default:
+        return 'badge-ghost';
+    }
+  }
+
   abrirParticipe() {
     throw new Error('Method not implemented.');
   }
 
+  mapearTipoArbitraje(tipo: string):
+    'EMERGENCIA'
+    | 'AD_HOC'
+    | 'TRIBUNAL' {
+
+    switch (tipo) {
+
+      case 'Arbitraje de Emergencia':
+        return 'EMERGENCIA';
+
+      case 'Arbitraje Institucional':
+        return 'TRIBUNAL';
+
+      case 'Arbitraje Ad Hoc':
+      default:
+        return 'AD_HOC';
+    }
+  }
 }

@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 // Service
 import { ThemeService } from 'src/app/services/theme.service';
-
 
 interface NavbarChild {
   label: string;
@@ -11,116 +10,127 @@ interface NavbarChild {
 }
 
 interface NavbarLink {
-  label: string;       // Texto a mostrar
-  path?: string;        // Ruta a navegar
-  activeClass?: string; // Clase para cuando la ruta está activa
+  label: string;
+  path?: string;
+  activeClass?: string;
   children?: NavbarChild[];
-  type?: 'link' | 'button'; // Tipo de enlace
-  buttonStyle?: string; // Clases para botones
+  type?: 'link' | 'button';
+  buttonStyle?: string;
 }
-
 
 @Component({
   selector: 'app-navbar-main',
+  standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar-main.component.html',
 })
-export class NavbarMainComponent {
-  theme: string = 'light';
+export class NavbarMainComponent implements OnInit {
+  theme = 'light';
+  mobileMenuOpen = false;
 
-  constructor(private themeService: ThemeService) { }
-
-  // Lista dinámica de rutas
-  navbarLinks: NavbarLink[] = [
-    // {
-    //   label: 'Inicio',
-    //   path: '/home',
-    //   activeClass: 'bg-info text-base-100'
-    // },
+  readonly navbarLinks: NavbarLink[] = [
     {
       label: 'Institucional',
-      activeClass: 'bg-info text-base-100',
+      activeClass: 'bg-info text-info-content',
       children: [
-        { label: 'Nosotros', path: '/about' },
-        { label: 'Estructura Institucional', path: '/unidad_gobierno' },
-        { label: 'Servicios', path: '/servicios' },
-        { label: 'Licencias', path: '/licencia' },
-        { label: 'Banco de Laudos', path: '/laudos' },
-        { label: 'Banco de Decisiones', path: '/desiciones' },
-      ]
+        {
+          label: 'Nosotros',
+          path: '/about',
+        },
+        {
+          label: 'Estructura Institucional',
+          path: '/unidad_gobierno',
+        },
+        {
+          label: 'Servicios',
+          path: '/servicios',
+        },
+        {
+          label: 'Licencias',
+          path: '/licencia',
+        },
+        {
+          label: 'Banco de Laudos',
+          path: '/laudos',
+        },
+        {
+          label: 'Banco de Decisiones',
+          path: '/desiciones',
+        },
+      ],
     },
     {
       label: 'Conciliaciones',
       path: '/conciliaciones',
-      activeClass: 'bg-info text-base-100'
+      activeClass: 'bg-info text-info-content',
     },
-
     {
-      label: 'Proceso\nJudiciales',
+      label: 'Procesos Judiciales',
       path: '/procesos_judiciales',
-      activeClass: 'bg-info text-base-100'
+      activeClass: 'bg-info text-info-content',
     },
-
     {
       label: 'Centro de Arbitraje',
       path: '/arbitraje',
-      activeClass: 'bg-info text-base-100'
+      activeClass: 'bg-info text-info-content',
     },
-
     {
       label: 'JPRD',
       path: '/jprd',
-      activeClass: 'bg-primary text-base-100'
+      activeClass: 'bg-primary text-primary-content',
     },
-    // {
-    //   label: 'Decisiones',
-    //   path: '/desiciones',
-    //   activeClass: 'bg-info text-base-100'
-    // },
-
-    // {
-    //   label: 'Centro de Arbitraje',
-    //   // path: '/arbitraje',
-    //   activeClass: 'text-base-100',
-    //   children: [
-    //     { label: 'Laudos', path: '/laudos' },
-    //     { label: 'Arbitraje', path: '/arbitraje' },
-
-    //   ]
-    // },
-    // {
-    //   label: 'JPRD',
-    //   // path: '/jprd',
-    //   activeClass: 'text-base-100',
-    //   children: [
-    //     { label: 'JPRD', path: '/jprd' },
-    //     { label: 'Decisiones', path: '/desiciones' },
-    //   ]
-    // },
     {
       label: 'Mesa de Partes',
       path: '/ser_mesa_partes',
-      activeClass: 'bg-primary text-base-100'
+      activeClass: 'bg-primary text-primary-content',
     },
     {
       label: 'Contáctanos',
       path: '/contacto',
-      activeClass: 'bg-info text-base-100'
+      activeClass: 'bg-info text-info-content',
     },
     {
       label: 'Trazabilidad Documentaria',
       path: '/trazabilidad',
-      activeClass: 'bg-primary text-base-100'
+      activeClass: 'bg-primary text-primary-content',
     },
-
   ];
+
+  constructor(private readonly themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.theme = this.themeService.getTheme();
   }
 
-  toggleTheme() {
+  toggleTheme(): void {
     this.themeService.toggleTheme();
     this.theme = this.themeService.getTheme();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
+  /**
+   * Cierra el menú móvil cuando se presiona Escape.
+   */
+  @HostListener('document:keydown.escape')
+  onEscapePressed(): void {
+    this.closeMobileMenu();
+  }
+
+  /**
+   * Si el usuario amplía la pantalla, evita mantener abierto
+   * el menú móvil detrás de la navegación de escritorio.
+   */
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (window.innerWidth >= 1280 && this.mobileMenuOpen) {
+      this.closeMobileMenu();
+    }
   }
 }

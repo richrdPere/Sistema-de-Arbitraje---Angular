@@ -49,6 +49,7 @@ export class DesignacionService {
   API_ACEPTAR_DESIGNACION: string = this.API_BASE + '/aceptar/';
   API_RECHAZAR_DESIGNACION: string = this.API_BASE + '/rechazar/';
   API_GET_DESIGNACION_BY_EXPEDIENTE: string = this.API_BASE + '/expediente/';
+  API_GET_MIS_DESGINACIONES: string = this.API_BASE + '/arbitro/';
 
   constructor(private http: HttpClient) { }
 
@@ -130,8 +131,8 @@ export class DesignacionService {
   // ===========================================================
   // 7. Desginacion por expediente
   // ===========================================================
-  getDesignacionPorExpediente(expedienteId: number) {
-    return this.http.get(`${this.API_GET_DESIGNACION_BY_EXPEDIENTE}${expedienteId}`, this.getAuthHeaders());
+  getDesignacionByExpediente(id: number) {
+    return this.http.get(`${this.API_GET_DESIGNACION_BY_EXPEDIENTE}${id}`, this.getAuthHeaders());
   }
 
   // ===========================================================
@@ -146,5 +147,12 @@ export class DesignacionService {
   // ===========================================================
   rechazarDesignacion(id: number): Observable<any> {
     return this.http.patch(`${this.API_RECHAZAR_DESIGNACION}${id}`, this.getAuthHeaders());
+  }
+
+  // ===========================================================
+  // 10.- Rechazar designacion
+  // ===========================================================
+  getMisDesignacion(id: number): Observable<any> {
+    return this.http.get(`${this.API_GET_MIS_DESGINACIONES}${id}`, this.getAuthHeaders());
   }
 }

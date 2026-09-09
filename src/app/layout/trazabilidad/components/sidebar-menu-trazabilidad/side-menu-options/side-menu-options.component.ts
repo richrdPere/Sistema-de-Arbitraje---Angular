@@ -33,31 +33,45 @@ export class SideMenuOptionsComponent {
     },
     {
       icon: 'fa-solid fa-user-tie',
-      label: 'Participes',
+      label: 'Arbitros',
       sublabel: 'Resumen de las actividades realizadas',
-      route: '/app/participes',
+      route: '/app/arbitros',
       roles: ['ADMIN', 'SECRETARIA'],
     },
-    {
-      icon: 'fa-solid fa-book-journal-whills',
-      label: 'Acta Instalación',
-      sublabel: 'Casos abiertos de las solicitudes aprobadas',
-      route: '/app/acta-instalacion',
-      roles: ['ADMIN', 'ARBITRO', ],  // 'SECRETARIA'
-    },
-    {
-      icon: 'fa-solid fa-building-columns',
-      label: 'Casos',
-      sublabel: 'Casos abiertos de las solicitudes aprobadas',
-      route: '/app/casos',
-      roles: ['ADMIN', 'ARBITRO'],
-    },
+    // {
+    //   icon: 'fa-solid fa-user-tie',
+    //   label: 'Participes',
+    //   sublabel: 'Resumen de las actividades realizadas',
+    //   route: '/app/participes',
+    //   roles: ['ADMIN', 'SECRETARIA'],
+    // },
+    // {
+    //   icon: 'fa-solid fa-book-journal-whills',
+    //   label: 'Acta Instalación',
+    //   sublabel: 'Casos abiertos de las solicitudes aprobadas',
+    //   route: '/app/acta-instalacion',
+    //   roles: ['ADMIN', 'ARBITRO',],  // 'SECRETARIA'
+    // },
+    // {
+    //   icon: 'fa-solid fa-building-columns',
+    //   label: 'Casos',
+    //   sublabel: 'Casos abiertos de las solicitudes aprobadas',
+    //   route: '/app/casos',
+    //   roles: ['ADMIN', 'ARBITRO'],
+    // },
     {
       icon: 'fas fa-arrow-right text-muted',
       label: 'Designaciones',
       sublabel: 'Casos abiertos de las solicitudes aprobadas',
       route: '/app/designaciones',
-      roles: ['ADMIN', 'ARBITRO', 'SECRETARIA'],
+      roles: ['ADMIN', 'SECRETARIA'],
+    },
+    {
+      icon: 'fas fa-arrow-right text-muted',
+      label: 'Mis Designaciones',
+      sublabel: 'Visualiza tus designaciones de las solicitudes aprobadas',
+      route: '/app/designacion-arbitros',
+      roles: ['ADMIN', 'ARBITRO'],
     },
     {
       icon: 'fa-solid fa-users',

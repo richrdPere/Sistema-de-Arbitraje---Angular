@@ -1,11 +1,12 @@
-<!-- HEADER -->
-<app-navbar-main />
+<div class="flex min-h-screen w-full flex-col overflow-x-hidden bg-base-100">
+  <!-- Header -->
+  <app-navbar-main class="relative z-50 block w-full shrink-0" />
 
-<!-- Main: aquí cargan las páginas según la ruta -->
-<main class="">
-  <router-outlet></router-outlet>
-</main>
+  <!-- Contenido de las rutas -->
+  <main class="min-w-0 w-full flex-1">
+    <router-outlet></router-outlet>
+  </main>
 
-<!-- FOOTER -->
-<app-navbar-footer />
-
+  <!-- Footer -->
+  <app-navbar-footer class="block w-full shrink-0" />
+</div>
