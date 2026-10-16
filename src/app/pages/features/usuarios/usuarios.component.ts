@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
 // Service
-import { UsuarioService } from 'src/app/services/admin/usuarios.service';
+import { UsuarioService } from 'src/app/pages/features/usuarios/services/usuarios.service';
 import { UsuariosFormComponent } from "./components/usuarios-form/usuarios-form.component";
 
 

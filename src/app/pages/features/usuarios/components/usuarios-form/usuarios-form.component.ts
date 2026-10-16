@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 // Service
-import { UsuarioService } from 'src/app/services/admin/usuarios.service';
+import { UsuarioService } from 'src/app/pages/features/usuarios/services/usuarios.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 

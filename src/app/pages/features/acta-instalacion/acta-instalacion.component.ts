@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms'
 // Services
 import { ActaInstalacion, Expediente } from 'src/app/interfaces/acta-instalacion.model';
 import { ActaInstalacionService } from 'src/app/services/acta-instalacion.service';
-import { UsuarioService } from 'src/app/services/admin/usuarios.service';
+import { UsuarioService } from 'src/app/pages/features/usuarios/services/usuarios.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { InstalacionFormComponent } from "./components/instalacion-form/instalacion-form.component";
 import { FormUtils } from 'src/app/utils/form-utils';
