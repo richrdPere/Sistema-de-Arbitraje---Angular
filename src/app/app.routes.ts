@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { LayoutComponentMain } from './layout/main/layout_main/layout_main.component';
-import { RoleGuard } from './guards/role.guard';
+import { RoleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   // --- Layout publico ----

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { LayoutTrazabilidadComponent } from './layout_trazabilidad/layout_trazabilidad.component';
-import { RoleGuard } from 'src/app/guards/role.guard';
+import { RoleGuard } from 'src/app/core/guards/role.guard';
 
 export const trazabilidadRoutes: Routes = [
   // --- Layout trazabilidad ----
@@ -17,13 +17,13 @@ export const trazabilidadRoutes: Routes = [
       // ----------------------------
       {
         path: 'expedientes',
-        loadComponent: () => import('../../pages/modules/expedientes/expedientes.component').then(m => m.ExpedientesComponent),
+        loadComponent: () => import('../../pages/features/expedientes/expedientes.component').then(m => m.ExpedientesComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'expedientes/:id/documentos',
         loadComponent: () =>
-          import('../../pages/modules/expedientes/ver-documentos/ver-documentos.component')
+          import('../../pages/features/expedientes/components/ver-documentos/ver-documentos.component')
             .then(m => m.VerDocumentosComponent),
         data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
@@ -37,7 +37,7 @@ export const trazabilidadRoutes: Routes = [
       {
         path: 'expedientes/:id/historial',
         loadComponent: () =>
-          import('../../pages/modules/expedientes/ver-historial/ver-historial.component')
+          import('../../pages/features/expedientes/components/ver-historial/ver-historial.component')
             .then(m => m.VerHistorialComponent),
         data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
@@ -49,14 +49,14 @@ export const trazabilidadRoutes: Routes = [
       {
         path: 'trazabilidad',
         loadComponent: () =>
-          import('../../pages/modules/trazabilidad/trazabilidad.component')
+          import('../../pages/features/trazabilidad/trazabilidad.component')
             .then(m => m.TrazabilidadComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'trazabilidad/:id/documentos',
         loadComponent: () =>
-          import('../../pages/modules/trazabilidad/documentos/documentos.component')
+          import('../../pages/features/trazabilidad/components/documentos/documentos.component')
             .then(m => m.DocumentosComponent),
         data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO'] }
       },
@@ -68,98 +68,98 @@ export const trazabilidadRoutes: Routes = [
       {
         path: 'participes',
         loadComponent: () =>
-          import('../../pages/modules/participes/participes.component')
+          import('../../pages/features/participes/participes.component')
             .then(m => m.ParticipesComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'arbitros',
         loadComponent: () =>
-          import('../../pages/modules/arbitros/arbitros.component')
+          import('../../pages/features/arbitros/arbitros.component')
             .then(m => m.ArbitrosComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'designaciones',
         loadComponent: () =>
-          import('../../pages/modules/designaciones/designaciones.component')
+          import('../../pages/features/designaciones/designaciones.component')
             .then(m => m.DesignacionesComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'designacion-arbitros',
         loadComponent: () =>
-          import('../../pages/modules/designaciones-arbitro/designaciones-arbitro.component')
+          import('../../pages/features/expedientes/components/designaciones-arbitro/designaciones-arbitro.component')
             .then(m => m.DesignacionesArbitroComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'acta-instalacion',
         loadComponent: () =>
-          import('../../pages/modules/acta-instalacion/acta-instalacion.component')
+          import('../../pages/features/acta-instalacion/acta-instalacion.component')
             .then(m => m.ActaInstalacionComponent),
         data: { roles: ['ADMIN', 'ARBITRO',] }// 'SECRETARIA'
       },
       {
         path: 'perfil',
         loadComponent: () =>
-          import('../../pages/modules/perfil/perfil.component')
+          import('../../pages/features/perfil/perfil.component')
             .then(m => m.PerfilComponent),
         data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO', 'PARTICIPE'] }
       },
       {
         path: 'usuarios',
         loadComponent: () =>
-          import('../../pages/modules/usuarios/usuarios.component')
+          import('../../pages/features/usuarios/usuarios.component')
             .then(m => m.UsuariosComponent),
         data: { roles: ['ADMIN'] }
       },
       {
         path: 'casos',
         loadComponent: () =>
-          import('../../pages/modules/casos/casos.component')
+          import('../../pages/features/casos/casos.component')
             .then(m => m.CasosComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'resoluciones',
         loadComponent: () =>
-          import('../../pages/modules/resolucion/resolucion.component')
+          import('../../pages/features/solicitudes/components/resolucion/resolucion.component')
             .then(m => m.ResolucionComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'auditoria',
         loadComponent: () =>
-          import('../../pages/modules/auditorias/auditorias.component')
+          import('../../pages/features/auditorias/auditorias.component')
             .then(m => m.AuditoriasComponent),
         data: { roles: ['ADMIN'] }
       },
       {
         path: 'audiencias',
         loadComponent: () =>
-          import('../../pages/modules/audiencias/audiencias.component')
+          import('../../pages/features/audiencias/audiencias.component')
             .then(m => m.AudienciasComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'laudos',
         loadComponent: () =>
-          import('../../pages/modules/laudos/laudos.component')
+          import('../../pages/features/laudos/laudos.component')
             .then(m => m.LaudosComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] }
       },
       {
         path: 'solicitudes',
         loadComponent: () =>
-          import('../../pages/modules/solicitudes/solicitudes.component')
+          import('../../pages/features/solicitudes/solicitudes.component')
             .then(m => m.SolicitudesComponent),
         data: { roles: ['ADMIN', 'SECRETARIA'] }
       },
       {
         path: 'calendario',
         loadComponent: () =>
-          import('../../pages/modules/calendario/calendario.component')
+          import('../../pages/features/calendario/calendario.component')
             .then(m => m.CalendarioComponent),
         data: { roles: ['ADMIN', 'ARBITRO'] } // 'SECRETARIA',
       },

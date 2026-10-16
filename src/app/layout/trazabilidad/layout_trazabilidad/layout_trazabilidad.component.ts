@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 // Pipe
-import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
+import { CapitalizePipe } from 'src/app/shared/pipes/capitalize.pipe';
 
 // Service
 import { AuthService } from 'src/app/services/auth.service';
