@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 // Services
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 
 @Component({
   selector: 'ver-trazabilidad',

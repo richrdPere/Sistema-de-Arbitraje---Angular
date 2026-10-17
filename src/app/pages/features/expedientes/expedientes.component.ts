@@ -18,7 +18,7 @@ import iziToast from 'izitoast';
 // Service
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 // import { GestionarParticipesComponent } from "./gestionar-participes/gestionar-participes.component";
 import { VerHistorialComponent } from "./components/ver-historial/ver-historial.component";
 import Swal from 'sweetalert2';

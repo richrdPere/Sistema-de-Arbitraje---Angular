@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output, SimpleChanges, } from '@angular
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Service
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 
 
 @Component({

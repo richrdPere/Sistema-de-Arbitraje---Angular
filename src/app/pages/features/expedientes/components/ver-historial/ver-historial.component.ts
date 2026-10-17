@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // Service
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 
 @Component({
   selector: 'ver-historial',

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // Service
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 import { VerTrazabilidadComponent } from "./components/ver-trazabilidad/ver-trazabilidad.component";
 import { Router } from '@angular/router';
 

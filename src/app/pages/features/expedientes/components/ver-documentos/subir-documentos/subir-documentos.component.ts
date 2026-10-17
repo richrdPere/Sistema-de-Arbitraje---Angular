@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 // Services
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({

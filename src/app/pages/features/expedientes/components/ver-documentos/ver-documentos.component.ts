@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 // Service
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 
 

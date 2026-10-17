@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 // Directives
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 import { ExpedienteFormService } from 'src/app/services/admin/expedientes-form.service';
 
 

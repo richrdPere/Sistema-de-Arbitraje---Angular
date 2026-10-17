@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 // Service
 import { DesignacionFormService } from 'src/app/services/designacion-participes.service';
 import { DesignacionService } from '../../../../../services/designacion.service';
-import { ExpedientesService } from 'src/app/services/admin/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 
 // Componentes
 import { StepDemandantesComponent } from "./steps/step-demandantes/step-demandantes.component";
