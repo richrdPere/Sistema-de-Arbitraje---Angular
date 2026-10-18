@@ -3,27 +3,68 @@ import { LayoutComponentMain } from './layout/main/layout_main/layout_main.compo
 import { RoleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  // --- Layout publico ----
+
+  // =========================================================
+  // Layout público
+  // =========================================================
   {
     path: '',
-    loadChildren: () => import('./layout/main/main.routes'),
+    // loadChildren: () => import('./layout/main/main.routes'),
+    loadChildren: () => import('./pages/public/public.routes'),
   },
 
+
+
+  // =========================================================
+  // Layout auth
+  // =========================================================
+  {
+    path: 'auth',
+    // loadComponent: () => import('./layouts/auth-layout/auth-layout.component').then(
+    //   (component) =>
+    //     component.AuthLayoutComponent,
+    // ),
+
+    children: [
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./pages/auth/login-page/login-page.component').then(
+            (component) =>
+              component.LoginPageComponent,
+          ),
+      },
+    ],
+  },
+
+
+  // =========================================================
+  // Layout admin
+  // =========================================================
   // --- Layout Admin (rutas privadas, lazy loading)
   {
-    path: 'app',
+    path: 'admin',
     canActivate: [RoleGuard],
-    data: { roles: ['admin', 'secretaria', 'arbitro', 'participe', 'adjudicador'] },
+    data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO', 'PARTICIPE', 'ADJUDICADOR'] },
     loadChildren: () => import('./layout/trazabilidad/trazabilidad.routes'),
   },
 
+  // =========================================================
+  // Acceso denegado
+  // =========================================================
+  {
+    path: 'acceso-denegado',
+    loadComponent: () => import('./shared/pages/access-denied/access-denied.component').then(
+      m => m.AccessDeniedComponent),
+  },
 
-  // ✅ CORREGIDO: ÚNICA ruta comodín en toda la aplicación
+  // =========================================================
+  // Página no encontrada
+  // =========================================================
   {
     path: '**',
-    loadComponent: () =>
-      import('./pages/shared/not-found/not-found.component').then(
-        (m) => m.NotFoundComponent
-      ),
+    loadComponent: () => import('./shared/pages/no-found-page/no-found-page.component').then(
+      (m) => m.NoFoundPageComponent
+    ),
   },
 ];

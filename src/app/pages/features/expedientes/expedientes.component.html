@@ -1,288 +1,553 @@
-<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+<div class="min-h-full bg-base-300 p-4 text-base-content
+         transition-colors duration-300 md:p-6">
+  <div class="overflow-hidden rounded-2xl border border-base-300
+           bg-base-100 shadow-xl">
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+    <header class="flex flex-col gap-4 border-b border-base-300
+             p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-xl font-bold">
+          Gestión de expedientes
+        </h1>
 
-  <!-- Titulo -->
-  <h1 class="text-2xl font-bold mb-5 text-base-content ">Gestión de Expedientes</h1>
+        <p class="mt-1 text-sm text-base-content/60">
+          Consulta y administra los expedientes del sistema de arbitraje.
+        </p>
+      </div>
 
-  <!-- Header -->
-  <div class="p-4 mb-7 card bg-base-100 shadow-md">
+      <button type="button" class="btn btn-primary gap-2 rounded-xl" (click)="abrirModal()">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        Nuevo expediente
+      </button>
+    </header>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
+    <!-- ================================================= -->
+    <!-- FILTROS -->
+    <!-- ================================================= -->
+    <section class="space-y-4 border-b border-base-300
+             bg-base-200/40 p-5" aria-label="Filtros de expedientes">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <!-- Búsqueda -->
+        <div class="min-w-0">
+          <label for="expedientes-search" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Buscar expediente
+          </label>
 
-      <!--  BUSCADOR -->
-      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
-
-        <!-- Input buscar -->
-        <div class="relative w-full md:max-w-xs">
-          <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por N° Expediente"
-            autocomplete="off" [(ngModel)]="filtroSearch" (ngModelChange)="onSearchChange()" />
-          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input id="expedientes-search" type="search" class="input input-bordered h-11 w-full rounded-xl
+                   bg-base-100 focus:border-primary
+                   focus:outline-none focus:ring-2
+                   focus:ring-primary/30" placeholder="Número, código, título o descripción" autocomplete="off"
+            [(ngModel)]="searchBusqueda" (ngModelChange)="onSearchChange()" />
         </div>
 
+        <!-- Estado general -->
+        <div class="min-w-0">
+          <label for="expedientes-estado" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Estado general
+          </label>
 
-        <!-- Filtro MES -->
-        <select class="select select-bordered h-11 bg-base-100 text-base-content w-full md:w-40" [(ngModel)]="filtroMes"
-          (change)="aplicarFiltros()">
+          <select id="expedientes-estado" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
+            <option value="">Todos los estados</option>
 
-          <option value="">Mes</option>
-          <option *ngFor="let mes of meses" [value]="mes.value">
-            {{ mes.label }}
-          </option>
-        </select>
-
-        <!-- Filtro AÑO -->
-        <select class="select select-bordered h-11 bg-base-100 text-base-content w-full md:w-32"
-          [(ngModel)]="filtroAnio" (change)="aplicarFiltros()">
-
-          <option value="">Año</option>
-          <option *ngFor="let anio of anios" [value]="anio">
-            {{ anio }}
-          </option>
-        </select>
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Modal Crear Expediente -->
-  <expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
-    [expedienteSeleccionado]="expedienteSeleccionado" (modalCerrado)="cerrarModal()"
-    (expedienteCreado)="cargarExpedientes()">
-  </expediente-modal>
-
-  <!-- Modal Participes y Arbitros -->
-  <!-- <gestionar-participes [mostrarModal]="mostrarModalParticipes" [expedienteSeleccionado]="expedienteSeleccionado"
-    (modalCerrado)="cerrarModalParticipes()">
-  </gestionar-participes> -->
-
-  <!-- Designacion Form -->
-  @if(expedienteSeleccionado){
-
-  <designacion-form [mostrarModal]="true" [expedienteId]="expedienteSeleccionado.id_expediente"
-    (modalCerrado)=" cerrarModalFormDesignacion()" (designacionCreado)="cargarExpedientes()">
-
-  </designacion-form>
-
-  }
-
-  <!-- Modal de historial -->
-  <ver-historial [mostrarModal]="mostrarModalHistorial" [expedienteId]="expedienteId"
-    (modalCerrado)="cerrarModalHistorial()">
-  </ver-historial>
-
-  <!-- Modal ver expediente -->
-  <ver-expediente [mostrarModal]="mostrarModalInfoExpediente" [expedienteId]="expedienteId"
-    (modalCerrado)="cerrarModalInfo()"></ver-expediente>
-
-
-  <!-- Tabla -->
-  <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
-    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
-      <!-- Header acciones -->
-      <div class="flex justify-between items-center p-5">
-
-        <!-- Selector de cantidad -->
-        <div class="flex items-center gap-2 text-sm">
-          <label>Mostrar:</label>
-
-          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
-            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
-              {{ size }}
+            @for (opcion of estadosDisponibles; track opcion.value) {
+            <option [value]="opcion.value">
+              {{ opcion.label }}
             </option>
+            }
+          </select>
+        </div>
+
+        <!-- Tipo de arbitraje -->
+        <div class="min-w-0">
+          <label for="expedientes-tipo" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Tipo de arbitraje
+          </label>
+
+          <select id="expedientes-tipo" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="tipoBusqueda" (ngModelChange)="onFiltroChange()">
+            <option value="">Todos los tipos</option>
+
+            @for (opcion of tiposDisponibles; track opcion.value) {
+            <option [value]="opcion.value">
+              {{ opcion.label }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Origen -->
+        <div class="min-w-0">
+          <label for="expedientes-origen" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Origen
+          </label>
+
+          <select id="expedientes-origen" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="origenBusqueda" (ngModelChange)="onFiltroChange()">
+            <option value="">Todos los orígenes</option>
+
+            @for (opcion of origenesDisponibles; track opcion.value) {
+            <option [value]="opcion.value">
+              {{ opcion.label }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <!-- Estado procesal -->
+        <div class="min-w-0">
+          <label for="expedientes-estado-procesal" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Estado procesal
+          </label>
+
+          <select id="expedientes-estado-procesal" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="estadoProcesalBusqueda"
+            (ngModelChange)="onFiltroChange()">
+            <option value="">Todas las etapas</option>
+
+            @for (estado of estadosProcesalesDisponibles; track estado) {
+            <option [value]="estado">
+              {{ estado }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Año -->
+        <div class="min-w-0">
+          <label for="expedientes-anio" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Año de registro
+          </label>
+
+          <select id="expedientes-anio" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="filtroAnio" (ngModelChange)="onFiltroChange()">
+            <option [ngValue]="''">Todos los años</option>
+
+            @for (anio of anios; track anio) {
+            <option [ngValue]="anio">
+              {{ anio }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Mes -->
+        <div class="min-w-0">
+          <label for="expedientes-mes" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Mes de registro
+          </label>
+
+          <select id="expedientes-mes" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="filtroMes" (ngModelChange)="onFiltroChange()"
+            aria-describedby="expedientes-mes-ayuda">
+            <option [ngValue]="''">Todos los meses</option>
+
+            @for (mes of meses; track mes.value) {
+            <option [ngValue]="mes.value">
+              {{ mes.label }}
+            </option>
+            }
           </select>
 
-          <span>items por página</span>
+          <p id="expedientes-mes-ayuda" class="mt-1 text-xs text-base-content/55">
+            Para filtrar por mes, selecciona también un año.
+          </p>
         </div>
 
-        <!-- Botónes -->
-        <div class="flex flex-row justify-center items-center gap-4">
-
-          <!-- <button class="btn btn-warning text-base-content hover:text-white bg-info hover:bg-primary border-none"
-            (click)="abrirParticipe()">
-            <i class="fa-solid fa-plus mr-1"></i>
-            Participe
-          </button> -->
-
-
-          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
-            (click)="abrirModal()">
-            <i class="fa-solid fa-plus mr-1"></i>
-            Expediente
+        <!-- Limpiar -->
+        <div class="flex items-start pt-0 md:pt-6">
+          <button type="button" class="btn btn-outline h-11 min-h-11
+                   w-full gap-2 rounded-xl" (click)="limpiarFiltros()">
+            <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+            Limpiar filtros
           </button>
         </div>
+      </div>
+    </section>
 
+    <!-- ================================================= -->
+    <!-- CANTIDAD POR PÁGINA -->
+    <!-- ================================================= -->
+    <div class="flex flex-wrap items-center justify-between
+             gap-3 px-5 py-4">
+      <div class="flex items-center gap-2 text-sm">
+        <label for="expedientes-limit">
+          Mostrar
+        </label>
+
+        <select id="expedientes-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
+          (ngModelChange)="cambiarLimite()" [disabled]="isLoading">
+          @for (size of pageSizeOptions; track size) {
+          <option [ngValue]="size">
+            {{ size }}
+          </option>
+          }
+        </select>
+
+        <span class="text-base-content/60">
+          por página
+        </span>
       </div>
 
-      <!-- Tabla  -->
-      <table class="table w-full">
+      <span class="text-sm text-base-content/60" aria-live="polite">
+        {{ totalItems }}
+        {{ totalItems === 1
+        ? 'expediente encontrado'
+        : 'expedientes encontrados' }}
+      </span>
+    </div>
 
-        <thead class="bg-base-300/90">
+    <!-- ================================================= -->
+    <!-- TABLA -->
+    <!-- ================================================= -->
+    <div class="overflow-x-auto" [attr.aria-busy]="isLoading">
+      <table class="table w-full">
+        <caption class="sr-only">
+          Listado de expedientes del sistema de arbitraje
+        </caption>
+
+        <thead class="bg-base-200 text-base-content/70">
           <tr>
-            <th>#</th>
-            <th>N° Expediente</th>
-            <th>Tipo de Arbitraje</th>
-            <th>N° de Participes</th>
-            <th>Fecha de Inicio</th>
-            <th>Estado</th>
-            <th>Estado Procesal</th>
-            <th>Docs</th>
-            <th>Actualización</th>
-            <th>Acciones</th>
+            <th scope="col">#</th>
+            <th scope="col">Expediente</th>
+            <th scope="col">Tipo de arbitraje</th>
+            <th scope="col">Origen</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Fecha de inicio</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Estado procesal</th>
+            <th scope="col">Actualización</th>
+            <th scope="col" class="text-center">Acciones</th>
           </tr>
         </thead>
+
         <tbody>
-          @if (loading) {
+          <!-- Carga -->
+          @if (isLoading) {
           <tr>
-            <td colspan="7" class="text-center py-4 text-base-content/70">Cargando expedientes...</td>
+            <td colspan="10" class="py-14 text-center">
+              <div class="flex items-center justify-center
+                         gap-3 text-base-content/60" role="status">
+                <span class="loading loading-spinner loading-md
+                           text-primary" aria-hidden="true"></span>
+
+                <span>Cargando expedientes...</span>
+              </div>
+            </td>
           </tr>
-          }
+          } @else if (errorMessage) {
+          <!-- Error -->
+          <tr>
+            <td colspan="10" class="py-10 text-center">
+              <div role="alert" class="px-5">
+                <p class="font-medium text-error">
+                  {{ errorMessage }}
+                </p>
 
-          @for (exp of expedientes; track exp.id_expediente; let i = $index) {
-          <tr class="hover ">
-            <td>{{i + 1}}</td>
-            <td>{{ exp.numero_expediente }}</td>
-            <td>
-              <span class="badge badge-sm font-medium badge-outline" [ngClass]="{
-                'badge-info': mapearTipoArbitraje(exp.tipo) === 'EMERGENCIA',
-                'badge-primary': mapearTipoArbitraje(exp.tipo) === 'TRIBUNAL',
-                'badge-accent': mapearTipoArbitraje(exp.tipo) === 'AD_HOC'
-              }">
-
-                {{ mapearTipoArbitraje(exp.tipo) }}
-
-              </span>
-
+                <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="getExpedientesPaginados()">
+                  <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                  Reintentar
+                </button>
+              </div>
             </td>
-            <td>{{ exp.total_participes }}</td>
-            <td>{{ exp.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
+          </tr>
+          } @else {
+          @for (exp of expedientes; track exp.id_expediente) {
+          <tr class="transition-colors hover:bg-base-200/50">
+            <!-- Índice -->
+            <td class="text-base-content/50">
+              {{ (page - 1) * limit + $index + 1 }}
+            </td>
+
+            <!-- Número, título y código -->
             <td>
-              <span class="badge badge-soft font-semibold" [ngClass]="getEstadoClass(exp.estado)">
-                {{ exp.estado }}
+              <div class="min-w-56 max-w-80">
+                <p class="break-words font-semibold text-primary">
+                  {{ exp.numero_expediente }}
+                </p>
+
+                <p class="mt-1 break-words text-sm">
+                  {{ exp.titulo }}
+                </p>
+
+                <p class="mt-1 text-xs text-base-content/50">
+                  Código: {{ exp.codigo }}
+                </p>
+              </div>
+            </td>
+
+            <!-- Tipo -->
+            <td>
+              <span class="badge badge-outline h-auto
+                           min-w-32 py-1.5 text-center
+                           text-xs font-semibold" [ngClass]="{
+                      'badge-info':
+                        exp.tipo === 'ARBITRAJE_DE_EMERGENCIA',
+                      'badge-primary':
+                        exp.tipo === 'ARBITRAJE_INSTITUCIONAL',
+                      'badge-accent':
+                        exp.tipo === 'ARBITRAJE_AD_HOC'
+                    }">
+                {{ getTipoLabel(exp.tipo) }}
               </span>
             </td>
+
+            <!-- Origen -->
             <td>
-              <span class="badge badge-soft font-semibold" [ngClass]="getEstadoProcesalClass(exp.estado_procesal)">
+              <span class="badge badge-outline whitespace-nowrap text-xs" [ngClass]="exp.origen === 'MPV'
+                      ? 'badge-info'
+                      : 'badge-neutral'" [attr.title]="getOrigenLabel(exp.origen)">
+                {{ exp.origen === 'MPV'
+                ? 'Mesa de Partes'
+                : 'Manual' }}
+              </span>
+            </td>
+
+            <!-- Responsable -->
+            <td>
+              @if (exp.responsable) {
+              <div class="min-w-40">
+                <p class="break-all text-sm">
+                  {{ exp.responsable.correo }}
+                </p>
+
+                <p class="mt-1 text-xs text-base-content/50">
+                  ID: {{ exp.responsable.id_usuario }}
+                </p>
+              </div>
+              } @else {
+              <span class="text-sm text-base-content/50">
+                Sin asignar
+              </span>
+              }
+            </td>
+
+            <!-- Inicio -->
+            <td class="whitespace-nowrap text-sm">
+              @if (exp.fecha_inicio) {
+              {{ exp.fecha_inicio | date:'dd/MM/yyyy':'-0500' }}
+              } @else {
+              <span class="text-base-content/50">
+                No registrada
+              </span>
+              }
+            </td>
+
+            <!-- Estado general -->
+            <td>
+              <span class="badge badge-outline whitespace-nowrap
+                           text-xs font-semibold" [ngClass]="getEstadoClass(exp.estado)">
+                {{ getEstadoLabel(exp.estado) }}
+              </span>
+            </td>
+
+            <!-- Estado procesal -->
+            <td>
+              <span class="badge badge-outline h-auto
+                           min-w-32 max-w-64 py-1.5
+                           text-center text-xs font-semibold" [ngClass]="getEstadoProcesalClass(exp.estado_procesal)">
                 {{ exp.estado_procesal }}
               </span>
             </td>
-            <td>{{ exp.total_documentos }}</td>
-            <td>
-              {{ exp.updatedAt | date: 'dd/MM/yyyy, h:mm a' }}
+
+            <!-- Actualización -->
+            <td class="whitespace-nowrap text-sm">
+              <p>
+                {{ exp.updatedAt | date:'dd/MM/yyyy':'-0500' }}
+              </p>
+
+              <p class="mt-1 text-xs text-base-content/50">
+                {{ exp.updatedAt | date:'hh:mm a':'-0500' }}
+              </p>
             </td>
 
-            <!-- Menú contextual -->
-            <td class="text-right relative">
-
-              <!-- ACCIONES PRINCIPALES -->
-              <div class="flex justify-start items-center gap-1">
-                <!-- Ver documentos -->
-                <button class="btn btn-ghost btn-circle btn-md" title="Ver documentos" (click)="verDocumentos(exp)">
-                  <i class="fa-solid fa-file-lines"></i>
+            <!-- Acciones -->
+            <td>
+              <div class="flex items-center justify-center gap-1">
+                <!-- Documentos -->
+                <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" title="Ver documentos"
+                  [attr.aria-label]="'Ver documentos del expediente ' +
+                        exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
+                  (click)="verDocumentos(exp)">
+                  <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
                 </button>
 
-                <!-- Gestionar partícipes -->
-                <!-- <button class="btn btn-ghost btn-circle btn-md" title="Gestionar partícipes"
-                  (click)="gestionarParticipesModal(exp)">
-
-                  <i class="fa-solid fa-users"></i>
-                </button> -->
-
-                <button class="btn btn-ghost btn-circle btn-md" title="Gestionar partícipes"
+                <!-- Designación -->
+                @if (puedeEditar(exp)) {
+                <button type="button" class="btn btn-ghost btn-circle btn-sm
+                               text-secondary" title="Gestionar designación arbitral" [attr.aria-label]="'Gestionar designación del expediente ' +
+                          exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
                   (click)="designacionFormModal(exp)">
-
-                  <i class="fa-solid fa-users"></i>
+                  <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
                 </button>
+                }
+
                 <!-- Más opciones -->
-                <button class="btn btn-ghost btn-circle btn-md" title="Más opciones"
+                <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Más acciones" [attr.aria-label]="'Más acciones del expediente ' +
+                        exp.numero_expediente" [attr.aria-expanded]="menuActivo?.id_expediente ===
+                        exp.id_expediente" [attr.aria-controls]="'expediente-menu-' +
+                        exp.id_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
                   (click)="toggleDropdown($event, exp)">
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                  @if (estaEnOperacion(exp.id_expediente)) {
+                  <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
+                  } @else {
+                  <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+                  }
                 </button>
-
               </div>
+            </td>
+          </tr>
+          } @empty {
+          <!-- Sin resultados -->
+          <tr>
+            <td colspan="10" class="py-14 text-center">
+              <i class="fa-solid fa-folder-open mb-3
+                           text-4xl text-base-content/30" aria-hidden="true"></i>
 
-              @if (menuActivo?.id_expediente === exp.id_expediente ) {
-              <div class="fixed bg-base-100 shadow-xl rounded-xl w-auto border border-base-300 z-[9999]"
-                [ngStyle]="dropdownStyle">
-                <ul class="menu menu-md ">
-                  <li class="menu-title text-xs text-base-content/60 text-start">Otras acciones</li>
+              <p class="font-semibold">
+                No se encontraron expedientes
+              </p>
 
-                  <li>
-                    <button (click)="verExpedienteInfo(exp)">
-                      <i class="fa-solid fa-magnifying-glass"></i>
-                      Ver Expediente
-                    </button>
-                  </li>
-
-
-                  <li>
-                    <button (click)="verHistorial(exp)">
-                      <i class="fa-solid fa-clock-rotate-left"></i>
-                      Ver historial
-                    </button>
-                  </li>
-
-                  <li *ngIf="exp.estado !== 'Anulado'">
-                    <button (click)="editarExpediente(exp)">
-                      <i class="fa-solid fa-pen"></i>
-                      Editar expediente
-                    </button>
-                  </li>
-
-                  <!-- Si NO está anulado → mostrar ANULAR -->
-                  <li *ngIf="exp.estado !== 'Anulado'">
-                    <button class="text-warning" (click)="anularExpediente(exp.id_expediente)">
-                      <i class="fa-solid fa-ban"></i>
-                      Anular expediente
-                    </button>
-                  </li>
-
-
-                  <!-- Si está anulado → mostrar ELIMINAR -->
-                  <li *ngIf="exp.estado === 'Anulado'">
-                    <button class="text-error" (click)="eliminarExpediente(exp.id_expediente)">
-                      <i class="fa-solid fa-trash"></i>
-                      Eliminar expediente
-                    </button>
-                  </li>
-
-                </ul>
-              </div>
-              }
-
+              <p class="mt-1 text-sm text-base-content/60">
+                Ajusta los filtros o registra un nuevo expediente.
+              </p>
             </td>
           </tr>
           }
+          }
         </tbody>
       </table>
-
-      @if (!loading && expedientes.length === 0) {
-      <div class="flex flex-col items-center justify-center my-10 text-center text-base-content/70">
-        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
-        <h3 class="text-lg font-semibold text-base-content mb-2">
-          No hay expedientes registrados
-        </h3>
-        <p class="text-sm max-w-md">Cuando se registren nuevos expedientes, aparecerán aquí automáticamente.</p>
-      </div>}
-
-      <!-- Paginación -->
-      <div class="flex justify-end items-center p-4 text-sm text-base-content bg-base-300/90">
-        <span> Página {{ page }} de {{ totalPages }} registros</span>
-        <div class="join ml-4 gap-2">
-          <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
-            Anterior
-          </button>
-
-          <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
-            Siguiente
-          </button>
-        </div>
-      </div>
     </div>
 
+    <!-- ================================================= -->
+    <!-- PAGINACIÓN -->
+    <!-- ================================================= -->
+    <footer class="flex flex-col items-center justify-between
+             gap-4 border-t border-base-300
+             bg-base-200/40 px-5 py-4 sm:flex-row">
+      <div class="text-sm text-base-content/60">
+        @if (totalPages > 0) {
+        Página
+        <span class="font-semibold text-base-content">
+          {{ page }}
+        </span>
+        de
+        <span class="font-semibold text-base-content">
+          {{ totalPages }}
+        </span>
+        } @else {
+        Sin páginas disponibles
+        }
+      </div>
 
+      <nav class="flex items-center gap-2" aria-label="Paginación de expedientes">
+        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+          [disabled]="isLoading || page <= 1 || totalPages === 0" (click)="cambiarPagina(page - 1)">
+          <i class="fa-solid fa-chevron-left text-xs" aria-hidden="true"></i>
+          Anterior
+        </button>
+
+        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+          [disabled]="isLoading || page >= totalPages || totalPages === 0" (click)="cambiarPagina(page + 1)">
+          Siguiente
+          <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
+        </button>
+      </nav>
+    </footer>
   </div>
 </div>
+
+<!-- ===================================================== -->
+<!-- MENÚ DE ACCIONES -->
+<!-- Fuera del contenedor con overflow para evitar recortes. -->
+<!-- ===================================================== -->
+@if (menuActivo; as exp) {
+<div [id]="'expediente-menu-' + exp.id_expediente" class="fixed z-[60] w-[200px] rounded-xl
+           border border-base-300 bg-base-100
+           text-base-content shadow-xl" [ngStyle]="dropdownStyle" (click)="$event.stopPropagation()"
+  (keydown.escape)="cerrarDropdown()">
+  <ul class="menu w-full p-2">
+    <li class="menu-title text-xs text-base-content/60">
+      Acciones del expediente
+    </li>
+
+    <li>
+      <button type="button" (click)="verExpedienteInfo(exp)">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        Ver detalle
+      </button>
+    </li>
+
+    <li>
+      <button type="button" (click)="verHistorial(exp)">
+        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+        Ver historial
+      </button>
+    </li>
+
+    @if (puedeEditar(exp)) {
+    <li>
+      <button type="button" [disabled]="estaEnOperacion(exp.id_expediente)" (click)="editarExpediente(exp)">
+        <i class="fa-solid fa-pen" aria-hidden="true"></i>
+        Editar expediente
+      </button>
+    </li>
+    }
+
+    @if (puedeAnular(exp)) {
+    <li>
+      <button type="button" class="text-error" [disabled]="estaEnOperacion(exp.id_expediente)"
+        (click)="anularExpediente(exp.id_expediente)">
+        <i class="fa-solid fa-ban" aria-hidden="true"></i>
+        Anular expediente
+      </button>
+    </li>
+    }
+  </ul>
+</div>
+}
+
+<!-- ===================================================== -->
+<!-- MODAL: CREAR / EDITAR -->
+<!-- ===================================================== -->
+<expediente-modal [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion"
+  [expedienteSeleccionado]="expedienteSeleccionado" (expedienteCreado)="onExpedienteGuardado()"
+  (modalCerrado)="cerrarModal()">
+</expediente-modal>
+
+<!-- ===================================================== -->
+<!-- MODAL: DESIGNACIÓN -->
+<!-- Solo se monta cuando se solicita abrirlo. -->
+<!-- ===================================================== -->
+@if (mostrarModalFormDesignacion && expedienteSeleccionado) {
+<designacion-form [mostrarModal]="mostrarModalFormDesignacion" [expedienteId]="expedienteSeleccionado.id_expediente"
+  (modalCerrado)="cerrarModalFormDesignacion()" (designacionCreado)="getExpedientesPaginados()">
+</designacion-form>
+}
+
+<!-- ===================================================== -->
+<!-- MODAL: HISTORIAL -->
+<!-- ===================================================== -->
+<ver-historial [mostrarModal]="mostrarModalHistorial" [expedienteId]="expedienteId"
+  (modalCerrado)="cerrarModalHistorial()">
+</ver-historial>
+
+<!-- ===================================================== -->
+<!-- MODAL: DETALLE -->
+<!-- ===================================================== -->
+<ver-expediente [mostrarModal]="mostrarModalInfoExpediente" [expedienteId]="expedienteId"
+  (modalCerrado)="cerrarModalInfo()">
+</ver-expediente>
 
 <router-outlet></router-outlet>

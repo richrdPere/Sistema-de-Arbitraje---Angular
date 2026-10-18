@@ -72,51 +72,51 @@ export class DesignacionFormComponent implements OnInit, OnChanges {
   // CARGAR PARTICIPES
   // ==========================
   cargarParticipantes() {
-    this.expedienteService
-      .listarParticipantes(this.expedienteId!)
-      .subscribe({
-        next: (resp: any) => {
+    // this.expedienteService
+    //   .listarParticipantes(this.expedienteId!)
+    //   .subscribe({
+    //     next: (resp: any) => {
 
-          // - MAPEAR DEMANDANTES
-          const demandantes = (resp?.demandantes || [])
-            .map((d: any) => ({
-              persona_id: d.persona.id,
-              nombres: this.getNombrePersona(d.persona),
-              apellidos: d.persona.apellidos || '',
-              rol: 'DEMANDANTE'
-            }));
+    //       // - MAPEAR DEMANDANTES
+    //       const demandantes = (resp?.demandantes || [])
+    //         .map((d: any) => ({
+    //           persona_id: d.persona.id,
+    //           nombres: this.getNombrePersona(d.persona),
+    //           apellidos: d.persona.apellidos || '',
+    //           rol: 'DEMANDANTE'
+    //         }));
 
-          // - MAPEAR DEMANDADOS
-          const demandados = (resp?.demandados || [])
-            .map((d: any) => ({
-              persona_id: d.persona.id,
-              nombres: this.getNombrePersona(d.persona),
-              apellidos: d.persona.apellidos || '',
-              rol: 'DEMANDADO'
-            }));
+    //       // - MAPEAR DEMANDADOS
+    //       const demandados = (resp?.demandados || [])
+    //         .map((d: any) => ({
+    //           persona_id: d.persona.id,
+    //           nombres: this.getNombrePersona(d.persona),
+    //           apellidos: d.persona.apellidos || '',
+    //           rol: 'DEMANDADO'
+    //         }));
 
-          // - INIT STATE
-          const tipoArbitraje = this.mapearTipoArbitraje(resp.tipo);
-          this.designacionFormService.init(
-            this.expedienteId!,
-            tipoArbitraje,
-            demandantes,
-            demandados
-          );
+    //       // - INIT STATE
+    //       const tipoArbitraje = this.mapearTipoArbitraje(resp.tipo);
+    //       this.designacionFormService.init(
+    //         this.expedienteId!,
+    //         tipoArbitraje,
+    //         demandantes,
+    //         demandados
+    //       );
 
-          // - ASIGNAR TIPO ARBITRAJE
-          this.tipo_arbitraje = tipoArbitraje;
-        },
+    //       // - ASIGNAR TIPO ARBITRAJE
+    //       this.tipo_arbitraje = tipoArbitraje;
+    //     },
 
-        error: (err) => {
-          console.error(err);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudieron cargar los participantes.'
-          });
-        }
-      });
+    //     error: (err) => {
+    //       console.error(err);
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error',
+    //         text: 'No se pudieron cargar los participantes.'
+    //       });
+    //     }
+    //   });
   }
 
   // ==========================

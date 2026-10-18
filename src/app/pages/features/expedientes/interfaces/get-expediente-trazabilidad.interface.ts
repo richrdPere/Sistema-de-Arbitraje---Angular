@@ -24,8 +24,7 @@ export interface ExpedienteTrazabilidadResumen {
 // No incluye la relación usuario.
 // *********************************************************
 
-export type ExpedienteTrazabilidadMovimiento =
-  Omit<ExpedienteHistorialItem, 'usuario'>;
+export type ExpedienteTrazabilidadMovimiento = Omit<ExpedienteHistorialItem, 'usuario'>;
 
 // *********************************************************
 // RESPONSE: DATA

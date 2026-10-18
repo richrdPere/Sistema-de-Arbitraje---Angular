@@ -50,18 +50,18 @@ export class DocumentosComponent {
   }
 
   cargarDocumentos() {
-    this.expedienteService.listarDocumentos(this.idExpediente, {}).subscribe({
-      next: (data) => {
-        this.documentos = data;
+    // this.expedienteService.listarDocumentos(this.idExpediente, {}).subscribe({
+    //   next: (data) => {
+    //     this.documentos = data;
 
 
-        this.loading = false;
-      },
-      error: (err) => {
+    //     this.loading = false;
+    //   },
+    //   error: (err) => {
 
-        this.loading = false;
-      },
-    });
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   cambiarPagina(nuevaPagina: number) {

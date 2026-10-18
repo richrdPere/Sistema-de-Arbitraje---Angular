@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
 import { SolicitudDetailComponent } from "../solicitud-detail/solicitud-detail.component";
 import { SolicitudDocsComponent } from "../solicitud-docs/solicitud-docs.component";
-import { SolicitudesRefreshService } from 'src/app/pages/shared/services/solicitudesRefresh.service';
+import { SolicitudesRefreshService } from 'src/app/core/services/solicitudesRefresh.service';
+
 
 @Component({
   selector: 'list-rechazados',

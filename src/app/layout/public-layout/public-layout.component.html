@@ -1,1 +1,13 @@
-<p>public-layout works!</p>
+<div class="flex min-h-dvh flex-col
+         bg-base-100 text-base-content">
+  <!-- Navegación pública -->
+  <navbar-public class="sticky top-0 z-50 block"></navbar-public>
+
+  <!-- Contenido de las rutas hijas -->
+  <main id="public-main-content" class="min-w-0 flex-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Pie de página -->
+  <footer-public class="block"></footer-public>
+</div>

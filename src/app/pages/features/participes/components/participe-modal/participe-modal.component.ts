@@ -8,11 +8,12 @@ import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directiv
 
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
-import { ValidacionesService } from 'src/app/pages/shared/services/validaciones.service';
+
 import { PersonaService } from 'src/app/services/persona.service';
 
 // Interface
 import { Participe } from 'src/app/interfaces/users/participeUser';
+import { ValidacionesService } from 'src/app/core/services/validaciones.service';
 
 
 @Component({
@@ -56,7 +57,7 @@ export class ParticipeModalComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private participeService: ParticipeService,
-    private validacionesService: ValidacionesService
+   private validacionesService: ValidacionesService
   ) { }
 
   ngOnInit(): void {

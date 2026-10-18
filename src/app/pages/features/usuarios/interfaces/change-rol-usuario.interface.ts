@@ -5,7 +5,7 @@ import { AuthRol } from "src/app/core/models/auth-session.model";
 // *********************************************************
 export type UsuarioRolAsignable = Extract<
   AuthRol,
-  'ADMIN' | 'PARTICIPE' | 'STAFF_INTERNO'
+  'ADMIN' | 'PARTICIPE' | 'STAFF_INTERNO' | 'SECRETARIA' | 'ARBITRO' | 'ADJUDICADOR'
 >;
 
 // *********************************************************

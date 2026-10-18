@@ -6,7 +6,6 @@ interface FooterSection {
   links: { label: string; path: string; activeClass?: string }[];
 }
 
-
 @Component({
   selector: 'app-navbar-footer',
   imports: [RouterLink, RouterLinkActive],

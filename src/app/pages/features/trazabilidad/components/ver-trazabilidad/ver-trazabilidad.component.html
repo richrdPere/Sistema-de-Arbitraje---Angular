@@ -1,104 +1,460 @@
 @if (mostrarModal) {
-
 <div class="modal modal-open">
+  <div class="fixed inset-0 z-50 flex items-center justify-center
+             bg-black/30 p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="trazabilidad-view-title">
+    <section class="relative flex max-h-[92vh] w-full flex-col
+               overflow-hidden rounded-2xl border border-base-300
+               bg-base-100 text-base-content shadow-2xl" [ngClass]="modalWidthClass" [attr.aria-busy]="loading">
+      <!-- ================================================= -->
+      <!-- HEADER -->
+      <!-- ================================================= -->
+      <header class="flex shrink-0 items-center justify-between gap-4
+                 border-b border-base-300 px-5 py-4 sm:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-12 w-12 shrink-0 items-center
+                     justify-center rounded-2xl
+                     bg-primary/10 text-primary">
+            <i class="fa-solid fa-timeline text-lg" aria-hidden="true"></i>
+          </div>
 
-  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8" [ngClass]="modalWidthClass">
+          <div class="min-w-0">
+            <h2 id="trazabilidad-view-title" class="text-lg font-bold sm:text-xl">
+              Trazabilidad del expediente
+            </h2>
 
-    <!-- Header -->
-    <div class="flex justify-between items-center border-b border-base-300 pb-2">
-      <h3 class="text-2xl font-semibold">Trazabilidad</h3>
-      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
-    </div>
+            <p class="mt-0.5 break-words text-sm text-base-content/55">
+              {{ trazabilidad?.expediente?.numero_expediente
+              || 'Consulta de movimientos y estado actual' }}
+            </p>
+          </div>
+        </div>
 
+        <button type="button" class="btn btn-circle btn-ghost btn-sm shrink-0" aria-label="Cerrar trazabilidad"
+          (click)="cerrarModal()">
+          <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
+        </button>
+      </header>
 
-    <!-- ===== RESUMEN DEL EXPEDIENTE ===== -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <!-- ================================================= -->
+      <!-- CONTENIDO -->
+      <!-- ================================================= -->
+      <div class="min-h-0 flex-1 overflow-y-auto
+                 overscroll-contain px-5 py-5 sm:px-6">
+        @if (loading) {
+        <div class="flex items-center justify-center gap-3
+                     py-16 text-base-content/60" role="status">
+          <span class="loading loading-spinner loading-md text-primary" aria-hidden="true"></span>
+          Cargando trazabilidad...
+        </div>
+        } @else if (errorCarga) {
+        <div class="rounded-xl border border-error/25
+                     bg-error/10 p-6 text-center" role="alert">
+          <p class="font-medium text-error">
+            {{ errorCarga }}
+          </p>
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">EXPEDIENTE:</p>
-        <p class="font-semibold">{{ trazabilidad?.expediente.numero }}</p>
-      </div>
+          <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="cargarTrazabilidad()">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            Reintentar
+          </button>
+        </div>
+        } @else {
+        @if (trazabilidad; as data) {
+        <div class="space-y-6">
+          <!-- ============================================= -->
+          <!-- EXPEDIENTE -->
+          <!-- ============================================= -->
+          <section class="rounded-xl border border-base-300
+                       bg-base-200/40 p-4 sm:p-5">
+            <div class="flex flex-col gap-4
+                         sm:flex-row sm:items-start
+                         sm:justify-between">
+              <div class="min-w-0">
+                <p class="text-xs font-semibold uppercase
+                             tracking-wide text-base-content/55">
+                  Expediente
+                </p>
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">ARBITRAJE</p>
-        <p class="font-semibold">{{ trazabilidad?.expediente.tipo }}</p>
-      </div>
+                <h3 class="mt-1 break-words text-lg
+                             font-bold text-primary">
+                  {{ data.expediente.numero_expediente }}
+                </h3>
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">ASUNTO</p>
-        <p class="font-semibold">{{ trazabilidad?.expediente.titulo }}</p>
-      </div>
-
-    </div>
-
-    <!-- ===== TABLA DE TRAZABILIDAD ===== -->
-    <div class="overflow-x-auto">
-
-      <table class="table table-zebra w-full">
-        <thead>
-          <tr class="bg-base-200">
-            <th>#</th>
-            <th>CÓDIGO</th>
-            <th>FECHA</th>
-            <th>ACCIÓN</th>
-            <th>DETALLE</th>
-            <th>RESPONSABLE</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @if (timeline.length > 0) {
-
-          @for (item of timeline; track $index) {
-          <tr>
-            <td>{{ $index + 1 }}</td>
-
-            <td>{{ trazabilidad?.expediente.codigo}}</td>
-
-            <td class="text-sm">
-              <div>{{ item.fecha | date:'dd/MM/yyyy' }}</div>
-              <div class="text-gray-500">
-                {{ item.fecha | date:'HH:mm' }}
+                <p class="mt-2 break-words font-medium">
+                  {{ data.expediente.titulo }}
+                </p>
               </div>
-            </td>
 
-            <td class="font-medium">
-              {{ item.accion }}
-            </td>
+              <span class="badge badge-outline shrink-0
+                           whitespace-nowrap font-semibold" [ngClass]="getEstadoClass(data.expediente.estado)">
+                {{ getEstadoLabel(data.expediente.estado) }}
+              </span>
+            </div>
 
-            <td class="max-w-xs truncate" title="{{ item.detalle }}">
-              {{ item.detalle || '—' }}
-            </td>
+            <dl class="mt-5 grid grid-cols-1 gap-4
+                         text-sm md:grid-cols-2">
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Tipo de arbitraje
+                </dt>
+                <dd class="mt-1 font-medium">
+                  {{ getTipoLabel(data.expediente.tipo) }}
+                </dd>
+              </div>
 
-            <td>
-              {{ item.usuario }}
-            </td>
-          </tr>
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Estado procesal
+                </dt>
+                <dd class="mt-1 font-medium">
+                  {{ data.expediente.estado_procesal }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Código
+                </dt>
+                <dd class="mt-1 break-words">
+                  {{ data.expediente.codigo }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Origen
+                </dt>
+                <dd class="mt-1">
+                  {{ data.expediente.origen === 'MPV'
+                  ? 'Mesa de Partes Virtual'
+                  : 'Registro manual' }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Responsable actual
+                </dt>
+                <dd class="mt-1 break-all">
+                  {{ data.expediente.responsable?.correo
+                  || 'Sin asignar' }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Última actualización del expediente
+                </dt>
+                <dd class="mt-1">
+                  {{ data.expediente.updatedAt
+                  | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                </dd>
+              </div>
+            </dl>
+
+            @if (data.expediente.descripcion) {
+            <div class="mt-5 border-t border-base-300 pt-4">
+              <p class="text-xs text-base-content/55">
+                Descripción
+              </p>
+
+              <p class="mt-1 whitespace-pre-wrap
+                             break-words text-sm leading-relaxed">{{ data.expediente.descripcion }}</p>
+            </div>
+            }
+          </section>
+
+          <!-- ============================================= -->
+          <!-- CONTEOS -->
+          <!-- ============================================= -->
+          <section aria-label="Resumen del expediente">
+            <dl class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <div class="rounded-xl border border-base-300
+                           bg-base-100 p-4">
+                <dt class="text-xs text-base-content/55">
+                  Documentos
+                </dt>
+                <dd class="mt-2 text-2xl font-bold text-primary">
+                  {{ data.resumen.total_documentos }}
+                </dd>
+              </div>
+
+              <div class="rounded-xl border border-base-300
+                           bg-base-100 p-4">
+                <dt class="text-xs text-base-content/55">
+                  Partícipes
+                </dt>
+                <dd class="mt-2 text-2xl font-bold text-info">
+                  {{ data.resumen.total_participes }}
+                </dd>
+              </div>
+
+              <div class="rounded-xl border border-base-300
+                           bg-base-100 p-4">
+                <dt class="text-xs text-base-content/55">
+                  Trámites
+                </dt>
+                <dd class="mt-2 text-2xl font-bold text-secondary">
+                  {{ data.resumen.total_tramites }}
+                </dd>
+              </div>
+
+              <div class="rounded-xl border border-base-300
+                           bg-base-100 p-4">
+                <dt class="text-xs text-base-content/55">
+                  Movimientos
+                </dt>
+                <dd class="mt-2 text-2xl font-bold">
+                  {{ data.resumen.total_movimientos }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- ============================================= -->
+          <!-- FECHAS -->
+          <!-- ============================================= -->
+          <section>
+            <h3 class="mb-3 text-base font-semibold">
+              Fechas del expediente
+            </h3>
+
+            <dl class="grid grid-cols-1 gap-4 rounded-xl
+                         border border-base-300 p-4
+                         sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Inicio
+                </dt>
+                <dd class="mt-1 text-sm">
+                  {{ data.expediente.fecha_inicio
+                  ? (data.expediente.fecha_inicio
+                  | date:'dd/MM/yyyy HH:mm':'-0500')
+                  : 'No registrada' }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Laudo
+                </dt>
+                <dd class="mt-1 text-sm">
+                  {{ data.expediente.fecha_laudo
+                  ? (data.expediente.fecha_laudo
+                  | date:'dd/MM/yyyy HH:mm':'-0500')
+                  : 'No registrada' }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Resolución
+                </dt>
+                <dd class="mt-1 text-sm">
+                  {{ data.expediente.fecha_resolucion
+                  ? (data.expediente.fecha_resolucion
+                  | date:'dd/MM/yyyy HH:mm':'-0500')
+                  : 'No registrada' }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs text-base-content/55">
+                  Cierre
+                </dt>
+                <dd class="mt-1 text-sm">
+                  {{ data.expediente.fecha_cierre
+                  ? (data.expediente.fecha_cierre
+                  | date:'dd/MM/yyyy HH:mm':'-0500')
+                  : 'No registrada' }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- ============================================= -->
+          <!-- ÚLTIMO MOVIMIENTO -->
+          <!-- ============================================= -->
+          @if (data.ultimo_movimiento; as ultimo) {
+          <section class="rounded-xl border border-primary/20
+                         bg-primary/5 p-4">
+            <h3 class="text-sm font-semibold text-primary">
+              Último movimiento
+            </h3>
+
+            <p class="mt-2 break-words font-medium">
+              {{ ultimo.accion }}
+            </p>
+
+            <p class="mt-1 text-xs text-base-content/60">
+              {{ ultimo.fecha_accion
+              | date:'dd/MM/yyyy HH:mm:ss':'-0500' }}
+              · {{ getActor(ultimo) }}
+            </p>
+          </section>
           }
 
-          } @else {
+          <!-- ============================================= -->
+          <!-- MOVIMIENTOS RECIENTES -->
+          <!-- ============================================= -->
+          <section>
+            <div class="mb-3 flex flex-wrap items-center
+                         justify-between gap-2">
+              <h3 class="text-base font-semibold">
+                Movimientos recientes
+              </h3>
 
-          <tr>
-            <td colspan="6" class="text-center text-gray-400 py-6">
-              No existe trazabilidad registrada para este expediente
-            </td>
-          </tr>
+              <span class="text-xs text-base-content/55">
+                Mostrando {{ timeline.length }}
+                de {{ data.resumen.total_movimientos }}
+              </span>
+            </div>
 
-          }
-        </tbody>
-      </table>
+            @if (data.resumen.total_movimientos > timeline.length) {
+            <p class="mb-4 text-sm text-base-content/60">
+              Esta vista muestra los movimientos más recientes.
+              Consulta el historial del expediente para revisar
+              todos los eventos.
+            </p>
+            }
 
-    </div>
+            <div class="overflow-x-auto rounded-xl
+                         border border-base-300">
+              <table class="table w-full">
+                <caption class="sr-only">
+                  Movimientos recientes del expediente
+                </caption>
 
-    <!-- Footer -->
-    <div class="flex justify-end mt-6">
-      <button class="btn btn-outline" (click)="cerrarModal()">
-        Cerrar
-      </button>
-    </div>
+                <thead class="bg-base-200 text-base-content/70">
+                  <tr>
+                    <th scope="col">Evento</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Acción y detalle</th>
+                    <th scope="col">Actor</th>
+                  </tr>
+                </thead>
 
+                <tbody>
+                  @for (item of timeline; track item.id_historial) {
+                  <tr class="hover:bg-base-200/40">
+                    <td class="align-top text-base-content/55">
+                      #{{ item.id_historial }}
+                    </td>
+
+                    <td class="whitespace-nowrap align-top text-sm">
+                      <p>
+                        {{ item.fecha_accion
+                        | date:'dd/MM/yyyy':'-0500' }}
+                      </p>
+
+                      <p class="mt-1 text-xs text-base-content/55">
+                        {{ item.fecha_accion
+                        | date:'HH:mm:ss':'-0500' }}
+                      </p>
+                    </td>
+
+                    <td class="align-top">
+                      <div class="min-w-64 max-w-xl">
+                        <p class="break-words font-medium">
+                          {{ item.accion }}
+                        </p>
+
+                        <span class="badge badge-outline mt-2
+                                       h-auto whitespace-normal
+                                       py-1 text-xs" [ngClass]="getEventoClass(item.tipo_evento)">
+                          {{ getEventoLabel(item.tipo_evento) }}
+                        </span>
+
+                        @if (item.detalleFormateado) {
+                        <p class="mt-3 whitespace-pre-wrap
+                                         break-words text-sm
+                                         leading-relaxed
+                                         text-base-content/75">{{ item.detalleFormateado }}</p>
+                        }
+
+                        <!-- Estado general -->
+                        @if (
+                        item.estado_anterior !== null ||
+                        item.estado_nuevo !== null
+                        ) {
+                        <div class="mt-3">
+                          <p class="mb-1 text-xs text-base-content/55">
+                            Estado general
+                          </p>
+
+                          <p class="break-words text-xs">
+                            {{ item.estado_anterior
+                            ? getEstadoLabel(item.estado_anterior)
+                            : 'Sin estado previo' }}
+                            →
+                            {{ item.estado_nuevo
+                            ? getEstadoLabel(item.estado_nuevo)
+                            : 'Sin estado nuevo' }}
+                          </p>
+                        </div>
+                        }
+
+                        <!-- Estado procesal -->
+                        @if (
+                        item.estado_procesal_anterior !== null ||
+                        item.estado_procesal_nuevo !== null
+                        ) {
+                        <div class="mt-3">
+                          <p class="mb-1 text-xs text-base-content/55">
+                            Estado procesal
+                          </p>
+
+                          <p class="break-words text-xs">
+                            {{ item.estado_procesal_anterior
+                            || 'Sin etapa previa' }}
+                            →
+                            {{ item.estado_procesal_nuevo
+                            || 'Sin etapa nueva' }}
+                          </p>
+                        </div>
+                        }
+                      </div>
+                    </td>
+
+                    <td class="align-top">
+                      <p class="min-w-32 break-words text-sm">
+                        {{ getActor(item) }}
+                      </p>
+                    </td>
+                  </tr>
+                  } @empty {
+                  <tr>
+                    <td colspan="4" class="py-10 text-center">
+                      <i class="fa-solid fa-clock-rotate-left
+                                     mb-3 text-3xl text-base-content/30" aria-hidden="true"></i>
+
+                      <p class="text-sm text-base-content/60">
+                        No hay movimientos recientes disponibles.
+                      </p>
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        }
+
+        }
+      </div>
+
+      <!-- ================================================= -->
+      <!-- FOOTER -->
+      <!-- ================================================= -->
+      <footer class="flex shrink-0 justify-center
+                 border-t border-base-300 bg-base-100
+                 px-5 py-4 sm:px-6">
+        <button type="button" class="btn btn-primary" (click)="cerrarModal()">
+          Cerrar trazabilidad
+        </button>
+      </footer>
+    </section>
   </div>
-
 </div>
-
 }

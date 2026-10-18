@@ -1,103 +1,348 @@
 @if (mostrarModal) {
-
 <div class="modal modal-open">
-  <div class="modal-box max-w-4xl bg-base-100 text-base-content rounded-2xl shadow-2xl p-8" [ngClass]="modalWidthClass">
+  <div class="fixed inset-0 z-50 flex items-center justify-center
+             bg-black/30 p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="expediente-historial-title">
+    <section class="relative flex max-h-[92vh] w-full flex-col
+               overflow-hidden rounded-2xl border border-base-300
+               bg-base-100 text-base-content shadow-2xl" [ngClass]="modalWidthClass" [attr.aria-busy]="loading">
+      <!-- ================================================= -->
+      <!-- HEADER -->
+      <!-- ================================================= -->
+      <header class="flex shrink-0 items-center justify-between gap-4
+                 border-b border-base-300 px-5 py-4 sm:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-12 w-12 shrink-0 items-center
+                     justify-center rounded-2xl
+                     bg-primary/10 text-primary">
+            <i class="fa-solid fa-clock-rotate-left text-lg" aria-hidden="true"></i>
+          </div>
 
+          <div class="min-w-0">
+            <h2 id="expediente-historial-title" class="text-lg font-bold sm:text-xl">
+              Historial del expediente
+            </h2>
 
-    <!-- Header -->
-    <div class="flex justify-between items-center border-b border-base-300 pb-2">
-      <h3 class="text-2xl font-semibold">🕒 Historial del expediente</h3>
-      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
-    </div>
+            <p class="mt-0.5 text-sm text-base-content/55">
+              Expediente ID: {{ expedienteId }}
+            </p>
+          </div>
+        </div>
 
+        <button type="button" class="btn btn-circle btn-ghost btn-sm shrink-0" aria-label="Cerrar historial"
+          (click)="cerrarModal()">
+          <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
+        </button>
+      </header>
 
-    <!-- ===== RESUMEN DEL EXPEDIENTE ===== -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <!-- ================================================= -->
+      <!-- CONTENIDO CON SCROLL -->
+      <!-- ================================================= -->
+      <div class="min-h-0 flex-1 overflow-y-auto
+                 overscroll-contain px-5 py-5 sm:px-6">
+        <!-- Filtros -->
+        <form class="space-y-4 rounded-xl border border-base-300
+                   bg-base-200/40 p-4" (ngSubmit)="aplicarFiltros()">
+          <fieldset [disabled]="loading" class="min-w-0">
+            <legend class="mb-3 text-sm font-semibold">
+              Filtrar movimientos
+            </legend>
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">EXPEDIENTE:</p>
-        <p class="font-semibold">{{ historial?.expediente.numero }}</p>
-      </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <!-- Tipo de evento -->
+              <div class="min-w-0">
+                <label for="historial-tipo" class="mb-1.5 block text-xs font-semibold
+                           text-base-content/60">
+                  Tipo de evento
+                </label>
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">ARBITRAJE</p>
-        <p class="font-semibold">{{ historial?.expediente.tipo }}</p>
-      </div>
+                <input id="historial-tipo" name="tipo_evento" type="text" list="historial-tipos" maxlength="80"
+                  placeholder="Todos los eventos" class="input input-bordered w-full"
+                  [(ngModel)]="tipoEventoBusqueda" />
 
-      <div class="card bg-base-200 p-4">
-        <p class="text-xs text-gray-500">ASUNTO</p>
-        <p class="font-semibold">{{ historial?.expediente.titulo }}</p>
-      </div>
-
-    </div>
-
-
-    <!-- ===== TABLA DE TRAZABILIDAD ===== -->
-    <div class="overflow-x-auto">
-
-      <table class="table table-zebra w-full">
-        <thead>
-          <tr class="bg-base-200">
-            <th>#</th>
-            <th>CÓDIGO</th>
-            <th>FECHA</th>
-            <th>ACCIÓN</th>
-            <th>DETALLE</th>
-            <th>RESPONSABLE</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @if (timeline.length > 0) {
-
-          @for (item of timeline; track $index) {
-          <tr>
-            <td>{{ $index + 1 }}</td>
-
-            <td>{{ historial?.expediente.codigo}}</td>
-
-            <td class="text-sm">
-              <div>{{ item.fecha | date:'dd/MM/yyyy' }}</div>
-              <div class="text-gray-500">
-                {{ item.fecha | date:'HH:mm' }}
+                <datalist id="historial-tipos">
+                  @for (tipo of tiposEventoDisponibles; track tipo) {
+                  <option [value]="tipo">
+                    {{ getTipoEventoLabel(tipo) }}
+                  </option>
+                  }
+                </datalist>
               </div>
-            </td>
 
-            <td class="font-medium">
-              {{ item.accion }}
-            </td>
+              <!-- Usuario -->
+              <div class="min-w-0">
+                <label for="historial-usuario" class="mb-1.5 block text-xs font-semibold
+                           text-base-content/60">
+                  ID del usuario actor
+                </label>
 
-            <td class="max-w-xs whitespace-normal break-words max-h-24 overflow-y-auto">
-              {{ item.detalle || '—' }}
-            </td>
+                <input id="historial-usuario" name="usuario_id" type="number" min="1" max="2147483647" step="1"
+                  placeholder="Todos los usuarios" class="input input-bordered w-full" [(ngModel)]="usuarioBusqueda" />
+              </div>
 
-            <td>
-              {{ item.usuario }}
-            </td>
-          </tr>
+              <!-- Desde -->
+              <div class="min-w-0">
+                <label for="historial-desde" class="mb-1.5 block text-xs font-semibold
+                           text-base-content/60">
+                  Desde
+                </label>
+
+                <input id="historial-desde" name="fecha_desde" type="date" class="input input-bordered w-full"
+                  [(ngModel)]="fechaDesdeBusqueda" />
+              </div>
+
+              <!-- Hasta -->
+              <div class="min-w-0">
+                <label for="historial-hasta" class="mb-1.5 block text-xs font-semibold
+                           text-base-content/60">
+                  Hasta
+                </label>
+
+                <input id="historial-hasta" name="fecha_hasta" type="date" class="input input-bordered w-full"
+                  [(ngModel)]="fechaHastaBusqueda" />
+              </div>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-3
+                       sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <label for="historial-orden" class="mb-1.5 block text-xs font-semibold
+                           text-base-content/60">
+                  Orden
+                </label>
+
+                <select id="historial-orden" name="orden" class="select select-bordered w-full sm:w-auto"
+                  [(ngModel)]="ordenBusqueda">
+                  <option value="DESC">Más recientes primero</option>
+                  <option value="ASC">Más antiguos primero</option>
+                </select>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline btn-sm" (click)="limpiarFiltros()">
+                  Limpiar filtros
+                </button>
+
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                  Aplicar filtros
+                </button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <!-- Cantidad -->
+        <div class="my-5 flex flex-wrap items-center
+                   justify-between gap-3 text-sm">
+          <p class="text-base-content/60" aria-live="polite">
+            {{ totalItems }}
+            {{ totalItems === 1 ? 'movimiento encontrado' : 'movimientos encontrados' }}
+          </p>
+
+          <div class="flex items-center gap-2">
+            <label for="historial-limit">Mostrar</label>
+
+            <select id="historial-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
+              (ngModelChange)="cambiarLimite()" [disabled]="loading">
+              @for (size of pageSizeOptions; track size) {
+              <option [ngValue]="size">
+                {{ size }}
+              </option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Cargando -->
+        @if (loading) {
+        <div class="flex items-center justify-center gap-3
+                     py-14 text-base-content/60" role="status">
+          <span class="loading loading-spinner loading-md text-primary" aria-hidden="true"></span>
+          Cargando historial...
+        </div>
+        } @else if (errorCarga) {
+        <!-- Error -->
+        <div class="rounded-xl border border-error/25
+                     bg-error/10 p-5 text-center" role="alert">
+          <p class="text-sm font-medium text-error">
+            {{ errorCarga }}
+          </p>
+
+          <button type="button" class="btn btn-outline btn-sm mt-4" (click)="cargarHistorial()">
+            Reintentar
+          </button>
+        </div>
+        } @else {
+        <!-- ============================================= -->
+        <!-- TIMELINE -->
+        <!-- ============================================= -->
+        <ol class="space-y-5">
+          @for (evento of timeline; track evento.id_historial) {
+          <li class="relative ml-3 border-l-2
+                         border-base-300 pl-6">
+            <!-- Punto de la línea de tiempo -->
+            <span class="absolute -left-2 top-1 h-3.5 w-3.5
+                           rounded-full bg-primary
+                           ring-4 ring-base-100" aria-hidden="true"></span>
+
+            <article class="rounded-xl border border-base-300
+                           bg-base-100 p-4 shadow-sm sm:p-5">
+              <!-- Cabecera del evento -->
+              <div class="flex flex-col gap-3
+                             sm:flex-row sm:items-start
+                             sm:justify-between">
+                <div class="min-w-0">
+                  <h3 class="break-words font-semibold">
+                    {{ evento.accion }}
+                  </h3>
+
+                  <span class="badge badge-outline mt-2 h-auto
+                                 max-w-full break-words py-1
+                                 text-xs" [ngClass]="getEventoClass(evento.tipo_evento)">
+                    {{ getTipoEventoLabel(evento.tipo_evento) }}
+                  </span>
+                </div>
+
+                <div class="shrink-0 text-xs text-base-content/60">
+                  <p>
+                    {{ evento.fecha_accion | date:'dd/MM/yyyy':'-0500' }}
+                  </p>
+                  <p class="mt-1 sm:text-right">
+                    {{ evento.fecha_accion | date:'hh:mm:ss a':'-0500' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Actor -->
+              <p class="mt-4 flex items-start gap-2
+                             text-sm text-base-content/65">
+                <i class="fa-solid fa-user mt-0.5" aria-hidden="true"></i>
+
+                <span class="min-w-0 break-words">
+                  {{ getActor(evento) }}
+                </span>
+              </p>
+
+              <!-- Detalle -->
+              @if (evento.detalleFormateado) {
+              <p class="mt-4 whitespace-pre-wrap break-words
+                               rounded-lg bg-base-200/60
+                               p-3 text-sm leading-relaxed">{{ evento.detalleFormateado }}</p>
+              }
+
+              <!-- Estado general -->
+              @if (
+              evento.estado_anterior !== null ||
+              evento.estado_nuevo !== null
+              ) {
+              <div class="mt-4">
+                <p class="mb-2 text-xs font-semibold text-base-content/55">
+                  Estado general
+                </p>
+
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                  <span class="badge badge-outline">
+                    {{ evento.estado_anterior
+                    ? getEstadoLabel(evento.estado_anterior)
+                    : 'Sin estado previo' }}
+                  </span>
+
+                  <i class="fa-solid fa-arrow-right text-base-content/40" aria-label="pasa a"></i>
+
+                  <span class="badge badge-outline badge-primary">
+                    {{ evento.estado_nuevo
+                    ? getEstadoLabel(evento.estado_nuevo)
+                    : 'Sin estado nuevo' }}
+                  </span>
+                </div>
+              </div>
+              }
+
+              <!-- Estado procesal -->
+              @if (
+              evento.estado_procesal_anterior !== null ||
+              evento.estado_procesal_nuevo !== null
+              ) {
+              <div class="mt-4">
+                <p class="mb-2 text-xs font-semibold text-base-content/55">
+                  Estado procesal
+                </p>
+
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                  <span class="badge badge-outline h-auto
+                                   whitespace-normal py-1">
+                    {{ evento.estado_procesal_anterior || 'Sin etapa previa' }}
+                  </span>
+
+                  <i class="fa-solid fa-arrow-right text-base-content/40" aria-label="pasa a"></i>
+
+                  <span class="badge badge-outline badge-info
+                                   h-auto whitespace-normal py-1">
+                    {{ evento.estado_procesal_nuevo || 'Sin etapa nueva' }}
+                  </span>
+                </div>
+              </div>
+              }
+
+              <p class="mt-4 text-xs text-base-content/40">
+                Evento #{{ evento.id_historial }}
+              </p>
+            </article>
+          </li>
+          } @empty {
+          <li class="py-12 text-center">
+            <i class="fa-solid fa-clock-rotate-left mb-3
+                           text-3xl text-base-content/30" aria-hidden="true"></i>
+
+            <p class="font-semibold">
+              No se encontraron movimientos
+            </p>
+
+            <p class="mt-1 text-sm text-base-content/60">
+              No hay eventos que coincidan con los filtros seleccionados.
+            </p>
+          </li>
           }
+        </ol>
+        }
+      </div>
 
-          } @else {
+      <!-- ================================================= -->
+      <!-- FOOTER -->
+      <!-- ================================================= -->
+      <footer class="flex shrink-0 flex-col gap-4
+                 border-t border-base-300 bg-base-100
+                 px-5 py-4 sm:px-6">
+        <div class="flex flex-col items-center justify-between
+                   gap-3 sm:flex-row">
+          <p class="text-sm text-base-content/60">
+            @if (totalPages > 0) {
+            Página {{ page }} de {{ totalPages }}
+            } @else {
+            Sin páginas disponibles
+            }
+          </p>
 
-          <tr>
-            <td colspan="6" class="text-center text-gray-400 py-6">
-              No existe trazabilidad registrada para este expediente
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          <nav class="flex items-center gap-2" aria-label="Paginación del historial">
+            <button type="button" class="btn btn-outline btn-sm" [disabled]="loading || page <= 1 || totalPages === 0"
+              (click)="cambiarPagina(page - 1)">
+              Anterior
+            </button>
 
-    <!-- Footer -->
-    <div class="flex justify-end mt-6">
-      <button class="btn btn-outline" (click)="cerrarModal()">
-        Cerrar
-      </button>
-    </div>
+            <button type="button" class="btn btn-outline btn-sm"
+              [disabled]="loading || page >= totalPages || totalPages === 0" (click)="cambiarPagina(page + 1)">
+              Siguiente
+            </button>
+          </nav>
+        </div>
 
-
-
+        <div class="flex justify-center">
+          <button type="button" class="btn btn-primary" (click)="cerrarModal()">
+            Cerrar historial
+          </button>
+        </div>
+      </footer>
+    </section>
   </div>
 </div>
 }

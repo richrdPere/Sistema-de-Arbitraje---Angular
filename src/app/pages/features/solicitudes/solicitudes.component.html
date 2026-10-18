@@ -1,247 +1,420 @@
-<div class="p-4 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+<div class="min-h-full bg-base-300 p-4 text-base-content
+         transition-colors duration-300 md:p-6">
+  <div class="overflow-hidden rounded-2xl border border-base-300
+           bg-base-100 shadow-xl">
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+    <header class="border-b border-base-300 p-5">
+      <h1 class="text-xl font-bold">
+        Mesa de Partes
+      </h1>
 
-  <!-- Contenedor de tabs -->
-  <div class="tabs tabs-lifted w-full mb-6">
-    <!-- TAB 1 -->
-    <input type="radio" name="my_tabs_2" id="tab1" class="tab peer/tab1 hidden" checked />
+      <p class="mt-1 text-sm text-base-content/60">
+        Consulta las solicitudes y gestiona su revisión.
+      </p>
+    </header>
 
-    <label for="tab1"
-      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab1:bg-info peer-checked/tab1:text-white peer-checked/tab1:font-bold text-base-content transition-colors">
-      Pendientes
-    </label>
+    <!-- ================================================= -->
+    <!-- PESTAÑAS -->
+    <!-- ================================================= -->
+    <div class="flex flex-wrap gap-2 border-b border-base-300 p-4" role="group" aria-label="Estado de las solicitudes">
+      <button type="button" class="btn btn-sm gap-2 rounded-xl" [ngClass]="tabActivo === 'pendiente'
+          ? 'btn-warning'
+          : 'btn-ghost'" [attr.aria-pressed]="tabActivo === 'pendiente'" (click)="cambiarTab('pendiente')">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        Pendientes
+      </button>
 
-    <div
-      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab1:block transition-all duration-300">
+      <button type="button" class="btn btn-sm gap-2 rounded-xl" [ngClass]="tabActivo === 'aprobado'
+          ? 'btn-success'
+          : 'btn-ghost'" [attr.aria-pressed]="tabActivo === 'aprobado'" (click)="cambiarTab('aprobado')">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        Aprobadas
+      </button>
 
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-base-content">Solicitudes Pendientes</h2>
-      </div>
+      <button type="button" class="btn btn-sm gap-2 rounded-xl" [ngClass]="tabActivo === 'rechazado'
+          ? 'btn-error'
+          : 'btn-ghost'" [attr.aria-pressed]="tabActivo === 'rechazado'" (click)="cambiarTab('rechazado')">
+        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+        Rechazadas
+      </button>
+    </div>
 
-      <!-- CONTENEDOR PRINCIPAL -->
-      <div class="p-4 mb-7 card bg-base-100 shadow-md">
-        <!--  BUSCADOR -->
-        <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+    <!-- ================================================= -->
+    <!-- FILTROS -->
+    <!-- ================================================= -->
+    <section class="space-y-4 border-b border-base-300
+             bg-base-200/40 p-5" aria-label="Filtros de solicitudes">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <!-- Búsqueda -->
+        <div class="min-w-0">
+          <label for="solicitudes-search" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Buscar solicitud
+          </label>
 
-          <!-- Input buscar -->
-          <div class="relative w-full md:max-w-xs">
-            <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-4 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar..."
-              [(ngModel)]="filtroSearch" (input)="aplicarFiltros()" />
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-base-content/60"></i>
-          </div>
+          <input id="solicitudes-search" type="search" placeholder="Buscar trámites..." autocomplete="off" class="input input-bordered h-11 w-full
+                   rounded-xl bg-base-100" [(ngModel)]="filtroSearch" (ngModelChange)="onSearchChange()" />
+        </div>
 
-          <!-- Filtro Tipo Arbitraje -->
-          <select class="select select-bordered h-11 bg-base-100 text-base-content " [(ngModel)]="filtroTipo"
-            (change)="aplicarFiltros()">
-            <option value="">Tipo de arbitraje</option>
-            <option *ngFor="let t of tiposTramite" [value]="t">{{ t }}</option>
+        <!-- Tipo -->
+        <div class="min-w-0">
+          <label for="solicitudes-tipo" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Tipo de solicitud
+          </label>
+
+          <select id="solicitudes-tipo" class="select select-bordered h-11 min-h-11
+                   w-full rounded-xl bg-base-100" [(ngModel)]="filtroTipo" (ngModelChange)="onFiltroChange()">
+            <option value="">Todos los tipos</option>
+
+            @for (tipo of tiposTramite; track tipo.value) {
+            <option [value]="tipo.value">
+              {{ tipo.label }}
+            </option>
+            }
           </select>
         </div>
-      </div>
 
-      <!-- MODALES -->
+        <!-- Fecha inicial -->
+        <div class="min-w-0">
+          <label for="solicitudes-fecha-inicio" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Fecha inicial
+          </label>
 
-      <!-- Modal de detalles -->
-      <solicitud-detail [mostrarModal]="mostrarDetalle" [tramite]="tramiteDetalle" (cerrar)="cerrarDetalle()">
-      </solicitud-detail>
-
-      <!-- Modal de tramite aprobado -->
-      <solicitud-aprobado [visible]="tipoModal === 'estado'" [tramite]="tramiteSeleccionado" (cerrar)="cerrarModal()"
-        (aprobar)="aprobarSolicitud()" (rechazar)="rechazarSolicitud($event)">
-      </solicitud-aprobado>
-
-      <!-- Modal de documentos -->
-      <solicitud-docs [mostrarModal]="mostrarModal" [documentos]="documentosSeleccionados"
-        (modalCerrado)="cerrarModal()">
-      </solicitud-docs>
-
-
-      <!-- Tabla -->
-      <div class="p-6 min-h-auto bg-base-100 rounded-xl shadow-xl">
-
-        <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
-
-          <!-- Header acciones -->
-          <div class="flex justify-between items-center p-5">
-
-            <!-- Selector de cantidad -->
-            <div class="flex items-center gap-2 text-sm">
-              <label>Mostrar:</label>
-
-              <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
-                <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
-                  {{ size }}
-                </option>
-              </select>
-
-              <span>items por página</span>
-            </div>
-          </div>
-
-          <!-- Tabla -->
-          <table class="table w-full">
-            <thead class="bg-base-300/90 text-base-content">
-              <tr>
-                <th>#</th>
-                <th>N° EXPEDIENTE</th>
-                <th>TIPO</th>
-                <th>ESTADO</th>
-                <th>NRO DOCUMENTOS</th>
-                <!-- <th>ESTAPA</th> -->
-                <th>SOLICITANTE</th>
-                <th>CORREO</th>
-                <th>TELEFONO</th>
-                <th>ACCIONES</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-
-              <!-- Loading -->
-              @if (loading) {
-              <tr>
-                <td colspan="9" class="text-center py-4">Cargando trámites...</td>
-              </tr>
-              }
-
-              <!-- SIN DATOS -->
-              @else if (!loading && solicitudesFiltradas.length === 0){
-              <tr>
-                <td colspan="8" class="text-center py-10">
-                  <div class="flex flex-col items-center justify-center text-base-content/70">
-                    <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-32 h-32 mb-4 opacity-70" />
-
-                    <h3 class="text-lg font-semibold mb-1">
-                      No hay solicitudes recientes
-                    </h3>
-
-                    <p class="text-sm">
-                      Cuando existan solicitudes aparecerán aquí.
-                    </p>
-                  </div>
-                </td>
-              </tr>
-              }
-
-              <!-- CON DATOS -->
-              @else {
-
-              @for (solicitud of solicitudesFiltradas; track $index) {
-
-              <tr class="hover transition-colors text-base-content">
-                <td>{{ $index + 1 }}</td>
-                <td class="font-bold text-info">{{ solicitud.numero_expediente }}</td>
-                <td>{{ solicitud.tipo }}</td>
-                <td>
-                  <span class="badge badge-soft badge-info font-semibold">
-                    {{ solicitud.estado }}
-                  </span>
-                </td>
-                <!-- <td>{{ solicitud.etapa_procesal }}</td> -->
-
-                <!-- Nro documentos -->
-                <td class="text-center">
-                  <span class="badge badge-dash badge-info font-semibold">
-                    {{solicitud.documentos.length}}
-                  </span>
-                </td>
-
-                <!-- Solicitante -->
-                <td>{{ solicitud.solicitante }}</td>
-
-                <!-- Correo -->
-                <td>{{ solicitud.correo }}</td>
-
-                <!-- Teléfono -->
-                <td>{{ solicitud.telefono }}</td>
-
-                <!-- Acciones -->
-                <td class="text-right relative">
-
-                  <!-- ACCIONES PRINCIPALES -->
-                  <div class="flex justify-start items-center gap-1">
-
-                    <!-- Ver detalle -->
-                    <button class="btn btn-ghost btn-circle btn-md" (click)="verDetalle(solicitud)" title="Ver detalle">
-                      <i class="fa-solid fa-eye"></i>
-                    </button>
-
-                    <!-- Ver archivo -->
-                    <button class="btn btn-ghost btn-circle btn-md" (click)="verArchivos(solicitud)"
-                      [disabled]="!solicitud.documentos?.length" title="Ver archivo">
-                      <i class="fa-solid fa-file"></i>
-                    </button>
-
-                    <!-- Aprobar solicitud -->
-                    <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal(solicitud)"
-                      title="Aprobar solicitud">
-                      <i class="fa-regular fa-circle-check"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              }
-              }
-            </tbody>
-          </table>
-
-
+          <input id="solicitudes-fecha-inicio" type="date" class="input input-bordered h-11 w-full
+                   rounded-xl bg-base-100" [(ngModel)]="fecha_inicio" (ngModelChange)="onFiltroChange()" />
         </div>
-        <!-- Paginación -->
-        <div class="flex justify-end items-center p-4 bg-base-300/90 text-sm">
-          <span>
-            Página {{ page }} de {{ totalPages }} registros
-          </span>
 
-          <div class="join ml-4 gap-2">
-            <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
-              Anterior
-            </button>
+        <!-- Fecha final -->
+        <div class="min-w-0">
+          <label for="solicitudes-fecha-fin" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+            Fecha final
+          </label>
 
-            <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
-              Siguiente
-            </button>
-          </div>
+          <input id="solicitudes-fecha-fin" type="date" class="input input-bordered h-11 w-full
+                   rounded-xl bg-base-100" [(ngModel)]="fecha_fin" (ngModelChange)="onFiltroChange()" />
         </div>
       </div>
-    </div>
 
-    <!-- TAB 2 -->
-    <input type="radio" name="my_tabs_2" id="tab2" class="tab peer/tab2 hidden" />
-    <label for="tab2"
-      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab2:bg-info peer-checked/tab2:text-white peer-checked/tab2:font-bold text-base-content transition-colors">
-      Admitidas
-    </label>
+      <div class="flex justify-end">
+        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg" (click)="limpiarFiltros()">
+          <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+          Limpiar filtros
+        </button>
+      </div>
+    </section>
 
-    <div
-      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab2:block transition-all duration-300">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-base-content">Solicitudes Admitidas</h2>
+    <!-- ================================================= -->
+    <!-- ENCABEZADO DEL LISTADO -->
+    <!-- ================================================= -->
+    <div class="flex flex-col gap-4 px-5 py-4
+             sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="font-semibold">
+          @switch (tabActivo) {
+          @case ('pendiente') { Solicitudes pendientes }
+          @case ('aprobado') { Solicitudes aprobadas }
+          @case ('rechazado') { Solicitudes rechazadas }
+          }
+        </h2>
+
+        <p class="mt-1 text-xs text-base-content/55" aria-live="polite">
+          {{ totalItems }}
+          {{ totalItems === 1 ? 'solicitud encontrada' : 'solicitudes encontradas' }}
+        </p>
       </div>
 
+      <div class="flex items-center gap-2 text-sm">
+        <label for="solicitudes-limit">Mostrar</label>
 
-      <!-- Tabla -->
-      <list-aprobados />
+        <select id="solicitudes-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
+          (ngModelChange)="cambiarLimite()" [disabled]="isLoading">
+          @for (size of pageSizeOptions; track size) {
+          <option [ngValue]="size">
+            {{ size }}
+          </option>
+          }
+        </select>
 
-    </div>
-
-
-    <!-- TAB 3 -->
-    <input type="radio" name="my_tabs_2" id="tab3" class="tab peer/tab3 hidden" />
-    <label for="tab3"
-      class="tab tab-lifted text-xl cursor-pointer peer-checked/tab3:bg-info peer-checked/tab3:text-white peer-checked/tab3:font-bold text-base-content transition-colors">
-      No admitidas
-    </label>
-    <div
-      class="tab-content border-base-300 bg-base-100 p-6 rounded-b-xl shadow-md peer-checked/tab3:block transition-all duration-300">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-base-content">Solicitudes no admitidas</h2>
+        <span class="text-base-content/60">por página</span>
       </div>
-
-      <list-rechazados />
-
     </div>
 
+    <!-- ================================================= -->
+    <!-- TABLA -->
+    <!-- ================================================= -->
+    <div class="overflow-x-auto" [attr.aria-busy]="isLoading">
+      <table class="table w-full">
+        <caption class="sr-only">
+          Solicitudes de Mesa de Partes
+        </caption>
 
+        <thead class="bg-base-200 text-base-content/70">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Trámite / expediente</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Solicitante</th>
+            <th scope="col">Contacto</th>
+            <th scope="col">Registro</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (isLoading) {
+          <!-- Carga -->
+          <tr>
+            <td colspan="8" class="py-14 text-center">
+              <div class="flex items-center justify-center gap-3
+                         text-base-content/60" role="status">
+                <span class="loading loading-spinner loading-md text-primary" aria-hidden="true"></span>
+
+                <span>Cargando solicitudes...</span>
+              </div>
+            </td>
+          </tr>
+          } @else if (errorMessage) {
+          <!-- Error -->
+          <tr>
+            <td colspan="8" class="py-10 text-center">
+              <div class="px-5" role="alert">
+                <p class="font-medium text-error">
+                  {{ errorMessage }}
+                </p>
+
+                <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="cargarTramitesPorEstado()">
+                  <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                  Reintentar
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @else {
+          @for (solicitud of solicitudes; track solicitud.id_tramite) {
+          <tr class="transition-colors hover:bg-base-200/50">
+            <!-- Numeración -->
+            <td class="text-base-content/50">
+              {{ (page - 1) * limit + $index + 1 }}
+            </td>
+
+            <!-- Trámite y expediente -->
+            <td>
+              <div class="min-w-52 max-w-72">
+                <p class="break-words font-semibold text-primary">
+                  {{ solicitud.numero_tramite }}
+                </p>
+
+                <p class="mt-1 break-words text-xs text-base-content/55">
+                  Expediente:
+                  {{ solicitud.expediente?.numero_expediente
+                  || 'Sin expediente asociado' }}
+                </p>
+
+                @if (solicitud.descripcion) {
+                <details class="mt-2">
+                  <summary class="cursor-pointer text-xs text-info">
+                    Ver descripción
+                  </summary>
+
+                  <p class="mt-2 whitespace-pre-wrap break-words
+                                 text-sm text-base-content/70">{{ solicitud.descripcion }}</p>
+                </details>
+                }
+              </div>
+            </td>
+
+            <!-- Tipo -->
+            <td>
+              <span class="badge badge-outline h-auto min-w-32
+                           whitespace-normal py-1.5
+                           text-center text-xs font-semibold" [ngClass]="{
+                      'badge-primary':
+                        solicitud.tipo_solicitud === 'ARBITRAJE_INSTITUCIONAL',
+                      'badge-info':
+                        solicitud.tipo_solicitud === 'ARBITRAJE_DE_EMERGENCIA',
+                      'badge-accent':
+                        solicitud.tipo_solicitud === 'ARBITRAJE_AD_HOC'
+                    }">
+                {{ getTipoLabel(solicitud.tipo_solicitud) }}
+              </span>
+            </td>
+
+            <!-- Solicitante -->
+            <td>
+              <div class="min-w-44 max-w-64">
+                <p class="break-words font-medium">
+                  {{ getNombreSolicitante(solicitud.solicitante) }}
+                </p>
+
+                <p class="mt-1 text-xs text-base-content/55">
+                  Documento:
+                  {{ getDocumentoSolicitante(solicitud.solicitante) }}
+                </p>
+              </div>
+            </td>
+
+            <!-- Contacto -->
+            <td>
+              <div class="min-w-40 text-sm">
+                <p class="break-all">
+                  {{ solicitud.solicitante?.email || 'Sin correo registrado' }}
+                </p>
+
+                <p class="mt-1 text-xs text-base-content/55">
+                  {{ solicitud.solicitante?.telefono
+                  || 'Sin teléfono registrado' }}
+                </p>
+              </div>
+            </td>
+
+            <!-- Fecha -->
+            <td class="whitespace-nowrap text-sm">
+              <p>
+                {{ solicitud.createdAt | date:'dd/MM/yyyy':'-0500' }}
+              </p>
+
+              <p class="mt-1 text-xs text-base-content/55">
+                {{ solicitud.createdAt | date:'HH:mm':'-0500' }}
+              </p>
+            </td>
+
+            <!-- Estado y revisión -->
+            <td>
+              <div class="min-w-36">
+                <span class="badge badge-outline text-xs font-semibold" [ngClass]="getEstadoClass(solicitud.estado)">
+                  {{ getEstadoLabel(solicitud.estado) }}
+                </span>
+
+                @if (solicitud.fecha_aprobacion) {
+                <p class="mt-2 text-xs text-base-content/55">
+                  Aprobación:
+                  {{ solicitud.fecha_aprobacion
+                  | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                </p>
+                }
+
+                @if (solicitud.fecha_rechazo) {
+                <p class="mt-2 text-xs text-base-content/55">
+                  Rechazo:
+                  {{ solicitud.fecha_rechazo
+                  | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                </p>
+                }
+
+                @if (solicitud.observaciones) {
+                <details class="mt-2 max-w-64">
+                  <summary class="cursor-pointer text-xs text-info">
+                    Ver observaciones
+                  </summary>
+
+                  <p class="mt-2 whitespace-pre-wrap break-words
+                                 text-xs text-base-content/70">{{ solicitud.observaciones }}</p>
+                </details>
+                }
+              </div>
+            </td>
+
+            <!-- Acciones -->
+            <td>
+              <div class="flex items-center justify-center gap-1">
+                <!-- Detalle -->
+                <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" title="Ver detalle"
+                  [attr.aria-label]="'Ver detalle del trámite ' +
+                        solicitud.numero_tramite" [disabled]="estaEnOperacion(solicitud.id_tramite)"
+                  (click)="verDetalle(solicitud)">
+                  <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                </button>
+
+                @if (puedeRevisar(solicitud)) {
+                <!-- Aprobar -->
+                <button type="button" class="btn btn-ghost btn-circle btn-sm text-success" title="Aprobar solicitud"
+                  [attr.aria-label]="'Aprobar trámite ' +
+                          solicitud.numero_tramite" [disabled]="estaEnOperacion(solicitud.id_tramite)"
+                  (click)="aprobarSolicitud(solicitud)">
+                  <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                </button>
+
+                <!-- Rechazar -->
+                <button type="button" class="btn btn-ghost btn-circle btn-sm text-error" title="Rechazar solicitud"
+                  [attr.aria-label]="'Rechazar trámite ' +
+                          solicitud.numero_tramite" [disabled]="estaEnOperacion(solicitud.id_tramite)"
+                  (click)="rechazarSolicitud('', solicitud)">
+                  <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                </button>
+                }
+
+                @if (estaEnOperacion(solicitud.id_tramite)) {
+                <span class="loading loading-spinner loading-xs text-primary" role="status"
+                  aria-label="Procesando solicitud"></span>
+                }
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <!-- Sin resultados -->
+          <tr>
+            <td colspan="8" class="py-14 text-center">
+              <i class="fa-solid fa-folder-open mb-3
+                           text-4xl text-base-content/30" aria-hidden="true"></i>
+
+              <p class="font-semibold">
+                No se encontraron solicitudes
+              </p>
+
+              <p class="mt-1 text-sm text-base-content/60">
+                Revisa los filtros o selecciona otro estado.
+              </p>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- PAGINACIÓN -->
+    <!-- ================================================= -->
+    <footer class="flex flex-col items-center justify-between
+             gap-4 border-t border-base-300
+             bg-base-200/40 px-5 py-4 sm:flex-row">
+      <p class="text-sm text-base-content/60">
+        @if (totalPages > 0) {
+        Página
+        <span class="font-semibold text-base-content">{{ page }}</span>
+        de
+        <span class="font-semibold text-base-content">{{ totalPages }}</span>
+        } @else {
+        Sin páginas disponibles
+        }
+      </p>
+
+      <nav class="flex items-center gap-2" aria-label="Paginación de solicitudes">
+        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+          [disabled]="isLoading || !hasPreviousPage || totalPages === 0" (click)="cambiarPagina(page - 1)">
+          <i class="fa-solid fa-chevron-left text-xs" aria-hidden="true"></i>
+          Anterior
+        </button>
+
+        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+          [disabled]="isLoading || !hasNextPage || totalPages === 0" (click)="cambiarPagina(page + 1)">
+          Siguiente
+          <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
+        </button>
+      </nav>
+    </footer>
   </div>
 </div>
+
+<!-- ===================================================== -->
+<!-- MODAL DE DETALLE -->
+<!-- Conserva los inputs/outputs de tu componente actual. -->
+<!-- ===================================================== -->
+<solicitud-detail [mostrarModal]="mostrarDetalle" [tramite]="tramiteDetalle" (cerrar)="cerrarDetalle()">
+</solicitud-detail>

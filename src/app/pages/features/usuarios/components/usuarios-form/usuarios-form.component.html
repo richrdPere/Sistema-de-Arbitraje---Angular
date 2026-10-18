@@ -1,344 +1,586 @@
-<!-- MODAL CREAR USUARIO -->
 @if (mostrarModal) {
 <div class="modal modal-open">
+  <!-- ================================================= -->
+  <!-- MODAL -->
+  <!-- ================================================= -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center
+             bg-black/30 p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="usuario-form-title">
+    <section class="relative flex max-h-[92vh] w-full flex-col
+               overflow-hidden rounded-2xl border border-base-300
+               bg-base-100 text-base-content shadow-2xl" [ngClass]="modalWidthClass" [attr.aria-busy]="isLoading">
+      <!-- ================================================= -->
+      <!-- HEADER -->
+      <!-- ================================================= -->
+      <header class="flex shrink-0 items-center justify-between gap-4
+                 border-b border-base-300 px-5 py-4 sm:px-6">
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-12 w-12 shrink-0 items-center
+                     justify-center rounded-2xl
+                     bg-primary/10 text-primary">
+            <i class="fa-solid text-lg" [ngClass]="modoEdicion
+                  ? 'fa-pen-to-square'
+                  : 'fa-user-plus'" aria-hidden="true"></i>
+          </div>
 
-  <!-- Header -->
-  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg" [ngClass]="modalWidthClass">
+          <div class="min-w-0">
+            <h2 id="usuario-form-title" class="text-lg font-bold sm:text-xl">
+              {{ tituloModal }}
+            </h2>
 
-    <!-- Title -->
-    <div class="flex justify-between items-center border-b border-base-300 pb-4 mb-6">
-      <h3 class="text-2xl font-bold text-primary"> {{ modoEdicion ? "Editar Usuario" : "Crear Nuevo Usuario" }}</h3>
-      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
-    </div>
-
-    <!-- Formulario -->
-    <form [formGroup]="formUsuario" (ngSubmit)="crearOEditarUsuario()" class="space-y-4 ">
-
-      <!--  Nombre + Apellidos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-        <!-- Nombre -->
-        <div class="form-control">
-          <label class="label ">
-            <span class="label-text flex items-center gap-1">
-              Nombre
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-          <input type="text" formControlName="nombres" placeholder="Ej. Juan" class="input input-bordered w-full"
-            [class.input-error]="isInvalid('nombres')" appUppercase />
-
-          <!-- Error local -->
-          @if (hasError('nombres', 'required')) {
-          <p class="text-red-500 text-sm">
-            El nombre es obligatorio.
-          </p>
-          }
-
-          <!-- Error backend -->
-          @if (backendErrors?.nombres) {
-          <p class="text-red-500 text-sm">
-            {{ backendErrors.nombres }}
-          </p>
-          }
+            <p class="mt-0.5 text-sm text-base-content/55">
+              {{ modoEdicion
+              ? 'Actualiza la información personal del usuario.'
+              : 'Registra una cuenta de acceso al sistema de arbitraje.' }}
+            </p>
+          </div>
         </div>
 
-        <!-- Apellidos -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text flex items-center gap-1">Apellidos
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-          <input type="text" formControlName="apellidos" placeholder="Ej. Pérez López"
-            class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('apellidos')?.invalid && formUsuario.get('apellidos')?.touched"
-            appUppercase />
-
-          @if (formUsuario.get('apellidos')?.hasError('required') && formUsuario.get('apellidos')?.touched) {
-          <p class="text-red-500 text-sm">
-            Los apellidos son obligatorios.
-          </p>
-          }
-
-          @if (backendErrors?.apellidos) {
-          <p class="text-red-500 text-sm">
-            {{ backendErrors.apellidos }}
-          </p>
-          }
-
-        </div>
-      </div>
-
-      <!--  Correo y Password -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-        <!-- Correo -->
-        <div class="form-control" [ngClass]="{ 'md:col-span-2': !modoEdicion }">
-          <label class="label">
-            <span class="label-text flex items-center gap-1">
-              Correo
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-          <input type="email" formControlName="correo" placeholder="ejemplo@gmail.com"
-            class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('correo')?.invalid && formUsuario.get('correo')?.touched" />
-
-          @if (formUsuario.get('correo')?.hasError('required') && formUsuario.get('correo')?.touched) {
-          <p class="text-red-500 text-sm">
-            El correo es obligatorio.
-          </p>
-          }
-
-          @if (formUsuario.get('correo')?.hasError('email') && formUsuario.get('correo')?.touched) {
-          <p class="text-red-500 text-sm">
-            Ingresa un correo válido.
-          </p>
-          }
-
-          <!-- Error backend: correo duplicado -->
-          @if (backendErrors?.correo) {
-          <p class="text-red-500 text-sm">
-            {{ backendErrors.correo }}
-          </p>
-          }
-        </div>
-
-        @if (modoEdicion) {
-        <!-- Password -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text flex items-center gap-1">
-              Contraseña
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-          <input type="password" formControlName="password" placeholder="Cambiar Contraseña"
-            class="input input-bordered w-full"
-            [class.input-error]="formUsuario.get('password')?.invalid && formUsuario.get('password')?.touched" />
-
-          @if (formUsuario.get('password')?.hasError('required') && formUsuario.get('password')?.touched) {
-          <p class="text-red-500 text-sm">
-            La contraseña es obligatoria.
-          </p>
-          }
-
-          @if (backendErrors?.password) {
-          <p class="text-red-500 text-sm">
-            {{ backendErrors.password }}
-          </p>
-          }
-        </div>
-        }
-
-      </div>
-
-      <!-- Documento de identidad y Teléfono -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-        <!-- Documento de identidad -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text flex items-center gap-1">
-              Documento de Identidad
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-
-          <input type="text" formControlName="documento_identidad" placeholder="DNI" inputmode="numeric"
-            pattern="[0-9]*" maxlength="8" class="input input-bordered w-full" (keypress)="soloNumeros($event)" />
-
-          @if (formUsuario.get('documento_identidad')?.hasError('required') &&
-          formUsuario.get('documento_identidad')?.touched) {
-          <p class="text-red-500 text-sm">El DNI es obligatorio.</p>
-          }
-
-          @if (formUsuario.get('documento_identidad')?.hasError('minlength') ||
-          formUsuario.get('documento_identidad')?.hasError('maxlength')) {
-          <p class="text-red-500 text-sm">El DNI debe tener 8 dígitos.</p>
-          }
-        </div>
-
-        <!-- Teléfono -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text flex items-center gap-1">
-              Teléfono
-              <span class="text-red-500 font-bold">*</span>
-            </span>
-          </label>
-
-          <input type="text" formControlName="telefono" placeholder="Teléfono" inputmode="numeric" pattern="[0-9]*"
-            maxlength="9" class="input input-bordered w-full" (keypress)="soloNumeros($event)" />
-
-          @if (formUsuario.get('telefono')?.hasError('required') &&
-          formUsuario.get('telefono')?.touched) {
-          <p class="text-red-500 text-sm">El teléfono es obligatorio.</p>
-          }
-
-          @if (formUsuario.get('telefono')?.hasError('minlength') ||
-          formUsuario.get('telefono')?.hasError('maxlength')) {
-          <p class="text-red-500 text-sm">El teléfono debe tener 9 dígitos.</p>
-          }
-        </div>
-      </div>
-
-      <div class="form-control ">
-        <label class="label">
-          <span class="label-text flex items-center gap-1">
-            Rol
-            <span class="text-red-500 font-bold">*</span>
-          </span>
-        </label>
-
-        <select formControlName="rol" class="select select-md w-full ">
-          <option value="">Selecciona un rol</option>
-          <option value="admin">ADMINISTRADOR</option>
-          <option value="secretaria">SECRETARIA</option>
-          <option value="arbitro">ARBITRO</option>
-          <option value="adjudicador">ADJUDICADOR</option>
-        </select>
-
-        @if (formUsuario.get('rol')?.hasError('required') &&
-        formUsuario.get('rol')?.touched) {
-        <p class="text-red-500 text-sm">Debe seleccionar un rol</p>
-        }
-
-        @if (backendErrors?.rol) {
-        <p class="text-red-500 text-sm">
-          {{ backendErrors.rol }}
-        </p>
-        }
-      </div>
-
-      <!-- Campos dinámicos según el rol seleccionado -->
-
-      <!-- ADJUDICADOR -->
-      @if (formUsuario.get('rol')?.value === 'adjudicador') {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Cargo</span>
-          </label>
-          <input type="text" formControlName="cargo" placeholder="Ej. JPRD" class="input input-bordered w-full" />
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Especialidad</span>
-          </label>
-          <input type="text" formControlName="especialidad" placeholder="Ej. Arbitraje comercial"
-            class="input input-bordered w-full" appUppercase />
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Experiencia</span>
-          </label>
-          <input type="text" formControlName="experiencia" placeholder="Años de experiencia"
-            class="input input-bordered w-full" />
-        </div>
-
-      </div>
-      }
-
-      <!-- CLIENTE -->
-      @if (formUsuario.get('rol')?.value === 'cliente') {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Tipo de Persona</span>
-          </label>
-          <select formControlName="tipo_persona" class="select select-bordered w-full">
-            <option value="" disabled selected>Seleccione tipo</option>
-            <option value="Natural">Natural</option>
-            <option value="Jurídica">Jurídica</option>
-          </select>
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Razón Social</span>
-          </label>
-          <input type="text" formControlName="razon_social" placeholder="Ej. Empresa SAC"
-            class="input input-bordered w-full" appUppercase />
-        </div>
-
-
-
-        <div class="form-control md:col-span-2">
-          <label class="label">
-            <span class="label-text">Dirección</span>
-          </label>
-          <input type="text" formControlName="direccion" placeholder="Av. Ejemplo 123"
-            class="input input-bordered w-full" />
-        </div>
-      </div>
-      }
-
-      <!-- ÁRBITRO -->
-      @if (formUsuario.get('rol')?.value === 'arbitro') {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Cargo</span>
-          </label>
-          <input type="text" formControlName="cargo" placeholder="Ej. Árbitro titular"
-            class="input input-bordered w-full" appUppercase />
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Especialidad</span>
-          </label>
-          <input type="text" formControlName="especialidad" placeholder="Ej. Derecho civil"
-            class="input input-bordered w-full" appUppercase />
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Experiencia</span>
-          </label>
-          <input type="text" formControlName="experiencia" placeholder="5 años" class="input input-bordered w-full"
-            appUppercase />
-        </div>
-      </div>
-      }
-
-      <!-- SECRETARIA -->
-      @if (formUsuario.get('rol')?.value === 'secretaria') {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Cargo</span>
-          </label>
-          <input type="text" formControlName="cargo" placeholder="Ej. Secretaria General"
-            class="input input-bordered w-full" [class.input-error]="backendErrors?.cargo" appUppercase />
-
-          @if (backendErrors?.cargo) {
-          <p class="text-red-500 text-sm">{{ backendErrors.cargo }}</p>
-          }
-
-        </div>
-
-      </div>
-      }
-
-      <!-- Footer Buttons -->
-      <div class="modal-action">
-        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">Cancelar</button>
-        <button type="submit" class="btn bg-primary text-white hover:bg-primary" [disabled]="formUsuario.invalid">
-          <span *ngIf="!modoEdicion">Guardar usuario</span>
-          <span *ngIf="modoEdicion">Actualizar usuario</span>
+        <button type="button" class="btn btn-circle btn-ghost btn-sm shrink-0" aria-label="Cerrar formulario"
+          [disabled]="isLoading" (click)="cerrarModal()">
+          <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
         </button>
-      </div>
-    </form>
-  </div>
+      </header>
 
-  <!-- Fondo oscuro del modal -->
-  <div class="modal-backdrop bg-black/40 " (click)="cerrarModal()"></div>
+      <!-- ================================================= -->
+      <!-- FORMULARIO -->
+      <!-- ================================================= -->
+      <form [formGroup]="formUsuario" (ngSubmit)="crearOEditarUsuario()" class="flex min-h-0 flex-1 flex-col"
+        novalidate>
+        <!-- CONTENIDO CON SCROLL -->
+        <div class="min-h-0 flex-1 overflow-y-auto
+                   overscroll-contain px-5 py-5 sm:px-6">
+          <fieldset class="min-w-0 space-y-6" [disabled]="isLoading">
+            <!-- ============================================= -->
+            <!-- DATOS DE ACCESO -->
+            <!-- ============================================= -->
+            <section class="space-y-3">
+              <h3 class="flex items-center gap-2 text-lg font-semibold">
+                <i class="fa-solid fa-user-lock text-primary" aria-hidden="true"></i>
+                Datos de acceso
+              </h3>
+
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <!-- Correo de acceso -->
+                <div class="form-control min-w-0">
+                  <label class="label" for="usuario-correo">
+                    <span class="label-text">
+                      Correo de acceso
+                      @if (esRequerido('correo')) {
+                      <span class="text-error">*</span>
+                      }
+                    </span>
+                  </label>
+
+                  <input id="usuario-correo" type="email" formControlName="correo" placeholder="Ej. usuario@example.com"
+                    autocomplete="off" autocapitalize="none" spellcheck="false" class="input input-bordered w-full border-2
+                             transition-colors duration-200" [class.input-success]="campoCompleto('correo')"
+                    [class.input-error]="campoInvalido('correo')" [attr.aria-invalid]="campoInvalido('correo')"
+                    [attr.aria-describedby]="campoInvalido('correo')
+                        ? 'usuario-correo-error'
+                        : null" />
+
+                  @if (campoInvalido('correo')) {
+                  <p id="usuario-correo-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('correo') }}
+                  </p>
+                  }
+                </div>
+
+                <!-- Rol: creación -->
+                @if (!modoEdicion) {
+                <div class="form-control min-w-0">
+                  <label class="label" for="usuario-rol">
+                    <span class="label-text">
+                      Rol del usuario
+                      @if (esRequerido('rol')) {
+                      <span class="text-error">*</span>
+                      }
+                    </span>
+                  </label>
+
+                  <select id="usuario-rol" formControlName="rol" class="select select-bordered w-full border-2
+                               transition-colors duration-200" [class.select-success]="campoCompleto('rol')"
+                    [class.select-error]="campoInvalido('rol')" [attr.aria-invalid]="campoInvalido('rol')"
+                    [attr.aria-describedby]="campoInvalido('rol')
+                          ? 'usuario-rol-error'
+                          : null">
+                    <option value="" disabled>
+                      Seleccionar rol
+                    </option>
+
+                    @for (rol of rolesDisponibles; track rol.id_rol) {
+                    <option [value]="rol.id_rol">
+                      {{ rol.nombre }}
+                    </option>
+                    }
+                  </select>
+
+                  @if (campoInvalido('rol')) {
+                  <p id="usuario-rol-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('rol') }}
+                  </p>
+                  }
+                </div>
+                } @else {
+                <!-- Rol actual: informativo -->
+                <div class="form-control min-w-0">
+                  <span class="label">
+                    <span class="label-text">Rol actual</span>
+                  </span>
+
+                  <div class="flex min-h-12 items-center rounded-lg
+                               border border-base-300 bg-base-200 px-4">
+                    <span class="text-sm font-semibold">
+                      @switch (usuarioSeleccionado?.rol) {
+                      @case ('ADMIN') { Administrador }
+                      @case ('SECRETARIA') { Secretaría }
+                      @case ('PARTICIPE') { Partícipe }
+                      @case ('ARBITRO') { Árbitro }
+                      @case ('ADJUDICADOR') { Adjudicador }
+                      @case ('STAFF_INTERNO') { Personal interno }
+                      @default { Sin información }
+                      }
+                    </span>
+                  </div>
+                </div>
+                }
+              </div>
+
+              <div class="flex items-start gap-3 rounded-xl
+                         border border-info/20 bg-info/10 p-4">
+                <i class="fa-solid fa-circle-info mt-0.5 text-info" aria-hidden="true"></i>
+
+                <p class="text-sm text-base-content/75">
+                  @if (modoEdicion) {
+                  El correo de acceso, el rol y el estado de la cuenta
+                  se administran mediante sus opciones correspondientes.
+                  } @else {
+                  Se enviarán las instrucciones de acceso al correo
+                  registrado.
+                  }
+                </p>
+              </div>
+            </section>
+
+            <!-- ============================================= -->
+            <!-- PERSONA -->
+            <!-- ============================================= -->
+            <section class="space-y-4 border-t border-base-300 pt-5">
+              <h3 class="flex items-center gap-2 text-lg font-semibold">
+                <i class="fa-solid fa-address-card text-primary" aria-hidden="true"></i>
+                Información de la persona
+              </h3>
+
+              <!-- Selección de persona nueva o existente -->
+              @if (!modoEdicion) {
+              <div class="form-control">
+                <label class="label" for="usuario-modo-persona">
+                  <span class="label-text">
+                    ¿Cómo deseas asociar la persona?
+                    <span class="text-error">*</span>
+                  </span>
+                </label>
+
+                <select id="usuario-modo-persona" formControlName="modo_persona"
+                  class="select select-bordered w-full border-2" [class.select-error]="campoInvalido('modo_persona')"
+                  [attr.aria-invalid]="campoInvalido('modo_persona')" [attr.aria-describedby]="campoInvalido('modo_persona')
+                        ? 'usuario-modo-persona-error'
+                        : null">
+                  @for (opcion of modosPersona; track opcion.value) {
+                  <option [value]="opcion.value">
+                    {{ opcion.label }}
+                  </option>
+                  }
+                </select>
+
+                @if (campoInvalido('modo_persona')) {
+                <p id="usuario-modo-persona-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('modo_persona') }}
+                </p>
+                }
+              </div>
+              }
+
+              @if (esPersonaExistente) {
+              <!-- Persona existente -->
+              <div class="rounded-xl border border-base-300
+                           bg-base-200/40 p-4">
+                <div class="form-control">
+                  <label class="label" for="usuario-persona-id">
+                    <span class="label-text">
+                      ID de la persona existente
+                      <span class="text-error">*</span>
+                    </span>
+                  </label>
+
+                  <input id="usuario-persona-id" type="number" formControlName="persona_id" min="1" max="2147483647"
+                    step="1" placeholder="Ingrese el ID de la persona" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('persona_id')"
+                    [class.input-error]="campoInvalido('persona_id')" [attr.aria-invalid]="campoInvalido('persona_id')"
+                    [attr.aria-describedby]="campoInvalido('persona_id')
+                          ? 'usuario-persona-id-error'
+                          : 'usuario-persona-id-ayuda'" />
+
+                  @if (campoInvalido('persona_id')) {
+                  <p id="usuario-persona-id-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('persona_id') }}
+                  </p>
+                  }
+
+                  <p id="usuario-persona-id-ayuda" class="mt-2 text-xs text-base-content/60">
+                    La cuenta se asociará a una persona ya registrada.
+                    Sus datos personales se conservarán.
+                  </p>
+                </div>
+              </div>
+              } @else {
+              <!-- Tipo de persona -->
+              <div class="form-control">
+                <label class="label" for="usuario-persona-tipo">
+                  <span class="label-text">
+                    Tipo de persona
+                    @if (esRequerido('tipo')) {
+                    <span class="text-error">*</span>
+                    }
+                  </span>
+                </label>
+
+                <select id="usuario-persona-tipo" formControlName="tipo" class="select select-bordered w-full border-2"
+                  [class.select-success]="campoCompleto('tipo')" [class.select-error]="campoInvalido('tipo')"
+                  [attr.aria-invalid]="campoInvalido('tipo')" [attr.aria-describedby]="campoInvalido('tipo')
+                        ? 'usuario-persona-tipo-error'
+                        : null">
+                  @for (opcion of tiposPersona; track opcion.value) {
+                  <option [value]="opcion.value">
+                    {{ opcion.label }}
+                  </option>
+                  }
+                </select>
+
+                @if (campoInvalido('tipo')) {
+                <p id="usuario-persona-tipo-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('tipo') }}
+                </p>
+                }
+              </div>
+
+              <!-- ========================================= -->
+              <!-- PERSONA NATURAL -->
+              <!-- ========================================= -->
+              @if (tipoPersonaSeleccionado === 'NATURAL') {
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <!-- Nombres -->
+                <div class="form-control">
+                  <label class="label" for="usuario-nombres">
+                    <span class="label-text">
+                      Nombres <span class="text-error">*</span>
+                    </span>
+                  </label>
+
+                  <input id="usuario-nombres" type="text" formControlName="nombres" autocomplete="given-name"
+                    placeholder="Ingrese los nombres" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('nombres')" [class.input-error]="campoInvalido('nombres')"
+                    [attr.aria-invalid]="campoInvalido('nombres')" [attr.aria-describedby]="campoInvalido('nombres')
+                            ? 'usuario-nombres-error'
+                            : null" (blur)="normalizarCampo('nombres')" />
+
+                  @if (campoInvalido('nombres')) {
+                  <p id="usuario-nombres-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('nombres') }}
+                  </p>
+                  }
+                </div>
+
+                <!-- Apellidos -->
+                <div class="form-control">
+                  <label class="label" for="usuario-apellidos">
+                    <span class="label-text">
+                      Apellidos <span class="text-error">*</span>
+                    </span>
+                  </label>
+
+                  <input id="usuario-apellidos" type="text" formControlName="apellidos" autocomplete="family-name"
+                    placeholder="Ingrese los apellidos" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('apellidos')" [class.input-error]="campoInvalido('apellidos')"
+                    [attr.aria-invalid]="campoInvalido('apellidos')" [attr.aria-describedby]="campoInvalido('apellidos')
+                            ? 'usuario-apellidos-error'
+                            : null" (blur)="normalizarCampo('apellidos')" />
+
+                  @if (campoInvalido('apellidos')) {
+                  <p id="usuario-apellidos-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('apellidos') }}
+                  </p>
+                  }
+                </div>
+
+                <!-- DNI -->
+                <div class="form-control">
+                  <label class="label" for="usuario-dni">
+                    <span class="label-text">DNI</span>
+                    <span class="label-text-alt text-base-content/55">
+                      Opcional
+                    </span>
+                  </label>
+
+                  <input id="usuario-dni" type="text" inputmode="numeric" formControlName="dni" maxlength="8"
+                    placeholder="8 dígitos" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('dni')" [class.input-error]="campoInvalido('dni')"
+                    [attr.aria-invalid]="campoInvalido('dni')" [attr.aria-describedby]="campoInvalido('dni')
+                            ? 'usuario-dni-error'
+                            : null" />
+
+                  @if (campoInvalido('dni')) {
+                  <p id="usuario-dni-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('dni') }}
+                  </p>
+                  }
+                </div>
+              </div>
+              }
+
+              <!-- ========================================= -->
+              <!-- PERSONA JURÍDICA -->
+              <!-- ========================================= -->
+              @if (tipoPersonaSeleccionado === 'JURIDICA') {
+              <div class="form-control">
+                <label class="label" for="usuario-razon-social">
+                  <span class="label-text">
+                    Razón social <span class="text-error">*</span>
+                  </span>
+                </label>
+
+                <input id="usuario-razon-social" type="text" formControlName="razon_social"
+                  placeholder="Ingrese la razón social" class="input input-bordered w-full border-2"
+                  [class.input-success]="campoCompleto('razon_social')"
+                  [class.input-error]="campoInvalido('razon_social')"
+                  [attr.aria-invalid]="campoInvalido('razon_social')" [attr.aria-describedby]="campoInvalido('razon_social')
+                          ? 'usuario-razon-social-error'
+                          : null" (blur)="normalizarCampo('razon_social')" />
+
+                @if (campoInvalido('razon_social')) {
+                <p id="usuario-razon-social-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('razon_social') }}
+                </p>
+                }
+              </div>
+              }
+
+              <!-- ========================================= -->
+              <!-- ENTIDAD PÚBLICA -->
+              <!-- ========================================= -->
+              @if (tipoPersonaSeleccionado === 'ENTIDAD_PUBLICA') {
+              <div class="form-control">
+                <label class="label" for="usuario-nombre-entidad">
+                  <span class="label-text">
+                    Nombre de la entidad
+                    <span class="text-error">*</span>
+                  </span>
+                </label>
+
+                <input id="usuario-nombre-entidad" type="text" formControlName="nombre_entidad"
+                  placeholder="Ingrese el nombre de la entidad pública" class="input input-bordered w-full border-2"
+                  [class.input-success]="campoCompleto('nombre_entidad')"
+                  [class.input-error]="campoInvalido('nombre_entidad')"
+                  [attr.aria-invalid]="campoInvalido('nombre_entidad')" [attr.aria-describedby]="campoInvalido('nombre_entidad')
+                          ? 'usuario-nombre-entidad-error'
+                          : null" (blur)="normalizarCampo('nombre_entidad')" />
+
+                @if (campoInvalido('nombre_entidad')) {
+                <p id="usuario-nombre-entidad-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('nombre_entidad') }}
+                </p>
+                }
+              </div>
+              }
+
+              <!-- RUC: jurídica o entidad pública -->
+              @if (tipoPersonaSeleccionado !== 'NATURAL') {
+              <div class="form-control">
+                <label class="label" for="usuario-ruc">
+                  <span class="label-text">RUC</span>
+                  <span class="label-text-alt text-base-content/55">
+                    Opcional
+                  </span>
+                </label>
+
+                <input id="usuario-ruc" type="text" inputmode="numeric" formControlName="ruc" maxlength="11"
+                  placeholder="11 dígitos" class="input input-bordered w-full border-2"
+                  [class.input-success]="campoCompleto('ruc')" [class.input-error]="campoInvalido('ruc')"
+                  [attr.aria-invalid]="campoInvalido('ruc')" [attr.aria-describedby]="campoInvalido('ruc')
+                          ? 'usuario-ruc-error'
+                          : null" />
+
+                @if (campoInvalido('ruc')) {
+                <p id="usuario-ruc-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('ruc') }}
+                </p>
+                }
+              </div>
+              }
+              }
+            </section>
+
+            <!-- ============================================= -->
+            <!-- CONTACTO -->
+            <!-- ============================================= -->
+            @if (!esPersonaExistente) {
+            <section class="space-y-3 border-t border-base-300 pt-5">
+              <h3 class="flex items-center gap-2 text-lg font-semibold">
+                <i class="fa-solid fa-address-book text-primary" aria-hidden="true"></i>
+                Información de contacto
+              </h3>
+
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <!-- Correo de contacto -->
+                <div class="form-control">
+                  <label class="label" for="usuario-email">
+                    <span class="label-text">Correo de contacto</span>
+                    <span class="label-text-alt text-base-content/55">
+                      Opcional
+                    </span>
+                  </label>
+
+                  <input id="usuario-email" type="email" formControlName="email" placeholder="Ej. contacto@example.com"
+                    autocapitalize="none" spellcheck="false" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('email')" [class.input-error]="campoInvalido('email')"
+                    [attr.aria-invalid]="campoInvalido('email')" [attr.aria-describedby]="campoInvalido('email')
+                          ? 'usuario-email-error'
+                          : null" />
+
+                  @if (campoInvalido('email')) {
+                  <p id="usuario-email-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('email') }}
+                  </p>
+                  }
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-control">
+                  <label class="label" for="usuario-telefono">
+                    <span class="label-text">Teléfono</span>
+                    <span class="label-text-alt text-base-content/55">
+                      Opcional
+                    </span>
+                  </label>
+
+                  <input id="usuario-telefono" type="tel" formControlName="telefono" autocomplete="tel"
+                    placeholder="Ej. +51 987654321" class="input input-bordered w-full border-2"
+                    [class.input-success]="campoCompleto('telefono')" [class.input-error]="campoInvalido('telefono')"
+                    [attr.aria-invalid]="campoInvalido('telefono')" [attr.aria-describedby]="campoInvalido('telefono')
+                          ? 'usuario-telefono-error'
+                          : null" />
+
+                  @if (campoInvalido('telefono')) {
+                  <p id="usuario-telefono-error" class="mt-1 text-sm text-error">
+                    {{ obtenerError('telefono') }}
+                  </p>
+                  }
+                </div>
+              </div>
+
+              <!-- Cargo -->
+              <div class="form-control">
+                <label class="label" for="usuario-cargo">
+                  <span class="label-text">Cargo</span>
+                  <span class="label-text-alt text-base-content/55">
+                    Opcional
+                  </span>
+                </label>
+
+                <input id="usuario-cargo" type="text" formControlName="cargo" placeholder="Ingrese el cargo"
+                  class="input input-bordered w-full border-2" [class.input-success]="campoCompleto('cargo')"
+                  [class.input-error]="campoInvalido('cargo')" [attr.aria-invalid]="campoInvalido('cargo')"
+                  [attr.aria-describedby]="campoInvalido('cargo')
+                        ? 'usuario-cargo-error'
+                        : null" (blur)="normalizarCampo('cargo')" />
+
+                @if (campoInvalido('cargo')) {
+                <p id="usuario-cargo-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('cargo') }}
+                </p>
+                }
+              </div>
+
+              <!-- Dirección -->
+              <div class="form-control">
+                <label class="label" for="usuario-direccion">
+                  <span class="label-text">Dirección</span>
+                  <span class="label-text-alt text-base-content/55">
+                    Opcional
+                  </span>
+                </label>
+
+                <textarea id="usuario-direccion" formControlName="direccion" rows="3" placeholder="Ingrese la dirección"
+                  class="textarea textarea-bordered w-full border-2"
+                  [class.textarea-success]="campoCompleto('direccion')"
+                  [class.textarea-error]="campoInvalido('direccion')" [attr.aria-invalid]="campoInvalido('direccion')"
+                  [attr.aria-describedby]="campoInvalido('direccion')
+                        ? 'usuario-direccion-error'
+                        : null" (blur)="normalizarCampo('direccion')"></textarea>
+
+                @if (campoInvalido('direccion')) {
+                <p id="usuario-direccion-error" class="mt-1 text-sm text-error">
+                  {{ obtenerError('direccion') }}
+                </p>
+                }
+              </div>
+            </section>
+            }
+
+            <!-- ============================================= -->
+            <!-- FOTO DE PERFIL: EDICIÓN -->
+            <!-- ============================================= -->
+            @if (modoEdicion) {
+            <section class="space-y-3 border-t border-base-300 pt-5">
+              <h3 class="flex items-center gap-2 text-lg font-semibold">
+                <i class="fa-solid fa-image text-primary" aria-hidden="true"></i>
+                Foto de perfil
+              </h3>
+
+              <div class="form-control">
+                <label class="label" for="usuario-foto-perfil">
+                  <span class="label-text">URL de la fotografía</span>
+                  <span class="label-text-alt text-base-content/55">
+                    Opcional
+                  </span>
+                </label>
+
+                <input id="usuario-foto-perfil" type="text" inputmode="url" formControlName="foto_perfil"
+                  placeholder="https://ejemplo.com/fotografia.jpg" autocapitalize="none" spellcheck="false"
+                  class="input input-bordered w-full border-2" [class.input-success]="campoCompleto('foto_perfil')"
+                  [class.input-error]="campoInvalido('foto_perfil')" [attr.aria-invalid]="campoInvalido('foto_perfil')"
+                  aria-describedby="usuario-foto-perfil-ayuda" />
+
+                <p id="usuario-foto-perfil-ayuda" class="mt-2 text-xs text-base-content/60">
+                  Deja este campo vacío para retirar la fotografía actual.
+                </p>
+              </div>
+            </section>
+            }
+          </fieldset>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- FOOTER -->
+        <!-- ================================================= -->
+        <footer class="flex shrink-0 flex-col-reverse gap-3
+                   border-t border-base-300 bg-base-100
+                   px-5 py-4 sm:flex-row sm:items-center
+                   sm:justify-center sm:px-6">
+          <button type="button" class="btn btn-error" [disabled]="isLoading" (click)="cerrarModal()">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading" [attr.aria-busy]="isLoading">
+            @if (isLoading) {
+            <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+            }
+
+            {{ textoBotonGuardar }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
 </div>
 }

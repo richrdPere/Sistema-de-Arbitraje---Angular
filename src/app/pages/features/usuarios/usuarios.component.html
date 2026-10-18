@@ -1,214 +1,581 @@
-<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+<!-- ================================================= -->
+<!-- CONTENEDOR DEL USUARIOS -->
+<!-- ================================================= -->
+<div class="mx-auto w-full max-w-500">
 
-  <!-- Titulo -->
-  <h1 class="text-2xl font-bold mb-5 text-base-content ">Gestión de Usuarios</h1>
+  <!-- ================================================= -->
+  <!-- ENCABEZADO -->
+  <!-- ================================================= -->
+  <header class="mb-5 flex flex-col gap-4
+             sm:flex-row sm:items-center
+             sm:justify-between">
 
+    <div class="flex min-w-0 items-center gap-3">
 
-  <div class="p-4 mb-7 card bg-base-100 shadow-md">
+      <div class="flex h-12 w-12 shrink-0
+                 items-center justify-center
+                 rounded-2xl bg-primary/10
+                 text-primary" aria-hidden="true">
+        <i class="fa-solid fa-user-gear text-xl sm:text-2xl"> </i>
+      </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold leading-tight text-base-content">
+          Gestión de usuarios
+        </h1>
 
-      <!--  BUSCADOR -->
-      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+        <p class="mt-1 max-w-2xl
+                   text-sm leading-relaxed
+                   text-base-content/60">
 
-        <!-- Select tipo ROL -->
-        <select class="select select-bordered w-full md:w-60" [(ngModel)]="rolFiltro"
-        (change)="onFiltroChange()">
-          <!-- <option value="" disabled selected>Seleccione tipo</option> -->
-          <option value="">TODOS</option>
-          <option value="secretaria">SECRETARIA</option>
-          <option value="arbitro">ARBITRO</option>
-          <option value="adjudicador">ADJUDICADOR</option>
-          <option value="admin">ADMINISTRADOR</option>
-        </select>
-
-        <!-- Input buscar -->
-        <div class="relative w-full md:max-w-xs">
-          <input
-            type="text"
-            class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-2 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Buscar por nombres o DNI"
-            [(ngModel)]="search" (input)="onFiltroChange()" />
-          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
-
+          Administra usuarios, roles y accesos para arbitros y secretarios.
+        </p>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Modal -->
+  <!-- ================================================= -->
+  <!-- FILTROS -->
+  <!-- ================================================= -->
+  <section class="mb-6 overflow-hidden rounded-2xl
+         border border-base-300 bg-base-100 shadow-sm">
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_170px]">
+
+      <!-- ================================================= -->
+      <!-- CAMPOS DE FILTRO -->
+      <!-- ================================================= -->
+      <div class="min-w-0 p-4 sm:p-5">
+        <div class="grid grid-cols-1 items-end gap-4
+               sm:grid-cols-2
+               xl:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
+
+          <!-- Buscar por usuario -->
+          <div class="min-w-0">
+            <label for="filtro-usuario" class="mb-1.5 block text-xs font-semibold
+                   uppercase tracking-wide text-base-content/60">
+              Usuario
+            </label>
+
+            <div class="relative">
+              <input id="filtro-usuario" type="text" class="input input-bordered h-11 min-h-11
+                      w-full min-w-0 rounded-xl bg-base-200
+                     pl-11 pr-4 transition-colors
+                     focus:border-primary focus:outline-none
+                     focus:ring-2 focus:ring-primary/30" placeholder="Buscar por nombres o DNI" autocomplete="off"
+                [ngClass]="searchBusqueda.trim() ? 'border-primary' : 'border-base-500'" [(ngModel)]="searchBusqueda"
+                (ngModelChange)="onSearchChange()" appUppercase />
+
+              <span class="pointer-events-none absolute inset-y-0 left-0 z-10
+                     flex w-11 items-center justify-center
+                     text-base-content/50" aria-hidden="true">
+                <i class="fa-solid fa-magnifying-glass text-base"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Roles de usuario -->
+          <div class="min-w-0">
+            <label for="filtro-tipo" class="mb-1.5 block text-xs font-semibold
+                   uppercase tracking-wide text-base-content/60">
+              Rol de usuario
+            </label>
+
+            <select id="filtro-tipo" class="select select-bordered h-11 min-h-11
+                  w-full min-w-0 rounded-xl bg-base-200
+                  pl-4 pr-10 transition-colors
+                  focus:border-primary focus:outline-none
+                  focus:ring-2 focus:ring-primary/30" [ngClass]="rolBusqueda ? 'border-primary' : 'border-base-500'"
+              [(ngModel)]="rolBusqueda" (ngModelChange)="onSearchChange()">
+              <option value="">Todos los roles</option>
+
+              @for (opcion of rolesDisponibles; track opcion.id_rol) {
+              <option [value]="opcion.id_rol">
+                {{ opcion.nombre }}
+              </option>
+              }
+            </select>
+          </div>
+
+          <!-- Limpiar -->
+          <div class="min-w-0">
+            <button type="button" class="btn btn-secondary h-11 min-h-11
+                   w-full gap-2 rounded-xl
+                   xl:w-auto xl:min-w-28" [disabled]="
+              !searchBusqueda &&
+              !rolBusqueda
+            " (click)="limpiarFiltros()">
+              <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================= -->
+      <!-- ILUSTRACIÓN -->
+      <!-- ================================================= -->
+      <div class="hidden items-center justify-center px-5 lg:flex">
+        <span class="imagen-lupa block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- MODALES -->
+  <!-- ================================================= -->
+
+  <!-- Formulario modal -->
   <usuarios-form [mostrarModal]="mostrarModal" [modoEdicion]="modoEdicion" [usuarioSeleccionado]="usuarioSeleccionado"
-    (modalCerrado)="cerrarModal()" (usuarioCreado)="cargarUsuarios()"></usuarios-form>
+    (modalCerrado)="cerrarModal()" (usuarioCreado)="getUsuariosPaginated()"></usuarios-form>
 
+  <!-- Modal detalle -->
+  <usuarios-view [mostrarModal]="mostrarModalView" [usuario_id]="usuario_id" (modalCerrado)="cerrarModalInfo()" />
 
-  <!-- Tabla -->
-  <div class="p-6 bg-base-100 rounded-xl shadow-xl">
+  <!-- Formulario cambiar correo -->
+  <usuarios-change-correo [mostrarModal]="mostrarModalCorreo" [usuarioSeleccionado]="usuarioCorreoSeleccionado"
+    (correoActualizado)="onCorreoActualizado()" (modalCerrado)="cerrarModalCorreo()" />
 
-    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+  <!-- Formulario cambiar rol-->
+  <usuarios-change-rol [mostrarModal]="mostrarModalRol" [usuarioSeleccionado]="usuarioRolSeleccionado"
+    (rolActualizado)="onRolActualizado()" (modalCerrado)="cerrarModalRol()" />
 
-      <!-- Header acciones -->
-      <div class="flex justify-between items-center p-5">
+  <!-- ================================================= -->
+  <!-- TABLA DE USUARIOS -->
+  <!-- ================================================= -->
+  <div class="min-h-full bg-base-300 p-4 text-base-content
+         transition-colors duration-300 md:p-6">
+    <div class="overflow-hidden rounded-2xl border border-base-300
+           bg-base-100 shadow-xl">
+      <!-- ================================================= -->
+      <!-- CABECERA -->
+      <!-- ================================================= -->
+      <div class="flex flex-col gap-4 border-b border-base-300
+             p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-xl font-bold">
+            Usuarios
+          </h1>
 
-        <!-- Selector de cantidad -->
-        <div class="flex items-center gap-2 text-sm">
-          <label>Mostrar:</label>
-
-          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
-            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
-              {{ size }}
-            </option>
-          </select>
-
-          <span>items por página</span>
+          <p class="mt-1 text-sm text-base-content/60">
+            Administra las cuentas y el acceso al sistema de arbitraje.
+          </p>
         </div>
 
-        <!-- Botón -->
-        <div>
-          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
-            (click)="abrirModal()">
-            <i class="fa-solid fa-plus mr-1"></i>
-            Usuario
+        <button type="button" class="btn btn-primary gap-2 rounded-xl" (click)="abrirModal()">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          Nuevo usuario
+        </button>
+      </div>
+
+      <!-- ================================================= -->
+      <!-- FILTROS -->
+      <!-- ================================================= -->
+      <div class="grid grid-cols-1 gap-4 border-b border-base-300
+             bg-base-200/40 p-5 md:grid-cols-2 xl:grid-cols-4">
+        <!-- Búsqueda -->
+        <div class="min-w-0">
+          <label for="usuarios-search" class="mb-1.5 block text-xs font-semibold uppercase
+                 tracking-wide text-base-content/60">
+            Buscar usuario
+          </label>
+
+          <input id="usuarios-search" type="search" class="input input-bordered h-11 w-full rounded-xl
+                 bg-base-100 focus:border-primary
+                 focus:outline-none focus:ring-2
+                 focus:ring-primary/30" placeholder="Nombre, documento o correo" [(ngModel)]="searchBusqueda"
+            (ngModelChange)="onSearchChange()" />
+        </div>
+
+        <!-- Rol -->
+        <div class="min-w-0">
+          <label for="usuarios-rol" class="mb-1.5 block text-xs font-semibold uppercase
+                 tracking-wide text-base-content/60">
+            Rol de usuario
+          </label>
+
+          <select id="usuarios-rol" class="select select-bordered h-11 min-h-11
+                 w-full rounded-xl bg-base-100
+                 focus:border-primary focus:outline-none
+                 focus:ring-2 focus:ring-primary/30" [(ngModel)]="rolBusqueda" (ngModelChange)="onFiltroChange()">
+            <option value="">Todos los roles</option>
+
+            @for (opcion of rolesDisponibles; track opcion.id_rol) {
+            <option [value]="opcion.id_rol">
+              {{ opcion.nombre }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Estado -->
+        <div class="min-w-0">
+          <label for="usuarios-estado" class="mb-1.5 block text-xs font-semibold uppercase
+                 tracking-wide text-base-content/60">
+            Estado de la cuenta
+          </label>
+
+          <select id="usuarios-estado" class="select select-bordered h-11 min-h-11
+                 w-full rounded-xl bg-base-100
+                 focus:border-primary focus:outline-none
+                 focus:ring-2 focus:ring-primary/30" [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
+            <option [ngValue]="''">Todos los estados</option>
+            <option [ngValue]="true">Activos</option>
+            <option [ngValue]="false">Inactivos</option>
+          </select>
+        </div>
+
+        <!-- Limpiar -->
+        <div class="flex items-end">
+          <button type="button" class="btn btn-outline h-11 min-h-11
+                 w-full gap-2 rounded-xl" (click)="limpiarFiltros()">
+            <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+            Limpiar filtros
           </button>
         </div>
       </div>
 
+      <!-- ================================================= -->
+      <!-- CANTIDAD POR PÁGINA -->
+      <!-- ================================================= -->
+      <div class="flex flex-wrap items-center justify-between
+             gap-3 px-5 py-4">
+        <div class="flex items-center gap-2 text-sm">
+          <label for="usuarios-limit">
+            Mostrar
+          </label>
 
-      <!-- Tabla -->
-      <table class="table w-full">
-        <thead class="bg-base-300/90 text-base-content">
-          <tr>
-            <th>#</th>
-            <th>USUARIO</th>
-            <th>ROL</th>
-            <th>CARGO</th>
-            <th>CORREO ELECTRÓNICO</th>
-            <th>DNI</th>
-            <th>TÉLEFONO</th>
-            <th>ESTADO</th>
-            <th>ACCIONES</th>
-          </tr>
-        </thead>
+          <select id="usuarios-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
+            (ngModelChange)="cambiarLimite()" [disabled]="isLoading">
+            @for (size of pageSizeOptions; track size) {
+            <option [ngValue]="size">
+              {{ size }}
+            </option>
+            }
+          </select>
 
-        <tbody>
+          <span class="text-base-content/60">
+            por página
+          </span>
+        </div>
 
-          <!-- Loading -->
-          @if (loading) {
-          <tr>
-            <td colspan="7" class="text-center py-4">Cargando usuarios...</td>
-          </tr>
-          }
+        <span class="text-sm text-base-content/60" aria-live="polite">
+          {{ totalItems }}
+          {{ totalItems === 1 ? 'usuario encontrado' : 'usuarios encontrados' }}
+        </span>
+      </div>
 
-          <!-- Data -->
-          @for (user of usuarios; track user.id) {
-          <tr class="hover">
-            <td>{{ (page - 1) * limit + $index + 1 }}</td>
+      <!-- ================================================= -->
+      <!-- TABLA -->
+      <!-- ================================================= -->
+      <div class="overflow-x-auto" [attr.aria-busy]="isLoading">
+        <table class="table w-full">
+          <caption class="sr-only">
+            Listado de usuarios del sistema de arbitraje
+          </caption>
 
-            <!-- Nombres y apellidos -->
-            <td>
-              <div class="flex items-center gap-3">
-                <div class="avatar">
-                  <div class="mask mask-squircle h-12 w-12">
-                    <img [src]="user.foto_perfil || 'assets/img/default-avatar.png'" alt="Avatar del usuario" />
+          <thead class="bg-base-200 text-base-content/70">
+            <tr>
+              <th scope="col" class="w-16">#</th>
+              <th scope="col">Usuario</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Cargo</th>
+              <th scope="col">Correo de acceso</th>
+              <th scope="col">Documento</th>
+              <th scope="col">Teléfono</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- Loading -->
+            @if (isLoading) {
+            <tr>
+              <td colspan="9" class="py-14 text-center">
+                <div class="flex items-center justify-center
+                         gap-3 text-base-content/60" role="status">
+                  <span class="loading loading-spinner loading-md
+                           text-primary" aria-hidden="true"></span>
+                  <span>Cargando usuarios...</span>
+                </div>
+              </td>
+            </tr>
+            } @else if (errorMessage) {
+            <!-- Error -->
+            <tr>
+              <td colspan="9" class="py-10 text-center">
+                <div role="alert">
+                  <p class="font-medium text-error">
+                    {{ errorMessage }}
+                  </p>
+
+                  <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="getUsuariosPaginated()">
+                    <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                    Reintentar
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @else {
+            <!-- Datos -->
+            @for (usuario of usuarios; track usuario.id_usuario) {
+            <tr class="transition-colors hover:bg-base-200/50">
+              <td class="text-base-content/50">
+                {{ (page - 1) * limit + $index + 1 }}
+              </td>
+
+              <!-- Persona -->
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar">
+                    <div class="h-11 w-11 rounded-xl bg-base-200">
+                      <img [src]="usuario.foto_perfil || 'assets/img/default-avatar.png'" alt="" loading="lazy"
+                        class="object-cover" />
+                    </div>
+                  </div>
+
+                  <div class="min-w-48">
+                    <p class="font-semibold">
+                      {{ getNombreCompleto(usuario.persona) }}
+                    </p>
+
+                    <p class="mt-0.5 text-xs text-base-content/50">
+                      @switch (usuario.persona.tipo) {
+                      @case ('NATURAL') {
+                      Persona natural
+                      }
+                      @case ('JURIDICA') {
+                      Persona jurídica
+                      }
+                      @case ('ENTIDAD_PUBLICA') {
+                      Entidad pública
+                      }
+                      }
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <div class="font-bold">{{ user.nombre }}</div>
-                  <div class="text-sm opacity-50">{{ user.apellidos }}</div>
+              </td>
+
+              <!-- Rol -->
+              <td>
+                <span class="badge badge-outline whitespace-nowrap
+                           text-xs font-semibold" [ngClass]="{
+                      'badge-primary': usuario.rol === 'ADMIN',
+                      'badge-info': usuario.rol === 'SECRETARIA',
+                      'badge-success': usuario.rol === 'PARTICIPE',
+                      'badge-warning': usuario.rol === 'ARBITRO',
+                      'badge-secondary': usuario.rol === 'ADJUDICADOR',
+                      'badge-neutral': usuario.rol === 'STAFF_INTERNO'
+                    }">
+                  @switch (usuario.rol) {
+                  @case ('ADMIN') { Administrador }
+                  @case ('SECRETARIA') { Secretaría }
+                  @case ('PARTICIPE') { Partícipe }
+                  @case ('ARBITRO') { Árbitro }
+                  @case ('ADJUDICADOR') { Adjudicador }
+                  @case ('STAFF_INTERNO') { Personal interno }
+                  }
+                </span>
+              </td>
+
+              <!-- Cargo -->
+              <td>
+                <span class="block min-w-32 max-w-56 break-words">
+                  {{ getCargoUsuario(usuario) }}
+                </span>
+              </td>
+
+              <!-- Correo -->
+              <td>
+                <p class="font-medium">
+                  {{ usuario.correo }}
+                </p>
+
+                <div class="mt-1 flex items-center gap-1.5 text-xs" [ngClass]="usuario.correo_verificado
+                      ? 'text-success'
+                      : 'text-warning'">
+                  <i [class]="usuario.correo_verificado
+                        ? 'fa-solid fa-circle-check'
+                        : 'fa-solid fa-clock'" aria-hidden="true"></i>
+
+                  <span>
+                    {{ usuario.correo_verificado
+                    ? 'Correo verificado'
+                    : 'Verificación pendiente' }}
+                  </span>
                 </div>
-              </div>
-            </td>
 
-            <!-- Rol -->
-            <td>
-              <span class="badge badge-soft badge-info font-semibold">
-                {{ user.rol | uppercase }}
-              </span>
-            </td>
+                @if (usuario.password_reset_required) {
+                <p class="mt-1 text-xs text-base-content/60">
+                  Cambio de contraseña pendiente
+                </p>
+                }
+              </td>
 
+              <!-- Documento -->
+              <td class="whitespace-nowrap">
+                {{ getDocumentoUsuario(usuario) }}
+              </td>
 
-            <!-- Cargo -->
-            <td>
-              {{ getCargoUsuario(user) }}
-            </td>
+              <!-- Teléfono -->
+              <td class="whitespace-nowrap">
+                {{ usuario.persona.telefono || '-' }}
+              </td>
 
-            <!-- Correo -->
-            <td>{{ user.correo }}</td>
+              <!-- Estado -->
+              <td>
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" class="toggle toggle-sm" [ngClass]="usuario.estado
+                        ? 'toggle-success'
+                        : 'toggle-error'" [checked]="usuario.estado" [disabled]="estaCambiandoEstado(usuario)"
+                    [attr.aria-label]="'Cambiar estado de ' +
+                        getNombreCompleto(usuario.persona)" (change)="cambiarEstado(usuario, $event)" />
 
-            <!-- Documento de identidad -->
-            <td>{{ user.documento_identidad }}</td>
+                  @if (estaCambiandoEstado(usuario)) {
+                  <span class="loading loading-spinner
+                               loading-xs text-primary" role="status" aria-label="Procesando cambio de estado"></span>
+                  } @else {
+                  <span class="text-xs font-semibold" [ngClass]="usuario.estado
+                          ? 'text-success'
+                          : 'text-error'">
+                    {{ usuario.estado ? 'Activo' : 'Inactivo' }}
+                  </span>
+                  }
+                </div>
+              </td>
 
-            <!-- Teledono -->
-            <td>{{ user.telefono }}</td>
+              <!-- Acciones -->
+              <td>
+                <div class="flex items-center justify-center gap-1">
 
-            <!-- Estado -->
-            <td>
-              <input type="checkbox"
-                class="toggle transition-all duration-200 bg-red-400 checked:bg-green-300 checked:text-success"
-                [checked]="user.estado" [ngClass]="user.estado ? 'toggle-success' : 'toggle-error'"
-                (click)="toggleEstadoUsuario(user, $event)" />
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm text-secondary hover:bg-secondary/10"
+                    title="Cambiar rol" [attr.aria-label]="'Cambiar rol de ' + getNombreCompleto(usuario.persona)"
+                    [disabled]="estaCambiandoEstado(usuario)" (click)="abrirModalRol(usuario)">
+                    <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                  </button>
 
-              <span class="text-sm ml-2" [ngClass]="user.estado ? 'text-success font-bold' : 'text-error font-bold'">
-                {{ user.estado ? 'Activo' : 'Desactivado' }}
-              </span>
-            </td>
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm text-warning hover:bg-warning/10"
+                    title="Cambiar correo de acceso"
+                    [attr.aria-label]="'Cambiar correo de ' + getNombreCompleto(usuario.persona)"
+                    [disabled]="estaCambiandoEstado(usuario)" (click)="abrirModalCorreo(usuario)">
+                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                  </button>
 
-            <!-- Acciones -->
-            <td class="text-right relative">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm
+                             text-info hover:bg-info/10" title="Ver usuario" [attr.aria-label]="'Ver usuario ' +
+                        getNombreCompleto(usuario.persona)" (click)="verUsuario(usuario)">
+                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                  </button>
 
-              <!-- ACCIONES PRINCIPALES -->
-              <div class="flex justify-start items-center gap-1">
-                <!-- Ver -->
-                <button class="btn btn-ghost btn-circle btn-md" (click)="verUsuario(user)">
-                  <i class="fa-solid fa-eye"></i>
-                </button>
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm
+                             text-primary hover:bg-primary/10" title="Editar usuario" [attr.aria-label]="'Editar usuario ' +
+                        getNombreCompleto(usuario.persona)" [disabled]="estaCambiandoEstado(usuario)"
+                    (click)="editarUsuario(usuario)">
+                    <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <!-- Sin resultados -->
+            <tr>
+              <td colspan="9" class="py-14 text-center">
+                <i class="fa-solid fa-users mb-3 text-3xl
+                           text-base-content/30" aria-hidden="true"></i>
 
-                <!-- Editar -->
-                <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal('editar', user)">
-                  <i class="fa-solid fa-pencil"></i>
-                </button>
+                <p class="font-semibold">
+                  No se encontraron usuarios
+                </p>
 
-                <!-- Eliminar -->
-                <button class="btn btn-ghost btn-circle btn-md" (click)="eliminarUsuario(user.id)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
+                <p class="mt-1 text-sm text-base-content/60">
+                  Ajusta los filtros o registra un nuevo usuario.
+                </p>
+              </td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+      </div>
 
-            </td>
-          </tr>
+      <!-- ================================================= -->
+      <!-- PAGINADOR -->
+      <!-- ================================================= -->
+      <div class="flex flex-col items-center justify-between
+             gap-4 border-t border-base-300
+             bg-base-200/40 px-5 py-4 sm:flex-row">
+        <div class="text-sm text-base-content/60">
+          @if (totalPages > 0) {
+          Página
+          <span class="font-semibold text-base-content">
+            {{ page }}
+          </span>
+          de
+          <span class="font-semibold text-base-content">
+            {{ totalPages }}
+          </span>
+          } @else {
+          Sin páginas disponibles
           }
+        </div>
 
-          <!-- Empty -->
-          @if (!loading && usuarios.length === 0) {
-          <tr>
-            <td colspan="7" class="text-center text-gray-500 py-4">
-              No se encontraron usuarios
-            </td>
-          </tr>
-          }
-
-        </tbody>
-      </table>
-
-      <!-- Paginador -->
-      <div class="flex justify-end items-center p-4 bg-base-300/90 text-sm">
-        <span>
-          Página {{ page }} de {{ totalPages }} registros
-        </span>
-
-        <div class="join ml-4 gap-2">
-          <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
+        <nav class="flex items-center gap-2" aria-label="Paginación de usuarios">
+          <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+            [disabled]="isLoading || page <= 1 || totalPages === 0" (click)="cambiarPagina(page - 1)">
+            <i class="fa-solid fa-chevron-left text-xs" aria-hidden="true"></i>
             Anterior
           </button>
 
-          <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
+          <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
+            [disabled]="isLoading || page >= totalPages || totalPages === 0" (click)="cambiarPagina(page + 1)">
             Siguiente
+            <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
           </button>
-        </div>
+        </nav>
       </div>
-
     </div>
   </div>
+
+  <!-- ===================================================== -->
+  <!-- VACÍO -->
+  <!-- ===================================================== -->
+  @if (!isLoading && usuarios.length === 0) {
+  <section class="rounded-2xl border border-dashed
+           border-base-300 bg-base-100
+           px-6 py-16 text-center shadow-sm" aria-label="Sin usuarios disponibles">
+    <!-- <div class="mx-auto flex h-20 w-20
+             items-center justify-center
+             rounded-full bg-base-200
+             text-base-content/35">
+      <i class="fa-solid fa-users text-3xl" aria-hidden="true"></i>
+    </div> -->
+
+    <div class="hidden items-center justify-center px-5 lg:flex">
+      <span class="imagen-folder-empty block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
+    </div>
+
+    <h2 class="mt-5 text-lg font-bold">
+      No se encontraron usuarios
+    </h2>
+
+    <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
+      @if ( searchBusqueda || rolBusqueda ) {
+      No hay usuarios disponibles que coincidan con los filtros seleccionados.
+      Prueba con otros criterios de búsqueda.
+      } @else {
+      Aún no hay usuarios registrados en el sistema.
+      }
+    </p>
+
+    @if ( searchBusqueda || rolBusqueda ) {
+    <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
+      <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
+      <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+      Limpiar filtros
+    </button>
+    }
+  </section>
+  }
 
 </div>

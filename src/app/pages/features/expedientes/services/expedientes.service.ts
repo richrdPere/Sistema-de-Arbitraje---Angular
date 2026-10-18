@@ -38,7 +38,6 @@ export class ExpedientesService {
   private readonly API_GET_EXPEDIENTE_HISTORIAL = this.API_BASE + '/';
   private readonly API_GET_EXPEDIENTE_TRAZABILIDAD = this.API_BASE + '/';
 
-
   constructor(
     private readonly http: HttpClient,
     private readonly authStorage: AuthStorageService

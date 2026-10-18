@@ -1,6 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import 'izitoast/dist/css/iziToast.min.css';
 @import "tailwindcss";
-@plugin "daisyui";
 
-/* html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+
+.imagen-lupa {
+  background-color: currentColor;
+
+  -webkit-mask-image: url('/assets/img/search.png');
+  mask-image: url('/assets/img/search.png');
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  mask-mode: alpha;
+}
+
+.imagen-folder-empty {
+  background-color: currentColor;
+
+  -webkit-mask-image: url('/assets/img/empty-folder.png');
+  mask-image: url('/assets/img/empty-folder.png');
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  mask-mode: alpha;
+}
+
+/* html {
+  font-size: 13px;
+} */
+
+html, body { height: 100%; }
+/* body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */

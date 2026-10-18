@@ -107,66 +107,66 @@ export class SubirDocumentosComponent implements OnInit {
 
   //  Enviar formulario
   subirDocumento(): void {
-    if (this.formDocumento.invalid || !this.archivoSeleccionado) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Formulario incompleto',
-        text: 'Por favor completa todos los campos y selecciona un archivo PDF.',
-        confirmButtonColor: '#0a1a35',
-      });
-      return;
-    }
+    // if (this.formDocumento.invalid || !this.archivoSeleccionado) {
+    //   Swal.fire({
+    //     icon: 'warning',
+    //     title: 'Formulario incompleto',
+    //     text: 'Por favor completa todos los campos y selecciona un archivo PDF.',
+    //     confirmButtonColor: '#0a1a35',
+    //   });
+    //   return;
+    // }
 
-    this.cargando = true;
+    // this.cargando = true;
 
-    // Alerta de carga
-    Swal.fire({
-      title: 'Subiendo documento',
-      text: 'Por favor espere...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+    // // Alerta de carga
+    // Swal.fire({
+    //   title: 'Subiendo documento',
+    //   text: 'Por favor espere...',
+    //   allowOutsideClick: false,
+    //   didOpen: () => {
+    //     Swal.showLoading();
+    //   },
+    // });
 
-    const formData = new FormData();
-    formData.append('titulo', this.formDocumento.value.titulo);
-    formData.append('descripcion', this.formDocumento.value.descripcion);
-    formData.append('version', this.formDocumento.value.version);
-    formData.append('tipo_documento', this.formDocumento.value.tipo_documento);
-    formData.append('file', this.archivoSeleccionado);
-    formData.append('fecha_emision', new Date().toISOString());
+    // const formData = new FormData();
+    // formData.append('titulo', this.formDocumento.value.titulo);
+    // formData.append('descripcion', this.formDocumento.value.descripcion);
+    // formData.append('version', this.formDocumento.value.version);
+    // formData.append('tipo_documento', this.formDocumento.value.tipo_documento);
+    // formData.append('file', this.archivoSeleccionado);
+    // formData.append('fecha_emision', new Date().toISOString());
 
-    this.expedientesService.subirDocumento(this.expedienteId, formData).subscribe({
-      next: () => {
-        this.cargando = false;
+    // this.expedientesService.subirDocumento(this.expedienteId, formData).subscribe({
+    //   next: () => {
+    //     this.cargando = false;
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Documento registrado',
-          text: 'El documento fue subido correctamente al expediente.',
-          confirmButtonColor: '#0a1a35',
-          timer: 1500,
-          showConfirmButton: false,
-        });
+    //     Swal.fire({
+    //       icon: 'success',
+    //       title: 'Documento registrado',
+    //       text: 'El documento fue subido correctamente al expediente.',
+    //       confirmButtonColor: '#0a1a35',
+    //       timer: 1500,
+    //       showConfirmButton: false,
+    //     });
 
-        this.documentoSubido.emit();
-        setTimeout(() => this.cerrarModal(), 1500);
-      },
-      error: (err) => {
-        this.cargando = false;
+    //     this.documentoSubido.emit();
+    //     setTimeout(() => this.cerrarModal(), 1500);
+    //   },
+    //   error: (err) => {
+    //     this.cargando = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al subir documento',
-          text: err.error?.message || 'Ocurrió un error al subir el documento.',
-          confirmButtonColor: '#0a1a35',
-        });
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Error al subir documento',
+    //       text: err.error?.message || 'Ocurrió un error al subir el documento.',
+    //       confirmButtonColor: '#0a1a35',
+    //     });
 
 
-        // this.mensajeError = err.error?.message || 'Error al subir el documento.';
-      },
-    });
+    //     // this.mensajeError = err.error?.message || 'Error al subir el documento.';
+    //   },
+    // });
   }
 
   cerrarModal(): void {

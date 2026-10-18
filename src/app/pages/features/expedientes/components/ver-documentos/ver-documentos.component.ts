@@ -61,15 +61,15 @@ export class VerDocumentosComponent implements OnInit {
   }
 
   cargarDatosExpediente() {
-    this.expedienteService.getExpedienteById(this.idExpediente)
-      .subscribe({
-        next: (exp) => {
-          this.numeroExpediente = exp.numero_expediente;
-        },
-        error: () => {
-          this.numeroExpediente = 'No disponible';
-        }
-      });
+    // this.expedienteService.getExpedienteById(this.idExpediente)
+    //   .subscribe({
+    //     next: (exp) => {
+    //       this.numeroExpediente = exp.numero_expediente;
+    //     },
+    //     error: () => {
+    //       this.numeroExpediente = 'No disponible';
+    //     }
+    //   });
   }
 
   cargarDocumentos() {
@@ -81,22 +81,22 @@ export class VerDocumentosComponent implements OnInit {
       search: this.search || null,
     };
 
-    this.expedienteService.listarDocumentos(this.idExpediente, params)
-      .subscribe({
-        next: (resp) => {
+    // this.expedienteService.listarDocumentos(this.idExpediente, params)
+    //   .subscribe({
+    //     next: (resp) => {
 
-          this.documentos = resp.data;   // ✅ ahora sí
-          this.totalItems = resp.total;
-          this.totalPages = resp.totalPages;
-          this.currentPage = resp.page;
+    //       this.documentos = resp.data;   // ✅ ahora sí
+    //       this.totalItems = resp.total;
+    //       this.totalPages = resp.totalPages;
+    //       this.currentPage = resp.page;
 
-          this.loading = false;
-        },
-        error: (err) => {
-          this.loading = false;
-          this.mensajeError = err.error?.message || 'Error al cargar documentos';
-        }
-      });
+    //       this.loading = false;
+    //     },
+    //     error: (err) => {
+    //       this.loading = false;
+    //       this.mensajeError = err.error?.message || 'Error al cargar documentos';
+    //     }
+    //   });
   }
 
   cambiarPagina(nuevaPagina: number) {

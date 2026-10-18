@@ -54,61 +54,61 @@ export class StepResumenExpComponent implements OnInit {
     // EDITAR EXPEDIENTE
     // =========================
 
-    if (isEdit && id) {
+    // if (isEdit && id) {
 
-      this.expedienteService.updateExpediente(id, payload)
-        .subscribe({
-          next: () => {
-            this.loading = false;
+    //   this.expedienteService.updateExpediente(id, payload)
+    //     .subscribe({
+    //       next: () => {
+    //         this.loading = false;
 
-            Swal.fire({
-              icon: 'success',
-              title: 'Expediente actualizado correctamente'
-            });
+    //         Swal.fire({
+    //           icon: 'success',
+    //           title: 'Expediente actualizado correctamente'
+    //         });
 
-            this.expedienteGuardado.emit();
-            this.resetStepper.emit();
-          },
-          error: (err) => {
-            this.loading = false;
+    //         this.expedienteGuardado.emit();
+    //         this.resetStepper.emit();
+    //       },
+    //       error: (err) => {
+    //         this.loading = false;
 
-            Swal.fire({
-              icon: 'error',
-              title: 'Error al actualizar expediente',
-              text: err.error?.message || 'Error desconocido'
-            });
-          }
-        });
+    //         Swal.fire({
+    //           icon: 'error',
+    //           title: 'Error al actualizar expediente',
+    //           text: err.error?.message || 'Error desconocido'
+    //         });
+    //       }
+    //     });
 
-      return;
-    }
+    //   return;
+    // }
 
     // =========================
     // CREAR EXPEDIENTE
     // =========================
-    this.expedienteService.newExpediente(payload)
-      .subscribe({
-        next: () => {
-          this.loading = false;
+    // this.expedienteService.newExpediente(payload)
+    //   .subscribe({
+    //     next: () => {
+    //       this.loading = false;
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Expediente creado correctamente'
-          });
+    //       Swal.fire({
+    //         icon: 'success',
+    //         title: 'Expediente creado correctamente'
+    //       });
 
-          this.expedienteGuardado.emit();
-          this.resetStepper.emit();
-        },
-        error: (err) => {
-          this.loading = false;
+    //       this.expedienteGuardado.emit();
+    //       this.resetStepper.emit();
+    //     },
+    //     error: (err) => {
+    //       this.loading = false;
 
-          Swal.fire({
-            icon: 'error',
-            title: 'Error al crear expediente',
-            text: err.error?.message || 'Error desconocido'
-          });
-        }
-      });
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error al crear expediente',
+    //         text: err.error?.message || 'Error desconocido'
+    //       });
+    //     }
+    //   });
   }
 
   // =========================
