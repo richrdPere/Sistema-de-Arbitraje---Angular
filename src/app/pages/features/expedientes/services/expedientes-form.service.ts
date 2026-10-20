@@ -15,6 +15,7 @@ export interface PersonaData {
   tipo: string;
   nombres: string;
   apellidos: string;
+  dni: string;
   ruc: string;
   razon_social: string;
   nombre_entidad: string;

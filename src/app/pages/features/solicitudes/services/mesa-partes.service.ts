@@ -130,13 +130,14 @@ export class MesaPartesService {
   consultarTramite(
     request: ConsultarTramiteParams,
   ): Observable<ConsultarTramiteResponse> {
-    const headers = this.getJsonHeaders();
+    // const headers = this.getJsonHeaders();
     const params = HttpServiceHelper.buildParams(request);
 
     return this.http
       .get<ConsultarTramiteResponse>(
         this.API_CONSULTAR_TRAMITE,
-        { headers, params },
+        // { headers, params },
+        { params },
       )
       .pipe(
         catchError((error: unknown) =>

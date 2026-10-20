@@ -562,6 +562,13 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   // *********************************************************
   // HELPERS DE PRESENTACIÓN
   // *********************************************************
+ get hayFiltros(): boolean {
+    return !!(
+      this.searchBusqueda.trim() ||
+      this.rolBusqueda ||
+      this.estadoBusqueda
+    );
+  }
 
   getNombreCompleto(
     persona: AuthPersona | null | undefined,

@@ -119,22 +119,24 @@
           </div>
           } @else {
           <!-- Enlace normal -->
-          <a [routerLink]="link.path" [routerLinkActive]="
-                  link.activeClass || 'bg-info text-info-content'
-                " [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="flex min-h-10 max-w-[135px]
-                       items-center justify-center
-                       whitespace-normal break-words
-                       rounded-lg px-2 py-2
-                       text-center text-[11px]
-                       font-medium leading-tight
-                       transition-colors duration-200
-                       hover:bg-info hover:text-info-content
-                       focus-visible:outline-none
-                       focus-visible:ring-2
-                       focus-visible:ring-primary
-                       min-[1700px]:max-w-none
-                       min-[1700px]:px-3
-                       min-[1700px]:text-xs">
+          <a [routerLink]="link.path" [routerLinkActive]="link.activeClass || 'bg-info text-info-content'"
+            [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="flex min-h-10 max-w-[135px]
+         items-center justify-center
+         whitespace-normal break-words
+         rounded-lg px-2 py-2
+         text-center text-xs
+         font-medium leading-tight
+         transition-colors duration-200
+         hover:bg-info hover:text-info-content
+         focus-visible:outline-none
+         focus-visible:ring-2
+         focus-visible:ring-primary
+         min-[1536px]:max-w-[155px]
+         min-[1536px]:text-sm
+         min-[1700px]:max-w-none
+         min-[1700px]:px-3
+         min-[1920px]:px-4
+         min-[1920px]:text-base">
             {{ link.label }}
           </a>
           }

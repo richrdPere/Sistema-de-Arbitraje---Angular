@@ -1,5 +1,5 @@
-
 import { ApiResponse } from 'src/app/core/models/api-response.model';
+
 import {
   ExpedientePaginadoItem,
   ExpedienteResponsableData,
@@ -7,6 +7,8 @@ import {
 
 // *********************************************************
 // RESPONSE: DATA
+// Hereda los datos generales, responsable y participes.
+// Cada partícipe incluye su relación persona.
 // *********************************************************
 
 export interface ExpedienteDetalleData
@@ -19,4 +21,5 @@ export interface ExpedienteDetalleData
 // RESPONSE
 // *********************************************************
 
-export type GetExpedienteByIdResponse = ApiResponse<ExpedienteDetalleData>;
+export type GetExpedienteByIdResponse =
+  ApiResponse<ExpedienteDetalleData>;

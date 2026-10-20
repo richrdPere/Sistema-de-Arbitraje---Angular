@@ -3,10 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // Service
-import { TramiteMPVService } from 'src/app/services/tramiteMPV.service';
+import { TramiteMPVService } from 'src/app/services/mesa-partes/tramiteMPV.service';
+
+// Componentes
 import { SolicitudDetailComponent } from "../solicitud-detail/solicitud-detail.component";
 import { SolicitudDocsComponent } from "../solicitud-docs/solicitud-docs.component";
 import { SolicitudesRefreshService } from 'src/app/core/services/solicitudesRefresh.service';
+
 
 
 @Component({

@@ -9,7 +9,7 @@ import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directiv
 // Service
 import { ParticipeService } from 'src/app/services/admin/participes.service';
 
-import { PersonaService } from 'src/app/services/persona.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 
 // Interface
 import { Participe } from 'src/app/interfaces/users/participeUser';

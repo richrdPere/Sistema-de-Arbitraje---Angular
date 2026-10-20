@@ -1,42 +1,23 @@
 import { CommonModule } from '@angular/common';
-import {  ChangeDetectorRef,  Component,  HostListener,  OnDestroy,  OnInit} from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {  Observable,  Subject,  Subscription,  debounceTime,  finalize,  firstValueFrom,  of,  switchMap,  takeUntil} from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, finalize, firstValueFrom, of, switchMap, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 
 // Services
-import {  SolicitudesRefreshService} from 'src/app/core/services/solicitudesRefresh.service';
+import { SolicitudesRefreshService } from 'src/app/core/services/solicitudesRefresh.service';
+import { MesaPartesService } from './services/mesa-partes.service';
 
 // Interfaces
-import {
-  GetTramitesPaginatedFilters,
-  MesaPartesEstadoTramite,
-  MesaPartesSolicitanteListado,
-  MesaPartesTipoSolicitud,
-  MesaPartesTramiteListado,
-} from 'src/app/pages/features/solicitudes/interfaces';
+import { GetTramitesPaginatedFilters, MesaPartesEstadoTramite, MesaPartesSolicitanteListado, MesaPartesTipoSolicitud, MesaPartesTramiteListado } from 'src/app/pages/features/solicitudes/interfaces';
 
 // Componentes existentes
-import {
-  SolicitudDetailComponent,
-} from './components/solicitud-detail/solicitud-detail.component';
+import { SolicitudDetailComponent } from './components/solicitud-detail/solicitud-detail.component';
+import { SolicitudAprobadoComponent } from './components/solicitud-aprobado/solicitud-aprobado.component';
+import { SolicitudDocsComponent } from './components/solicitud-docs/solicitud-docs.component';
+import { ListAprobadosComponent } from './components/list-aprobados/list-aprobados.component';
+import { ListRechazadosComponent } from './components/list-rechazados/list-rechazados.component';
 
-import {
-  SolicitudAprobadoComponent,
-} from './components/solicitud-aprobado/solicitud-aprobado.component';
-
-import {
-  SolicitudDocsComponent,
-} from './components/solicitud-docs/solicitud-docs.component';
-
-import {
-  ListAprobadosComponent,
-} from './components/list-aprobados/list-aprobados.component';
-
-import {
-  ListRechazadosComponent,
-} from './components/list-rechazados/list-rechazados.component';
-import { MesaPartesService } from './services/mesa-partes.service';
 
 // *********************************************************
 // TIPOS INTERNOS
@@ -813,6 +794,14 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   // *********************************************************
   // PRESENTACIÓN
   // *********************************************************
+  get hayFiltros(): boolean {
+    return !!(
+      this.filtroSearch.trim() ||
+      this.filtroTipo ||
+      this.fecha_inicio ||
+      this.fecha_fin
+    );
+  }
 
   getNombreSolicitante(
     persona: MesaPartesSolicitanteListado | null,

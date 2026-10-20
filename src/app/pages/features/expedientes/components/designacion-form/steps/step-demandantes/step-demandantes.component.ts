@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 // Service
-import { PersonaService } from 'src/app/services/persona.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 
 @Component({
   selector: 'step-demandantes',
@@ -100,8 +100,7 @@ export class StepDemandantesComponent {
     }
 
     // REQUEST
-    this.personaService
-      .searchPersonaByFilters(filtros)
+    this.personaService.getPersonasSelector(filtros)
       .subscribe({
 
         next: (resp: any) => {
@@ -211,8 +210,7 @@ export class StepDemandantesComponent {
   // ============================================
   guardarNuevaPersona(data: any) {
     this.guardandoPersona = true;
-    this.personaService
-      .newPersona(data)
+    this.personaService.createPersona(data)
       .subscribe({
         next: (resp: any) => {
           const persona =

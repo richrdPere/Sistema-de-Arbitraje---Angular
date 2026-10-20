@@ -12,7 +12,7 @@ import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directiv
 
 // Service
 import { DesignacionFormService, Participante } from 'src/app/services/designacion-participes.service';
-import { PersonaService } from 'src/app/services/persona.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 
 @Component({
   selector: 'step-demandados',
@@ -89,8 +89,7 @@ export class StepDemandadosComponent implements OnInit {
     }
 
     // REQUEST
-    this.personaService
-      .searchPersonaByFilters(filtros)
+    this.personaService.getPersonasSelector(filtros)
       .subscribe({
         next: (resp: any) => {
           this.personasEncontradas =
@@ -226,7 +225,7 @@ export class StepDemandadosComponent implements OnInit {
   guardarNuevaPersona(data: any) {
     this.guardandoPersona = true;
     this.personaService
-      .newPersona(data)
+      .createPersona(data)
       .subscribe({
         next: (resp: any) => {
           const persona = resp?.persona;

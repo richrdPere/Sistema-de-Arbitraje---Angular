@@ -383,6 +383,15 @@ export class TrazabilidadComponent implements OnInit, OnDestroy {
     return this.expedientes;
   }
 
+  get hayFiltros(): boolean {
+    return !!(
+      this.filtroSearch.trim() ||
+      this.filtroEstado ||
+      this.filtroEstadoProcesal
+    );
+  }
+
+
   // *********************************************************
   // 4. PAGINACIÓN
   // *********************************************************

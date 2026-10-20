@@ -1,186 +1,306 @@
-<div class="min-h-full bg-base-300 p-4 text-base-content
-         transition-colors duration-300 md:p-6">
-  <div class="overflow-hidden rounded-2xl border border-base-300
-           bg-base-100 shadow-xl">
-    <!-- ================================================= -->
-    <!-- CABECERA -->
-    <!-- ================================================= -->
-    <header class="flex flex-col gap-4 border-b border-base-300
-             p-5 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-xl font-bold">
+<!-- ================================================= -->
+<!-- CONTENEDOR DE EXPEDIENTES -->
+<!-- ================================================= -->
+<div class="mx-auto w-full max-w-500">
+
+  <!-- ================================================= -->
+  <!-- CABECERA -->
+  <!-- ================================================= -->
+  <header class="mb-5 flex flex-col gap-4
+             sm:flex-row sm:items-center
+             sm:justify-between">
+
+    <div class="flex min-w-0 items-center gap-3">
+
+      <div class="flex h-12 w-12 shrink-0
+                 items-center justify-center
+                 rounded-2xl bg-primary/10
+                 text-primary" aria-hidden="true">
+        <i class="fa-solid fa-folder-open text-xl sm:text-2xl"> </i>
+      </div>
+
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold leading-tight text-base-content">
           Gestión de expedientes
         </h1>
 
-        <p class="mt-1 text-sm text-base-content/60">
+        <p class="mt-1 max-w-2xl
+                   text-sm leading-relaxed
+                   text-base-content/60">
+
           Consulta y administra los expedientes del sistema de arbitraje.
         </p>
       </div>
+    </div>
+  </header>
 
-      <button type="button" class="btn btn-primary gap-2 rounded-xl" (click)="abrirModal()">
-        <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        Nuevo expediente
-      </button>
-    </header>
+  <!-- ================================================= -->
+  <!-- FILTROS -->
+  <!-- ================================================= -->
+  <section class="mb-6 overflow-hidden rounded-2xl
+         border border-base-300 bg-base-100 shadow-sm" aria-label="Filtros de expedientes">
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_170px]">
 
-    <!-- ================================================= -->
-    <!-- FILTROS -->
-    <!-- ================================================= -->
-    <section class="space-y-4 border-b border-base-300
-             bg-base-200/40 p-5" aria-label="Filtros de expedientes">
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <!-- Búsqueda -->
-        <div class="min-w-0">
-          <label for="expedientes-search" class="mb-1.5 block text-xs font-semibold uppercase
+      <!-- ================================================= -->
+      <!-- CONTENEDOR DE FILTROS -->
+      <!-- ================================================= -->
+      <div class="min-w-0 p-4 sm:p-5">
+
+        <!-- FILTROS PRINCIPALES -->
+        <div class="grid grid-cols-1 items-start gap-4
+               sm:grid-cols-2 xl:grid-cols-4">
+          <!-- Búsqueda -->
+          <div class="min-w-0">
+            <label for="expedientes-search" class="mb-1.5 block text-xs font-semibold uppercase
                    tracking-wide text-base-content/60">
-            Buscar expediente
-          </label>
+              Buscar expediente
+            </label>
 
-          <input id="expedientes-search" type="search" class="input input-bordered h-11 w-full rounded-xl
-                   bg-base-100 focus:border-primary
-                   focus:outline-none focus:ring-2
-                   focus:ring-primary/30" placeholder="Número, código, título o descripción" autocomplete="off"
-            [(ngModel)]="searchBusqueda" (ngModelChange)="onSearchChange()" />
+            <div class="relative">
+              <input id="expedientes-search" type="search" placeholder="Número, código, título o descripción"
+                autocomplete="off" class="input input-bordered h-11 min-h-11
+                     w-full min-w-0 rounded-xl bg-base-200
+                     pl-11 pr-4 transition-colors
+                     focus:border-primary focus:outline-none
+                     focus:ring-2 focus:ring-primary/30" [class.border-primary]="searchBusqueda.trim().length > 0"
+                [(ngModel)]="searchBusqueda" (ngModelChange)="onSearchChange()" />
+
+              <span class="pointer-events-none absolute inset-y-0
+                     left-0 z-10 flex w-11 items-center
+                     justify-center text-base-content/50" aria-hidden="true">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Estado general -->
+          <div class="min-w-0">
+            <label for="expedientes-estado" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+              Estado general
+            </label>
+
+            <select id="expedientes-estado" class="select select-bordered h-11 min-h-11
+                   w-full min-w-0 rounded-xl bg-base-200
+                   pl-4 pr-10 transition-colors
+                   focus:border-primary focus:outline-none
+                   focus:ring-2 focus:ring-primary/30" [class.border-primary]="estadoBusqueda !== ''"
+              [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
+              <option value="">Todos los estados</option>
+
+              @for (opcion of estadosDisponibles; track opcion.value) {
+              <option [value]="opcion.value">
+                {{ opcion.label }}
+              </option>
+              }
+            </select>
+          </div>
+
+          <!-- Tipo de arbitraje -->
+          <div class="min-w-0">
+            <label for="expedientes-tipo" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+              Tipo de arbitraje
+            </label>
+
+            <select id="expedientes-tipo" class="select select-bordered h-11 min-h-11
+                   w-full min-w-0 rounded-xl bg-base-200
+                   pl-4 pr-10 transition-colors
+                   focus:border-primary focus:outline-none
+                   focus:ring-2 focus:ring-primary/30" [class.border-primary]="tipoBusqueda !== ''"
+              [(ngModel)]="tipoBusqueda" (ngModelChange)="onFiltroChange()">
+              <option value="">Todos los tipos</option>
+
+              @for (opcion of tiposDisponibles; track opcion.value) {
+              <option [value]="opcion.value">
+                {{ opcion.label }}
+              </option>
+              }
+            </select>
+          </div>
+
+          <!-- Origen -->
+          <div class="min-w-0">
+            <label for="expedientes-origen" class="mb-1.5 block text-xs font-semibold uppercase
+                   tracking-wide text-base-content/60">
+              Origen
+            </label>
+
+            <select id="expedientes-origen" class="select select-bordered h-11 min-h-11
+                   w-full min-w-0 rounded-xl bg-base-200
+                   pl-4 pr-10 transition-colors
+                   focus:border-primary focus:outline-none
+                   focus:ring-2 focus:ring-primary/30" [class.border-primary]="origenBusqueda !== ''"
+              [(ngModel)]="origenBusqueda" (ngModelChange)="onFiltroChange()">
+              <option value="">Todos los orígenes</option>
+
+              @for (opcion of origenesDisponibles; track opcion.value) {
+              <option [value]="opcion.value">
+                {{ opcion.label }}
+              </option>
+              }
+            </select>
+          </div>
         </div>
 
-        <!-- Estado general -->
-        <div class="min-w-0">
-          <label for="expedientes-estado" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Estado general
-          </label>
+        <!-- ================================================= -->
+        <!-- BOTONES -->
+        <!-- ================================================= -->
+        <div class="mt-4 flex flex-col gap-3
+               sm:flex-row sm:items-center sm:justify-between">
+          <!-- Desplegar filtros -->
+          <button type="button" class="btn btn-ghost btn-sm gap-2 self-start
+                 rounded-lg text-primary" [attr.aria-expanded]="mostrarFiltrosAvanzados"
+            aria-controls="expedientes-filtros-avanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+            <i class="fa-solid fa-sliders" aria-hidden="true"></i>
 
-          <select id="expedientes-estado" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
-            <option value="">Todos los estados</option>
+            {{ mostrarFiltrosAvanzados
+            ? 'Ocultar filtros avanzados'
+            : 'Mostrar filtros avanzados' }}
 
-            @for (opcion of estadosDisponibles; track opcion.value) {
-            <option [value]="opcion.value">
-              {{ opcion.label }}
-            </option>
+            @if (
+            estadoProcesalBusqueda !== '' ||
+            filtroAnio !== '' ||
+            filtroMes !== ''
+            ) {
+            <span class="badge badge-primary badge-sm">
+              Activos
+            </span>
             }
-          </select>
-        </div>
 
-        <!-- Tipo de arbitraje -->
-        <div class="min-w-0">
-          <label for="expedientes-tipo" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Tipo de arbitraje
-          </label>
+            <i class="fa-solid fa-chevron-down text-xs
+                   transition-transform duration-200" [class.rotate-180]="mostrarFiltrosAvanzados"
+              aria-hidden="true"></i>
+          </button>
 
-          <select id="expedientes-tipo" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="tipoBusqueda" (ngModelChange)="onFiltroChange()">
-            <option value="">Todos los tipos</option>
-
-            @for (opcion of tiposDisponibles; track opcion.value) {
-            <option [value]="opcion.value">
-              {{ opcion.label }}
-            </option>
-            }
-          </select>
-        </div>
-
-        <!-- Origen -->
-        <div class="min-w-0">
-          <label for="expedientes-origen" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Origen
-          </label>
-
-          <select id="expedientes-origen" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="origenBusqueda" (ngModelChange)="onFiltroChange()">
-            <option value="">Todos los orígenes</option>
-
-            @for (opcion of origenesDisponibles; track opcion.value) {
-            <option [value]="opcion.value">
-              {{ opcion.label }}
-            </option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <!-- Estado procesal -->
-        <div class="min-w-0">
-          <label for="expedientes-estado-procesal" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Estado procesal
-          </label>
-
-          <select id="expedientes-estado-procesal" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="estadoProcesalBusqueda"
-            (ngModelChange)="onFiltroChange()">
-            <option value="">Todas las etapas</option>
-
-            @for (estado of estadosProcesalesDisponibles; track estado) {
-            <option [value]="estado">
-              {{ estado }}
-            </option>
-            }
-          </select>
-        </div>
-
-        <!-- Año -->
-        <div class="min-w-0">
-          <label for="expedientes-anio" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Año de registro
-          </label>
-
-          <select id="expedientes-anio" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="filtroAnio" (ngModelChange)="onFiltroChange()">
-            <option [ngValue]="''">Todos los años</option>
-
-            @for (anio of anios; track anio) {
-            <option [ngValue]="anio">
-              {{ anio }}
-            </option>
-            }
-          </select>
-        </div>
-
-        <!-- Mes -->
-        <div class="min-w-0">
-          <label for="expedientes-mes" class="mb-1.5 block text-xs font-semibold uppercase
-                   tracking-wide text-base-content/60">
-            Mes de registro
-          </label>
-
-          <select id="expedientes-mes" class="select select-bordered h-11 min-h-11
-                   w-full rounded-xl bg-base-100" [(ngModel)]="filtroMes" (ngModelChange)="onFiltroChange()"
-            aria-describedby="expedientes-mes-ayuda">
-            <option [ngValue]="''">Todos los meses</option>
-
-            @for (mes of meses; track mes.value) {
-            <option [ngValue]="mes.value">
-              {{ mes.label }}
-            </option>
-            }
-          </select>
-
-          <p id="expedientes-mes-ayuda" class="mt-1 text-xs text-base-content/55">
-            Para filtrar por mes, selecciona también un año.
-          </p>
-        </div>
-
-        <!-- Limpiar -->
-        <div class="flex items-start pt-0 md:pt-6">
-          <button type="button" class="btn btn-outline h-11 min-h-11
-                   w-full gap-2 rounded-xl" (click)="limpiarFiltros()">
-            <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+          <!-- Limpiar -->
+          @if (hayFiltros) {
+          <button type="button" class="btn btn-secondary btn-sm gap-2 rounded-lg" [disabled]="
+            !searchBusqueda.trim() &&
+            !estadoBusqueda &&
+            !tipoBusqueda &&
+            !origenBusqueda &&
+            !estadoProcesalBusqueda &&
+            filtroAnio === '' &&
+            filtroMes === '' &&
+            responsableBusqueda === null
+          " (click)="limpiarFiltros()">
+            <i class="fa-solid fa-eraser" aria-hidden="true"></i>
             Limpiar filtros
           </button>
+          }
+
+        </div>
+
+        <!-- ================================================= -->
+        <!-- FILTROS AVANZADOS -->
+        <!-- ================================================= -->
+        <div id="expedientes-filtros-avanzados" [hidden]="!mostrarFiltrosAvanzados">
+          <div class="mt-4 grid grid-cols-1 items-start gap-4
+                 border-t border-base-300 pt-4
+                 sm:grid-cols-2 xl:grid-cols-3">
+            <!-- Estado procesal -->
+            <div class="min-w-0 sm:col-span-2 xl:col-span-1">
+              <label for="expedientes-estado-procesal" class="mb-1.5 block text-xs font-semibold uppercase
+                     tracking-wide text-base-content/60">
+                Estado procesal
+              </label>
+
+              <select id="expedientes-estado-procesal" class="select select-bordered h-11 min-h-11
+                     w-full min-w-0 rounded-xl bg-base-200
+                     pl-4 pr-10 transition-colors
+                     focus:border-primary focus:outline-none
+                     focus:ring-2 focus:ring-primary/30" [class.border-primary]="estadoProcesalBusqueda !== ''"
+                [(ngModel)]="estadoProcesalBusqueda" (ngModelChange)="onFiltroChange()">
+                <option value="">Todas las etapas</option>
+
+                @for (estado of estadosProcesalesDisponibles; track estado) {
+                <option [value]="estado">
+                  {{ estado }}
+                </option>
+                }
+              </select>
+            </div>
+
+            <!-- Año -->
+            <div class="min-w-0">
+              <label for="expedientes-anio" class="mb-1.5 block text-xs font-semibold uppercase
+                     tracking-wide text-base-content/60">
+                Año de registro
+              </label>
+
+              <select id="expedientes-anio" class="select select-bordered h-11 min-h-11
+                     w-full min-w-0 rounded-xl bg-base-200
+                     pl-4 pr-10 transition-colors
+                     focus:border-primary focus:outline-none
+                     focus:ring-2 focus:ring-primary/30" [class.border-primary]="filtroAnio !== ''"
+                [(ngModel)]="filtroAnio" (ngModelChange)="onFiltroChange()">
+                <option [ngValue]="''">Todos los años</option>
+
+                @for (anio of anios; track anio) {
+                <option [ngValue]="anio">
+                  {{ anio }}
+                </option>
+                }
+              </select>
+            </div>
+
+            <!-- Mes -->
+            <div class="min-w-0">
+              <label for="expedientes-mes" class="mb-1.5 block text-xs font-semibold uppercase
+                     tracking-wide text-base-content/60">
+                Mes de registro
+              </label>
+
+              <select id="expedientes-mes" class="select select-bordered h-11 min-h-11
+                     w-full min-w-0 rounded-xl bg-base-200
+                     pl-4 pr-10 transition-colors
+                     focus:border-primary focus:outline-none
+                     focus:ring-2 focus:ring-primary/30" [class.border-primary]="filtroMes !== ''"
+                [(ngModel)]="filtroMes" (ngModelChange)="onFiltroChange()" aria-describedby="expedientes-mes-ayuda">
+                <option [ngValue]="''">Todos los meses</option>
+
+                @for (mes of meses; track mes.value) {
+                <option [ngValue]="mes.value">
+                  {{ mes.label }}
+                </option>
+                }
+              </select>
+
+              <p id="expedientes-mes-ayuda" class="mt-1.5 text-xs text-base-content/55">
+                Para filtrar por mes, selecciona también un año.
+              </p>
+            </div>
+
+          </div>
         </div>
       </div>
-    </section>
+
+      <!-- ================================================= -->
+      <!-- ILUSTRACIÓN -->
+      <!-- ================================================= -->
+      <div class="hidden items-center justify-center
+             border-l border-base-300 px-5 lg:flex">
+        <span class="imagen-lupa block h-32 w-32
+               text-base-content opacity-90" aria-hidden="true"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- TABLA DE EXPEDIENTES -->
+  <!-- ================================================= -->
+  @if (isLoading || expedientes.length > 0) {
+  <section class="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm"
+    aria-label="Expedientes registradas">
 
     <!-- ================================================= -->
     <!-- CANTIDAD POR PÁGINA -->
     <!-- ================================================= -->
-    <div class="flex flex-wrap items-center justify-between
-             gap-3 px-5 py-4">
+    <div class="flex flex-col gap-4 border-b border-base-300 px-4 py-4
+           sm:flex-row sm:items-center sm:justify-between sm:px-5">
+
+      <!-- Mostrar cantidad por pagina -->
       <div class="flex items-center gap-2 text-sm">
         <label for="expedientes-limit">
           Mostrar
@@ -200,12 +320,26 @@
         </span>
       </div>
 
-      <span class="text-sm text-base-content/60" aria-live="polite">
+      <!-- <span class="text-sm text-base-content/60" aria-live="polite">
         {{ totalItems }}
         {{ totalItems === 1
         ? 'expediente encontrado'
         : 'expedientes encontrados' }}
-      </span>
+      </span> -->
+
+      <!-- Boton crear -->
+      <div class="flex w-full items-center
+                 justify-end sm:w-auto">
+        <button type="button" class="btn btn-primary
+                  min-h-10 w-full gap-2
+                  rounded-xl border-none
+                hover:text-white bg-info hover:bg-primary
+                  sm:w-auto sm:min-w-36" (click)="abrirModal()">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          Expediente
+        </button>
+      </div>
+
     </div>
 
     <!-- ================================================= -->
@@ -375,41 +509,50 @@
             <!-- Acciones -->
             <td>
               <div class="flex items-center justify-center gap-1">
+
                 <!-- Documentos -->
-                <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" title="Ver documentos"
-                  [attr.aria-label]="'Ver documentos del expediente ' +
+                <div class="tooltip tooltip-left" data-tip="Ver documentos">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" [attr.aria-label]="'Ver documentos del expediente ' +
                         exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
-                  (click)="verDocumentos(exp)">
-                  <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
-                </button>
+                    (click)="verDocumentos(exp)">
+                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                  </button>
+                </div>
+
 
                 <!-- Designación -->
                 @if (puedeEditar(exp)) {
-                <button type="button" class="btn btn-ghost btn-circle btn-sm
-                               text-secondary" title="Gestionar designación arbitral" [attr.aria-label]="'Gestionar designación del expediente ' +
+                <div class="tooltip tooltip-left" data-tip="Gestionar designación arbitral">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm
+                               text-secondary" [attr.aria-label]="'Gestionar designación del expediente ' +
                           exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
-                  (click)="designacionFormModal(exp)">
-                  <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-                </button>
+                    (click)="designacionFormModal(exp)">
+                    <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+                  </button>
+                </div>
                 }
 
                 <!-- Más opciones -->
-                <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Más acciones" [attr.aria-label]="'Más acciones del expediente ' +
+                <div class="tooltip tooltip-left" data-tip="Más acciones">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" [attr.aria-label]="'Más acciones del expediente ' +
                         exp.numero_expediente" [attr.aria-expanded]="menuActivo?.id_expediente ===
                         exp.id_expediente" [attr.aria-controls]="'expediente-menu-' +
                         exp.id_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
-                  (click)="toggleDropdown($event, exp)">
-                  @if (estaEnOperacion(exp.id_expediente)) {
-                  <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
-                  } @else {
-                  <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
-                  }
-                </button>
+                    (click)="toggleDropdown($event, exp)">
+                    @if (estaEnOperacion(exp.id_expediente)) {
+                    <span class="loading loading-spinner loading-xs" aria-hidden="true"></span>
+                    } @else {
+                    <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+                    }
+                  </button>
+                </div>
+
               </div>
             </td>
           </tr>
-          } @empty {
-          <!-- Sin resultados -->
+          }
+          <!--  @empty {
+
           <tr>
             <td colspan="10" class="py-14 text-center">
               <i class="fa-solid fa-folder-open mb-3
@@ -424,7 +567,7 @@
               </p>
             </td>
           </tr>
-          }
+          } -->
           }
         </tbody>
       </table>
@@ -433,39 +576,97 @@
     <!-- ================================================= -->
     <!-- PAGINACIÓN -->
     <!-- ================================================= -->
-    <footer class="flex flex-col items-center justify-between
-             gap-4 border-t border-base-300
-             bg-base-200/40 px-5 py-4 sm:flex-row">
-      <div class="text-sm text-base-content/60">
-        @if (totalPages > 0) {
-        Página
-        <span class="font-semibold text-base-content">
-          {{ page }}
-        </span>
-        de
-        <span class="font-semibold text-base-content">
-          {{ totalPages }}
-        </span>
-        } @else {
-        Sin páginas disponibles
-        }
+    @if (!isLoading && totalItems > 0) {
+    <footer class="flex flex-col gap-4 border-t border-base-300
+           bg-base-200/50 px-4 py-4 sm:px-5
+           lg:flex-row lg:items-center lg:justify-between">
+      <div class="text-center sm:text-left">
+        <h3 class="font-semibold text-base-content">
+          Expedientes registrados
+        </h3>
+
+        <p class="mt-0.5 text-sm text-base-content/55">
+          {{ totalItems }}
+          {{ totalItems === 1 ? 'expediente encontrado' : 'expedientes encontrados' }}
+        </p>
       </div>
 
-      <nav class="flex items-center gap-2" aria-label="Paginación de expedientes">
-        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
-          [disabled]="isLoading || page <= 1 || totalPages === 0" (click)="cambiarPagina(page - 1)">
-          <i class="fa-solid fa-chevron-left text-xs" aria-hidden="true"></i>
-          Anterior
-        </button>
+      <div class="flex w-full flex-col items-center gap-3
+             text-sm text-base-content/70 sm:w-auto sm:flex-row">
+        <span class="whitespace-nowrap">
+          Página
+          <strong class="text-base-content">{{ page }}</strong>
+          de
+          <strong class="text-base-content">{{ totalPages }}</strong>
+        </span>
 
-        <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
-          [disabled]="isLoading || page >= totalPages || totalPages === 0" (click)="cambiarPagina(page + 1)">
-          Siguiente
-          <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
-        </button>
-      </nav>
+        <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
+          <button type="button" class="btn btn-sm w-full gap-2 rounded-lg sm:w-auto" [disabled]="isLoading || page <= 1"
+            (click)="cambiarPagina(page - 1)">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+
+            Anterior
+          </button>
+
+          <button type="button" class="btn btn-sm w-full gap-2 rounded-lg sm:w-auto" [disabled]="
+            isLoading ||
+            totalPages === 0 ||
+            page >= totalPages
+          " (click)="cambiarPagina(page + 1)">
+            Siguiente
+
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
     </footer>
-  </div>
+    }
+  </section>
+  }
+
+  <!-- ===================================================== -->
+  <!-- VACÍO -->
+  <!-- ===================================================== -->
+  @if (!isLoading && expedientes.length === 0) {
+  <section class="rounded-2xl border border-dashed
+           border-base-300 bg-base-100
+           px-6 py-16 text-center shadow-sm" aria-label="Sin usuarios disponibles">
+    <!-- <div class="mx-auto flex h-20 w-20
+             items-center justify-center
+             rounded-full bg-base-200
+             text-base-content/35">
+      <i class="fa-solid fa-users text-3xl" aria-hidden="true"></i>
+    </div> -->
+
+    <div class="hidden items-center justify-center px-5 lg:flex">
+      <span class="imagen-folder-empty block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
+    </div>
+
+    <h2 class="mt-5 text-lg font-bold">
+      No se encontraron expedientes
+    </h2>
+
+    <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
+      @if ( searchBusqueda || estadoBusqueda || tipoBusqueda || origenBusqueda || estadoProcesalBusqueda || filtroAnio||
+      filtroMes ||responsableBusqueda) {
+      No hay expedientes disponibles que coincidan con los filtros seleccionados.
+      Prueba con otros criterios de búsqueda.
+      } @else {
+      Aún no hay expedientes registrados en el sistema.
+      }
+    </p>
+
+    @if ( searchBusqueda || estadoBusqueda || tipoBusqueda || origenBusqueda || estadoProcesalBusqueda || filtroAnio||
+    filtroMes ||responsableBusqueda) {
+    <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
+      <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
+      <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+      Limpiar filtros
+    </button>
+    }
+  </section>
+  }
+
 </div>
 
 <!-- ===================================================== -->

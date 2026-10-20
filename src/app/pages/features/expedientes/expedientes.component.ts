@@ -44,6 +44,7 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
   errorMessage = '';
 
   // Compatibilidad con el HTML anterior.
+  mostrarFiltrosAvanzados = false;
   get loading(): boolean {
     return this.isLoading;
   }
@@ -523,7 +524,7 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
     this.cerrarDropdown();
 
     void this.router.navigate([
-      '/app',
+      '/admin',
       'expedientes',
       expediente.id_expediente,
       'documentos',
@@ -722,6 +723,19 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
   // *********************************************************
   // MENÚ DE ACCIONES
   // *********************************************************
+
+  get hayFiltros(): boolean {
+    return !!(
+      this.searchBusqueda.trim() ||
+      this.estadoBusqueda ||
+      this.tipoBusqueda ||
+      this.origenBusqueda ||
+      this.estadoProcesalBusqueda ||
+      this.filtroAnio ||
+      this.filtroMes ||
+      this.responsableBusqueda
+    );
+  }
 
   toggleDropdown(
     event: MouseEvent,

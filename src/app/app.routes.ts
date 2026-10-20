@@ -46,7 +46,7 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [RoleGuard],
     data: { roles: ['ADMIN', 'SECRETARIA', 'ARBITRO', 'PARTICIPE', 'ADJUDICADOR'] },
-    loadChildren: () => import('./layout/trazabilidad/trazabilidad.routes'),
+    loadChildren: () => import('./pages/features/features.routes'),
   },
 
   // =========================================================

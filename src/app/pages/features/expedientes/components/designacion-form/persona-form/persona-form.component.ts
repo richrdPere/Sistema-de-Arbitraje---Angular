@@ -8,7 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 // SERVICES
-import { PersonaService } from 'src/app/services/persona.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 
 @Component({
   selector: 'persona-form',
@@ -104,7 +104,7 @@ export class PersonaFormComponent implements OnInit {
 
         if (!dni || dni.length !== 8) return;
         this.loadingBusqueda = true;
-        this.personaService.searchPersona({ dni })
+        this.personaService.findPersona({ dni })
           .subscribe({
             next: (resp: any) => {
               if (!resp) {
@@ -148,7 +148,7 @@ export class PersonaFormComponent implements OnInit {
 
         if (!ruc || ruc.length !== 11) return;
         this.loadingBusqueda = true;
-        this.personaService.searchPersona({ ruc })
+        this.personaService.findPersona({ ruc })
           .subscribe({
 
             next: (resp: any) => {

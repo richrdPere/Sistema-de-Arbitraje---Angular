@@ -1,109 +1,300 @@
-<section class="relative min-h-screen ">
+<section class="relative isolate flex min-h-screen items-center justify-center
+         bg-cover bg-center px-4 py-10 sm:px-6" style="background-image: url('assets/bg-justicia.jpg');"
+  aria-labelledby="consulta-titulo">
+  <!-- ================================================= -->
+  <!-- OVERLAY -->
+  <!-- ================================================= -->
+  <div class="pointer-events-none absolute inset-0 -z-10 bg-black/50" aria-hidden="true"></div>
 
-  <div class="relative min-h-screen bg-cover bg-center" style="background-image: url('assets/bg-justicia.jpg');">
+  <div class="card w-full max-w-3xl bg-base-100 shadow-2xl">
+    <div class="card-body gap-6 p-5 sm:p-8">
 
-    <!-- Overlay oscuro -->
-    <div class="absolute inset-0 bg-black/40 "></div>
+      <!-- ================================================= -->
+      <!-- ENCABEZADO -->
+      <!-- ================================================= -->
+      <div class="space-y-2 text-center">
+        <h1 id="consulta-titulo" class="text-xl font-bold text-base-content sm:text-2xl">
+          Consulta de trámites y expedientes
+        </h1>
 
-    <div class="flex flex-col items-center justify-center px-4 py-10">
-      <div class="card w-full max-w-md bg-base-100 shadow-xl">
-        <div class="card-body space-y-5">
-          <h2 class="text-center text-xl font-bold text-info">
-            Consulta de Expediente
-          </h2>
-
-          <!-- FORMULARIO -->
-          <form [formGroup]="formConsulta" (ngSubmit)="consultarExpediente()" class="space-y-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text pb-3">Número de expediente</span>
-              </label>
-              <input type="text" formControlName="numeroExpediente" placeholder="Ej: EXP-2025-001"
-                class="input input-bordered w-full" />
-              @if (formConsulta.controls['numeroExpediente'].invalid &&
-              formConsulta.controls['numeroExpediente'].touched) {
-              <span class="text-error text-sm mt-1">Ingrese un número válido.</span>
-              }
-            </div>
-
-            <button type="submit" class="btn btn-primary w-full" [disabled]="cargando || formConsulta.invalid">
-              @if (cargando) {
-              <span class="loading loading-spinner"></span> Consultando...
-              } @else {
-              Consultar
-              }
-            </button>
-          </form>
-
-          <!-- MENSAJES DE ERROR -->
-          @if (errorMsg) {
-          <div class="alert alert-error text-sm text-white">
-            {{ errorMsg }}
-          </div>
-          }
-
-          <!-- RESULTADO -->
-          @if (resultado) {
-          <div class="mt-5 p-4 bg-base-300 rounded-lg space-y-2">
-
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Datos del Trámite</h3>
-            <p><strong>Número:</strong> {{ resultado.tramite.numero_tramite }}</p>
-            <p><strong>Tipo:</strong> {{ resultado.tramite.tipo_solicitud }}</p>
-            <p><strong>Descripción:</strong> {{ resultado.tramite.descripcion }}</p>
-            <p><strong>Estado:</strong>
-              <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800">
-                {{ resultado.tramite.estado }}
-              </span>
-            </p>
-            <p class="mt-2">
-              <a [href]="resultado.tramite.archivo_url" target="_blank" class="text-blue-600 underline"> Ver
-                documento</a>
-            </p>
-
-            <h3 class="text-lg font-bold text-gray-800 mt-6 mb-2">Datos del Participante</h3>
-            <p><strong>Nombre:</strong> {{ resultado.usuario.nombre }} {{ resultado.usuario.apellidos }}</p>
-            <p><strong>Correo:</strong> {{ resultado.usuario.correo }}</p>
-            <p><strong>Teléfono:</strong> {{ resultado.usuario.telefono }}</p>
-            <p><strong>DNI:</strong> {{ resultado.usuario.documento_identidad }}</p>
-
-            <h3 class="text-lg font-bold text-gray-800 mt-6 mb-2">Historial</h3>
-
-            @if (resultado.tramite.expediente.historialExpedientes?.length > 0) {
-            <div>
-              <ul class="space-y-2">
-
-                @for (h of resultado.tramite.expediente.historialExpedientes; track $index) {
-                <li class="border rounded-lg p-2">
-                  <p><strong>Acción:</strong> {{ h.accion }}</p>
-                  <p><strong>Detalle:</strong> {{ h.detalle }}</p>
-                  <p class="text-sm text-gray-500">
-                    {{ h.fecha_accion | date:'short' }} - {{ h.usuario_responsable }}
-                  </p>
-                </li>
-                }
-
-              </ul>
-            </div>
-            }
-            @else {
-            <ng-template #sinHistorial>
-              <p class="text-gray-500">No hay historial registrado.</p>
-            </ng-template>
-            }
-
-
-
-          </div>
-
-          <button class="btn btn-primary w-full mt-3" (click)="reset()">Nueva consulta</button>
-
-          }
-        </div>
+        <p class="text-sm leading-relaxed text-base-content/70">
+          Ingresa el número completo de tu trámite o expediente
+          para consultar su estado.
+        </p>
       </div>
+
+      <!-- ================================================= -->
+      <!-- FORMULARIO -->
+      <!-- ================================================= -->
+      <form [formGroup]="formConsulta" (ngSubmit)="consultarExpediente()" class="space-y-5" [attr.aria-busy]="cargando">
+        <div class="form-control">
+          <label class="label" for="numero-consulta">
+            <span class="label-text font-medium">
+              Número de trámite o expediente
+              <span class="text-error" aria-hidden="true">*</span>
+            </span>
+          </label>
+
+          <input id="numero-consulta" type="text" formControlName="numeroExpediente"
+            placeholder="Ingresa el número completo" class="input input-bordered w-full" autocomplete="off"
+            spellcheck="false" required [readOnly]="cargando" [class.input-error]="
+              formConsulta.controls.numeroExpediente.invalid &&
+              formConsulta.controls.numeroExpediente.touched
+            " [attr.aria-invalid]="
+              formConsulta.controls.numeroExpediente.invalid &&
+              formConsulta.controls.numeroExpediente.touched
+            " aria-describedby="numero-consulta-ayuda numero-consulta-error" appUppercase />
+
+          <p id="numero-consulta-ayuda" class="mt-2 text-xs text-base-content/60">
+            Incluye los guiones, barras y demás caracteres del número.
+          </p>
+
+          <div id="numero-consulta-error" aria-live="polite">
+            @if (
+            formConsulta.controls.numeroExpediente.invalid &&
+            formConsulta.controls.numeroExpediente.touched
+            ) {
+            <p class="mt-2 text-sm text-error">
+              @if (
+              formConsulta.controls.numeroExpediente.hasError('required')
+              ) {
+              Ingresa el número de trámite o expediente.
+              } @else {
+              El número debe contener al menos 5 caracteres.
+              }
+            </p>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" [disabled]="cargando || formConsulta.invalid">
+          @if (cargando) {
+          <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+          Consultando...
+          } @else {
+          Consultar
+          }
+        </button>
+      </form>
+
+      <!-- ================================================= -->
+      <!-- ERROR -->
+      <!-- ================================================= -->
+      @if (errorMsg) {
+      <div class="alert alert-error text-sm" role="alert">
+        <span class="break-words">{{ errorMsg }}</span>
+      </div>
+      }
+
+      <!-- ================================================= -->
+      <!-- RESULTADOS -->
+      <!-- ================================================= -->
+      <div aria-live="polite" [attr.aria-busy]="cargando">
+        @if (resultado; as consulta) {
+        <div class="space-y-5">
+
+          <p class="text-sm text-base-content/70">
+            Resultados encontrados:
+            <span class="font-semibold text-base-content">
+              {{ consulta.items.length }}
+            </span>
+          </p>
+
+          @for (tramite of consulta.items; track tramite.id_tramite) {
+          <article class="overflow-hidden rounded-xl
+                       border border-base-300 bg-base-100">
+            <!-- CABECERA DEL RESULTADO -->
+            <div class="flex flex-wrap items-start justify-between
+                         gap-3 border-b border-base-300 bg-base-200 p-4 sm:p-5">
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-medium text-base-content/60">
+                  Número de trámite
+                </p>
+
+                <h2 class="mt-1 break-words text-base
+                             font-bold text-base-content sm:text-lg">
+                  {{ tramite.numero_tramite }}
+                </h2>
+              </div>
+
+              <span class="badge h-auto whitespace-normal
+                           px-3 py-2 text-center text-xs font-semibold"
+                [class.badge-warning]="tramite.estado === 'PENDIENTE'"
+                [class.badge-success]="tramite.estado === 'APROBADA'"
+                [class.badge-error]="tramite.estado === 'RECHAZADA'">
+                @switch (tramite.estado) {
+                @case ('PENDIENTE') {
+                Pendiente
+                }
+                @case ('APROBADA') {
+                Aprobada
+                }
+                @case ('RECHAZADA') {
+                Rechazada
+                }
+                }
+              </span>
+            </div>
+
+            <div class="space-y-6 p-4 sm:p-5">
+
+              <!-- DATOS DEL TRÁMITE -->
+              <section>
+                <h3 class="mb-4 font-semibold text-base-content">
+                  Información del trámite
+                </h3>
+
+                <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                  <div class="sm:col-span-2">
+                    <dt class="font-medium text-base-content/60">
+                      Tipo de solicitud
+                    </dt>
+                    <dd class="mt-1 text-base-content">
+                      {{ tiposSolicitud[tramite.tipo_solicitud] }}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Fecha de registro
+                    </dt>
+                    <dd class="mt-1 text-base-content">
+                      {{ tramite.createdAt | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Última actualización
+                    </dt>
+                    <dd class="mt-1 text-base-content">
+                      {{ tramite.updatedAt | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                    </dd>
+                  </div>
+
+                  @if (tramite.fecha_aprobacion; as fechaAprobacion) {
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Fecha de aprobación
+                    </dt>
+                    <dd class="mt-1 text-base-content">
+                      {{ fechaAprobacion | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                    </dd>
+                  </div>
+                  }
+
+                  @if (tramite.fecha_rechazo; as fechaRechazo) {
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Fecha de rechazo
+                    </dt>
+                    <dd class="mt-1 text-base-content">
+                      {{ fechaRechazo | date:'dd/MM/yyyy HH:mm':'-0500' }}
+                    </dd>
+                  </div>
+                  }
+
+                  @if (tramite.observaciones; as observaciones) {
+                  <div class="sm:col-span-2">
+                    <dt class="font-medium text-base-content/60">
+                      Observaciones
+                    </dt>
+                    <dd class="mt-2 whitespace-pre-line break-words
+                                   rounded-lg bg-base-200 p-3
+                                   leading-relaxed text-base-content">
+                      {{ observaciones }}
+                    </dd>
+                  </div>
+                  }
+                </dl>
+              </section>
+
+              <!-- EXPEDIENTE ASOCIADO -->
+              <section class="border-t border-base-300 pt-5">
+                <h3 class="mb-4 font-semibold text-base-content">
+                  Expediente asociado
+                </h3>
+
+                @if (tramite.expediente; as expediente) {
+                <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                  <div class="sm:col-span-2">
+                    <dt class="font-medium text-base-content/60">
+                      Número de expediente
+                    </dt>
+                    <dd class="mt-1 break-words font-semibold
+                                   text-base-content">
+                      {{ expediente.numero_expediente }}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Estado del expediente
+                    </dt>
+                    <dd class="mt-2">
+                      <span class="badge badge-outline h-auto
+                                     whitespace-normal px-3 py-2 text-center">
+                        @switch (expediente.estado) {
+                        @case ('SUSPENDIDO') {
+                        Suspendido
+                        }
+                        @case ('EN_ESPERA') {
+                        En espera
+                        }
+                        @case ('EN_TRAMITE') {
+                        En trámite
+                        }
+                        @case ('CONCLUIDO') {
+                        Concluido
+                        }
+                        @case ('ARCHIVADO') {
+                        Archivado
+                        }
+                        @case ('ANULADO') {
+                        Anulado
+                        }
+                        }
+                      </span>
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt class="font-medium text-base-content/60">
+                      Etapa procesal
+                    </dt>
+                    <dd class="mt-1 break-words
+                                   leading-relaxed text-base-content">
+                      {{ expediente.estado_procesal }}
+                    </dd>
+                  </div>
+                </dl>
+                } @else {
+                <p class="rounded-lg bg-base-200
+                               p-3 text-sm text-base-content/70">
+                  Este trámite todavía no tiene un expediente asociado.
+                </p>
+                }
+              </section>
+
+            </div>
+          </article>
+          }
+
+          <p class="text-xs text-base-content/60">
+            Las fechas y horas se muestran en horario de Perú.
+          </p>
+
+        </div>
+        }
+      </div>
+
+      <!-- NUEVA CONSULTA -->
+      @if (resultado || errorMsg) {
+      <button type="button" class="btn btn-outline btn-primary w-full" [disabled]="cargando" (click)="reset()">
+        Nueva consulta
+      </button>
+      }
+
     </div>
-
-
   </div>
-
-
 </section>

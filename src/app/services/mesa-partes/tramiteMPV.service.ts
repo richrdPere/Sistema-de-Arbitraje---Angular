@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
-// Interface
-import { TramiteMPV, TramiteMPVResponse } from '../interfaces/tramiteMPV';
-
 // Environment
 import { environment } from '@environments/environment';
-import { UpdateTramitePayload } from '../interfaces/tramite-update.interface';
+
+// Interface
+import { TramiteMPVResponse } from 'src/app/interfaces/tramiteMPV';
+import { UpdateTramitePayload } from 'src/app/interfaces/tramite-update.interface';
 
 
 @Injectable({ providedIn: 'root' })

@@ -1,6 +1,5 @@
-// Ajusta la ruta según tu proyecto.
-
 import { ApiResponse } from 'src/app/core/models/api-response.model';
+
 import {
   ExpedienteTipo,
   ExpedienteOrigen,
@@ -29,6 +28,20 @@ export type ExpedientesSortBy =
   | 'updatedAt';
 
 export type ExpedientesSortOrder = 'ASC' | 'DESC';
+
+// *********************************************************
+// TIPOS DE PERSONA Y ROL PROCESAL
+// *********************************************************
+
+export type ExpedientePersonaTipo =
+  | 'NATURAL'
+  | 'JURIDICA'
+  | 'ENTIDAD_PUBLICA';
+
+export type ExpedienteParticipeRol =
+  | 'DEMANDANTE'
+  | 'DEMANDADO'
+  | 'TERCERO';
 
 // *********************************************************
 // FILTROS
@@ -68,6 +81,52 @@ export interface ExpedienteResponsableData {
 }
 
 // *********************************************************
+// PERSONA DEL PARTÍCIPE
+// *********************************************************
+
+export interface ExpedienteParticipePersonaData {
+  id_persona: number;
+  tipo: ExpedientePersonaTipo;
+
+  nombres: string | null;
+  apellidos: string | null;
+  dni: string | null;
+  cargo: string | null;
+
+  ruc: string | null;
+  razon_social: string | null;
+  nombre_entidad: string | null;
+
+  email: string | null;
+  direccion: string | null;
+  telefono: string | null;
+
+  estado: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+// *********************************************************
+// PARTÍCIPE DEL EXPEDIENTE
+// *********************************************************
+
+export interface ExpedienteParticipeData {
+  id_participe: number;
+  persona_id: number;
+  expediente_id: number;
+  rol_participe: ExpedienteParticipeRol;
+
+  estado: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+
+  /** Nullable porque el include de persona usa required: false. */
+  persona: ExpedienteParticipePersonaData | null;
+}
+
+// *********************************************************
 // ITEM DEL LISTADO
 // *********************************************************
 
@@ -96,6 +155,9 @@ export interface ExpedientePaginadoItem {
   updatedAt: string;
 
   responsable: ExpedienteResponsableData | null;
+
+  /** Arreglo vacío cuando el expediente no tiene partícipes. */
+  participes: ExpedienteParticipeData[];
 }
 
 // *********************************************************
@@ -122,4 +184,5 @@ export interface ExpedientesPaginadosData {
 // RESPONSE
 // *********************************************************
 
-export type ExpedientesPaginadosResponse = ApiResponse<ExpedientesPaginadosData>;
+export type ExpedientesPaginadosResponse =
+  ApiResponse<ExpedientesPaginadosData>;

@@ -236,8 +236,7 @@ export class AuthService {
     this.refreshEnCurso$ = defer(() => {
       // Leer el token al ejecutar la petición,
       // no al construir el Observable.
-      const refreshToken =
-        this.authStorage.getRefreshToken();
+      const refreshToken = this.authStorage.getRefreshToken();
 
       if (
         !refreshToken ||
@@ -256,9 +255,7 @@ export class AuthService {
 
       const request: RefreshSesionRequest = {
         refresh_token: refreshToken,
-
-        dispositivo:
-          this.authStorage.getOrCreateDeviceId(),
+        dispositivo: this.authStorage.getOrCreateDeviceId(),
       };
 
       // No requiere access token vigente.

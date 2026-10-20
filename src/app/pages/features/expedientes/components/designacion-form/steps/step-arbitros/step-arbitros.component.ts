@@ -10,7 +10,7 @@ import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directiv
 
 // Service
 import { DesignacionFormService, ArbitroSeleccionado } from 'src/app/services/designacion-participes.service';
-import { PersonaService } from 'src/app/services/persona.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 import { ArbitrosService } from 'src/app/services/admin/arbitros.service';
 
 

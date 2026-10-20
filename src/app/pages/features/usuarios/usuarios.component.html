@@ -16,7 +16,7 @@
                  items-center justify-center
                  rounded-2xl bg-primary/10
                  text-primary" aria-hidden="true">
-        <i class="fa-solid fa-user-gear text-xl sm:text-2xl"> </i>
+        <i class="fa-solid fa-users-gear text-xl sm:text-2xl"> </i>
       </div>
 
       <div class="min-w-0">
@@ -96,18 +96,41 @@
             </select>
           </div>
 
+          <!-- Estado -->
+          <div class="min-w-0">
+            <label for="usuarios-estado" class="mb-1.5 block text-xs font-semibold uppercase
+                 tracking-wide text-base-content/60">
+              Estado de la cuenta
+            </label>
+
+            <select id="usuarios-estado" class="select select-bordered h-11 min-h-11
+                  w-full min-w-0 rounded-xl bg-base-200
+                  pl-4 pr-10 transition-colors
+                  focus:border-primary focus:outline-none
+                  focus:ring-2 focus:ring-primary/30" [ngClass]="estadoBusqueda ? 'border-primary' : 'border-base-500'"
+              [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
+              <option [ngValue]="''">Todos los estados</option>
+              <option [ngValue]="true">ACTIVOS</option>
+              <option [ngValue]="false">DESACTIVADOS</option>
+            </select>
+          </div>
+
           <!-- Limpiar -->
+          @if (hayFiltros) {
           <div class="min-w-0">
             <button type="button" class="btn btn-secondary h-11 min-h-11
                    w-full gap-2 rounded-xl
                    xl:w-auto xl:min-w-28" [disabled]="
               !searchBusqueda &&
-              !rolBusqueda
+              !rolBusqueda &&
+              !estadoBusqueda
             " (click)="limpiarFiltros()">
               <i class="fa-solid fa-eraser" aria-hidden="true"></i>
               Limpiar
             </button>
           </div>
+          }
+
         </div>
       </div>
 
@@ -143,223 +166,152 @@
   <!-- ================================================= -->
   <!-- TABLA DE USUARIOS -->
   <!-- ================================================= -->
-  <div class="min-h-full bg-base-300 p-4 text-base-content
-         transition-colors duration-300 md:p-6">
-    <div class="overflow-hidden rounded-2xl border border-base-300
-           bg-base-100 shadow-xl">
-      <!-- ================================================= -->
-      <!-- CABECERA -->
-      <!-- ================================================= -->
-      <div class="flex flex-col gap-4 border-b border-base-300
-             p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 class="text-xl font-bold">
-            Usuarios
-          </h1>
+  @if(isLoading || usuarios.length >0) {
+  <section class="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm"
+    aria-label="Usuarios registrados">
 
-          <p class="mt-1 text-sm text-base-content/60">
-            Administra las cuentas y el acceso al sistema de arbitraje.
-          </p>
-        </div>
+    <!-- ================================================= -->
+    <!-- Cabecera de tabla -->
+    <!-- ================================================= -->
+    <div class="flex flex-col gap-4 border-b border-base-300 px-4 py-4
+           sm:flex-row sm:items-center sm:justify-between sm:px-5">
 
-        <button type="button" class="btn btn-primary gap-2 rounded-xl" (click)="abrirModal()">
-          <i class="fa-solid fa-plus" aria-hidden="true"></i>
-          Nuevo usuario
-        </button>
-      </div>
+      <!-- Total -->
+      <div class="flex w-full items-center
+                 justify-between gap-3
+                 text-sm text-base-content/70
+                 sm:w-auto sm:justify-start">
+        <label for="usuarios-page-size" class="whitespace-nowrap">
+          Mostrar
+        </label>
 
-      <!-- ================================================= -->
-      <!-- FILTROS -->
-      <!-- ================================================= -->
-      <div class="grid grid-cols-1 gap-4 border-b border-base-300
-             bg-base-200/40 p-5 md:grid-cols-2 xl:grid-cols-4">
-        <!-- Búsqueda -->
-        <div class="min-w-0">
-          <label for="usuarios-search" class="mb-1.5 block text-xs font-semibold uppercase
-                 tracking-wide text-base-content/60">
-            Buscar usuario
-          </label>
+        <select id="usuarios-page-size" class="select select-bordered select-sm
+         w-16 min-w-16 shrink-0 pl-3 pr-8" [(ngModel)]="limit" (change)="cambiarLimite()">
 
-          <input id="usuarios-search" type="search" class="input input-bordered h-11 w-full rounded-xl
-                 bg-base-100 focus:border-primary
-                 focus:outline-none focus:ring-2
-                 focus:ring-primary/30" placeholder="Nombre, documento o correo" [(ngModel)]="searchBusqueda"
-            (ngModelChange)="onSearchChange()" />
-        </div>
+          @for ( size of pageSizeOptions; track size ) {
+          <option [ngValue]="size">
+            {{ size }}
+          </option>
+          }
+        </select>
 
-        <!-- Rol -->
-        <div class="min-w-0">
-          <label for="usuarios-rol" class="mb-1.5 block text-xs font-semibold uppercase
-                 tracking-wide text-base-content/60">
-            Rol de usuario
-          </label>
-
-          <select id="usuarios-rol" class="select select-bordered h-11 min-h-11
-                 w-full rounded-xl bg-base-100
-                 focus:border-primary focus:outline-none
-                 focus:ring-2 focus:ring-primary/30" [(ngModel)]="rolBusqueda" (ngModelChange)="onFiltroChange()">
-            <option value="">Todos los roles</option>
-
-            @for (opcion of rolesDisponibles; track opcion.id_rol) {
-            <option [value]="opcion.id_rol">
-              {{ opcion.nombre }}
-            </option>
-            }
-          </select>
-        </div>
-
-        <!-- Estado -->
-        <div class="min-w-0">
-          <label for="usuarios-estado" class="mb-1.5 block text-xs font-semibold uppercase
-                 tracking-wide text-base-content/60">
-            Estado de la cuenta
-          </label>
-
-          <select id="usuarios-estado" class="select select-bordered h-11 min-h-11
-                 w-full rounded-xl bg-base-100
-                 focus:border-primary focus:outline-none
-                 focus:ring-2 focus:ring-primary/30" [(ngModel)]="estadoBusqueda" (ngModelChange)="onFiltroChange()">
-            <option [ngValue]="''">Todos los estados</option>
-            <option [ngValue]="true">Activos</option>
-            <option [ngValue]="false">Inactivos</option>
-          </select>
-        </div>
-
-        <!-- Limpiar -->
-        <div class="flex items-end">
-          <button type="button" class="btn btn-outline h-11 min-h-11
-                 w-full gap-2 rounded-xl" (click)="limpiarFiltros()">
-            <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
-            Limpiar filtros
-          </button>
-        </div>
-      </div>
-
-      <!-- ================================================= -->
-      <!-- CANTIDAD POR PÁGINA -->
-      <!-- ================================================= -->
-      <div class="flex flex-wrap items-center justify-between
-             gap-3 px-5 py-4">
-        <div class="flex items-center gap-2 text-sm">
-          <label for="usuarios-limit">
-            Mostrar
-          </label>
-
-          <select id="usuarios-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
-            (ngModelChange)="cambiarLimite()" [disabled]="isLoading">
-            @for (size of pageSizeOptions; track size) {
-            <option [ngValue]="size">
-              {{ size }}
-            </option>
-            }
-          </select>
-
-          <span class="text-base-content/60">
-            por página
-          </span>
-        </div>
-
-        <span class="text-sm text-base-content/60" aria-live="polite">
-          {{ totalItems }}
-          {{ totalItems === 1 ? 'usuario encontrado' : 'usuarios encontrados' }}
+        <span class="whitespace-nowrap">
+          ítems por página
         </span>
       </div>
 
-      <!-- ================================================= -->
-      <!-- TABLA -->
-      <!-- ================================================= -->
-      <div class="overflow-x-auto" [attr.aria-busy]="isLoading">
-        <table class="table w-full">
-          <caption class="sr-only">
-            Listado de usuarios del sistema de arbitraje
-          </caption>
+      <!-- Botón crear -->
+      <div class="flex w-full items-center
+                 justify-end sm:w-auto">
 
-          <thead class="bg-base-200 text-base-content/70">
-            <tr>
-              <th scope="col" class="w-16">#</th>
-              <th scope="col">Usuario</th>
-              <th scope="col">Rol</th>
-              <th scope="col">Cargo</th>
-              <th scope="col">Correo de acceso</th>
-              <th scope="col">Documento</th>
-              <th scope="col">Teléfono</th>
-              <th scope="col">Estado</th>
-              <th scope="col" class="text-center">Acciones</th>
-            </tr>
-          </thead>
+        <button type="button" class="btn btn-primary
+                  min-h-10 w-full gap-2
+                  rounded-xl border-none
+                hover:text-white bg-info hover:bg-primary
+                  sm:w-auto sm:min-w-36" (click)="abrirModal()">
 
-          <tbody>
-            <!-- Loading -->
-            @if (isLoading) {
-            <tr>
-              <td colspan="9" class="py-14 text-center">
-                <div class="flex items-center justify-center
+          <i class="fa-solid fa-plus"></i>
+
+          Usuario
+        </button>
+      </div>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- TABLA -->
+    <!-- ================================================= -->
+    <div class="overflow-x-auto" [attr.aria-busy]="isLoading">
+      <table class="table w-full">
+        <caption class="sr-only">
+          Listado de usuarios del sistema de arbitraje
+        </caption>
+
+        <thead class="bg-base-200 text-base-content/70">
+          <tr>
+            <th scope="col" class="w-16">#</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Cargo</th>
+            <th scope="col">Correo de acceso</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- Loading -->
+          @if (isLoading) {
+          <tr>
+            <td colspan="9" class="py-14 text-center">
+              <div class="flex items-center justify-center
                          gap-3 text-base-content/60" role="status">
-                  <span class="loading loading-spinner loading-md
+                <span class="loading loading-spinner loading-md
                            text-primary" aria-hidden="true"></span>
-                  <span>Cargando usuarios...</span>
+                <span>Cargando usuarios...</span>
+              </div>
+            </td>
+          </tr>
+          } @else if (errorMessage) {
+          <!-- Error -->
+          <tr>
+            <td colspan="9" class="py-10 text-center">
+              <div role="alert">
+                <p class="font-medium text-error">
+                  {{ errorMessage }}
+                </p>
+
+                <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="getUsuariosPaginated()">
+                  <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                  Reintentar
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @else {
+          <!-- Datos -->
+          @for (usuario of usuarios; track usuario.id_usuario) {
+          <tr class="transition-colors hover:bg-base-200/50">
+            <td class="text-base-content/50">
+              {{ (page - 1) * limit + $index + 1 }}
+            </td>
+
+            <!-- Persona -->
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar">
+                  <div class="h-11 w-11 rounded-xl bg-base-200">
+                    <img [src]="usuario.foto_perfil || 'assets/img/default-avatar.png'" alt="" loading="lazy"
+                      class="object-cover" />
+                  </div>
                 </div>
-              </td>
-            </tr>
-            } @else if (errorMessage) {
-            <!-- Error -->
-            <tr>
-              <td colspan="9" class="py-10 text-center">
-                <div role="alert">
-                  <p class="font-medium text-error">
-                    {{ errorMessage }}
+
+                <div class="min-w-48">
+                  <p class="font-semibold">
+                    {{ getNombreCompleto(usuario.persona) }}
                   </p>
 
-                  <button type="button" class="btn btn-outline btn-sm mt-4 gap-2" (click)="getUsuariosPaginated()">
-                    <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
-                    Reintentar
-                  </button>
+                  <p class="mt-0.5 text-xs text-base-content/50">
+                    @switch (usuario.persona.tipo) {
+                    @case ('NATURAL') {
+                    Persona natural
+                    }
+                    @case ('JURIDICA') {
+                    Persona jurídica
+                    }
+                    @case ('ENTIDAD_PUBLICA') {
+                    Entidad pública
+                    }
+                    }
+                  </p>
                 </div>
-              </td>
-            </tr>
-            } @else {
-            <!-- Datos -->
-            @for (usuario of usuarios; track usuario.id_usuario) {
-            <tr class="transition-colors hover:bg-base-200/50">
-              <td class="text-base-content/50">
-                {{ (page - 1) * limit + $index + 1 }}
-              </td>
+              </div>
+            </td>
 
-              <!-- Persona -->
-              <td>
-                <div class="flex items-center gap-3">
-                  <div class="avatar">
-                    <div class="h-11 w-11 rounded-xl bg-base-200">
-                      <img [src]="usuario.foto_perfil || 'assets/img/default-avatar.png'" alt="" loading="lazy"
-                        class="object-cover" />
-                    </div>
-                  </div>
-
-                  <div class="min-w-48">
-                    <p class="font-semibold">
-                      {{ getNombreCompleto(usuario.persona) }}
-                    </p>
-
-                    <p class="mt-0.5 text-xs text-base-content/50">
-                      @switch (usuario.persona.tipo) {
-                      @case ('NATURAL') {
-                      Persona natural
-                      }
-                      @case ('JURIDICA') {
-                      Persona jurídica
-                      }
-                      @case ('ENTIDAD_PUBLICA') {
-                      Entidad pública
-                      }
-                      }
-                    </p>
-                  </div>
-                </div>
-              </td>
-
-              <!-- Rol -->
-              <td>
-                <span class="badge badge-outline whitespace-nowrap
+            <!-- Rol -->
+            <td>
+              <span class="badge badge-outline whitespace-nowrap
                            text-xs font-semibold" [ngClass]="{
                       'badge-primary': usuario.rol === 'ADMIN',
                       'badge-info': usuario.rol === 'SECRETARIA',
@@ -368,174 +320,201 @@
                       'badge-secondary': usuario.rol === 'ADJUDICADOR',
                       'badge-neutral': usuario.rol === 'STAFF_INTERNO'
                     }">
-                  @switch (usuario.rol) {
-                  @case ('ADMIN') { Administrador }
-                  @case ('SECRETARIA') { Secretaría }
-                  @case ('PARTICIPE') { Partícipe }
-                  @case ('ARBITRO') { Árbitro }
-                  @case ('ADJUDICADOR') { Adjudicador }
-                  @case ('STAFF_INTERNO') { Personal interno }
-                  }
-                </span>
-              </td>
+                @switch (usuario.rol) {
+                @case ('ADMIN') { Administrador }
+                @case ('SECRETARIA') { Secretaría }
+                @case ('PARTICIPE') { Partícipe }
+                @case ('ARBITRO') { Árbitro }
+                @case ('ADJUDICADOR') { Adjudicador }
+                @case ('STAFF_INTERNO') { Personal interno }
+                }
+              </span>
+            </td>
 
-              <!-- Cargo -->
-              <td>
-                <span class="block min-w-32 max-w-56 break-words">
-                  {{ getCargoUsuario(usuario) }}
-                </span>
-              </td>
+            <!-- Cargo -->
+            <td>
+              <span class="block min-w-32 max-w-56 break-words">
+                {{ getCargoUsuario(usuario) }}
+              </span>
+            </td>
 
-              <!-- Correo -->
-              <td>
-                <p class="font-medium">
-                  {{ usuario.correo }}
-                </p>
+            <!-- Correo -->
+            <td>
+              <p class="font-medium">
+                {{ usuario.correo }}
+              </p>
 
-                <div class="mt-1 flex items-center gap-1.5 text-xs" [ngClass]="usuario.correo_verificado
+              <div class="mt-1 flex items-center gap-1.5 text-xs" [ngClass]="usuario.correo_verificado
                       ? 'text-success'
                       : 'text-warning'">
-                  <i [class]="usuario.correo_verificado
+                <i [class]="usuario.correo_verificado
                         ? 'fa-solid fa-circle-check'
                         : 'fa-solid fa-clock'" aria-hidden="true"></i>
 
-                  <span>
-                    {{ usuario.correo_verificado
-                    ? 'Correo verificado'
-                    : 'Verificación pendiente' }}
-                  </span>
-                </div>
+                <span>
+                  {{ usuario.correo_verificado
+                  ? 'Correo verificado'
+                  : 'Verificación pendiente' }}
+                </span>
+              </div>
 
-                @if (usuario.password_reset_required) {
-                <p class="mt-1 text-xs text-base-content/60">
-                  Cambio de contraseña pendiente
-                </p>
-                }
-              </td>
+              @if (usuario.password_reset_required) {
+              <p class="mt-1 text-xs text-base-content/60">
+                Cambio de contraseña pendiente
+              </p>
+              }
+            </td>
 
-              <!-- Documento -->
-              <td class="whitespace-nowrap">
-                {{ getDocumentoUsuario(usuario) }}
-              </td>
+            <!-- Documento -->
+            <td class="whitespace-nowrap">
+              {{ getDocumentoUsuario(usuario) }}
+            </td>
 
-              <!-- Teléfono -->
-              <td class="whitespace-nowrap">
-                {{ usuario.persona.telefono || '-' }}
-              </td>
+            <!-- Teléfono -->
+            <td class="whitespace-nowrap">
+              {{ usuario.persona.telefono || '-' }}
+            </td>
 
-              <!-- Estado -->
-              <td>
-                <div class="flex items-center gap-2">
-                  <input type="checkbox" class="toggle toggle-sm" [ngClass]="usuario.estado
+            <!-- Estado -->
+            <td>
+              <div class="flex items-center gap-2">
+                <input type="checkbox" class="toggle toggle-sm" [ngClass]="usuario.estado
                         ? 'toggle-success'
                         : 'toggle-error'" [checked]="usuario.estado" [disabled]="estaCambiandoEstado(usuario)"
-                    [attr.aria-label]="'Cambiar estado de ' +
+                  [attr.aria-label]="'Cambiar estado de ' +
                         getNombreCompleto(usuario.persona)" (change)="cambiarEstado(usuario, $event)" />
 
-                  @if (estaCambiandoEstado(usuario)) {
-                  <span class="loading loading-spinner
+                @if (estaCambiandoEstado(usuario)) {
+                <span class="loading loading-spinner
                                loading-xs text-primary" role="status" aria-label="Procesando cambio de estado"></span>
-                  } @else {
-                  <span class="text-xs font-semibold" [ngClass]="usuario.estado
+                } @else {
+                <span class="text-xs font-semibold" [ngClass]="usuario.estado
                           ? 'text-success'
                           : 'text-error'">
-                    {{ usuario.estado ? 'Activo' : 'Inactivo' }}
-                  </span>
-                  }
-                </div>
-              </td>
+                  {{ usuario.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+                }
+              </div>
+            </td>
 
-              <!-- Acciones -->
-              <td>
-                <div class="flex items-center justify-center gap-1">
+            <!-- Acciones -->
+            <td>
+              <div class="flex items-center justify-center gap-1">
 
+                <!-- Cambiar rol -->
+                <div class="tooltip tooltip-left" data-tip="Cambiar rol">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm text-secondary hover:bg-secondary/10"
-                    title="Cambiar rol" [attr.aria-label]="'Cambiar rol de ' + getNombreCompleto(usuario.persona)"
+                    [attr.aria-label]="'Cambiar rol de ' + getNombreCompleto(usuario.persona)"
                     [disabled]="estaCambiandoEstado(usuario)" (click)="abrirModalRol(usuario)">
                     <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                   </button>
+                </div>
 
+                <!-- Cambiar correo -->
+                <div class="tooltip tooltip-left" data-tip="Cambiar correo de acceso">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm text-warning hover:bg-warning/10"
-                    title="Cambiar correo de acceso"
                     [attr.aria-label]="'Cambiar correo de ' + getNombreCompleto(usuario.persona)"
                     [disabled]="estaCambiandoEstado(usuario)" (click)="abrirModalCorreo(usuario)">
                     <i class="fa-solid fa-envelope" aria-hidden="true"></i>
                   </button>
+                </div>
 
+                <!-- Ver usuario-->
+                <div class="tooltip tooltip-left" data-tip="Ver usuario">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm
-                             text-info hover:bg-info/10" title="Ver usuario" [attr.aria-label]="'Ver usuario ' +
+                             text-info hover:bg-info/10" [attr.aria-label]="'Ver usuario ' +
                         getNombreCompleto(usuario.persona)" (click)="verUsuario(usuario)">
                     <i class="fa-solid fa-eye" aria-hidden="true"></i>
                   </button>
+                </div>
 
+
+                <!-- Editar usuario-->
+                <div class="tooltip tooltip-left" data-tip="Editar usuario">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm
-                             text-primary hover:bg-primary/10" title="Editar usuario" [attr.aria-label]="'Editar usuario ' +
+                             text-primary hover:bg-primary/10" [attr.aria-label]="'Editar usuario ' +
                         getNombreCompleto(usuario.persona)" [disabled]="estaCambiandoEstado(usuario)"
                     (click)="editarUsuario(usuario)">
                     <i class="fa-solid fa-pencil" aria-hidden="true"></i>
                   </button>
                 </div>
-              </td>
-            </tr>
-            } @empty {
-            <!-- Sin resultados -->
-            <tr>
-              <td colspan="9" class="py-14 text-center">
-                <i class="fa-solid fa-users mb-3 text-3xl
+
+              </div>
+            </td>
+          </tr>
+          }
+          <!-- @empty {
+
+          <tr>
+            <td colspan="9" class="py-14 text-center">
+              <i class="fa-solid fa-users mb-3 text-3xl
                            text-base-content/30" aria-hidden="true"></i>
 
-                <p class="font-semibold">
-                  No se encontraron usuarios
-                </p>
+              <p class="font-semibold">
+                No se encontraron usuarios
+              </p>
 
-                <p class="mt-1 text-sm text-base-content/60">
-                  Ajusta los filtros o registra un nuevo usuario.
-                </p>
-              </td>
-            </tr>
-            }
-            }
-          </tbody>
-        </table>
+              <p class="mt-1 text-sm text-base-content/60">
+                Ajusta los filtros o registra un nuevo usuario.
+              </p>
+            </td>
+          </tr>
+          } -->
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- PAGINACIÓN -->
+    <!-- ================================================= -->
+    @if (!isLoading && totalItems > 0) {
+    <footer class="flex flex-col gap-4 border-t border-base-300
+           bg-base-200/50 px-4 py-4 sm:px-5
+           lg:flex-row lg:items-center lg:justify-between">
+      <div class="text-center sm:text-left">
+        <h3 class="font-semibold text-base-content">
+          Usuarios registrados
+        </h3>
+
+        <p class="mt-0.5 text-sm text-base-content/55">
+          {{ totalItems }}
+          {{ totalItems === 1 ? 'usuario encontrado' : 'usuarios encontrados' }}
+        </p>
       </div>
 
-      <!-- ================================================= -->
-      <!-- PAGINADOR -->
-      <!-- ================================================= -->
-      <div class="flex flex-col items-center justify-between
-             gap-4 border-t border-base-300
-             bg-base-200/40 px-5 py-4 sm:flex-row">
-        <div class="text-sm text-base-content/60">
-          @if (totalPages > 0) {
+      <div class="flex w-full flex-col items-center gap-3
+             text-sm text-base-content/70 sm:w-auto sm:flex-row">
+        <span class="whitespace-nowrap">
           Página
-          <span class="font-semibold text-base-content">
-            {{ page }}
-          </span>
+          <strong class="text-base-content">{{ page }}</strong>
           de
-          <span class="font-semibold text-base-content">
-            {{ totalPages }}
-          </span>
-          } @else {
-          Sin páginas disponibles
-          }
-        </div>
+          <strong class="text-base-content">{{ totalPages }}</strong>
+        </span>
 
-        <nav class="flex items-center gap-2" aria-label="Paginación de usuarios">
-          <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
-            [disabled]="isLoading || page <= 1 || totalPages === 0" (click)="cambiarPagina(page - 1)">
-            <i class="fa-solid fa-chevron-left text-xs" aria-hidden="true"></i>
+        <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
+          <button type="button" class="btn btn-sm w-full gap-2 rounded-lg sm:w-auto" [disabled]="isLoading || page <= 1"
+            (click)="cambiarPagina(page - 1)">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+
             Anterior
           </button>
 
-          <button type="button" class="btn btn-outline btn-sm gap-2 rounded-lg"
-            [disabled]="isLoading || page >= totalPages || totalPages === 0" (click)="cambiarPagina(page + 1)">
+          <button type="button" class="btn btn-sm w-full gap-2 rounded-lg sm:w-auto" [disabled]="
+            isLoading ||
+            totalPages === 0 ||
+            page >= totalPages
+          " (click)="cambiarPagina(page + 1)">
             Siguiente
-            <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
+
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
           </button>
-        </nav>
+        </div>
       </div>
-    </div>
-  </div>
+    </footer>
+    }
+  </section>
+  }
 
   <!-- ===================================================== -->
   <!-- VACÍO -->
@@ -560,7 +539,7 @@
     </h2>
 
     <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
-      @if ( searchBusqueda || rolBusqueda ) {
+      @if ( searchBusqueda || rolBusqueda || estadoBusqueda) {
       No hay usuarios disponibles que coincidan con los filtros seleccionados.
       Prueba con otros criterios de búsqueda.
       } @else {
@@ -568,7 +547,7 @@
       }
     </p>
 
-    @if ( searchBusqueda || rolBusqueda ) {
+    @if ( searchBusqueda || rolBusqueda || estadoBusqueda) {
     <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
       <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
       <i class="fa-solid fa-eraser" aria-hidden="true"></i>
@@ -577,5 +556,6 @@
     }
   </section>
   }
+
 
 </div>
