@@ -2,23 +2,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import {
-  Subject,
-  Subscription,
-  finalize,
-  takeUntil,
-} from 'rxjs';
-
+import { Subject, Subscription, finalize, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 
 // Service
 import { DocumentoService } from 'src/app/pages/features/trazabilidad/services/documento.service';
 
 // Interfaces
-import {
-  DocumentoPaginatedData,
-} from 'src/app/pages/features/trazabilidad/interfaces/documentos';
+import { DocumentoPaginatedData } from 'src/app/pages/features/trazabilidad/interfaces/documentos';
 
 @Component({
   selector: 'app-documentos',

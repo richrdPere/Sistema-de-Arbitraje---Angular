@@ -249,4 +249,13 @@ export class LoginPageComponent implements OnInit {
       ? message
       : fallback;
   }
+
+  // VOLVER A PUBLICO
+
+  irAPublic(): void {
+    void this.router.navigate([
+      '/',
+      'home',
+    ]);
+  }
 }

@@ -17,7 +17,7 @@ type AdminTheme = 'light' | 'dark';
   selector: 'navbar-admin',
   standalone: true,
   imports: [
-    RouterLink,
+    // RouterLink,
   ],
   templateUrl: './navbar-admin.component.html',
   host: {
