@@ -40,6 +40,9 @@ export interface ExpedienteTrazabilidadListado
   templateUrl: './trazabilidad.component.html',
 })
 export class TrazabilidadComponent implements OnInit, OnDestroy {
+abrirModal() {
+throw new Error('Method not implemented.');
+}
 
   // *********************************************************
   // LISTADO

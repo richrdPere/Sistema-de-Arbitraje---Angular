@@ -461,23 +461,6 @@
             </td>
           </tr>
           }
-          <!-- @empty {
-
-          <tr>
-            <td colspan="8" class="py-14 text-center">
-              <i class="fa-solid fa-folder-open mb-3
-                           text-4xl text-base-content/30" aria-hidden="true"></i>
-
-              <p class="font-semibold">
-                No se encontraron solicitudes
-              </p>
-
-              <p class="mt-1 text-sm text-base-content/60">
-                Revisa los filtros o selecciona otro estado.
-              </p>
-            </td>
-          </tr>
-          } -->
           }
         </tbody>
       </table>
@@ -532,6 +515,54 @@
   </div>
   }
 
+  <!-- ===================================================== -->
+  <!-- VACÍO -->
+  <!-- ===================================================== -->
+  @if (!isLoading && solicitudes.length === 0) {
+  <section class="rounded-2xl border border-dashed
+           border-base-300 bg-base-100
+           px-6 py-16 text-center shadow-sm" aria-label="Sin usuarios disponibles">
+
+
+    <div class="hidden items-center justify-center px-5 lg:flex">
+      <span class="imagen-folder-empty block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
+    </div>
+
+    <h2 class="mt-5 text-lg font-bold">
+      @if (
+      filtroSearch ||
+      filtroTipo ||
+      fecha_inicio ||
+      fecha_fin
+      ) {
+      No se encontraron solicitudes
+      } @else {
+      Aún no tienes solicitudes registrados
+      }
+    </h2>
+
+    <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
+      @if ( filtroSearch || filtroTipo || fecha_inicio || fecha_fin) {
+      No hay solicitudes disponibles que coincidan con los filtros seleccionados.
+      Prueba con otros criterios de búsqueda.
+      } @else {
+      Espere a que las personas emitan solicitudes por mesa de partes.
+      }
+    </p>
+
+    <!-- Acciones -->
+    <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      @if ( filtroSearch || filtroTipo || fecha_inicio || fecha_fin) {
+      <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
+        <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
+        <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+        Limpiar filtros
+      </button>
+      }
+    </div>
+
+  </section>
+  }
 </div>
 
 <!-- ===================================================== -->

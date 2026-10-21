@@ -581,9 +581,29 @@ export class StepPersonaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.buscandoPersona) {
-      return;
-    }
+    // if (this.buscandoPersona) {
+    //   return;
+    // }
+    // if (this.buscandoPersona) {
+    //   this.mensajeBusqueda =
+    //     'Espera a que termine la búsqueda de la persona.';
+
+    //   return;
+    // }
+
+    // if (!this.form.valid) {
+    //   this.form.markAllAsTouched();
+
+    //   const camposInvalidos = Object.entries(this.form.controls)
+    //     .filter(([, control]) => control.enabled && control.invalid)
+    //     .map(([nombre]) => nombre);
+
+    //   this.mensajeBusqueda = camposInvalidos.length
+    //     ? `Revisa estos campos: ${camposInvalidos.join(', ')}.`
+    //     : 'La validación del formulario todavía no ha terminado.';
+
+    //   return;
+    // }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -609,6 +629,30 @@ export class StepPersonaComponent implements OnInit, OnDestroy {
     this.expedienteFormService.setPersona(persona);
 
     this.nextStep.emit();
+  }
+
+  // ==========================================================
+  // HABILITAR SIGUIENTE STEP
+  // ==========================================================
+
+  get puedeContinuar(): boolean {
+    if (!this.form || this.buscandoPersona) {
+      return false;
+    }
+
+    if (this.modoEdicion) {
+      return !!this.expedienteFormService.getExpedienteId();
+    }
+
+    return this.form.valid;
+  }
+
+  get camposInvalidos(): string[] {
+    if (!this.form) return [];
+
+    return Object.entries(this.form.controls)
+      .filter(([, control]) => control.enabled && control.invalid)
+      .map(([nombre]) => nombre);
   }
 }
 

@@ -255,13 +255,35 @@ export class ExpedienteModalComponent implements OnChanges {
   private personaCompleta(): boolean {
     const persona = this.expedienteFormService.getPersona();
 
-    // El contrato de creación compartido solo admite NATURAL.
-    return (
-      persona.tipo === 'NATURAL' &&
-      this.tieneTexto(persona.nombres) &&
-      this.tieneTexto(persona.apellidos) &&
-      this.tieneTexto(persona.dni)
-    );
+    switch (persona.tipo) {
+      case 'NATURAL':
+        return (
+          this.tieneTexto(persona.nombres) &&
+          this.tieneTexto(persona.apellidos) &&
+          /^\d{8}$/.test(
+            String(persona.dni ?? '').trim(),
+          )
+        );
+
+      case 'JURIDICA':
+        return (
+          this.tieneTexto(persona.razon_social) &&
+          /^\d{11}$/.test(
+            String(persona.ruc ?? '').trim(),
+          )
+        );
+
+      case 'ENTIDAD_PUBLICA':
+        return (
+          this.tieneTexto(persona.nombre_entidad) &&
+          /^\d{11}$/.test(
+            String(persona.ruc ?? '').trim(),
+          )
+        );
+
+      default:
+        return false;
+    }
   }
 
   private expedienteCompleto(): boolean {

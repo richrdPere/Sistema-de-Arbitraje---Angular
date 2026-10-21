@@ -517,23 +517,22 @@
   <section class="rounded-2xl border border-dashed
            border-base-300 bg-base-100
            px-6 py-16 text-center shadow-sm" aria-label="Sin usuarios disponibles">
-    <!-- <div class="mx-auto flex h-20 w-20
-             items-center justify-center
-             rounded-full bg-base-200
-             text-base-content/35">
-      <i class="fa-solid fa-users text-3xl" aria-hidden="true"></i>
-    </div> -->
+
 
     <div class="hidden items-center justify-center px-5 lg:flex">
       <span class="imagen-folder-empty block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
     </div>
 
     <h2 class="mt-5 text-lg font-bold">
-      No se encontraron usuarios
+      @if ( filtroSearch || filtroEstado  ) {
+      No se tiene trazabilidad de expedientes emitidos
+      } @else {
+      Aún no tienes expedientes registrados
+      }
     </h2>
 
     <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
-      @if ( filtroSearch || filtroEstado || estadosProcesalesDisponibles) {
+      @if ( filtroSearch || filtroEstado ) {
       No hay expedientes disponibles que coincidan con los filtros seleccionados.
       Prueba con otros criterios de búsqueda.
       } @else {
@@ -541,13 +540,16 @@
       }
     </p>
 
-    @if ( filtroSearch || filtroEstado || estadosProcesalesDisponibles) {
-    <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
-      <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
-      <i class="fa-solid fa-eraser" aria-hidden="true"></i>
-      Limpiar filtros
-    </button>
-    }
+    <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      @if ( filtroSearch || filtroEstado ) {
+      <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
+        <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
+        <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+        Limpiar filtros
+      </button>
+      }
+    </div>
+
   </section>
   }
 </div>

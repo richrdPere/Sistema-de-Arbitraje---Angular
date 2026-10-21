@@ -522,9 +522,18 @@
                   </button>
                 </div>
 
+                <!-- Editar expediente-->
+                <div class="tooltip tooltip-left" data-tip="Editar expediente">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm text-warning" [attr.aria-label]="'Editar expediente ' +
+                        exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
+                    (click)="editarExpediente(exp)">
+                    <i class="fa-solid fa-pen" aria-hidden="true"></i>
+
+                  </button>
+                </div>
 
                 <!-- Designación -->
-                @if (puedeEditar(exp)) {
+                <!-- @if (puedeEditar(exp)) {
                 <div class="tooltip tooltip-left" data-tip="Gestionar designación arbitral">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm
                                text-secondary" [attr.aria-label]="'Gestionar designación del expediente ' +
@@ -533,7 +542,7 @@
                     <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
                   </button>
                 </div>
-                }
+                } -->
 
                 <!-- Más opciones -->
                 <div class="tooltip tooltip-left" data-tip="Más acciones">
@@ -634,19 +643,27 @@
   <section class="rounded-2xl border border-dashed
            border-base-300 bg-base-100
            px-6 py-16 text-center shadow-sm" aria-label="Sin usuarios disponibles">
-    <!-- <div class="mx-auto flex h-20 w-20
-             items-center justify-center
-             rounded-full bg-base-200
-             text-base-content/35">
-      <i class="fa-solid fa-users text-3xl" aria-hidden="true"></i>
-    </div> -->
+
 
     <div class="hidden items-center justify-center px-5 lg:flex">
       <span class="imagen-folder-empty block h-32 w-32 text-base-content opacity-90" aria-hidden="true"></span>
     </div>
 
     <h2 class="mt-5 text-lg font-bold">
+      @if (
+      searchBusqueda.trim() ||
+      estadoBusqueda ||
+      tipoBusqueda ||
+      origenBusqueda ||
+      estadoProcesalBusqueda ||
+      filtroAnio === '' ||
+      filtroMes === ''||
+      responsableBusqueda === null
+      ) {
       No se encontraron expedientes
+      } @else {
+      Aún no tienes expedientes registrados
+      }
     </h2>
 
     <p class="mx-auto mt-2 max-w-md text-sm text-base-content/55">
@@ -655,18 +672,28 @@
       No hay expedientes disponibles que coincidan con los filtros seleccionados.
       Prueba con otros criterios de búsqueda.
       } @else {
-      Aún no hay expedientes registrados en el sistema.
+      Registra el primer expediente para gestionar
+      su información, y registro del futuro proceso de arbitraje.
       }
     </p>
 
-    @if ( searchBusqueda || estadoBusqueda || tipoBusqueda || origenBusqueda || estadoProcesalBusqueda || filtroAnio||
-    filtroMes ||responsableBusqueda) {
-    <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
-      <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
-      <i class="fa-solid fa-eraser" aria-hidden="true"></i>
-      Limpiar filtros
-    </button>
-    }
+    <!-- Acciones -->
+    <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      @if ( searchBusqueda || estadoBusqueda || tipoBusqueda || origenBusqueda || estadoProcesalBusqueda || filtroAnio||
+      filtroMes ||responsableBusqueda) {
+      <button type="button" class="btn btn-secondary btn-sm mt-5" (click)="limpiarFiltros()">
+        <!-- <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> -->
+        <i class="fa-solid fa-eraser" aria-hidden="true"></i>
+        Limpiar filtros
+      </button>
+      } @else {
+      <button type="button" class="btn btn-primary btn-sm w-full gap-2 rounded-xl sm:w-auto" (click)="abrirModal()">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        Nuevo expediente
+      </button>
+      }
+    </div>
+
   </section>
   }
 
@@ -700,14 +727,14 @@
       </button>
     </li>
 
-    @if (puedeEditar(exp)) {
+    <!-- @if (puedeEditar(exp)) {
     <li>
       <button type="button" [disabled]="estaEnOperacion(exp.id_expediente)" (click)="editarExpediente(exp)">
         <i class="fa-solid fa-pen" aria-hidden="true"></i>
         Editar expediente
       </button>
     </li>
-    }
+    } -->
 
     @if (puedeAnular(exp)) {
     <li>

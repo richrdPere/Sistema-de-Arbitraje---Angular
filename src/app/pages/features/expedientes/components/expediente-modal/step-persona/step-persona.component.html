@@ -18,8 +18,7 @@
           <span *ngIf="esRequerido('tipo')" class="text-red-500 font-bold"> *</span>
         </label>
 
-        <select formControlName="tipo" class="select select-bordered w-full"
-        (change)="onTipoUsuarioChange()">
+        <select formControlName="tipo" class="select select-bordered w-full">
           <option [ngValue]="null" disabled>Seleccionar tipo</option>
           <option *ngFor="let d of tipoUsuarios" [ngValue]="d.id">
             {{ d.nombre }}
@@ -79,6 +78,20 @@
           </label>
           <input formControlName="ruc" class="input input-bordered w-full" placeholder="Ingrese N° RUC" maxlength="11"
             (keypress)="soloNumeros($event)" />
+
+          @if (form.get('ruc')?.dirty || form.get('ruc')?.touched) {
+          @if (form.get('ruc')?.hasError('required')) {
+          <p class="mt-1 text-xs text-error">
+            El RUC es obligatorio.
+          </p>
+          }
+
+          @if (form.get('ruc')?.hasError('pattern')) {
+          <p class="mt-1 text-xs text-error">
+            El RUC debe contener exactamente 11 dígitos, sin espacios.
+          </p>
+          }
+          }
         </div>
 
         <div class="md:col-span-8">
@@ -88,6 +101,15 @@
           </label>
           <input formControlName="razon_social" class="input input-bordered w-full" placeholder="Ingrese Razón Social"
             appUppercase />
+
+          @if (
+          form.get('razon_social')?.invalid &&
+          (form.get('razon_social')?.dirty || form.get('razon_social')?.touched)
+          ) {
+          <p class="mt-1 text-xs text-error">
+            La razón social es obligatoria y no puede contener solo espacios.
+          </p>
+          }
         </div>
 
       </div>
@@ -104,6 +126,13 @@
           </label>
           <input formControlName="ruc" class="input input-bordered w-full" placeholder="Ingrese N° RUC" maxlength="11"
             (keypress)="soloNumeros($event)" />
+
+          @if (form.get('ruc')?.hasError('pattern')) {
+          <p class="mt-1 text-xs text-error">
+            El RUC debe contener exactamente 11 dígitos, sin espacios.
+          </p>
+          }
+
         </div>
 
         <div class="md:col-span-8">
@@ -113,6 +142,15 @@
           </label>
           <input formControlName="nombre_entidad" class="input input-bordered w-full"
             placeholder="Ingrese nombre de la entidad" appUppercase />
+
+          @if (
+          form.get('nombre_entidad')?.invalid &&
+          (form.get('nombre_entidad')?.dirty || form.get('nombre_entidad')?.touched)
+          ) {
+          <p class="mt-1 text-xs text-error">
+            El nombre de la entidad es obligatorio y no puede contener solo espacios.
+          </p>
+          }
         </div>
 
       </div>
@@ -135,6 +173,14 @@
           <span *ngIf="esRequerido('email')" class="text-red-500 font-bold"> *</span>
         </label>
         <input formControlName="email" type="email" class="input input-bordered w-full" placeholder="Ingrese email" />
+        @if (
+        form.get('email')?.invalid &&
+        (form.get('email')?.dirty || form.get('email')?.touched)
+        ) {
+        <p class="mt-1 text-xs text-error">
+          Ingresa un correo válido o deja el campo vacío.
+        </p>
+        }
       </div>
 
       <div>
@@ -157,14 +203,35 @@
 
     </div>
 
+    <!-- @if (camposInvalidos.length > 0) {
+    <p class="mt-4 text-sm text-error">
+      Campos pendientes o inválidos:
+      {{ camposInvalidos.join(', ') }}
+    </p>
+    } -->
+
+    @if (mensajeBusqueda) {
+    <p role="status" class="mt-4 text-sm text-info">
+      {{ mensajeBusqueda }}
+    </p>
+    }
+
     <!-- BOTÓN -->
     <div class="mt-6 flex justify-around">
-      <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
+      <button type="button" class="btn btn-primary" [disabled]="buscandoPersona" (click)="continuar()">
+        @if (buscandoPersona) {
+        <span class="loading loading-spinner loading-sm"></span>
+        Buscando persona...
+        } @else {
+        Siguiente
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        }
+      </button>
+      <!-- <button type="button" class="btn btn-primary" (click)="continuar()" [disabled]="form.invalid">
         Siguiente
         <i class="fa-solid fa-arrow-right"></i>
-      </button>
+      </button> -->
     </div>
 
   </section>
 </form>
-

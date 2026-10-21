@@ -1,31 +1,11 @@
 import Swal from 'sweetalert2';
-
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-
-import {
-  Observable,
-  Subject,
-  finalize,
-  map,
-  takeUntil,
-} from 'rxjs';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Observable, Subject, finalize, map, takeUntil } from 'rxjs';
 
 // Services
-import { ExpedientesService } from
-  'src/app/pages/features/expedientes/services/expedientes.service';
-
-import {
-  ExpedienteFormService,
-  FormDataExpediente,
-} from
-  'src/app/pages/features/expedientes/services/expedientes-form.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
+import { ExpedienteFormService, FormDataExpediente } from 'src/app/pages/features/expedientes/services/expedientes-form.service';
 
 // Interfaces
 import {
@@ -258,50 +238,121 @@ export class StepResumenExpComponent
 
   // ==========================================================
   // PAYLOAD DE CREACIÓN
+  // Admite NATURAL, JURIDICA y ENTIDAD_PUBLICA.
   // ==========================================================
 
   private buildCreateRequest(): CreateExpedienteRequest {
-    const { persona } =
-      this.expedienteFormService.buildPayload();
-
-    // El contrato compartido solo admite persona natural.
-    if (persona.tipo !== 'NATURAL') {
-      throw new Error(
-        'El contrato actual de creación solo admite personas naturales.',
-      );
-    }
-
-    const nombres = this.texto(persona.nombres);
-    const apellidos = this.texto(persona.apellidos);
-    const dni = this.texto(persona.dni);
-
-    if (!nombres || !apellidos) {
-      throw new Error(
-        'Completa los nombres y apellidos de la persona.',
-      );
-    }
-
-    if (!/^\d{8}$/.test(dni)) {
-      throw new Error(
-        'El DNI debe contener exactamente 8 dígitos.',
-      );
-    }
+    const persona = this.expedienteFormService.getPersona();
 
     const expediente = this.buildDatosExpediente();
 
-    return {
-      persona: {
-        tipo: 'NATURAL',
-        nombres,
-        apellidos,
-        dni,
-        email: this.textoOpcional(persona.email),
-        telefono: this.textoOpcional(persona.telefono),
-        direccion: this.textoOpcional(persona.direccion),
-      },
-
-      expediente,
+    const contacto = {
+      email: this.textoOpcional(persona.email),
+      telefono: this.textoOpcional(persona.telefono),
+      direccion: this.textoOpcional(persona.direccion),
     };
+
+    switch (persona.tipo) {
+      // ======================================================
+      // PERSONA NATURAL
+      // ======================================================
+      case 'NATURAL': {
+        const nombres = this.texto(persona.nombres);
+        const apellidos = this.texto(persona.apellidos);
+        const dni = this.texto(persona.dni);
+
+        if (!nombres || !apellidos) {
+          throw new Error(
+            'Completa los nombres y apellidos de la persona.',
+          );
+        }
+
+        if (!/^\d{8}$/.test(dni)) {
+          throw new Error(
+            'El DNI debe contener exactamente 8 dígitos.',
+          );
+        }
+
+        return {
+          persona: {
+            tipo: 'NATURAL',
+            nombres,
+            apellidos,
+            dni,
+            ...contacto,
+          },
+
+          expediente,
+        };
+      }
+
+      // ======================================================
+      // PERSONA JURÍDICA
+      // ======================================================
+      case 'JURIDICA': {
+        const razonSocial = this.texto(persona.razon_social);
+        const ruc = this.texto(persona.ruc);
+
+        if (!razonSocial) {
+          throw new Error(
+            'Completa la razón social de la persona jurídica.',
+          );
+        }
+
+        if (!/^\d{11}$/.test(ruc)) {
+          throw new Error(
+            'El RUC debe contener exactamente 11 dígitos.',
+          );
+        }
+
+        return {
+          persona: {
+            tipo: 'JURIDICA',
+            razon_social: razonSocial,
+            ruc,
+            ...contacto,
+          },
+
+          expediente,
+        };
+      }
+
+      // ======================================================
+      // ENTIDAD PÚBLICA
+      // ======================================================
+      case 'ENTIDAD_PUBLICA': {
+        const nombreEntidad = this.texto(persona.nombre_entidad);
+        const ruc = this.texto(persona.ruc);
+
+        if (!nombreEntidad) {
+          throw new Error(
+            'Completa el nombre de la entidad pública.',
+          );
+        }
+
+        if (!/^\d{11}$/.test(ruc)) {
+          throw new Error(
+            'El RUC debe contener exactamente 11 dígitos.',
+          );
+        }
+
+        return {
+          persona: {
+            tipo: 'ENTIDAD_PUBLICA',
+            nombre_entidad: nombreEntidad,
+            ruc,
+            ...contacto,
+          },
+
+          expediente,
+        };
+      }
+
+      default:
+        throw new Error(
+          'Selecciona un tipo de persona válido.',
+        );
+    }
   }
 
   // ==========================================================
@@ -452,131 +503,3 @@ export class StepResumenExpComponent
     return this.expedienteFormService.getModoEdicion();
   }
 }
-// import Swal from 'sweetalert2';
-// import { CommonModule } from '@angular/common';
-// import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-
-// // Directives
-// import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
-// import { ExpedienteFormService } from 'src/app/pages/features/expedientes/services/expedientes-form.service';
-
-
-// @Component({
-//   selector: 'step-resumen-exp',
-//   imports: [CommonModule],
-//   templateUrl: './step-resumen-exp.component.html',
-//   styles: ``
-// })
-// export class StepResumenExpComponent implements OnInit {
-
-//   @Output() prevStep = new EventEmitter<void>();
-//   @Output() resetStepper = new EventEmitter<void>();
-//   @Output() expedienteGuardado = new EventEmitter<void>();
-
-//   data: any;
-//   loading = false;
-
-//   constructor(
-//     private expedienteFormService: ExpedienteFormService,
-//     private expedienteService: ExpedientesService,
-//   ) { }
-
-//   ngOnInit(): void {
-//     this.data = this.expedienteFormService.buildPayload();
-//   }
-
-
-//   // VOLVER
-//   volver() {
-//     this.prevStep.emit();
-//   }
-
-//   // =========================
-//   // ENVIAR FINAL
-//   // =========================
-//   guardar() {
-
-//     this.loading = true;
-
-//     const payload = this.expedienteFormService.buildPayload();
-
-//     const isEdit = this.expedienteFormService.getModoEdicion();
-//     const id = this.expedienteFormService.getExpedienteId();
-
-
-//     // =========================
-//     // EDITAR EXPEDIENTE
-//     // =========================
-
-//     // if (isEdit && id) {
-
-//     //   this.expedienteService.updateExpediente(id, payload)
-//     //     .subscribe({
-//     //       next: () => {
-//     //         this.loading = false;
-
-//     //         Swal.fire({
-//     //           icon: 'success',
-//     //           title: 'Expediente actualizado correctamente'
-//     //         });
-
-//     //         this.expedienteGuardado.emit();
-//     //         this.resetStepper.emit();
-//     //       },
-//     //       error: (err) => {
-//     //         this.loading = false;
-
-//     //         Swal.fire({
-//     //           icon: 'error',
-//     //           title: 'Error al actualizar expediente',
-//     //           text: err.error?.message || 'Error desconocido'
-//     //         });
-//     //       }
-//     //     });
-
-//     //   return;
-//     // }
-
-//     // =========================
-//     // CREAR EXPEDIENTE
-//     // =========================
-//     // this.expedienteService.newExpediente(payload)
-//     //   .subscribe({
-//     //     next: () => {
-//     //       this.loading = false;
-
-//     //       Swal.fire({
-//     //         icon: 'success',
-//     //         title: 'Expediente creado correctamente'
-//     //       });
-
-//     //       this.expedienteGuardado.emit();
-//     //       this.resetStepper.emit();
-//     //     },
-//     //     error: (err) => {
-//     //       this.loading = false;
-
-//     //       Swal.fire({
-//     //         icon: 'error',
-//     //         title: 'Error al crear expediente',
-//     //         text: err.error?.message || 'Error desconocido'
-//     //       });
-//     //     }
-//     //   });
-//   }
-
-//   // =========================
-//   // DATA VIEW (helpers opcional)
-//   // =========================
-//   get persona() {
-//     return this.data?.persona || {};
-//   }
-
-//   get expediente() {
-//     return this.data?.expediente || {};
-//   }
-
-//   get esEdicion(): boolean {
-//     return this.expedienteFormService.getModoEdicion();
-//   }
-// }
