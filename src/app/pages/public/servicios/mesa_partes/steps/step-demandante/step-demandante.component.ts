@@ -1,63 +1,25 @@
 import { CommonModule } from '@angular/common';
-
-import {
-  Component,
-  DestroyRef,
-  EventEmitter,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
-
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-
-import {
-  catchError,
-  distinctUntilChanged,
-  finalize,
-  map,
-  of,
-  switchMap,
-  timer,
-} from 'rxjs';
-
-import {
-  takeUntilDestroyed,
-} from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { catchError, distinctUntilChanged, finalize, map, of, switchMap, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Directives
-import {
-  UppercaseDirective,
-} from 'src/app/shared/directives/uppercase.directive';
+import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 // Services
-import {
-  MesaPartesFormService,
-} from 'src/app/pages/features/solicitudes/services/mesa-partes-form.service';
-
-import {
-  PersonaService,
-} from 'src/app/pages/features/personas/services/persona.service';
+import { MesaPartesFormService } from 'src/app/pages/features/solicitudes/services/mesa-partes-form.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
 
 // Interfaces
-import {
-  FindPersonaFilters,
-  PersonaData,
-  PersonaTipo,
-} from 'src/app/pages/features/personas/interfaces';
+import { FindPersonaFilters, PersonaData, PersonaTipo } from 'src/app/pages/features/personas/interfaces';
 
 // *********************************************************
 // TEXTO OBLIGATORIO
 // *********************************************************
 const textoObligatorio: ValidatorFn = (control) =>
   typeof control.value === 'string' &&
-  control.value.trim().length > 0
+    control.value.trim().length > 0
     ? null
     : { required: true };
 
@@ -91,16 +53,16 @@ export class StepDemandanteComponent implements OnInit {
     id: PersonaTipo;
     nombre: string;
   }[] = [
-    { id: 'NATURAL', nombre: 'PERSONA NATURAL' },
-    { id: 'JURIDICA', nombre: 'PERSONA JURÍDICA' },
-    { id: 'ENTIDAD_PUBLICA', nombre: 'ENTIDAD PÚBLICA' },
-  ];
+      { id: 'NATURAL', nombre: 'PERSONA NATURAL' },
+      { id: 'JURIDICA', nombre: 'PERSONA JURÍDICA' },
+      { id: 'ENTIDAD_PUBLICA', nombre: 'ENTIDAD PÚBLICA' },
+    ];
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly mesaPartesFormService: MesaPartesFormService,
     private readonly personaService: PersonaService,
-  ) {}
+  ) { }
 
   // *********************************************************
   // INICIALIZACIÓN
@@ -155,8 +117,7 @@ export class StepDemandanteComponent implements OnInit {
   // RESTAURAR BORRADOR
   // *********************************************************
   loadDataDemandante(): void {
-    const demandante =
-      this.mesaPartesFormService.getFormData()?.demandante;
+    const demandante = this.mesaPartesFormService.getFormData()?.demandante;
 
     if (demandante) {
       this.form.patchValue(demandante, {
@@ -283,9 +244,9 @@ export class StepDemandanteComponent implements OnInit {
     const compatible = tipoActual === 'NATURAL'
       ? persona.tipo === 'NATURAL'
       : (
-          persona.tipo === 'JURIDICA' ||
-          persona.tipo === 'ENTIDAD_PUBLICA'
-        );
+        persona.tipo === 'JURIDICA' ||
+        persona.tipo === 'ENTIDAD_PUBLICA'
+      );
 
     if (!compatible) {
       this.mensajeBusqueda =
@@ -395,10 +356,7 @@ export class StepDemandanteComponent implements OnInit {
       }
     }
 
-    if (
-      tipo === 'JURIDICA' ||
-      tipo === 'ENTIDAD_PUBLICA'
-    ) {
+    if (tipo === 'JURIDICA' || tipo === 'ENTIDAD_PUBLICA') {
       this.form.get('ruc')?.setValidators([
         Validators.required,
         Validators.pattern(/^\d{11}$/),

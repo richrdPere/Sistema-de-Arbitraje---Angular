@@ -1,212 +1,461 @@
-<div class="p-6 min-h-full bg-base-300 text-base-content overflow-auto transition-colors duration-300">
+<div class="mx-auto w-full max-w-500">
+  <!-- ================================================= -->
+  <!-- REGRESAR -->
+  <!-- ================================================= -->
 
-  <!-- Link de regreso -->
-  <a (click)="volver()" class="text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-4">
-    <i class="fa-solid fa-arrow-left"></i>
+  <button type="button" class="mb-4 flex items-center gap-2 text-sm
+           text-info hover:underline" (click)="volver()">
+    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
     Volver a Expedientes
-  </a>
+  </button>
 
-  <!-- Título -->
+  <!-- ================================================= -->
+  <!-- TÍTULO -->
+  <!-- ================================================= -->
+
   <div class="mb-5">
+    <h1 class="flex items-center gap-2 text-xl font-bold sm:text-2xl">
+      <i class="fa-solid fa-folder-open text-info" aria-hidden="true"></i>
 
-    <h1 class="text-2xl font-bold text-base-content flex items-center gap-2">
-      <!-- <i class="fa-solid fa-file-pdf text-red-500"></i> -->
-      Documentos del Expediente
+      Documentos del expediente
     </h1>
 
-    <p *ngIf="numeroExpediente" class="text-sm text-base-content/70 mt-1">
-      N° {{ numeroExpediente }}
+    <p class="mt-1 text-sm text-base-content/70">
+      @if (numeroExpediente) {
+      N.° {{ numeroExpediente }}
+      } @else if (idExpediente) {
+      Expediente ID: {{ idExpediente }}
+      }
     </p>
-
   </div>
 
+  <!-- ================================================= -->
+  <!-- MENSAJES -->
+  <!-- ================================================= -->
 
-  <div class="p-4 mb-7 card bg-base-100 shadow-md">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-4">
+  @if (mensajeError) {
+  <div role="alert" class="alert alert-error mb-4">
+    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
 
-      <!--  BUSCADOR -->
-      <div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+    <span>{{ mensajeError }}</span>
 
-        <!-- Input buscar -->
-        <div class="relative w-full md:max-w-xs">
-          <input type="text" class="input input-bordered w-full bg-base-100 rounded-md h-11 pl-10 pr-2 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Buscar por titulo"
-            [(ngModel)]="search" (input)="onFiltroChange()" />
-          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
+    <button type="button" class="btn btn-ghost btn-sm" [disabled]="loading" (click)="cargarDocumentos()">
+      Reintentar
+    </button>
+  </div>
+  }
 
+  @if (mensajeExito) {
+  <div role="status" class="alert alert-success mb-4">
+    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+
+    <span>{{ mensajeExito }}</span>
+
+    <button type="button" class="btn btn-ghost btn-sm" aria-label="Cerrar mensaje" (click)="mensajeExito = ''">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </div>
+  }
+
+  <!-- ================================================= -->
+  <!-- FILTROS -->
+  <!-- ================================================= -->
+
+  <section class="card mb-6 bg-base-100 p-4 shadow-md">
+    <div class="flex flex-col gap-4
+             md:flex-row md:items-center md:justify-between">
+      <div class="relative w-full md:max-w-md">
+        <label for="buscar-documento" class="sr-only">
+          Buscar documentos
+        </label>
+
+        <input id="buscar-documento" type="search" class="input input-bordered h-11 w-full
+                 rounded-md bg-base-100 pl-10 text-sm" placeholder="Buscar documentos..." [(ngModel)]="search"
+          (ngModelChange)="onFiltroChange()" appUppercase />
+
+        <i class="fa-solid fa-search pointer-events-none absolute
+                 left-3 top-1/2 -translate-y-1/2
+                 text-base-content/50" aria-hidden="true"></i>
       </div>
+
+      <label class="flex cursor-pointer items-center gap-3 text-sm">
+        <input type="checkbox" class="checkbox checkbox-info checkbox-sm" [(ngModel)]="soloUltimaVersion"
+          (ngModelChange)="onFiltroChange()" />
+
+        Solo última versión
+      </label>
     </div>
+  </section>
 
-  </div>
+  <!-- ================================================= -->
+  <!-- MODAL EXISTENTE — SUBIR DOCUMENTO -->
+  <!-- ================================================= -->
 
-
-  <!-- Modal Subir documento -->
+  @if (idExpediente) {
   <subir-documentos [mostrarModal]="mostrarModal" [expedienteId]="expedienteSeleccionadoId"
-    (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="cargarDocumentos()"></subir-documentos>
+    (modalCerrado)="cerrarModalDocumento()" (documentoSubido)="onDocumentoSubido()"></subir-documentos>
+  }
 
+  <!-- ================================================= -->
+  <!-- TABLA -->
+  <!-- ================================================= -->
 
-  <!-- Tabla de documentos -->
-  <div class="p-6 bg-base-100 rounded-xl shadow-xl">
+  <section class="rounded-xl bg-base-100 p-3 shadow-xl sm:p-6">
+    <div class="overflow-hidden rounded-lg border border-base-300">
+      <!-- ACCIONES DEL LISTADO -->
 
-    <div class="overflow-x-auto text-base-content border border-base-300/90 shadow rounded-lg">
+      <div class="flex flex-col gap-4 border-b border-base-300 p-4
+               sm:flex-row sm:items-center sm:justify-between">
+        <!-- Total -->
+        <div class="flex w-full items-center
+                 justify-between gap-3
+                 text-sm text-base-content/70
+                 sm:w-auto sm:justify-start">
+          <label for="usuarios-page-size" class="whitespace-nowrap">
+            Mostrar
+          </label>
 
-      <!-- Header acciones -->
-      <div class="flex justify-between items-center p-5">
+          <select id="usuarios-page-size" class="select select-bordered select-sm
+         w-16 min-w-16 shrink-0 pl-3 pr-8" [(ngModel)]="limit" (change)="cambiarLimite()">
 
-        <!-- Selector de cantidad -->
-        <div class="flex items-center gap-2 text-sm">
-          <label>Mostrar:</label>
-
-          <select class="select select-bordered select-sm w-auto" [(ngModel)]="limit" (change)="cambiarLimite()">
-            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+            @for ( size of pageSizeOptions; track size ) {
+            <option [ngValue]="size">
               {{ size }}
             </option>
+            }
           </select>
 
-          <span>items por página</span>
+          <span class="whitespace-nowrap">
+            ítems por página
+          </span>
         </div>
 
-        <!-- Botón -->
-        <div>
-          <button class="btn btn-primary text-base-content hover:text-white bg-info hover:bg-primary border-none"
-            (click)="abrirModal()">
-            <i class="fa-solid fa-plus mr-1"></i>
-            Documento
-          </button>
-        </div>
+        <!-- Botón crear -->
+
+        <button type="button" class="btn btn-info" [disabled]="!idExpediente" (click)="abrirModal()">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          Documento
+        </button>
       </div>
-
 
       @if (loading) {
-
-      <div class="text-gray-500">Cargando documentos...</div>
+      <div role="status" class="flex items-center justify-center gap-3 p-12
+                 text-base-content/60">
+        <span class="loading loading-spinner loading-md"></span>
+        Cargando documentos...
+      </div>
       }
 
-
-      <!-- @if (!loading && documentos.length === 0) {
-      <div class="text-gray-400">
-        No hay documentos registrados.
-      </div>
-      } -->
-
-
-      @if (!loading && documentos.length > 0) {
-      <div class="overflow-x-auto bg-white shadow rounded-lg ">
+      @else if (documentos.length > 0) {
+      <div class="overflow-x-auto">
         <table class="table w-full">
-          <thead class="bg-gray-100 text-gray-700 ">
+          <thead class="bg-base-200 text-base-content/70">
             <tr>
-              <th>N°</th>
-              <th>Titulo</th>
+              <th>N.°</th>
+              <th>Documento</th>
               <th>Descripción</th>
-              <th>Fecha de Subida</th>
-
-              <th>Tipo Documento</th>
-              <th class="text-center">Usuario</th>
-              <th>Acción</th>
+              <th>Fecha de subida</th>
+              <th>Tipo</th>
+              <th>Usuario</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
+
           <tbody>
-
-            @for (doc of documentos; track doc.id_documento; let i = $index) {
-            <tr>
-              <td>{{i + 1}}</td>
-              <td>{{ doc.titulo }}</td>
-              <td>{{ doc.descripcion }}</td>
-              <td>{{ doc.createdAt | date: 'dd/MM/yyyy, h:mm a' }}</td>
-              <td>{{ doc.tipo_documento }}</td>
-              <td class="text-sm text-center">
-                <div *ngIf="doc.usuario; else sinUsuario" class="space-y-1">
-
-                  <!-- Nombre -->
-                  <div class="font-semibold text-base-content">
-                    {{ doc.usuario.nombre }} {{ doc.usuario.apellidos }}
-                  </div>
-
-                  <!-- Rol -->
-                  <!-- <div class="text-xs badge badge-outline">
-                    {{ doc.usuario.rol | titlecase }}
-                  </div> -->
-
-                  <!-- Fecha -->
-                  <div class="text-xs text-gray-500">
-                    Modificado: {{ doc.updatedAt | date:'dd/MM/yyyy, h:mm a' }}
-                  </div>
-
-                </div>
-
-                <ng-template #sinUsuario>
-                  <span class="text-gray-400 italic">Sin registro de usuario</span>
-                </ng-template>
+            @for (
+            doc of documentos;
+            track doc.id_documento;
+            let i = $index
+            ) {
+            <tr class="hover:bg-base-200/40">
+              <td>
+                {{ (page - 1) * limit + i + 1 }}
               </td>
 
-              <!-- Acciones -->
-              <td class="text-right relative">
-                <!-- <a [href]="doc.url_s3" target="_blank" class="text-blue-600 hover:underline">
-                  Ver archivo
-                </a> -->
-
-                <!-- ACCIONES PRINCIPALES -->
-                <div class="flex justify-start items-center gap-1">
-                  <!-- Ver -->
-                  <button class="btn btn-ghost btn-circle btn-md" title="Ver documento" (click)="verDocumento(doc)">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                  </button>
-
-                  <!-- Editar -->
-                  <!-- <button class="btn btn-ghost btn-circle btn-md" (click)="abrirModal('editar', user)">
-                    <i class="fa-solid fa-pencil"></i>
-                  </button> -->
-
-                  <!-- Eliminar -->
-                  <button class="btn btn-ghost btn-circle btn-md" title="Eliminar documento"
-                    (click)="eliminarDocumento(doc.id_documento)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
+              <td class="min-w-56 max-w-sm">
+                <div class="break-words font-semibold">
+                  {{ doc.titulo }}
                 </div>
 
+                <div class="mt-1 break-all text-xs text-base-content/60">
+                  {{ doc.nombre_original }}
+                </div>
+
+                <div class="mt-2 flex flex-wrap items-center gap-2">
+                  <span class="badge badge-outline badge-sm">
+                    Versión {{ doc.version }}
+                  </span>
+
+                  <span class="text-xs uppercase text-base-content/60">
+                    {{ doc.tipo_archivo }}
+                  </span>
+
+                  <span class="text-xs text-base-content/60">
+                    {{ formatoTamano(doc.tamano_bytes) }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="min-w-48 max-w-xs">
+                <p class="whitespace-pre-line break-words text-sm">
+                  {{ doc.descripcion || 'Sin descripción' }}
+                </p>
+              </td>
+
+              <td class="whitespace-nowrap text-sm">
+                {{ doc.fecha_subida | date:'dd/MM/yyyy, h:mm a' }}
+
+                <div class="mt-1 text-xs text-base-content/50">
+                  Modificado:
+                  {{ doc.updatedAt | date:'dd/MM/yyyy, h:mm a' }}
+                </div>
+              </td>
+
+              <td>
+                <span class="badge badge-outline whitespace-nowrap">
+                  {{ doc.tipo_documento }}
+                </span>
+              </td>
+
+              <td class="min-w-44 text-sm">
+                <div class="font-medium">
+                  {{ nombreUsuario(doc) }}
+                </div>
+
+                @if (doc.usuario) {
+                <div class="mt-1 text-xs text-base-content/60">
+                  {{ doc.usuario.rol }}
+                </div>
+                }
+              </td>
+
+              <td>
+                <span class="badge badge-sm" [class.badge-success]="doc.estado" [class.badge-error]="!doc.estado">
+                  {{ doc.estado ? 'Habilitado' : 'Deshabilitado' }}
+                </span>
+              </td>
+
+              <td>
+                <div class="flex items-center gap-1">
+                  <!-- VISUALIZAR -->
+
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Visualizar documento"
+                    aria-label="Visualizar documento" [disabled]="
+                          !doc.estado ||
+                          estaEnOperacion(doc.id_documento)
+                        " (click)="verDocumento(doc)">
+                    <i class="fa-solid fa-eye text-info" aria-hidden="true"></i>
+                  </button>
+
+                  <!-- DESCARGAR -->
+
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Descargar documento"
+                    aria-label="Descargar documento" [disabled]="
+                          !doc.estado ||
+                          estaEnOperacion(doc.id_documento)
+                        " (click)="descargarDocumento(doc)">
+                    <i class="fa-solid fa-download text-success" aria-hidden="true"></i>
+                  </button>
+
+                  <!-- EDITAR METADATOS -->
+
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Editar metadatos"
+                    aria-label="Editar metadatos" [disabled]="
+                          estaEnOperacion(doc.id_documento) ||
+                          guardandoFormulario
+                        " (click)="editarDocumento(doc)">
+                    <i class="fa-solid fa-pen text-warning" aria-hidden="true"></i>
+                  </button>
+
+                  <!-- NUEVA VERSIÓN -->
+
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" title="Crear nueva versión"
+                    aria-label="Crear nueva versión" [disabled]="
+                          !doc.estado ||
+                          estaEnOperacion(doc.id_documento) ||
+                          guardandoFormulario
+                        " (click)="nuevaVersion(doc)">
+                    <i class="fa-solid fa-file-circle-plus text-primary" aria-hidden="true"></i>
+                  </button>
+
+                  <!-- CAMBIAR ESTADO -->
+
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm" [title]="
+                          doc.estado
+                            ? 'Deshabilitar documento'
+                            : 'Habilitar documento'
+                        " [attr.aria-label]="
+                          doc.estado
+                            ? 'Deshabilitar documento'
+                            : 'Habilitar documento'
+                        " [disabled]="estaEnOperacion(doc.id_documento)" (click)="cambiarEstado(doc)">
+                    <i class="fa-solid" [class.fa-ban]="doc.estado" [class.text-error]="doc.estado"
+                      [class.fa-check]="!doc.estado" [class.text-success]="!doc.estado" aria-hidden="true"></i>
+                  </button>
+
+                  @if (estaEnOperacion(doc.id_documento)) {
+                  <span role="status" aria-label="Procesando documento"
+                    class="loading loading-spinner loading-xs"></span>
+                  }
+                </div>
               </td>
             </tr>
             }
-
           </tbody>
         </table>
-
-        <!-- Paginador -->
-        <div class="flex justify-end items-center p-4 bg-base-300/90 text-sm">
-          <span>
-            Página {{ page }} de {{ totalPages }} registros
-          </span>
-
-          <div class="join ml-4 gap-2">
-            <button class="join-item btn btn-sm" [disabled]="page === 1" (click)="cambiarPagina(page - 1)">
-              Anterior
-            </button>
-
-            <button class="join-item btn btn-sm" [disabled]="page === totalItems" (click)="cambiarPagina(page + 1)">
-              Siguiente
-            </button>
-          </div>
-        </div>
-
       </div>
 
+      <!-- PAGINADOR -->
+
+      <div class="flex flex-col gap-3 border-t border-base-300
+                 bg-base-200/60 p-4 text-sm
+                 sm:flex-row sm:items-center sm:justify-between">
+        <span class="text-base-content/70">
+          Página {{ currentPage }} de {{ totalPages }}
+          · {{ totalItems }} registros
+        </span>
+
+        <div class="flex items-center gap-2">
+          <button type="button" class="btn btn-sm" [disabled]="loading || !hasPreviousPage"
+            (click)="cambiarPagina(page - 1)">
+            Anterior
+          </button>
+
+          <button type="button" class="btn btn-sm" [disabled]="loading || !hasNextPage"
+            (click)="cambiarPagina(page + 1)">
+            Siguiente
+          </button>
+        </div>
+      </div>
       }
 
-      @else if (!loading && documentos.length === 0) {
-      <div class="flex flex-col items-center justify-center my-20 text-center text-base-content/70">
-        <img src="assets/img/empty-folder.png" alt="Sin solicitudes" class="w-40 h-40 mb-6 opacity-80" />
-        <h3 class="text-lg font-semibold text-base-content mb-2">
-          No hay documentos registrados.
+      @else if (!mensajeError) {
+      <div class="flex flex-col items-center justify-center
+                 px-6 py-16 text-center text-base-content/70">
+        <i class="fa-solid fa-folder-open mb-5 text-6xl
+                   text-base-content/25" aria-hidden="true"></i>
+
+        <h3 class="mb-2 text-lg font-semibold text-base-content">
+          No hay documentos para mostrar
         </h3>
-        <p class="text-sm max-w-md">Suba los documentos relacionados al expediente.</p>
+
+        <p class="max-w-md text-sm">
+          @if (search.trim()) {
+          No se encontraron documentos con la búsqueda indicada.
+          } @else {
+          Sube los documentos relacionados con este expediente.
+          }
+        </p>
       </div>
       }
     </div>
+  </section>
 
+  <!-- ================================================= -->
+  <!-- MODAL — METADATOS / NUEVA VERSIÓN -->
+  <!-- ================================================= -->
+
+  @if (modoFormulario && documentoSeleccionado) {
+  <div class="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="titulo-formulario-documento">
+    <div class="modal-box w-11/12 max-w-2xl">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 id="titulo-formulario-documento" class="text-lg font-bold">
+            {{
+            modoFormulario === 'editar'
+            ? 'Editar metadatos'
+            : 'Crear nueva versión'
+            }}
+          </h2>
+
+          <p class="mt-1 text-xs text-base-content/60">
+            Documento #{{ documentoSeleccionado.id_documento }}
+            · Versión base {{ documentoSeleccionado.version }}
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-circle btn-sm" aria-label="Cerrar formulario"
+          [disabled]="guardandoFormulario" (click)="cerrarFormulario()">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form class="mt-5 space-y-4" (ngSubmit)="guardarFormulario()">
+        @if (errorFormulario) {
+        <div role="alert" class="alert alert-error text-sm">
+          {{ errorFormulario }}
+        </div>
+        }
+
+        <div>
+          <label for="titulo-documento" class="mb-2 block text-sm font-medium">
+            Título
+            <span class="text-error">*</span>
+          </label>
+
+          <input id="titulo-documento" name="tituloDocumento" type="text" class="input input-bordered w-full" required
+            [(ngModel)]="tituloFormulario" [disabled]="guardandoFormulario" />
+        </div>
+
+        <div>
+          <label for="descripcion-documento" class="mb-2 block text-sm font-medium">
+            Descripción
+          </label>
+
+          <textarea id="descripcion-documento" name="descripcionDocumento" class="textarea textarea-bordered w-full"
+            rows="4" [(ngModel)]="descripcionFormulario" [disabled]="guardandoFormulario"></textarea>
+        </div>
+
+        @if (modoFormulario === 'version') {
+        <div>
+          <label for="archivo-version" class="mb-2 block text-sm font-medium">
+            Archivo de la nueva versión
+            <span class="text-error">*</span>
+          </label>
+
+          <input id="archivo-version" type="file" class="file-input file-input-bordered w-full"
+            accept=".pdf,.docx,.jpg,.jpeg,.png" required [disabled]="guardandoFormulario"
+            (change)="seleccionarArchivoVersion($event)" />
+
+          <p class="mt-2 text-xs text-base-content/60">
+            PDF, DOCX, JPG o PNG. Tamaño máximo: 10 MB.
+            El backend verificará el contenido del archivo.
+          </p>
+
+          @if (archivoVersion) {
+          <p class="mt-2 break-all text-xs text-info">
+            {{ archivoVersion.name }}
+            · {{ formatoTamano(archivoVersion.size) }}
+          </p>
+          }
+        </div>
+        }
+
+        <div class="modal-action">
+          <button type="button" class="btn btn-ghost" [disabled]="guardandoFormulario" (click)="cerrarFormulario()">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-info" [disabled]="
+                guardandoFormulario ||
+                !tituloFormulario.trim() ||
+                (modoFormulario === 'version' && !archivoVersion)
+              ">
+            @if (guardandoFormulario) {
+            <span class="loading loading-spinner loading-sm"></span>
+            Guardando...
+            } @else {
+            {{
+            modoFormulario === 'editar'
+            ? 'Guardar cambios'
+            : 'Crear versión'
+            }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-
-
-
+  }
 </div>

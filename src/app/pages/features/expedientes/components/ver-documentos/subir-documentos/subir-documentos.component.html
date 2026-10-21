@@ -1,83 +1,172 @@
 <!-- MODAL PARA SUBIR DOCUMENTO -->
+
 @if (mostrarModal) {
-<div class="modal modal-open">
-
-  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg p-8" [ngClass]="modalWidthClass">
-    <!-- <h2 class="text-xl font-bold mb-4">Subir Documento</h2> -->
-
+<div class="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-subir-documento">
+  <div class="modal-box bg-base-100 text-base-content
+             rounded-2xl shadow-lg p-5 sm:p-8" [ngClass]="modalWidthClass" [attr.aria-busy]="cargando">
     <!-- Header -->
-    <div class="flex justify-between items-center border-b border-base-300 pb-2 mb-4">
-      <h3 class="text-2xl font-semibold">Subir Documento</h3>
-      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-circle btn-ghost text-xl">✕</button>
+
+    <div class="flex justify-between items-center
+               border-b border-base-300 pb-2 mb-4">
+      <h3 id="titulo-modal-subir-documento" class="text-2xl font-semibold">
+        Subir Documento
+      </h3>
+
+      <button type="button" class="btn btn-sm btn-circle btn-ghost text-xl" aria-label="Cerrar modal"
+        [disabled]="cargando" (click)="cerrarModal()">
+        ✕
+      </button>
     </div>
 
     <form [formGroup]="formDocumento" (ngSubmit)="subirDocumento()" class="space-y-6">
+      <!-- Mensajes -->
 
-      <!-- SECCION 1 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <!-- TÍTULO (1/3) -->
-        <div>
-          <label class="block text-sm font-medium mb-1">Título</label>
-          <input type="text" formControlName="titulo" class="input input-bordered w-full" placeholder="Ingrese titulo"
-            appUppercase />
+      @if (mensajeError) {
+      <div role="alert" class="alert alert-error text-sm">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+
+        <span>{{ mensajeError }}</span>
+      </div>
+      }
+
+      <!-- Deshabilita los campos durante la carga -->
+
+      <fieldset [disabled]="cargando" class="min-w-0 space-y-6">
+        <!-- SECCIÓN 1 -->
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- TÍTULO -->
+
+          <div>
+            <label for="subir-documento-titulo" class="block text-sm font-medium mb-1">
+              Título
+              <span class="text-error">*</span>
+            </label>
+
+            <input id="subir-documento-titulo" type="text" formControlName="titulo" class="input input-bordered w-full"
+              placeholder="Ingrese título" [class.input-error]="f.titulo.touched && f.titulo.invalid" appUppercase />
+
+            @if (f.titulo.touched && f.titulo.hasError('required')) {
+            <p class="text-error text-xs mt-1">
+              El título es obligatorio.
+            </p>
+            }
+
+            @if (f.titulo.touched && f.titulo.hasError('minlength')) {
+            <p class="text-error text-xs mt-1">
+              El título debe contener al menos 3 caracteres.
+            </p>
+            }
+          </div>
+
+          <!-- TIPO DE DOCUMENTO -->
+
+          <div>
+            <label for="subir-documento-tipo" class="block text-sm font-medium mb-1">
+              Tipo de Documento
+              <span class="text-error">*</span>
+            </label>
+
+            <select id="subir-documento-tipo" formControlName="tipo_documento" class="select select-bordered w-full"
+              [class.select-error]="
+                  f.tipo_documento.touched &&
+                  f.tipo_documento.invalid
+                ">
+              <option [ngValue]="null" disabled>
+                Seleccionar tipo de documento
+              </option>
+
+              @for (tipo of tipoDocumento; track tipo.value) {
+              <option [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+              }
+            </select>
+
+            @if (
+            f.tipo_documento.touched &&
+            f.tipo_documento.hasError('required')
+            ) {
+            <p class="text-error text-xs mt-1">
+              Selecciona el tipo de documento.
+            </p>
+            }
+          </div>
         </div>
 
-        <!-- TIPO DE DOCUMENTO (2/3) -->
-        <div>
-          <label class="block text-sm font-medium mb-1">Tipo de Documento</label>
-          <select formControlName="tipo_documento" class="select select-bordered w-full">
-            <option [ngValue]="null" disabled>Seleccionar tipo de documento</option>
+        <!-- SECCIÓN 2 -->
 
-            <option *ngFor="let t of tipoDocumento" [value]="t.value">
-              {{ t.label }}
-            </option>
-          </select>
-        </div>
-      </div>
+        <div class="grid grid-cols-1 gap-4 mb-4">
+          <!-- DESCRIPCIÓN -->
 
+          <div>
+            <label for="subir-documento-descripcion" class="block text-sm font-medium mb-1">
+              Descripción
+              <span class="text-xs text-base-content/50">
+                (opcional)
+              </span>
+            </label>
 
-      <!-- SECCION 2 -->
-      <div class="grid grid-cols-1 gap-4 mb-4">
-
-        <!-- VERSIÓN (1/3) -->
-        <!-- <div class="col-span-1">
-          <label class="block text-sm font-medium mb-1">Versión</label>
-          <input type="number" formControlName="version" class="input input-bordered w-full" />
-        </div> -->
-
-        <!-- DESCRIPCIÓN (2/3) -->
-        <div>
-          <label class="block text-sm font-medium mb-1">Descripción</label>
-          <textarea formControlName="descripcion" class="textarea textarea-bordered w-full"
-            placeholder="Ingrese descripción" rows="3" appUppercase></textarea>
+            <textarea id="subir-documento-descripcion" formControlName="descripcion"
+              class="textarea textarea-bordered w-full" placeholder="Ingrese descripción" rows="3"
+              appUppercase></textarea>
+          </div>
         </div>
 
-      </div>
+        <!-- SELECCIONAR DOCUMENTO -->
 
-      <!-- SELECCIONAR DOCUMENTO -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Archivo PDF</label>
-        <input type="file" class="file-input file-input-bordered w-full" (change)="onArchivoSeleccionado($event)"
-          accept=".pdf" />
-      </div>
+        <div class="mb-4">
+          <label for="subir-documento-archivo" class="block text-sm font-medium mb-1">
+            Archivo PDF
+            <span class="text-error">*</span>
+          </label>
 
-      <!-- Botones -->
-      <div class="mt-6 flex justify-center gap-5">
+          <input #archivoInput id="subir-documento-archivo" type="file" class="file-input file-input-bordered w-full"
+            accept=".pdf,application/pdf" [class.file-input-error]="
+                f.file.touched && f.file.invalid
+              " (change)="onArchivoSeleccionado($event)" />
 
-        <!-- Botón cerrar modal -->
-        <button type="button" (click)="cerrarModal()" class="btn btn-outline">
-          Cerrar
-        </button>
+          <p class="text-xs text-base-content/60 mt-2">
+            Selecciona un PDF de hasta 10 MB.
+          </p>
 
-        <!-- Botón subir documento -->
-        <button type="submit" [disabled]="cargando || formDocumento.invalid" class="btn btn-primary"
-          [class.loading]="cargando">
-          {{ cargando ? 'Subiendo...' : 'Subir Documento' }}
-        </button>
+          @if (archivoSeleccionado) {
+          <p class="text-xs text-info mt-2 break-all">
+            Archivo seleccionado:
+            {{ archivoSeleccionado.name }}
+          </p>
+          }
 
-      </div>
+          @if (f.file.touched && f.file.hasError('required')) {
+          <p class="text-error text-xs mt-1">
+            Debes seleccionar un archivo PDF válido.
+          </p>
+          }
+        </div>
+
+        <!-- Botones -->
+
+        <div class="mt-6 flex justify-center gap-5">
+          <button type="button" class="btn btn-outline" [disabled]="cargando" (click)="cerrarModal()">
+            Cerrar
+          </button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="
+                cargando ||
+                formDocumento.invalid ||
+                !archivoSeleccionado
+              ">
+            @if (cargando) {
+            <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+
+            Subiendo...
+            } @else {
+            Subir Documento
+            }
+          </button>
+        </div>
+      </fieldset>
     </form>
   </div>
 </div>
-
 }

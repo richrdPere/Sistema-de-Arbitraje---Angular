@@ -219,20 +219,29 @@
       </div>
 
       <!-- Mostrar cantidad por pagina -->
-      <div class="flex items-center gap-2 text-sm">
-        <label for="solicitudes-limit">Mostrar</label>
+      <div class="flex w-full items-center
+                 justify-between gap-3
+                 text-sm text-base-content/70
+                 sm:w-auto sm:justify-start">
+        <label for="usuarios-page-size" class="whitespace-nowrap">
+          Mostrar
+        </label>
 
-        <select id="solicitudes-limit" class="select select-bordered select-sm w-auto" [(ngModel)]="limit"
-          (ngModelChange)="cambiarLimite()" [disabled]="isLoading">
-          @for (size of pageSizeOptions; track size) {
+        <select id="usuarios-page-size" class="select select-bordered select-sm
+         w-16 min-w-16 shrink-0 pl-3 pr-8" [(ngModel)]="limit" (change)="cambiarLimite()">
+
+          @for ( size of pageSizeOptions; track size ) {
           <option [ngValue]="size">
             {{ size }}
           </option>
           }
         </select>
 
-        <span class="text-base-content/60">por página</span>
+        <span class="whitespace-nowrap">
+          ítems por página
+        </span>
       </div>
+
     </div>
 
     <!-- ================================================= -->

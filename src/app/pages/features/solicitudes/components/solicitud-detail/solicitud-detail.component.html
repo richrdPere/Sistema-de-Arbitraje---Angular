@@ -1,128 +1,337 @@
 @if (mostrarModal) {
-<div class="modal modal-open">
-  <div class="modal-box bg-base-100 text-base-content rounded-2xl shadow-lg" [ngClass]="modalWidthClass">
+<div class="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="solicitud-detail-titulo">
+  <div class="modal-box bg-base-100 text-base-content
+           rounded-2xl shadow-lg" [ngClass]="modalWidthClass" [attr.aria-busy]="loading">
 
     <!-- ================= HEADER ================= -->
     <div class="flex justify-between items-start gap-4 mb-6">
       <div>
-        <h3 class="text-2xl font-bold text-base-content">
+        <h3 id="solicitud-detail-titulo" class="text-2xl font-bold text-base-content">
           Detalle del Trámite
         </h3>
+
         <p class="text-sm text-base-content/60">
-          Información completa del expediente
+          Información de la solicitud y su expediente asociado
         </p>
       </div>
 
-
-      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl">&times;</button>
-      <!-- <button class="btn btn-sm btn-circle btn-ghost hover:bg-error/10 hover:text-error" (click)="cerrarModal()">
-        ✕
-      </button> -->
+      <button type="button" (click)="cerrarModal()" class="btn btn-sm btn-ghost text-xl"
+        aria-label="Cerrar detalle del trámite">
+        &times;
+      </button>
     </div>
+
+    <!-- ================= CARGANDO ================= -->
+    @if (loading) {
+    <div class="flex flex-col items-center justify-center gap-3 py-12" role="status">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+
+      <p class="text-sm text-base-content/60">
+        Cargando detalle del trámite…
+      </p>
+    </div>
+    }
+
+    <!-- ================= ERROR ================= -->
+    @else if (errorMensaje) {
+    <div class="space-y-4">
+      <div class="alert alert-error" role="alert">
+        <span>{{ errorMensaje }}</span>
+      </div>
+
+      <div class="flex justify-center">
+        <button type="button" class="btn btn-outline btn-sm" (click)="cargarDetalle()">
+          Reintentar
+        </button>
+      </div>
+    </div>
+    }
+
+    @else{
+    @if (detalle; as t) {
 
     <!-- ================= INFO GRID ================= -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
 
-      <!-- N° Expediente -->
+      <!-- N° TRÁMITE -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          N° Trámite
+        </p>
+        <p class="font-semibold text-primary text-lg mt-1 break-words">
+          {{ t.numero_tramite }}
+        </p>
+      </div>
+
+      <!-- TIPO -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Tipo de solicitud
+        </p>
+        <p class="font-medium mt-1">
+          {{ getTipoSolicitudLabel(t.tipo_solicitud) }}
+        </p>
+      </div>
+
+      <!-- ESTADO -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60 mb-1">
+          Estado del trámite
+        </p>
+        <span class="badge badge-lg font-semibold px-4" [ngClass]="badgeEstadoClass">
+          {{ t.estado | titlecase }}
+        </span>
+      </div>
+
+      <!-- FECHA DE REGISTRO -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Fecha de registro
+        </p>
+        <p class="font-medium mt-1">
+          {{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
+      <!-- N° EXPEDIENTE -->
       <div class="bg-base-200/60 rounded-xl p-4">
         <p class="text-xs uppercase tracking-wide text-base-content/60">
           N° Expediente
         </p>
-        <p class="font-semibold text-primary text-lg mt-1">
-          {{ tramite.numero_expediente }}
+        <p class="font-medium mt-1 break-words">
+          {{ t.expediente?.numero_expediente || 'Sin expediente asociado' }}
         </p>
       </div>
 
-      <!-- Tipo -->
-      <div class="bg-base-200/60 rounded-xl p-4">
-        <p class="text-xs uppercase tracking-wide text-base-content/60">
-          Tipo
-        </p>
-        <p class="font-medium mt-1">
-          {{ tramite.tipo }}
-        </p>
-      </div>
-
-      <!-- Estado -->
-      <div class="bg-base-200/60 rounded-xl p-4">
-        <p class="text-xs uppercase tracking-wide text-base-content/60 mb-1">
-          Estado
-        </p>
-        <span class="badge badge-lg font-semibold px-4" [ngClass]="badgeEstadoClass">
-          {{ tramite.estado | titlecase }}
-        </span>
-      </div>
-
-      <!-- Etapa procesal -->
+      <!-- ETAPA PROCESAL -->
       <div class="bg-base-200/60 rounded-xl p-4">
         <p class="text-xs uppercase tracking-wide text-base-content/60">
           Etapa procesal
         </p>
         <p class="font-medium mt-1">
-          {{ tramite.etapa_procesal }}
+          {{ t.expediente?.estado_procesal || 'No aplica' }}
         </p>
       </div>
 
-      <!-- Fecha inicio -->
-      <div class="bg-base-200/60 rounded-xl p-4">
-        <p class="text-xs uppercase tracking-wide text-base-content/60">
-          Fecha de inicio
-        </p>
-        <p class="font-medium mt-1">
-          {{ tramite.fecha_inicio | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-      </div>
-
-      <!-- Condición -->
+      <!-- ESTADO DEL EXPEDIENTE -->
+      @if (t.expediente; as exp) {
       <div class="bg-base-200/60 rounded-xl p-4">
         <p class="text-xs uppercase tracking-wide text-base-content/60 mb-1">
-          Condición
+          Estado del expediente
         </p>
-        <span class="badge badge-outline badge-sm">
-          {{ tramite.condicion }}
+        <span class="badge badge-outline">
+          {{ exp.estado }}
         </span>
       </div>
 
-      <!-- Solicitante -->
+      <!-- FECHA INICIO DEL EXPEDIENTE -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Fecha de inicio del expediente
+        </p>
+        <p class="font-medium mt-1">
+          {{
+          exp.fecha_inicio
+          ? (exp.fecha_inicio | date:'dd/MM/yyyy':'UTC')
+          : 'No registrada'
+          }}
+        </p>
+      </div>
+      }
+
+      <!-- DESCRIPCIÓN -->
+      <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Descripción de la solicitud
+        </p>
+        <p class="font-medium mt-1 whitespace-pre-line break-words">
+          {{ t.descripcion || 'Sin descripción' }}
+        </p>
+      </div>
+
+      <!-- SOLICITANTE -->
       <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
         <p class="text-xs uppercase tracking-wide text-base-content/60">
           Solicitante
         </p>
         <p class="font-medium mt-1">
-          {{ tramite.solicitante }}
+          {{ getNombrePersona(t.solicitante) }}
+        </p>
+
+        @if (t.solicitante; as persona) {
+        <p class="text-xs text-base-content/60 mt-1">
+          {{ persona.tipo.replace('_', ' ') }}
+        </p>
+        }
+      </div>
+
+      <!-- DOCUMENTO DE IDENTIDAD -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          DNI / RUC
+        </p>
+        <p class="font-medium mt-1">
+          {{ t.solicitante?.dni || t.solicitante?.ruc || 'No registrado' }}
         </p>
       </div>
 
-      <!-- Correo -->
+      <!-- TELÉFONO -->
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Teléfono
+        </p>
+        <p class="font-medium mt-1">
+          {{ t.solicitante?.telefono || 'No registrado' }}
+        </p>
+      </div>
+
+      <!-- CORREO -->
       <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
         <p class="text-xs uppercase tracking-wide text-base-content/60">
           Correo electrónico
         </p>
-        <p class="font-medium break-all">
-          {{ tramite.correo }}
+        <p class="font-medium mt-1 break-all">
+          {{ t.solicitante?.email || 'No registrado' }}
         </p>
       </div>
 
+      <!-- DIRECCIÓN -->
+      <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Dirección
+        </p>
+        <p class="font-medium mt-1 break-words">
+          {{ t.solicitante?.direccion || 'No registrada' }}
+        </p>
+      </div>
+
+      <!-- FECHA APROBACIÓN -->
+      @if (t.fecha_aprobacion) {
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Fecha de aprobación
+        </p>
+        <p class="font-medium mt-1">
+          {{ t.fecha_aprobacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+      }
+
+      <!-- FECHA RECHAZO -->
+      @if (t.fecha_rechazo) {
+      <div class="bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Fecha de rechazo
+        </p>
+        <p class="font-medium mt-1">
+          {{ t.fecha_rechazo | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+      }
+
+      <!-- OBSERVACIONES -->
+      @if (t.observaciones) {
+      <div class="md:col-span-2 bg-base-200/60 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wide text-base-content/60">
+          Observaciones
+        </p>
+        <p class="font-medium mt-1 whitespace-pre-line break-words">
+          {{ t.observaciones }}
+        </p>
+      </div>
+      }
+
     </div>
 
-    <!-- ================= DOCUMENTO ================= -->
-    @if (tramite.documento) {
-    <div class="mt-8 p-5 rounded-xl border border-dashed border-primary/40 bg-primary/5">
+    <!-- ================= DOCUMENTOS ================= -->
+    <div class="mt-8 p-5 rounded-xl border border-dashed
+               border-primary/40 bg-primary/5">
       <p class="text-sm font-semibold mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-paperclip text-primary"></i>
-        Documento adjunto
+        <i class="fa-solid fa-paperclip text-primary" aria-hidden="true"></i>
+        Documentos adjuntos
       </p>
 
-      <a [href]="tramite.documento" target="_blank" class="btn btn-outline btn-primary btn-sm gap-2">
-        <i class="fa-solid fa-file-pdf"></i>
-        Ver documento
+      <div class="overflow-x-auto">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Tipo</th>
+              <th>Versión</th>
+              <th>Fecha de subida</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (doc of t.documentos; track doc.id_documento) {
+            <tr>
+              <td>
+                <p class="font-medium">
+                  {{ doc.titulo }}
+                </p>
+
+                <p class="text-xs text-base-content/60 break-all">
+                  {{ doc.nombre_original }}
+                </p>
+
+                @if (doc.descripcion) {
+                <p class="text-xs text-base-content/60 mt-1">
+                  {{ doc.descripcion }}
+                </p>
+                }
+
+                @if (!doc.estado) {
+                <span class="badge badge-ghost badge-xs mt-1">
+                  Inactivo
+                </span>
+                }
+              </td>
+
+              <td>
+                <span class="badge badge-outline badge-sm">
+                  {{ doc.tipo_documento }}
+                </span>
+
+                <p class="text-xs text-base-content/60 mt-1">
+                  {{ doc.tipo_archivo | uppercase }}
+                </p>
+              </td>
+
+              <td>
+                {{ doc.version }}
+              </td>
+
+              <td class="whitespace-nowrap">
+                {{ doc.fecha_subida | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" class="text-center text-base-content/60">
+                No hay documentos registrados en el listado.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ARCHIVO REFERENCIADO POR EL TRÁMITE -->
+      @if (t.archivo_url) {
+      <a [href]="t.archivo_url" target="_blank" rel="noopener noreferrer"
+        class="btn btn-outline btn-primary btn-sm gap-2 mt-4">
+        <i class="fa-solid fa-file" aria-hidden="true"></i>
+        Ver archivo del trámite
       </a>
+      }
     </div>
     }
+    }
+
 
     <!-- ================= FOOTER ================= -->
     <div class="modal-action mt-8">
-      <button class="btn btn-outline btn-wide" (click)="cerrarModal()">
+      <button type="button" class="btn btn-outline btn-wide" (click)="cerrarModal()">
         Cerrar
       </button>
     </div>

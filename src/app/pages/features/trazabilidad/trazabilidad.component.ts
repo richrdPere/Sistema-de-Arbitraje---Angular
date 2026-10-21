@@ -1,43 +1,17 @@
 import { CommonModule } from '@angular/common';
-
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import {
-  Subscription,
-  catchError,
-  finalize,
-  from,
-  map,
-  mergeMap,
-  of,
-} from 'rxjs';
+import { Subscription, catchError, finalize, from, map, mergeMap, of } from 'rxjs';
 
 // Services
-import {
-  ExpedientesService,
-} from 'src/app/pages/features/expedientes/services/expedientes.service';
+import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
 
 // Interfaces
-import {
-  ExpedienteEstado,
-  ExpedienteEstadoProcesal,
-  ExpedientePaginadoItem,
-  ExpedientesPaginadosFilters,
-  ExpedienteTrazabilidadResumen,
-} from 'src/app/pages/features/expedientes/interfaces';
+import { ExpedienteEstado, ExpedienteEstadoProcesal, ExpedientePaginadoItem, ExpedientesPaginadosFilters, ExpedienteTrazabilidadResumen } from 'src/app/pages/features/expedientes/interfaces';
 
 // Componentes
-import {
-  VerTrazabilidadComponent,
-} from './components/ver-trazabilidad/ver-trazabilidad.component';
+import { VerTrazabilidadComponent } from './components/ver-trazabilidad/ver-trazabilidad.component';
 
 // *********************************************************
 // EXPEDIENTE PARA PRESENTACIÓN
@@ -462,7 +436,7 @@ export class TrazabilidadComponent implements OnInit, OnDestroy {
     expediente: ExpedientePaginadoItem,
   ): void {
     void this.router.navigate([
-      '/app',
+      '/admin',
       'trazabilidad',
       expediente.id_expediente,
       'documentos',

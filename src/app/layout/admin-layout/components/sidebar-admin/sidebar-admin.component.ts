@@ -174,25 +174,25 @@ export class SidebarAdminComponent {
     //     },
     //   ],
     // },
-    {
-      title: 'Administración',
-      items: [
-        {
-          icon: 'fa-solid fa-users-gear',
-          label: 'Usuarios',
-          description: 'Administración de usuarios del sistema',
-          route: '/admin/usuarios',
-          roles: ['ADMIN'],
-        },
-        // {
-        //   icon: 'fa-solid fa-shield-halved',
-        //   label: 'Auditoría',
-        //   description: 'Consulta de acciones registradas',
-        //   route: '/admin/auditoria',
-        //   roles: ['ADMIN'],
-        // },
-      ],
-    },
+    // {
+    //   title: 'Administración',
+    //   items: [
+    //     {
+    //       icon: 'fa-solid fa-users-gear',
+    //       label: 'Usuarios',
+    //       description: 'Administración de usuarios del sistema',
+    //       route: '/admin/usuarios',
+    //       roles: ['ADMIN'],
+    //     },
+    //     {
+    //       icon: 'fa-solid fa-shield-halved',
+    //       label: 'Auditoría',
+    //       description: 'Consulta de acciones registradas',
+    //       route: '/admin/auditoria',
+    //       roles: ['ADMIN'],
+    //     },
+    //   ],
+    // },
   ];
 
   readonly navigationGroups = computed(() => {

@@ -36,7 +36,7 @@ export interface MesaPartesPersonaNaturalRequest
   tipo: 'NATURAL';
   nombres: string;
   apellidos: string;
-
+  email?: string;
   /** Cadena para conservar los ceros iniciales. */
   dni: string;
 
@@ -52,6 +52,7 @@ export interface MesaPartesPersonaJuridicaRequest
   tipo: 'JURIDICA';
   ruc: string;
   razon_social: string;
+  email?: string;
 }
 
 // *********************************************************
@@ -63,6 +64,7 @@ export interface MesaPartesEntidadPublicaRequest
   tipo: 'ENTIDAD_PUBLICA';
   ruc: string;
   nombre_entidad: string;
+  email?: string;
 }
 
 // *********************************************************
