@@ -18,7 +18,7 @@ export class ArbitrosService {
   envs = environment;
 
   // 2.- variables publicas
-  API_BASE: string = this.envs.main_url_prueba + 'arbitros';
+  API_BASE: string = this.envs.main_url + 'arbitros';
 
   API_NEW_ARBITRO: string = this.API_BASE + '/crear';
   API_GET_ALL_ARBITROS: string = this.API_BASE + '/paginado';

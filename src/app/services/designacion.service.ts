@@ -38,7 +38,7 @@ export class DesignacionService {
   envs = environment;
 
   // 2.- variables publicas
-  API_BASE: string = this.envs.main_url_prueba + 'designaciones';
+  API_BASE: string = this.envs.main_url + 'designaciones';
 
   API_NEW_DESIGNACION: string = this.API_BASE + '/crear';
   API_ASIGNAR_ARBITROS: string = this.API_BASE + '/arbitros/';

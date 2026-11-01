@@ -26,7 +26,7 @@ export class ContactoService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'contacto'; // ⚙️ Cambia a tu dominio en producción
+  private url: string = this.envs.main_url + 'contacto'; // ⚙️ Cambia a tu dominio en producción
 
   constructor(private http: HttpClient) { }
 

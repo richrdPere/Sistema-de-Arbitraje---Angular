@@ -16,7 +16,7 @@ export class ParticipeService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'participes';
+  private url: string = this.envs.main_url + 'participes';
 
   constructor(private http: HttpClient) { }
 

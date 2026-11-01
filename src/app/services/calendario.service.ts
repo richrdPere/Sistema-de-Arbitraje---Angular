@@ -15,7 +15,7 @@ export class CalendarioService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba + 'calendario';
+  private url: string = this.envs.main_url + 'calendario';
 
 
   constructor(private http: HttpClient) { }

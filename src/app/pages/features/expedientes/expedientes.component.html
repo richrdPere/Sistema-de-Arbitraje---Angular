@@ -473,7 +473,7 @@
             <!-- Inicio -->
             <td class="whitespace-nowrap text-sm">
               @if (exp.fecha_inicio) {
-              {{ exp.fecha_inicio | date:'dd/MM/yyyy':'-0500' }}
+              {{ exp.fecha_inicio | date:'dd/MM/yyyy':'+0500' }}
               } @else {
               <span class="text-base-content/50">
                 No registrada

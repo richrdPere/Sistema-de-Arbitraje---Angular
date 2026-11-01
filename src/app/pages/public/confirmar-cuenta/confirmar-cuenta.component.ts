@@ -16,7 +16,7 @@ export class ConfirmarCuentaComponent implements OnInit {
   // 1.- Enviroment
   envs = environment;
 
-  private url: string = this.envs.main_url_prueba;
+  private url: string = this.envs.main_url;
 
 
   token: string | null = null;

@@ -1,32 +1,7 @@
 import { CommonModule } from '@angular/common';
-
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-
-import {
-  Subject,
-  finalize,
-  takeUntil,
-} from 'rxjs';
-
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { Subject, finalize, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 
 // Directives
@@ -36,9 +11,7 @@ import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directiv
 import { DocumentoService } from 'src/app/pages/features/trazabilidad/services/documento.service';
 
 // Interfaces
-import {
-  SubirDocumentoRequest,
-} from 'src/app/pages/features/trazabilidad/interfaces/documentos';
+import { SubirDocumentoRequest } from 'src/app/pages/features/trazabilidad/interfaces/documentos';
 
 // *********************************************************
 // VALIDACIÓN — LONGITUD DEL TÍTULO SIN ESPACIOS EXTERNOS
@@ -122,8 +95,20 @@ export class SubirDocumentosComponent
   // *********************************************************
 
   readonly tipoDocumento = [
-    { value: 'SOLICITUD', label: 'Solicitud' },
-    { value: 'ESCRITO', label: 'Escrito' },
+    { value: 'APELACION', label: 'APELACION' },
+    { value: 'ACTA', label: 'ACTA' },
+    { value: 'CARTA', label: 'CARTA' },
+    { value: 'CONTESTACION', label: 'CONTESTACION' },
+    { value: 'DEMANDA', label: 'DEMANDA' },
+    { value: 'ESCRITO', label: 'ESCRITO' },
+    { value: 'INFORME', label: 'INFORME' },
+    { value: 'LAUDO', label: 'LAUDO' },
+    { value: 'OFICIO', label: 'OFICIO' },
+    { value: 'REPOSICION', label: 'REPOSICION' },
+    { value: 'RESOLUCION', label: 'RESOLUCION' },
+    { value: 'SOLICITUD', label: 'SOLICITUD' },
+
+
   ];
 
   // *********************************************************

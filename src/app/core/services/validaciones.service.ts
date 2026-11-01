@@ -16,7 +16,7 @@ export class ValidacionesService {
   envs = environment;
 
   // 2.- variables publicas
-  API_BASE: string = this.envs.main_url_prueba + 'usuarios';
+  API_BASE: string = this.envs.main_url + 'usuarios';
 
   API_VALIDAR_EMAIL: string = this.API_BASE + '/existe-email/';
   API_VALIDAR_DNI: string = this.API_BASE + '/existe-dni/';

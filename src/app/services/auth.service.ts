@@ -19,7 +19,7 @@ export class AuthService {
   envs = environment;
 
   // 2.- variables publicas
-  private url: string = this.envs.main_url_prueba; // ⚙️ Cambia a tu dominio en producción
+  private url: string = this.envs.main_url; // ⚙️ Cambia a tu dominio en producción
 
   private currentUserSubject = new BehaviorSubject<LoginResponse['usuario'] | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();

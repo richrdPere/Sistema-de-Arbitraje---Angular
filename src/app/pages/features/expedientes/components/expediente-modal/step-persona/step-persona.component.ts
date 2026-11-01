@@ -65,7 +65,7 @@ export class StepPersonaComponent implements OnInit, OnDestroy {
       },
       {
         id: 'JURIDICA',
-        nombre: 'PERSONA JURÍDICA',
+        nombre: 'JURÍDICA',
       },
       {
         id: 'ENTIDAD_PUBLICA',

@@ -16,7 +16,7 @@ export class TramiteMPVService {
   envs = environment;
 
   // 2.- variables publicas
-  API_BASE: string = this.envs.main_url_prueba + 'tramitesMPV';
+  API_BASE: string = this.envs.main_url + 'tramitesMPV';
 
   API_NEW_TRAMITE: string = this.API_BASE + '/crear';
   API_GET_TRAMITE_BY_NUMERO: string = this.API_BASE + '/numero-tramite';

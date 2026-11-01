@@ -16,7 +16,7 @@ export class PerfilService {
 
 
   // 2.- variables publicas
-  private baseUrl: string = this.envs.main_url_prueba + "perfil";
+  private baseUrl: string = this.envs.main_url + "perfil";
 
   constructor(private http: HttpClient) { }
 
