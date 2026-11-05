@@ -1,43 +1,41 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  inject,
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  FormBuilder,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { firstValueFrom, merge } from 'rxjs';
 
+// Services
+import { PersonalService } from 'src/app/pages/features/personal/services/personal.service';
+import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
+import { UsuarioService } from 'src/app/pages/features/usuarios/services/usuarios.service';
+
+// Interfaces
 import type { AuthPersonaTipo } from 'src/app/core/models/auth-session.model';
 import type { RegisterPersonaRequest } from 'src/app/pages/auth/interfaces';
-import { PersonalService } from 'src/app/pages/features/personal/services/personal.service';
-import type {
-  FindPersonaFilters,
-  PersonaData,
-} from 'src/app/pages/features/personas/interfaces';
-import { PersonaService } from 'src/app/pages/features/personas/services/persona.service';
-import type {
-  CreateUsuarioRequest,
-  CreateUsuarioRol,
-  UpdateUsuarioRequest,
-  UsuarioListadoData,
-} from 'src/app/pages/features/usuarios/interfaces';
-import { UsuarioService } from 'src/app/pages/features/usuarios/services/usuarios.service';
+import type { FindPersonaFilters, PersonaData } from 'src/app/pages/features/personas/interfaces';
+import type { CreateUsuarioRequest, CreateUsuarioRol, UpdateUsuarioRequest, UsuarioListadoData } from 'src/app/pages/features/usuarios/interfaces';
+
 
 type ModoPersona = 'NUEVA' | 'EXISTENTE';
 type RolConPerfil = 'SECRETARIA' | 'ARBITRO' | 'ADJUDICADOR';
 
+const textoNoVacio: ValidatorFn = (control) => {
+  const value = control.value;
+
+  // Validators.required maneja los valores vacíos.
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+
+  return typeof value === 'string' && value.trim().length > 0
+    ? null
+    : { textoVacio: true };
+};
+
 @Component({
   selector: 'usuarios-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './usuarios-form.component.html',
 })
 export class UsuariosFormComponent implements OnChanges {
@@ -72,13 +70,14 @@ export class UsuariosFormComponent implements OnChanges {
     apellidos: '',
     razon_social: '',
     nombre_entidad: '',
-    email: '',
+    email: ['', [Validators.required, textoNoVacio, Validators.email, Validators.maxLength(150)]],
     telefono: '',
     direccion: '',
     cargo: '',
     foto_perfil: '',
   });
 
+  modalWidthClass = 'max-w-4xl';
   personaEncontrada: PersonaData | null = null;
   buscando = false;
   guardando = false;
@@ -419,5 +418,116 @@ export class UsuariosFormComponent implements OnChanges {
     return typeof mensaje === 'string' && mensaje.trim()
       ? mensaje
       : 'No se pudo completar la operación.';
+  }
+
+  esRequerido(campo: string): boolean {
+    const control = this.form.get(campo);
+
+    return !!(
+      control?.enabled &&
+      control.hasValidator(Validators.required)
+    );
+  }
+
+  campoCompleto(campo: string): boolean {
+    const control = this.form.get(campo);
+
+    if (!control || control.disabled || !control.valid) {
+      return false;
+    }
+
+    const value = control.value;
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    return value !== null && value !== undefined;
+  }
+
+  campoInvalido(campo: string): boolean {
+    const control = this.form.get(campo);
+
+    return !!(
+      control &&
+      control.enabled &&
+      control.invalid &&
+      (control.touched || control.dirty)
+    );
+  }
+
+  obtenerError(campo: string): string {
+    const control = this.form.get(campo);
+
+    if (!control || !this.campoInvalido(campo)) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return campo === 'roles_ids'
+        ? 'Selecciona al menos un rol.'
+        : 'Este campo es obligatorio.';
+    }
+
+    if (control.hasError('textoVacio')) {
+      return 'Ingresa un valor válido.';
+    }
+
+    if (control.hasError('email')) {
+      return 'Ingresa un correo electrónico válido.';
+    }
+
+    if (control.hasError('maxlength')) {
+      const limite = control.getError('maxlength').requiredLength;
+      return `Se permiten como máximo ${limite} caracteres.`;
+    }
+
+    if (control.hasError('opcionInvalida')) {
+      return 'Selecciona una opción válida.';
+    }
+
+    if (control.hasError('rolesInvalidos')) {
+      return 'Los identificadores de los roles no son válidos.';
+    }
+
+    if (control.hasError('fechaInvalida')) {
+      return 'Ingresa una fecha válida en formato YYYY-MM-DD.';
+    }
+
+    if (control.hasError('passwordCorta')) {
+      return 'La contraseña debe tener al menos 8 caracteres.';
+    }
+
+    if (control.hasError('passwordLarga')) {
+      return 'La contraseña no puede superar los 72 bytes.';
+    }
+
+    return 'Revisa el valor ingresado.';
+  }
+
+  normalizarCampo(
+    campo: string,
+    convertirMayusculas = false,
+  ): void {
+    if (campo === 'password') {
+      return;
+    }
+
+    const control = this.form.get(campo);
+
+    if (!control || typeof control.value !== 'string') {
+      return;
+    }
+
+    const texto = control.value.trim().replace(/\s+/g, ' ');
+
+    control.setValue(
+      convertirMayusculas ? texto.toUpperCase() : texto,
+      { emitEvent: false },
+    );
   }
 }

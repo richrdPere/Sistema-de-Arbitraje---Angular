@@ -117,7 +117,7 @@ export class SubirDocumentosComponent
 
   modalWidthClass = 'max-w-4xl';
 
-  private readonly maxBytes = 10 * 1024 * 1024;
+  private readonly maxBytes = 50 * 1024 * 1024;
   private readonly destroy$ = new Subject<void>();
 
   constructor(

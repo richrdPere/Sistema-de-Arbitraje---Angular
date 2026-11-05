@@ -104,13 +104,13 @@ export class SidebarAdminComponent {
           route: '/admin/expedientes',
           roles: ['ADMIN', 'SECRETARIA'],
         },
-        {
-          icon: 'fa-solid fa-user-tie',
-          label: 'Árbitros',
-          description: 'Registro y consulta de árbitros',
-          route: '/admin/arbitros',
-          roles: ['ADMIN', 'SECRETARIA'],
-        },
+        // {
+        //   icon: 'fa-solid fa-user-tie',
+        //   label: 'Árbitros',
+        //   description: 'Registro y consulta de árbitros',
+        //   route: '/admin/arbitros',
+        //   roles: ['ADMIN', 'SECRETARIA'],
+        // },
         // {
         //   icon: 'fa-solid fa-user-check',
         //   label: 'Designaciones',

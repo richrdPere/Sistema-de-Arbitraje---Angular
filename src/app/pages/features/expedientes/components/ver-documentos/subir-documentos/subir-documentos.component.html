@@ -127,7 +127,7 @@
               " (change)="onArchivoSeleccionado($event)" />
 
           <p class="text-xs text-base-content/60 mt-2">
-            Selecciona un PDF de hasta 10 MB.
+            Selecciona un PDF de hasta 50 MB.
           </p>
 
           @if (archivoSeleccionado) {
@@ -145,7 +145,6 @@
         </div>
 
         <!-- Botones -->
-
         <div class="mt-6 flex justify-center gap-5">
           <button type="button" class="btn btn-outline" [disabled]="cargando" (click)="cerrarModal()">
             Cerrar
