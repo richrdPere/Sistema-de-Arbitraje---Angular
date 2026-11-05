@@ -1,85 +1,163 @@
-<div class="mx-auto w-full max-w-500">
+<section class="mx-auto w-full max-w-6xl space-y-6 p-4 sm:p-6" [attr.aria-busy]="ocupado">
 
-  <!-- <div class="p-6 bg-base-100 rounded-xl shadow-xl ">
-
-  </div> -->
-
-  <!-- <h2 class="text-2xl font-bold mb-6 text-base-content">Mi Perfil</h2> -->
-
-  <div class="p-4 mb-7 card bg-base-100 shadow-md flex flex-col items-start">
-    <h1 class="text-2xl font-bold mb-1 text-base-content">Mi Perfil</h1>
-    <p class="text-gray-600">Vea y actualice sus datos.</p>
-  </div>
-
-
+  <header class="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm">
+    <h1 class="text-2xl font-bold">Mi perfil</h1>
+    <p class="mt-1 text-sm text-base-content/70">
+      Consulta los datos de tu cuenta y actualiza tu información personal.
+    </p>
+  </header>
 
   @if (loading) {
-  <div class="text-center py-4">Cargando...</div>
-  }
-
-  @if (!loading) {
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    <!-- Card Foto -->
-    <div class="card bg-base-100 shadow-2xl p-4 flex flex-col items-center">
-      <img [src]="fotoPreview || 'assets/img/default-avatar.png'" alt="Foto de perfil"
-        class="w-40 h-40 rounded-full object-cover mb-4" />
-
-      <input type="file" (change)="seleccionarFoto($event)" class="file-input file-input-bordered w-full max-w-xs"
-        accept="image/png, image/jpeg, image/jpg" />
-    </div>
-
-    <!-- Card Datos de Perfil -->
-    <div class="md:col-span-2 space-y-6">
-
-      <div class="card bg-base-100 shadow-2xl p-6">
-        <h3 class="text-lg font-semibold mb-3 text-base-content">Datos del Perfil</h3>
-
-        <form [formGroup]="perfilForm" (ngSubmit)="actualizarPerfil() " class="space-y-4 text-base-content">
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ">
-            <input formControlName="nombre" placeholder="Nombre" class="input input-bordered w-full" />
-            <input formControlName="apellidos" placeholder="Apellidos" class="input input-bordered w-full" />
-          </div>
-
-          <input formControlName="correo" placeholder="Correo" class="input input-bordered w-full" />
-          <input formControlName="telefono" placeholder="Teléfono" class="input input-bordered w-full" />
-          <input formControlName="documento_identidad" placeholder="Documento" class="input input-bordered w-full" />
-          <input formControlName="rol" placeholder="Cargo" class="input input-bordered w-full" />
-
-          <button type="submit" class="btn btn-primary w-full">
-            Actualizar Perfil
-          </button>
-        </form>
-      </div>
-
-      <!-- Card Contraseña -->
-      <div class="card bg-base-100 shadow-2xl p-6">
-        <h3 class="text-lg font-semibold text-base-content">Cambiar Contraseña</h3>
-
-        <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()" class="mt-4 space-y-3 text-base-content">
-
-          <input formControlName="passwordActual" type="password" placeholder="Contraseña actual"
-            class="input input-bordered w-full" />
-
-          <input formControlName="nuevaPassword" type="password" placeholder="Nueva contraseña"
-            class="input input-bordered w-full" />
-
-          <input formControlName="repetirPassword" type="password" placeholder="Repetir nueva contraseña"
-            class="input input-bordered w-full" />
-
-          <button type="submit" class="btn btn-accent w-full">
-            Actualizar Contraseña
-          </button>
-        </form>
-      </div>
-
-    </div>
-
+  <div class="flex items-center justify-center gap-3 py-12" role="status">
+    <span class="loading loading-spinner text-primary" aria-hidden="true"></span>
+    <span>Cargando perfil…</span>
   </div>
+  } @else if (errorCarga) {
+  <div class="alert alert-error" role="alert">
+    <span>{{ errorCarga }}</span>
+    <button type="button" class="btn btn-sm" (click)="cargarPerfil()">
+      Reintentar
+    </button>
+  </div>
+  } @else {
 
+  @if (perfil; as usuario) {
+  <div class="grid gap-6 lg:grid-cols-3">
+
+    <aside class="card self-start border border-base-300 bg-base-100 shadow-sm">
+      <div class="card-body items-center text-center">
+        <h2 class="card-title">Foto de perfil</h2>
+
+        <img [src]="fotoPreview || avatarPredeterminado" alt="Foto de perfil"
+          class="my-3 size-32 rounded-full border border-base-300 object-cover sm:size-40" />
+
+        <label for="perfil-foto" class="text-sm font-medium">
+          Selecciona una nueva foto
+        </label>
+
+        <input id="perfil-foto" type="file" accept="image/jpeg,image/png" class="file-input file-input-bordered w-full"
+          aria-describedby="perfil-foto-ayuda" [disabled]="ocupado" (change)="seleccionarFoto($event)" />
+
+        <p id="perfil-foto-ayuda" class="text-xs text-base-content/70">
+          JPEG o PNG de hasta 2 MiB.
+        </p>
+
+        @if (subiendoFoto) {
+        <p class="flex items-center gap-2 text-sm" role="status">
+          <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+          Subiendo foto…
+        </p>
+        }
+      </div>
+    </aside>
+
+    <div class="space-y-6 lg:col-span-2">
+
+      <section class="card border border-base-300 bg-base-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">Datos del perfil</h2>
+
+          <form [formGroup]="perfilForm" (ngSubmit)="actualizarPerfil()">
+            <fieldset class="grid min-w-0 gap-4 sm:grid-cols-2" [disabled]="ocupado">
+
+              @if (usuario.persona.tipo === 'NATURAL') {
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Nombres</span>
+                <input class="input input-bordered w-full" formControlName="nombres" autocomplete="given-name" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Apellidos</span>
+                <input class="input input-bordered w-full" formControlName="apellidos" autocomplete="family-name" />
+              </label>
+              } @else {
+              <label class="flex flex-col gap-1 sm:col-span-2">
+                <span class="text-sm font-medium">
+                  {{ usuario.persona.tipo === 'JURIDICA' ? 'Razón social' : 'Entidad pública' }}
+                </span>
+                <input class="input input-bordered w-full bg-base-200" readonly
+                  [value]="usuario.persona.razon_social || usuario.persona.nombre_entidad || ''" />
+              </label>
+              }
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Correo de acceso</span>
+                <input type="email" class="input input-bordered w-full bg-base-200" [value]="usuario.correo" readonly />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Teléfono</span>
+                <input type="tel" class="input input-bordered w-full" formControlName="telefono" autocomplete="tel" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">
+                  {{ usuario.persona.tipo === 'NATURAL' ? 'DNI' : 'RUC' }}
+                </span>
+                <input class="input input-bordered w-full bg-base-200" readonly [value]="(usuario.persona.tipo === 'NATURAL'
+                      ? usuario.persona.dni : usuario.persona.ruc) || 'Sin registrar'" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Rol de la cuenta</span>
+                <input class="input input-bordered w-full bg-base-200" [value]="usuario.rol" readonly />
+              </label>
+            </fieldset>
+
+            <div class="mt-5 flex justify-end">
+              <button type="submit" class="btn btn-primary w-full sm:w-auto"
+                [disabled]="ocupado || perfilForm.pristine">
+                {{ guardandoPerfil ? 'Guardando…' : 'Actualizar perfil' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="card border border-base-300 bg-base-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">Cambiar contraseña</h2>
+
+          @if (usuario.password_reset_required) {
+          <div class="alert alert-warning text-sm" role="status">
+            Usa la contraseña temporal que recibiste por correo como contraseña actual.
+          </div>
+          }
+
+          <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()">
+            <fieldset class="space-y-4" [disabled]="ocupado">
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Contraseña actual</span>
+                <input type="password" formControlName="passwordActual" autocomplete="current-password"
+                  class="input input-bordered w-full" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Nueva contraseña</span>
+                <input type="password" formControlName="nuevaPassword" autocomplete="new-password"
+                  class="input input-bordered w-full" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Repetir nueva contraseña</span>
+                <input type="password" formControlName="repetirPassword" autocomplete="new-password"
+                  class="input input-bordered w-full" />
+              </label>
+            </fieldset>
+
+            <div class="mt-5 flex justify-end">
+              <button type="submit" class="btn btn-primary w-full sm:w-auto"
+                [disabled]="ocupado || passwordForm.invalid">
+                {{ cambiandoPassword ? 'Actualizando…' : 'Actualizar contraseña' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  }
   }
 
-
-</div>
+</section>

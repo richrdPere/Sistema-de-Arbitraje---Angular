@@ -104,13 +104,13 @@ export class SidebarAdminComponent {
           route: '/admin/expedientes',
           roles: ['ADMIN', 'SECRETARIA'],
         },
-        // {
-        //   icon: 'fa-solid fa-user-tie',
-        //   label: 'Árbitros',
-        //   description: 'Registro y consulta de árbitros',
-        //   route: '/admin/arbitros',
-        //   roles: ['ADMIN', 'SECRETARIA'],
-        // },
+        {
+          icon: 'fa-solid fa-user-tie',
+          label: 'Árbitros',
+          description: 'Registro y consulta de árbitros',
+          route: '/admin/arbitros',
+          roles: ['ADMIN', 'SECRETARIA'],
+        },
         // {
         //   icon: 'fa-solid fa-user-check',
         //   label: 'Designaciones',
@@ -174,25 +174,32 @@ export class SidebarAdminComponent {
     //     },
     //   ],
     // },
-    // {
-    //   title: 'Administración',
-    //   items: [
-    //     {
-    //       icon: 'fa-solid fa-users-gear',
-    //       label: 'Usuarios',
-    //       description: 'Administración de usuarios del sistema',
-    //       route: '/admin/usuarios',
-    //       roles: ['ADMIN'],
-    //     },
-    //     {
-    //       icon: 'fa-solid fa-shield-halved',
-    //       label: 'Auditoría',
-    //       description: 'Consulta de acciones registradas',
-    //       route: '/admin/auditoria',
-    //       roles: ['ADMIN'],
-    //     },
-    //   ],
-    // },
+    {
+      title: 'Administración',
+      items: [
+        {
+          icon: 'fa-solid fa-users-gear',
+          label: 'Usuarios',
+          description: 'Administración de usuarios del sistema',
+          route: '/admin/usuarios',
+          roles: ['ADMIN'],
+        },
+        // {
+        //   icon: 'fa-solid fa-people-group',
+        //   label: 'Personal',
+        //   description: 'Administración de personal del sistema',
+        //   route: '/admin/personal',
+        //   roles: ['ADMIN'],
+        // },
+        // {
+        //   icon: 'fa-solid fa-shield-halved',
+        //   label: 'Auditoría',
+        //   description: 'Consulta de acciones registradas',
+        //   route: '/admin/auditoria',
+        //   roles: ['ADMIN'],
+        // },
+      ],
+    },
   ];
 
   readonly navigationGroups = computed(() => {

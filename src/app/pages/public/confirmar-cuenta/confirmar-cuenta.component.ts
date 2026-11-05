@@ -31,7 +31,8 @@ export class ConfirmarCuentaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.token = this.route.snapshot.paramMap.get('token');
+    this.token = this.route.snapshot.queryParamMap.get('token')?.trim() || null;
+
     if (this.token) {
       this.confirmarCuenta(this.token);
     }

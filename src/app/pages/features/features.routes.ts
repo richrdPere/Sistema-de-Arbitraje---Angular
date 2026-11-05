@@ -164,6 +164,15 @@ export const adminFeatureRoutes: Routes = [
         data: { roles: ['ADMIN', 'ARBITRO'] } // 'SECRETARIA',
       },
 
+      {
+        path: 'personal',
+        loadComponent: () =>
+          import('./personal/personal.component')
+            .then((m) => m.PersonalComponent),
+        canActivate: [RoleGuard],
+        data: { roles: ['ADMIN'] },
+      },
+
       // Redirect default
       { path: '', redirectTo: 'expedientes', pathMatch: 'full' }
     ]

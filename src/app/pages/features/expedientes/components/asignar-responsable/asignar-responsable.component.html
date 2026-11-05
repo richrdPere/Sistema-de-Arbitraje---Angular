@@ -1,0 +1,161 @@
+@if (mostrarModal) {
+<div class="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="asignar-responsable-titulo"
+  (keydown.escape)="cerrar()">
+  <div class="modal-box flex max-h-[90dvh] w-11/12 flex-col
+             overflow-hidden rounded-2xl bg-base-100 p-4
+             text-base-content shadow-2xl sm:p-6" [ngClass]="modalWidthClass"
+    [attr.aria-busy]="cargandoExpediente || buscando || guardando">
+    <!-- ENCABEZADO -->
+    <header class="flex shrink-0 items-center justify-between gap-3 border-b border-base-300 pb-3">
+      <div class="flex min-w-0 flex-wrap items-center gap-2">
+        <h3 id="asignar-responsable-titulo" class="text-lg font-bold">
+          Asignar responsable
+        </h3>
+
+        @if (expediente; as detalle) {
+        <span class="badge badge-info badge-outline h-auto max-w-full whitespace-normal break-words">
+          Expediente {{ detalle.numero_expediente || expedienteId }}
+        </span>
+        }
+      </div>
+
+      <button type="button" class="btn btn-circle btn-ghost btn-sm shrink-0 text-xl"
+        aria-label="Cerrar asignación de responsable" [disabled]="guardando" (click)="cerrar()">
+        ✕
+      </button>
+    </header>
+
+    <!-- CARGA Y ERROR DEL EXPEDIENTE -->
+    @if (cargandoExpediente) {
+    <div class="flex flex-col items-center gap-3 py-12" role="status">
+      <span class="loading loading-spinner loading-lg text-primary" aria-hidden="true"></span>
+      <p class="text-sm text-base-content/70">Cargando expediente…</p>
+    </div>
+    } @else if (errorExpediente) {
+    <div class="mt-4 space-y-4">
+      <div class="alert alert-error" role="alert">
+        <span>{{ errorExpediente }}</span>
+      </div>
+
+      <div class="flex justify-center">
+        <button type="button" class="btn btn-outline btn-sm" (click)="cargarExpediente()">
+          Reintentar
+        </button>
+      </div>
+    </div>
+    } @else {
+    @if (expediente; as detalle) {
+    <form class="flex min-h-0 flex-col" (ngSubmit)="guardar()">
+      <!-- CONTENIDO CON DESPLAZAMIENTO -->
+      <div class="min-h-0 space-y-5 overflow-y-auto py-4">
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="min-w-0 rounded-lg bg-base-200 px-3 py-2">
+            <span class="text-xs text-base-content/60">Responsable actual</span>
+            <p class="break-words font-medium">
+              {{ detalle.responsable?.correo ||
+              (responsableActualId === null
+              ? 'Sin asignar'
+              : 'Usuario #' + responsableActualId) }}
+            </p>
+          </div>
+
+          <div class="min-w-0 rounded-lg bg-base-200 px-3 py-2" aria-live="polite">
+            <span class="text-xs text-base-content/60">Selección</span>
+            <p class="break-words font-medium">{{ nombreSeleccionado }}</p>
+          </div>
+        </div>
+
+        <fieldset class="min-w-0 space-y-4" [disabled]="guardando">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
+            <label for="asignar-responsable-busqueda" class="flex min-w-0 flex-1 flex-col gap-1">
+              <span class="text-sm font-medium">Buscar secretaria</span>
+              <input id="asignar-responsable-busqueda" type="search" name="busqueda" [(ngModel)]="busqueda"
+                class="input input-bordered w-full" placeholder="Nombre o correo"
+                (keydown.enter)="$event.preventDefault(); buscarUsuarios()" />
+            </label>
+
+            <button type="button" class="btn btn-outline" [disabled]="buscando" (click)="buscarUsuarios()">
+              Buscar
+            </button>
+          </div>
+
+          @if (buscando) {
+          <div class="flex items-center gap-2 py-3 text-sm text-base-content/70" role="status">
+            <span class="loading loading-spinner loading-sm text-primary" aria-hidden="true"></span>
+            Cargando secretarias…
+          </div>
+          } @else if (errorBusqueda) {
+          <div class="alert alert-error" role="alert">
+            <span>{{ errorBusqueda }}</span>
+          </div>
+          } @else {
+          <ul class="divide-y divide-base-300 rounded-lg border border-base-300" aria-label="Secretarias activas">
+            @for (usuario of usuarios; track usuario.id_usuario) {
+            <li>
+              <button type="button" class="flex w-full items-center justify-between gap-3
+                               px-3 py-2 text-left hover:bg-base-200"
+                [class.bg-base-200]="responsableId === usuario.id_usuario"
+                [attr.aria-pressed]="responsableId === usuario.id_usuario" (click)="seleccionar(usuario)">
+                <span class="min-w-0">
+                  <span class="block break-words text-sm font-semibold">
+                    {{ usuario.nombre || usuario.correo }}
+                  </span>
+                  @if (usuario.nombre) {
+                  <span class="block break-words text-xs text-base-content/70">
+                    {{ usuario.correo }}
+                  </span>
+                  }
+                </span>
+
+                @if (responsableId === usuario.id_usuario) {
+                <span class="badge badge-success badge-outline shrink-0">
+                  Seleccionada
+                </span>
+                }
+              </button>
+            </li>
+            } @empty {
+            <li class="px-3 py-4 text-center text-sm text-base-content/70">
+              No se encontraron secretarias activas.
+            </li>
+            }
+          </ul>
+          }
+
+          @if (responsableId !== null) {
+          <button type="button" class="btn btn-ghost btn-sm text-error" (click)="retirarResponsable()">
+            Dejar sin responsable
+          </button>
+          }
+
+          <label for="asignar-responsable-motivo" class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Motivo (opcional)</span>
+            <textarea id="asignar-responsable-motivo" name="motivo" [(ngModel)]="motivo" rows="2"
+              class="textarea textarea-bordered w-full"></textarea>
+          </label>
+        </fieldset>
+
+        @if (errorGuardado) {
+        <div class="alert alert-error" role="alert">
+          <span>{{ errorGuardado }}</span>
+        </div>
+        }
+      </div>
+
+      <!-- ACCIONES -->
+      <footer class="flex shrink-0 flex-col-reverse gap-2 border-t border-base-300
+                         pt-4 sm:flex-row sm:justify-center">
+        <button type="button" class="btn btn-outline" [disabled]="guardando" (click)="cerrar()">
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="buscando || guardando || !hayCambios">
+          {{ guardando ? 'Guardando…' : 'Guardar asignación' }}
+        </button>
+      </footer>
+    </form>
+    }
+    }
+  </div>
+</div>
+}

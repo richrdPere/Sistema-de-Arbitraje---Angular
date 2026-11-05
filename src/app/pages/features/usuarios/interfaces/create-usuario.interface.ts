@@ -8,7 +8,12 @@ import { RegisterPersonaRequest } from "src/app/pages/auth/interfaces";
 // *********************************************************
 export type CreateUsuarioRol = Extract<
   AuthRol,
-  'ADMIN' | 'PARTICIPE' | 'STAFF_INTERNO'
+  | 'ADMIN'
+  | 'PARTICIPE'
+  | 'STAFF_INTERNO'
+  | 'SECRETARIA'
+  | 'ARBITRO'
+  | 'ADJUDICADOR'
 >;
 
 // *********************************************************

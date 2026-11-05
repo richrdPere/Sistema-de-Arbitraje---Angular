@@ -513,6 +513,15 @@
             <td>
               <div class="flex items-center justify-center gap-1">
 
+                <!-- Asignar responsable -->
+                <!-- <div class="tooltip tooltip-left" data-tip="Asignar responsable">
+                  <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" [attr.aria-label]="'Asignar responsable para ' +
+                        exp.numero_expediente" [disabled]="estaEnOperacion(exp.id_expediente)"
+                    (click)="abrirAsignarResponsable(exp)">
+                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                  </button>
+                </div> -->
+
                 <!-- Documentos -->
                 <div class="tooltip tooltip-left" data-tip="Ver documentos">
                   <button type="button" class="btn btn-ghost btn-circle btn-sm text-info" [attr.aria-label]="'Ver documentos del expediente ' +
@@ -713,6 +722,15 @@
       Acciones del expediente
     </li>
 
+    @if (puedeAsignarResponsable) {
+    <li>
+      <button type="button" (click)="abrirAsignarResponsable(exp)">
+        <i class="fa-solid fa-user-check" aria-hidden="true"></i>
+        Asignar responsable
+      </button>
+    </li>
+    }
+
     <li>
       <button type="button" (click)="verExpedienteInfo(exp)">
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -780,5 +798,11 @@
 <ver-expediente [mostrarModal]="mostrarModalInfoExpediente" [expedienteId]="expedienteId"
   (modalCerrado)="cerrarModalInfo()">
 </ver-expediente>
+
+<!-- ===================================================== -->
+<!-- MODAL: ASIGNAR RESPONSABLE -->
+<!-- ===================================================== -->
+<asignar-responsable [mostrarModal]="mostrarModalAsignarResponsable" [expedienteId]="expedienteIdParaAsignar"
+  (cerrado)="cerrarAsignarResponsable()" (asignado)="onResponsableAsignado()" />
 
 <router-outlet></router-outlet>

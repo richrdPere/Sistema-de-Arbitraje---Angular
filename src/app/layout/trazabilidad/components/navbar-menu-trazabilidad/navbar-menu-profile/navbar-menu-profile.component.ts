@@ -9,7 +9,7 @@ import { MenuOptions } from 'src/app/interfaces/components/MenuOptions';
 
 // Servicio
 import { AuthService } from 'src/app/services/auth.service';
-import { PerfilService } from 'src/app/services/perfil.service';
+import { PerfilService } from 'src/app/pages/features/perfil/services/perfil.service';
 
 
 @Component({

@@ -1,1 +1,233 @@
-<p>personal works!</p>
+<section class="mx-auto max-w-7xl space-y-5 p-4 sm:p-6" [attr.aria-busy]="ocupado">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-bold">Gestión de personal</h1>
+      <p class="text-sm text-base-content/70">
+        Registra perfiles y administra su estado y disponibilidad.
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-primary" [disabled]="ocupado" (click)="abrirCreacion()">
+      Registrar perfil
+    </button>
+  </header>
+
+  <div class="flex flex-wrap gap-2" aria-label="Tipos de personal">
+    @for (opcion of tipos; track opcion.valor) {
+    <button type="button" class="btn btn-sm" [class.btn-primary]="tipo === opcion.valor"
+      [attr.aria-pressed]="tipo === opcion.valor" [disabled]="ocupado" (click)="cambiarTipo(opcion.valor)">
+      {{ opcion.etiqueta }}
+    </button>
+    }
+  </div>
+
+  @if (error) {
+  <div class="alert alert-error" role="alert">{{ error }}</div>
+  }
+
+  @if (aviso) {
+  <div class="alert alert-success" role="status">{{ aviso }}</div>
+  }
+
+  @if (modo) {
+  <form class="rounded-xl border border-base-300 bg-base-100 p-4" (ngSubmit)="guardar()">
+    <div class="mb-4 flex items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold">
+        {{ modo === 'crear' ? 'Registrar perfil' : modo === 'editar' ? 'Editar perfil' : 'Detalle del perfil' }}
+      </h2>
+      <button type="button" class="btn btn-ghost btn-sm" [disabled]="ocupado" (click)="cerrarFormulario()">
+        Cerrar
+      </button>
+    </div>
+
+    <fieldset class="grid gap-4 sm:grid-cols-2" [disabled]="ocupado || modo === 'ver'">
+      <label class="flex flex-col gap-1">
+        <span>ID de la persona</span>
+        <input type="number" name="personaId" class="input input-bordered w-full" min="1" max="2147483647" step="1"
+          required [readonly]="modo !== 'crear'" [(ngModel)]="formulario.personaId" />
+      </label>
+
+      @if (tipo !== 'STAFF_INTERNO') {
+      <label class="flex flex-col gap-1">
+        <span>Cargo</span>
+        <input type="text" name="cargo" class="input input-bordered w-full" maxlength="100"
+          [required]="modo === 'editar'" [(ngModel)]="formulario.cargo" />
+      </label>
+      }
+
+      @if (tipo === 'SECRETARIA') {
+      <label class="flex flex-col gap-1">
+        <span>Fecha de ingreso</span>
+        <input type="date" name="fechaIngreso" class="input input-bordered w-full"
+          [(ngModel)]="formulario.fechaIngreso" />
+      </label>
+      }
+
+      @if (admiteDisponibilidad) {
+      <label class="flex flex-col gap-1">
+        <span>Especialidad</span>
+        <input type="text" name="especialidad" class="input input-bordered w-full" maxlength="150"
+          [(ngModel)]="formulario.especialidad" />
+      </label>
+
+      <label class="flex flex-col gap-1">
+        <span>Número de colegiatura</span>
+        <input type="text" name="colegiatura" class="input input-bordered w-full" maxlength="50"
+          [(ngModel)]="formulario.colegiatura" />
+      </label>
+
+      <label class="flex flex-col gap-1 sm:col-span-2">
+        <span>Experiencia</span>
+        <textarea name="experiencia" class="textarea textarea-bordered w-full" rows="3" maxlength="10000"
+          [(ngModel)]="formulario.experiencia"></textarea>
+      </label>
+      }
+
+      @if (modo !== 'editar') {
+      <label class="flex items-center gap-2">
+        <input type="checkbox" name="estado" class="checkbox checkbox-primary" [(ngModel)]="formulario.estado" />
+        <span>Perfil habilitado</span>
+      </label>
+
+      @if (admiteDisponibilidad) {
+      <label class="flex items-center gap-2">
+        <input type="checkbox" name="disponible" class="checkbox checkbox-primary" [disabled]="!formulario.estado"
+          [(ngModel)]="formulario.disponible" />
+        <span>Disponible para designaciones</span>
+      </label>
+      }
+      }
+    </fieldset>
+
+    @if (modo !== 'ver') {
+    <div class="mt-4 flex justify-end">
+      <button type="submit" class="btn btn-primary" [disabled]="ocupado">
+        {{ modo === 'crear' ? 'Registrar' : 'Guardar cambios' }}
+      </button>
+    </div>
+    }
+  </form>
+  }
+
+  <div class="flex flex-wrap items-end gap-3">
+    <label class="flex flex-col gap-1">
+      <span class="text-sm">Estado</span>
+      <select class="select select-bordered" [disabled]="ocupado" [(ngModel)]="filtroEstado">
+        <option value="">Todos</option>
+        <option value="true">Habilitado</option>
+        <option value="false">Deshabilitado</option>
+      </select>
+    </label>
+
+    @if (admiteDisponibilidad) {
+    <label class="flex flex-col gap-1">
+      <span class="text-sm">Disponibilidad</span>
+      <select class="select select-bordered" [disabled]="ocupado" [(ngModel)]="filtroDisponibilidad">
+        <option value="">Todas</option>
+        <option value="true">Disponible</option>
+        <option value="false">No disponible</option>
+      </select>
+    </label>
+    }
+
+    <button type="button" class="btn btn-outline" [disabled]="ocupado" (click)="aplicarFiltros()">
+      Aplicar filtros
+    </button>
+  </div>
+
+  @if (ocupado) {
+  <p class="flex items-center gap-2 text-sm" role="status">
+    <span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
+    Procesando solicitud…
+  </p>
+  }
+
+  <div class="overflow-x-auto rounded-xl border border-base-300">
+    <table class="table">
+      <caption class="sr-only">Listado de perfiles de personal</caption>
+      <thead class="bg-base-200">
+        <tr>
+          <th scope="col">ID del perfil</th>
+          <th scope="col">ID de la persona</th>
+          <th scope="col">Cargo</th>
+          <th scope="col">Estado</th>
+          @if (admiteDisponibilidad) {
+          <th scope="col">Disponibilidad</th>
+          }
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (perfil of perfiles; track obtenerId(perfil)) {
+        <tr>
+          <td>{{ obtenerId(perfil) }}</td>
+          <td>{{ perfil.persona_id }}</td>
+          <td>{{ obtenerCargo(perfil) || '—' }}</td>
+          <td>
+            <span class="badge badge-outline" [class.badge-success]="perfil.estado">
+              {{ perfil.estado ? 'Habilitado' : 'Deshabilitado' }}
+            </span>
+          </td>
+
+          @if (admiteDisponibilidad) {
+          <td>{{ estaDisponible(perfil) ? 'Disponible' : 'No disponible' }}</td>
+          }
+
+          <td>
+            <div class="flex flex-wrap gap-1">
+              <button type="button" class="btn btn-ghost btn-xs" [disabled]="ocupado"
+                (click)="abrirPerfil(perfil, 'ver')">
+                Ver
+              </button>
+
+              @if (tipo !== 'STAFF_INTERNO') {
+              <button type="button" class="btn btn-outline btn-xs" [disabled]="ocupado"
+                (click)="abrirPerfil(perfil, 'editar')">
+                Editar
+              </button>
+              }
+
+              <button type="button" class="btn btn-outline btn-xs" [disabled]="ocupado || !!modo"
+                (click)="cambiarEstado(perfil)">
+                {{ perfil.estado ? 'Deshabilitar' : 'Habilitar' }}
+              </button>
+
+              @if (admiteDisponibilidad) {
+              <button type="button" class="btn btn-outline btn-xs" [disabled]="ocupado || !!modo || !perfil.estado"
+                (click)="cambiarDisponibilidad(perfil)">
+                {{ estaDisponible(perfil) ? 'Retirar disponibilidad' : 'Marcar disponible' }}
+              </button>
+              }
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (!ocupado && paginacion && perfiles.length === 0) {
+    <p class="p-4 text-center text-sm text-base-content/70">
+      No hay perfiles en esta página.
+    </p>
+    }
+  </div>
+
+  @if (paginacion; as pagina) {
+  <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Paginación del personal">
+    <span class="text-sm">
+      {{ pagina.total }} registros · Página {{ pagina.page }} de {{ pagina.total_pages || 1 }}
+    </span>
+
+    <div class="flex gap-2">
+      <button type="button" class="btn btn-outline btn-sm" [disabled]="ocupado || !pagina.has_previous"
+        (click)="cargar(pagina.page - 1)">
+        Anterior
+      </button>
+      <button type="button" class="btn btn-outline btn-sm" [disabled]="ocupado || !pagina.has_next"
+        (click)="cargar(pagina.page + 1)">
+        Siguiente
+      </button>
+    </div>
+  </nav>
+  }
+</section>

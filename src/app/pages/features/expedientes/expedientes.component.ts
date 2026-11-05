@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 
 // Services
 import { ExpedientesService } from 'src/app/pages/features/expedientes/services/expedientes.service';
+import { AuthStorageService } from 'src/app/core/auth/auth-storage.service';
 
 // Interfaces
 import { ExpedienteEstado, ExpedienteEstadoProcesal, ExpedienteOrigen, ExpedientePaginadoItem, ExpedientesPaginadosFilters, ExpedienteTipo } from 'src/app/pages/features/expedientes/interfaces';
@@ -16,6 +17,8 @@ import { ExpedienteModalComponent } from './components/expediente-modal/expedien
 import { VerHistorialComponent } from './components/ver-historial/ver-historial.component';
 import { VerExpedienteComponent } from './components/ver-expediente/ver-expediente.component';
 import { DesignacionFormComponent } from './components/designacion-form/designacion-form.component';
+import { AsignarResponsableComponent } from './components/asignar-responsable/asignar-responsable.component';
+
 
 @Component({
   selector: 'app-expedientes',
@@ -29,6 +32,7 @@ import { DesignacionFormComponent } from './components/designacion-form/designac
     VerHistorialComponent,
     VerExpedienteComponent,
     DesignacionFormComponent,
+    AsignarResponsableComponent,
   ],
   templateUrl: './expedientes.component.html',
 })
@@ -169,11 +173,14 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
 
   expedienteSeleccionado: ExpedientePaginadoItem | null = null;
   expedienteId: number | null = null;
+  expedienteIdParaAsignar: number | null = null;
 
   mostrarModalHistorial = false;
   mostrarModalInfoExpediente = false;
   mostrarModalParticipes = false;
   mostrarModalFormDesignacion = false;
+  mostrarModalAsignarResponsable = false;
+
 
   // *********************************************************
   // MENÚ DE ACCIONES
@@ -202,6 +209,7 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly expedienteService: ExpedientesService,
+    private readonly authStorage: AuthStorageService,
     private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
   ) { }
@@ -718,6 +726,31 @@ export class ExpedientesComponent implements OnInit, OnDestroy {
     expediente: ExpedientePaginadoItem,
   ): boolean {
     return this.puedeEditar(expediente);
+  }
+
+  // *********************************************************
+  // ASIGNAR RESPONSABLE
+  // *********************************************************
+  get puedeAsignarResponsable(): boolean {
+    return this.authStorage.getRol() === 'ADMIN';
+  }
+
+  abrirAsignarResponsable(expediente: ExpedientePaginadoItem): void {
+    if (!this.puedeAsignarResponsable) return;
+
+    this.cerrarDropdown();
+    this.expedienteIdParaAsignar = expediente.id_expediente;
+    this.mostrarModalAsignarResponsable = true;
+  }
+
+  cerrarAsignarResponsable(): void {
+    this.mostrarModalAsignarResponsable = false;
+    this.expedienteIdParaAsignar = null;
+  }
+
+  onResponsableAsignado(): void {
+    this.cerrarAsignarResponsable();
+    this.getExpedientesPaginados();
   }
 
   // *********************************************************
